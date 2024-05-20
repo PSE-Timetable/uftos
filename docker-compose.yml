@@ -1,0 +1,30 @@
+services:
+  db:
+    image: postgres:16.3-alpine3.18
+    restart: unless-stopped
+    ports:
+      - ${DB_PORT}:5432
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+  api:
+    image: uftos-server-dev:latest
+    build:
+      context: ./
+      dockerfile: server/Dockerfile
+    restart: unless-stopped
+    volumes:
+      - ./server:/app
+    depends_on:
+      - db
+    env_file: 
+      - .env
+  web:
+    image: uftos-web-dev:latest
+    build:
+      context: ./web
+    volumes:
+      - ./web:/app
+      - /app/node_modules
+    restart: unless-stopped
