@@ -1,4 +1,4 @@
-package de.uftos;
+package de.uftos.timefoldQuickstart;
 
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
