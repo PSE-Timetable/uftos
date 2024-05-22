@@ -14,6 +14,8 @@ services:
       context: ./
       dockerfile: server/Dockerfile
     restart: unless-stopped
+    ports:
+      - 8080:8080
     volumes:
       - ./server:/app
     depends_on:
@@ -24,6 +26,8 @@ services:
     image: uftos-web-dev:latest
     build:
       context: ./web
+    ports:
+      - 3000:3000
     volumes:
       - ./web:/app
       - /app/node_modules
