@@ -6,7 +6,6 @@ import ai.timefold.solver.core.api.score.stream.ConstraintFactory;
 import ai.timefold.solver.core.api.score.stream.ConstraintProvider;
 import ai.timefold.solver.core.api.score.stream.Joiners;
 import de.uftos.timefoldQuickstart.domain.Lesson;
-import de.uftos.timefoldQuickstart.solver.justifications.*;
 
 import java.time.Duration;
 
@@ -37,7 +36,6 @@ public class TimetableConstraintProvider implements ConstraintProvider {
                         Joiners.equal(Lesson::getRoom))
                 // ... and penalize each pair with a hard weight.
                 .penalize(HardSoftScore.ONE_HARD)
-                .justifyWith((lesson1, lesson2, score) -> new RoomConflictJustification(lesson1.getRoom(), lesson1, lesson2))
                 .asConstraint("Room conflict");
     }
 
@@ -48,8 +46,6 @@ public class TimetableConstraintProvider implements ConstraintProvider {
                         Joiners.equal(Lesson::getTimeslot),
                         Joiners.equal(Lesson::getTeacher))
                 .penalize(HardSoftScore.ONE_HARD)
-                .justifyWith(
-                        (lesson1, lesson2, score) -> new TeacherConflictJustification(lesson1.getTeacher(), lesson1, lesson2))
                 .asConstraint("Teacher conflict");
     }
 
@@ -60,7 +56,6 @@ public class TimetableConstraintProvider implements ConstraintProvider {
                         Joiners.equal(Lesson::getTimeslot),
                         Joiners.equal(Lesson::getStudentGroup))
                 .penalize(HardSoftScore.ONE_HARD)
-                .justifyWith((lesson1, lesson2, score) -> new StudentGroupConflictJustification(lesson1.getStudentGroup(), lesson1, lesson2))
                 .asConstraint("Student group conflict");
     }
 
@@ -71,7 +66,6 @@ public class TimetableConstraintProvider implements ConstraintProvider {
                         Joiners.equal(Lesson::getTeacher))
                 .filter((lesson1, lesson2) -> lesson1.getRoom() != lesson2.getRoom())
                 .penalize(HardSoftScore.ONE_SOFT)
-                .justifyWith((lesson1, lesson2, score) -> new TeacherRoomStabilityJustification(lesson1.getTeacher(), lesson1, lesson2))
                 .asConstraint("Teacher room stability");
     }
 
@@ -87,7 +81,6 @@ public class TimetableConstraintProvider implements ConstraintProvider {
                     return !between.isNegative() && between.compareTo(Duration.ofMinutes(30)) <= 0;
                 })
                 .reward(HardSoftScore.ONE_SOFT)
-                .justifyWith((lesson1, lesson2, score) -> new TeacherTimeEfficiencyJustification(lesson1.getTeacher(), lesson1, lesson2))
                 .asConstraint("Teacher time efficiency");
     }
 
@@ -105,7 +98,6 @@ public class TimetableConstraintProvider implements ConstraintProvider {
                     return !between.isNegative() && between.compareTo(Duration.ofMinutes(30)) <= 0;
                 })
                 .penalize(HardSoftScore.ONE_SOFT)
-                .justifyWith((lesson1, lesson2, score) -> new StudentGroupSubjectVarietyJustification(lesson1.getStudentGroup(), lesson1, lesson2))
                 .asConstraint("Student group subject variety");
     }
 
