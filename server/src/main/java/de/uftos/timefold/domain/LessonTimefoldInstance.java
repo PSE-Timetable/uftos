@@ -11,18 +11,23 @@ import lombok.Setter;
 public class LessonTimefoldInstance {
     @PlanningId
     private int id;
+
     @JsonIdentityReference
     @PlanningVariable
     private int timeslotId;
+
     @JsonIdentityReference
     @PlanningVariable
     private int teacherId;
+
     @JsonIdentityReference
     @PlanningVariable
     private int studentGroupId;
+
     @JsonIdentityReference
     @PlanningVariable
     private int subjectId;
+
     @JsonIdentityReference
     @PlanningVariable
     private int roomId;
