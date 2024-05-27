@@ -11,7 +11,6 @@ public class DataSourceConfig {
 
     @Bean
     public DataSource getDataSource() {
-        System.out.println("hello");
         DataSourceBuilder<?> dataSourceBuilder = DataSourceBuilder.create();
         dataSourceBuilder.url("jdbc:postgresql://db:5432/uftos");
         dataSourceBuilder.username("uftos");
