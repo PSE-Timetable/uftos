@@ -31,7 +31,6 @@ public class StudentService {
     public Student create(Student student) {
         if (student.getId() != null && this.repository.findById(student.getId()).isPresent()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-
         }
 
         return this.repository.save(student);
