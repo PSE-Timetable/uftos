@@ -17,35 +17,35 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/students")
 public class StudentController {
-    private final StudentService studentService;
+  private final StudentService studentService;
 
-    @Autowired
-    public StudentController(StudentService studentService) {
-       this.studentService = studentService;
-    }
+  @Autowired
+  public StudentController(StudentService studentService) {
+    this.studentService = studentService;
+  }
 
-    @PostMapping()
-    public Student createStudent(@RequestBody Student student) {
-        return this.studentService.create(student);
-    }
+  @PostMapping()
+  public Student createStudent(@RequestBody Student student) {
+    return this.studentService.create(student);
+  }
 
-    @GetMapping()
-    public Page<Student> getStudents(Pageable pageable) {
-        return this.studentService.get(pageable);
-    }
+  @GetMapping()
+  public Page<Student> getStudents(Pageable pageable) {
+    return this.studentService.get(pageable);
+  }
 
-    @GetMapping("/{id}")
-    public Student getStudent(@PathVariable String id) {
-        return this.studentService.getById(id);
-    }
+  @GetMapping("/{id}")
+  public Student getStudent(@PathVariable String id) {
+    return this.studentService.getById(id);
+  }
 
-    @PutMapping("/{id}")
-    public Student updateStudent(@PathVariable String id, @RequestBody Student student) {
-        return this.studentService.update(id, student);
-    }
+  @PutMapping("/{id}")
+  public Student updateStudent(@PathVariable String id, @RequestBody Student student) {
+    return this.studentService.update(id, student);
+  }
 
-    @DeleteMapping("/{id}")
-    public void deleteStudent(@PathVariable String id) {
-        this.studentService.delete(id);
-    }
+  @DeleteMapping("/{id}")
+  public void deleteStudent(@PathVariable String id) {
+    this.studentService.delete(id);
+  }
 }

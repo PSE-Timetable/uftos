@@ -17,35 +17,35 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/subjects")
 public class SubjectController {
-    private final SubjectService subjectService;
+  private final SubjectService subjectService;
 
-    @Autowired
-    public SubjectController(SubjectService subjectService) {
-        this.subjectService = subjectService;
-    }
+  @Autowired
+  public SubjectController(SubjectService subjectService) {
+    this.subjectService = subjectService;
+  }
 
-    @PostMapping()
-    public Subject createSubject(@RequestBody Subject subject) {
-        return this.subjectService.create(subject);
-    }
+  @PostMapping()
+  public Subject createSubject(@RequestBody Subject subject) {
+    return this.subjectService.create(subject);
+  }
 
-    @GetMapping()
-    public Page<Subject> getSubjects(Pageable pageable) {
-        return this.subjectService.get(pageable);
-    }
+  @GetMapping()
+  public Page<Subject> getSubjects(Pageable pageable) {
+    return this.subjectService.get(pageable);
+  }
 
-    @GetMapping("/{id}")
-    public Subject getSubject(@PathVariable String id) {
-        return this.subjectService.getById(id);
-    }
+  @GetMapping("/{id}")
+  public Subject getSubject(@PathVariable String id) {
+    return this.subjectService.getById(id);
+  }
 
-    @PutMapping("/{id}")
-    public Subject updateSubject(@PathVariable String id, @RequestBody Subject subject) {
-        return this.subjectService.update(id, subject);
-    }
+  @PutMapping("/{id}")
+  public Subject updateSubject(@PathVariable String id, @RequestBody Subject subject) {
+    return this.subjectService.update(id, subject);
+  }
 
-    @DeleteMapping("/{id}")
-    public void deleteSubject(@PathVariable String id) {
-        this.subjectService.delete(id);
-    }
+  @DeleteMapping("/{id}")
+  public void deleteSubject(@PathVariable String id) {
+    this.subjectService.delete(id);
+  }
 }
