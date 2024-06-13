@@ -11,43 +11,43 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class StudentService {
-    private final StudentRepository repository;
+  private final StudentRepository repository;
 
-    @Autowired
-    public StudentService(StudentRepository repository) {
-        this.repository = repository;
+  @Autowired
+  public StudentService(StudentRepository repository) {
+    this.repository = repository;
+  }
+
+  public Page<Student> get(Pageable pageable) {
+    return this.repository.findAll(pageable);
+  }
+
+  public Student getById(String id) {
+    var student = this.repository.findById(id);
+
+    return student.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+  }
+
+  public Student create(Student student) {
+    if (student.getId() != null && this.repository.findById(student.getId()).isPresent()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
     }
 
-    public Page<Student> get(Pageable pageable) {
-        return this.repository.findAll(pageable);
+    return this.repository.save(student);
+  }
+
+  public Student update(String id, Student student) {
+    student.setId(id);
+
+    return this.repository.save(student);
+  }
+
+  public void delete(String id) {
+    var student = this.repository.findById(id);
+    if (student.isEmpty()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
     }
 
-    public Student getById(String id) {
-        var student = this.repository.findById(id);
-
-        return student.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
-    }
-
-    public Student create(Student student) {
-        if (student.getId() != null && this.repository.findById(student.getId()).isPresent()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
-
-        return this.repository.save(student);
-    }
-
-    public Student update(String id, Student student) {
-        student.setId(id);
-
-        return this.repository.save(student);
-    }
-
-    public void delete(String id) {
-        var student = this.repository.findById(id);
-        if (student.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
-
-        this.repository.delete(student.get());
-    }
+    this.repository.delete(student.get());
+  }
 }

@@ -6,22 +6,21 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
-import lombok.Data;
-
 import java.util.List;
+import lombok.Data;
 
 @Entity
 @Table(name = "students")
 @Data
 public class Student {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+  @ManyToMany
+  List<StudentGroup> groups;
 
-    private String firstName;
-    private String lastName;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private String id;
 
-    @ManyToMany
-    List<StudentGroup> groups;
+  private String firstName;
+  private String lastName;
 }
