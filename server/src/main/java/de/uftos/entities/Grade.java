@@ -10,18 +10,14 @@ import java.util.List;
 import lombok.Data;
 
 @Entity
-@Table(name = "studentGroups")
+@Table(name = "grades")
 @Data
-public class StudentGroup {
+public class Grade {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
-  private String id;
+  private long id;
 
   private String name;
-
   @ManyToMany
-  private List<Student> students;
-
-  @ManyToMany
-  private List<Grade> grades;
+  private List<StudentGroup> studentGroups;
 }
