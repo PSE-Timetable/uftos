@@ -1,0 +1,51 @@
+package de.uftos.controller;
+
+import de.uftos.entities.Teacher;
+import de.uftos.services.TeacherService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/teachers")
+public class TeacherController {
+  private final TeacherService teacherService;
+
+  @Autowired
+  public TeacherController(TeacherService teacherService) {
+    this.teacherService = teacherService;
+  }
+
+  @PostMapping()
+  public Teacher createTeacher(@RequestBody Teacher teacher) {
+    return this.teacherService.create(teacher);
+  }
+
+  @GetMapping()
+  public Page<Teacher> getTeachers(Pageable pageable) {
+    return this.teacherService.get(pageable);
+  }
+
+  @GetMapping("/{id}")
+  public Teacher getTeacher(@PathVariable long id) {
+    return this.teacherService.getById(id);
+  }
+
+  @PutMapping("/{id}")
+  public Teacher updateTeacher(@PathVariable long id, @RequestBody Teacher teacher) {
+    return this.teacherService.update(id, teacher);
+  }
+
+  @DeleteMapping("/{id}")
+  public void deleteTeacher(@PathVariable long id) {
+    this.teacherService.delete(id);
+  }
+}

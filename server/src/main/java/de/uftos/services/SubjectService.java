@@ -31,7 +31,6 @@ public class SubjectService {
   public Subject create(Subject subject) {
     if (subject.getId() != null && this.repository.findById(subject.getId()).isPresent()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-
     }
 
     return this.repository.save(subject);
