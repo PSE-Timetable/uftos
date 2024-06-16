@@ -22,4 +22,7 @@ public class Subject {
 
   @ManyToMany
   private List<Teacher> teachers;
+
+  @ManyToMany
+  private List<Tag> tags;
 }

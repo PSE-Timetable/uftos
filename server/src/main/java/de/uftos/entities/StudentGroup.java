@@ -24,4 +24,7 @@ public class StudentGroup {
 
   @ManyToMany
   private List<Grade> grades;
+
+  @ManyToMany
+  private List<Tag> tags;
 }

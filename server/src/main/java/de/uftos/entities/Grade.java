@@ -18,6 +18,10 @@ public class Grade {
   private long id;
 
   private String name;
+
   @ManyToMany
   private List<StudentGroup> studentGroups;
+
+  @ManyToMany
+  private List<Tag> tags;
 }

@@ -7,7 +7,9 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
+import java.util.List;
 import lombok.Data;
 
 @Entity
@@ -21,5 +23,8 @@ public class Timeslot {
   @Enumerated(EnumType.STRING)
   private Weekday day;
   private int slot;
+
+  @ManyToMany
+  private List<Tag> tags;
 }
 
