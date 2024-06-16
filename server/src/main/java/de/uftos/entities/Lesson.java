@@ -32,4 +32,7 @@ public class Lesson {
 
   @ManyToOne
   private Subject subject;
+
+  @ManyToOne
+  private Timetable timetable;
 }
