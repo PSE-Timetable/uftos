@@ -9,13 +9,18 @@ import jakarta.persistence.Table;
 import java.util.List;
 import lombok.Data;
 
+/**
+ * The database entry for students.
+ * Contains an ID, the first and last name as well as tags associated with the student and the
+ * student groups which they are a part of.
+ */
 @Entity
 @Table(name = "students")
 @Data
 public class Student {
 
   @ManyToMany
-  List<StudentGroup> groups;
+  private List<StudentGroup> groups;
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
