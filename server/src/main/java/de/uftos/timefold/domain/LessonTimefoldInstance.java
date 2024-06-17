@@ -4,31 +4,59 @@ import ai.timefold.solver.core.api.domain.entity.PlanningEntity;
 import ai.timefold.solver.core.api.domain.lookup.PlanningId;
 import ai.timefold.solver.core.api.domain.variable.PlanningVariable;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import de.uftos.entities.Lesson;
+import de.uftos.entities.ResourceType;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter @PlanningEntity
-public class LessonTimefoldInstance {
+public class LessonTimefoldInstance implements ResourceTimefoldInstance{
+
+    public LessonTimefoldInstance() {
+    }
+
+    public LessonTimefoldInstance(int id, int index, SubjectTimefoldInstance subject, StudentGroupTimefoldInstance studentGroup) {
+        this.id = id;
+        this.index = index;
+        this.subject = subject;
+        this.studentGroup = studentGroup;
+    }
+
+    public LessonTimefoldInstance(int id, int index, SubjectTimefoldInstance subject, TeacherTimefoldInstance teacher, StudentGroupTimefoldInstance studentGroup) {
+        this.id = id;
+        this.index = index;
+        this.subject = subject;
+        this.teacher = teacher;
+        this.studentGroup = studentGroup;
+    }
+
     @PlanningId
     private int id;
 
-    @JsonIdentityReference
-    @PlanningVariable
-    private int timeslotId;
+    private int index;
 
     @JsonIdentityReference
     @PlanningVariable
-    private int teacherId;
+    private TimeslotTimefoldInstance timeslot;
 
     @JsonIdentityReference
     @PlanningVariable
-    private int studentGroupId;
+    private TeacherTimefoldInstance teacher;
 
     @JsonIdentityReference
     @PlanningVariable
-    private int subjectId;
+    private StudentGroupTimefoldInstance studentGroup;
 
     @JsonIdentityReference
     @PlanningVariable
-    private int roomId;
+    private SubjectTimefoldInstance subject;
+
+    @JsonIdentityReference
+    @PlanningVariable
+    private RoomTimefoldInstance room;
+
+    @Override
+    public ResourceType getResourceType() {
+        return ResourceType.LESSON;
+    }
 }
