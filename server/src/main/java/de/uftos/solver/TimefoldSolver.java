@@ -12,8 +12,10 @@ import de.uftos.demoDataSource.PredefinedConstraint;
 import de.uftos.demoDataSource.PredefinedConstraintInstance;
 import de.uftos.demoDataSource.PredefinedConstraints;
 import de.uftos.entities.*;
+import de.uftos.timefold.constraints.ConstraintInstanceAggregate;
 import de.uftos.timefold.domain.*;
 import de.uftos.timefold.solver.ConstraintProviderTimefoldInstance;
+import de.uftos.timefold.solver.ScoreCalculator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,15 +45,19 @@ public class TimefoldSolver implements SolverAdapter{
                         case STUDENT_GROUP -> {parameters.add(solution.getStudentGroups().get(resource.getId()));}
                     }
                 }
-                solution.getConstrains().add(new de.uftos.timefold.constraints.PredefinedConstraintInstance(i.name(), parameters, solution));
+                solution.getConstrains().add(new de.uftos.timefold.constraints.PredefinedConstraintInstance(i.name(), parameters));
             }
+
+            ConstraintInstanceAggregate.addAllInstances(solution.getConstrains());
+
 
             SolverConfig solverConfig = new SolverConfig()
                     .withTerminationConfig(new TerminationConfig()
-                            .withMillisecondsSpentLimit(5000L))
+                            .withMillisecondsSpentLimit(300000L))
                     .withSolutionClass(TimetableSolutionTimefoldInstance.class)
-                    .withEntityClassList(Arrays.stream(new Class<?>[]{LessonTimefoldInstance.class}).toList());
-            solverConfig.setScoreDirectorFactoryConfig(new ScoreDirectorFactoryConfig().withConstraintProviderClass(ConstraintProviderTimefoldInstance.class));
+                    .withEntityClassList(Arrays.stream(new Class<?>[]{LessonTimefoldInstance.class}).toList())
+                    .withScoreDirectorFactory(new ScoreDirectorFactoryConfig().withEasyScoreCalculatorClass(ScoreCalculator.class));
+
 
             SolverFactory<TimetableSolutionTimefoldInstance> factory = new DefaultSolverFactory<>(solverConfig);
 
@@ -59,11 +65,8 @@ public class TimefoldSolver implements SolverAdapter{
 
             System.out.println(solver);
             System.out.println(solver.getClass());
-
-
-            solver.solve(solution);
-
-            return getTimetableInstanceFromSolutionInstance(solution);
+            
+            return getTimetableInstanceFromSolutionInstance(solver.solve(solution));
         };
 
         BlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<>(1);

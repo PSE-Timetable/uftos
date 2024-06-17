@@ -26,9 +26,12 @@ public class StudentCollision implements PredefinedConstraint {
 
                 List<LessonTimefoldInstance> lessons = new ArrayList<>();
 
-                for (LessonTimefoldInstance l : timetable.getLessons()) {
-                    if (studentGroups.contains(l.getStudentGroup())) {
-                        lessons.add(l);
+                lessonLoop: for (LessonTimefoldInstance l : timetable.getLessons()) {
+                    for (StudentGroupTimefoldInstance sg : studentGroups) {
+                        if (l.getStudentGroup().getId() == sg.getId()) {
+                            lessons.add(l);
+                            continue lessonLoop;
+                        }
                     }
                 }
 

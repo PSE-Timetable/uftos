@@ -25,6 +25,7 @@ public class TeacherCollision implements PredefinedConstraint {
             public Boolean call() throws Exception {
                 TeacherTimefoldInstance teacher = (TeacherTimefoldInstance) parameters.getFirst();
                 List<LessonTimefoldInstance> lessons = teacher.getLessonList(timetable.getLessons());
+
                 for (LessonTimefoldInstance l1 : lessons) {
                     for (LessonTimefoldInstance l2 : lessons) {
                         if (l1 != l2 && l1.getTimeslot() == l2.getTimeslot()) {

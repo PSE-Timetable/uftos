@@ -8,10 +8,9 @@ import java.util.List;
 
 public record PredefinedConstraintInstance(
         PredefinedConstraints name,
-        List<ResourceTimefoldInstance> parameters,
-        TimetableSolutionTimefoldInstance timetable
+        List<ResourceTimefoldInstance> parameters
 ) {
-    public boolean evaluate() {
+    public boolean evaluate(TimetableSolutionTimefoldInstance timetable) {
         try {
             switch (name) {
                 case ROOM_CONFLICT -> {
@@ -22,6 +21,9 @@ public record PredefinedConstraintInstance(
                 }
                 case TEACHER_CONFLICT -> {
                     return new TeacherCollision().getEvaluation(timetable, parameters).call();
+                }
+                case LESSON_VALIDATION -> {
+                    return new LessonValidation().getEvaluation(timetable, parameters).call();
                 }
                 default -> {
                     return false;
