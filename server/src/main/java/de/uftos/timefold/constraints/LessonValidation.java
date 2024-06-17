@@ -3,7 +3,6 @@ package de.uftos.timefold.constraints;
 import de.uftos.entities.ResourceType;
 import de.uftos.timefold.domain.LessonTimefoldInstance;
 import de.uftos.timefold.domain.ResourceTimefoldInstance;
-import de.uftos.timefold.domain.RoomTimefoldInstance;
 import de.uftos.timefold.domain.TimetableSolutionTimefoldInstance;
 
 import java.util.List;
@@ -23,7 +22,7 @@ public class LessonValidation implements PredefinedConstraint {
         return new Callable<Boolean>() {
             @Override
             public Boolean call() throws Exception {
-                LessonTimefoldInstance lesson = (LessonTimefoldInstance) parameters.getFirst();
+                LessonTimefoldInstance lesson = timetable.getLessons().get(((LessonTimefoldInstance) parameters.getFirst()).getId());
 
                 if (lesson.getTimeslot() == null
                         || lesson.getTeacher() == null

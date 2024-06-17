@@ -21,8 +21,9 @@ public class ConstraintProviderTimefoldInstance implements ConstraintProvider {
     }
 
     Constraint predefinedConstraint(ConstraintFactory constraintFactory) {
+        System.out.println(constraintFactory.getClass());
         return constraintFactory.forEach(PredefinedConstraintInstance.class)
-                .filter(PredefinedConstraintInstance::evaluate)
+                //.filter(PredefinedConstraintInstance::evaluate)
                 .penalize(HardSoftScore.ONE_HARD).asConstraint("Predefined");
     }
     //todo: add constraints

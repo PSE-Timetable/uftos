@@ -7,14 +7,12 @@ import java.util.HashMap;
 import java.util.List;
 
 public class DemoDataSource {
-    public static Timetable getDemoTimetable() {
-        return getDemoTimetable(5,10,15,50,4,18,10,5);
-    }
 
     public static List<PredefinedConstraintInstance> getPredefinedConstraintInstances(Timetable timetable, HashMap<PredefinedConstraints, PredefinedConstraint> constraints) {
         List<PredefinedConstraintInstance> instances = new ArrayList<>();
 
         if (constraints.containsKey(PredefinedConstraints.STUDENT_CONFLICT)) {
+            System.out.println("Students: " + timetable.students().size());
             for (Student s : timetable.students()) {
                 List<Resource> parameters = new ArrayList<>();
                 parameters.add(s);
@@ -22,6 +20,7 @@ public class DemoDataSource {
             }
         }
         if (constraints.containsKey(PredefinedConstraints.TEACHER_CONFLICT)) {
+            System.out.println("Teachers: " + timetable.teachers().size());
             for (Teacher t : timetable.teachers()) {
                 List<Resource> parameters = new ArrayList<>();
                 parameters.add(t);
@@ -29,6 +28,7 @@ public class DemoDataSource {
             }
         }
         if (constraints.containsKey(PredefinedConstraints.ROOM_CONFLICT)) {
+            System.out.println("Rooms: " + timetable.rooms().size());
             for (Room r : timetable.rooms()) {
                 List<Resource> parameters = new ArrayList<>();
                 parameters.add(r);
@@ -36,6 +36,7 @@ public class DemoDataSource {
             }
         }
         if (constraints.containsKey(PredefinedConstraints.LESSON_VALIDATION)) {
+            System.out.println("Lessons: " + timetable.lessons().size());
             for (Lesson l : timetable.lessons()) {
                 List<Resource> parameters = new ArrayList<>();
                 parameters.add(l);
@@ -136,7 +137,7 @@ public class DemoDataSource {
             int[] subjects = curriculum[sg.gradeId()];
             for (int subject = 0; subject < subjects.length; subject++) {
                 for (int index = 0; index < subjects[subject]; index++) {
-                    lessons.add(new Lesson(id++, index, -1, -1, sg.getId(),subject, -1));
+                    lessons.add(new Lesson(id++, index, -1, -1, sg.getId(), subject, -1));
                 }
             }
         }
@@ -154,6 +155,9 @@ public class DemoDataSource {
         return tags;
     }
 
+    public static Timetable getDemoTimetable() {
+        return getDemoTimetable(5,10,15,2,2,18,10,2);
+    }
     public static Timetable getDemoTimetable(int grades, int rooms, int studentGroups, int students, int subjects, int teachers, int timeslotsPerDay, int tags) {
         List<Grade> gradeList = getGrades(grades);
         List<Room> roomList = getRooms(rooms);
