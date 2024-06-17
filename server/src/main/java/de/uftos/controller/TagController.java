@@ -1,9 +1,7 @@
 package de.uftos.controller;
 
 import de.uftos.entities.Tag;
-import de.uftos.entities.Timeslot;
 import de.uftos.services.TagService;
-import de.uftos.services.TimeslotService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
