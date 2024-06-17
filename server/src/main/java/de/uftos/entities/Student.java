@@ -23,4 +23,7 @@ public class Student {
 
   private String firstName;
   private String lastName;
+
+  @ManyToMany
+  private List<Tag> tags;
 }
