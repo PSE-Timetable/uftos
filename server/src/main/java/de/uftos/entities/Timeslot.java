@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.List;
 import lombok.Data;
@@ -26,5 +27,8 @@ public class Timeslot {
 
   @ManyToMany
   private List<Tag> tags;
+
+  @OneToMany
+  private List<Lesson> lessons;
 }
 

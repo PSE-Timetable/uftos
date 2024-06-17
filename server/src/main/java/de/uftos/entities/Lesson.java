@@ -4,27 +4,32 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.util.List;
 import lombok.Data;
 
 @Entity
-@Table(name = "rooms")
+@Table(name = "lessons")
 @Data
-public class Room {
+public class Lesson {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private long id;
 
-  private String name;
-  private String buildingName;
-  private int capacity;
+  private int index;
 
-  @ManyToMany
-  private List<Tag> tags;
+  @ManyToOne
+  private Teacher teacher;
 
-  @OneToMany
-  private List<Lesson> lessons;
+  @ManyToOne
+  private StudentGroup studentGroup;
+
+  @ManyToOne
+  private Room room;
+
+  @ManyToOne
+  private Timeslot timeslot;
+
+  @ManyToOne
+  private Subject subject;
 }
