@@ -10,6 +10,11 @@ import jakarta.persistence.Table;
 import java.util.List;
 import lombok.Data;
 
+/**
+ * The database entry for teachers.
+ * Contains an ID, the first and last name, the acronym as well as tags and the subjects and
+ * lessons they teach.
+ */
 @Entity
 @Table(name = "teachers")
 @Data
