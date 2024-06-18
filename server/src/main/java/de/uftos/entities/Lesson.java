@@ -6,10 +6,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
-import org.springframework.data.relational.core.mapping.Table;
 
-@Entity
-@Table("lessons")
+@Entity(name = "lessons")
 @Data
 public class Lesson {
   @Id

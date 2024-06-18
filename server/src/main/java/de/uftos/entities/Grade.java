@@ -7,10 +7,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import java.util.List;
 import lombok.Data;
-import org.springframework.data.relational.core.mapping.Table;
 
-@Entity
-@Table("grades")
+@Entity(name = "grades")
 @Data
 public class Grade {
   @Id

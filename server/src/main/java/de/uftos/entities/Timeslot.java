@@ -11,10 +11,8 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import java.util.List;
 import lombok.Data;
-import org.springframework.data.relational.core.mapping.Table;
 
-@Entity
-@Table("timeslots")
+@Entity(name = "timeslots")
 @Data
 public class Timeslot {
   @Id
