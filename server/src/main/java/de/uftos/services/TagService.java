@@ -1,9 +1,7 @@
 package de.uftos.services;
 
 import de.uftos.entities.Tag;
-import de.uftos.entities.Timeslot;
 import de.uftos.repositories.TagRepository;
-import de.uftos.repositories.TimeslotRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
