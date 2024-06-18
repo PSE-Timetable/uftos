@@ -22,7 +22,7 @@ public class TimeslotService {
     return this.repository.findAll(pageable);
   }
 
-  public Timeslot getById(long id) {
+  public Timeslot getById(String id) {
     var timeslot = this.repository.findById(id);
 
     return timeslot.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
@@ -36,13 +36,13 @@ public class TimeslotService {
     return this.repository.save(timeslot);
   }
 
-  public Timeslot update(long id, Timeslot timeslot) {
+  public Timeslot update(String id, Timeslot timeslot) {
     timeslot.setId(id);
 
     return this.repository.save(timeslot);
   }
 
-  public void delete(long id) {
+  public void delete(String id) {
     var timeslot = this.repository.findById(id);
     if (timeslot.isEmpty()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST);

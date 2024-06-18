@@ -22,7 +22,7 @@ public class GradeService {
     return this.repository.findAll(pageable);
   }
 
-  public Grade getById(long id) {
+  public Grade getById(String id) {
     var grade = this.repository.findById(id);
 
     return grade.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
@@ -36,13 +36,13 @@ public class GradeService {
     return this.repository.save(grade);
   }
 
-  public Grade update(long id, Grade grade) {
+  public Grade update(String id, Grade grade) {
     grade.setId(id);
 
     return this.repository.save(grade);
   }
 
-  public void delete(long id) {
+  public void delete(String id) {
     var grade = this.repository.findById(id);
     if (grade.isEmpty()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST);

@@ -22,7 +22,7 @@ public class LessonService {
     return this.repository.findAll(pageable);
   }
 
-  public Lesson getById(long id) {
+  public Lesson getById(String id) {
     var lesson = this.repository.findById(id);
 
     return lesson.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
@@ -36,13 +36,13 @@ public class LessonService {
     return this.repository.save(lesson);
   }
 
-  public Lesson update(long id, Lesson lesson) {
+  public Lesson update(String id, Lesson lesson) {
     lesson.setId(id);
 
     return this.repository.save(lesson);
   }
 
-  public void delete(long id) {
+  public void delete(String id) {
     var lesson = this.repository.findById(id);
     if (lesson.isEmpty()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST);

@@ -35,17 +35,17 @@ public class TimeslotController {
   }
 
   @GetMapping("/{id}")
-  public Timeslot getTimeslot(@PathVariable long id) {
+  public Timeslot getTimeslot(@PathVariable String id) {
     return this.timeslotsService.getById(id);
   }
 
   @PutMapping("/{id}")
-  public Timeslot updateTimeslot(@PathVariable long id, @RequestBody Timeslot timeslots) {
+  public Timeslot updateTimeslot(@PathVariable String id, @RequestBody Timeslot timeslots) {
     return this.timeslotsService.update(id, timeslots);
   }
 
   @DeleteMapping("/{id}")
-  public void deleteTimeslot(@PathVariable long id) {
+  public void deleteTimeslot(@PathVariable String id) {
     this.timeslotsService.delete(id);
   }
 }

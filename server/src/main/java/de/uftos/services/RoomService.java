@@ -22,7 +22,7 @@ public class RoomService {
     return this.repository.findAll(pageable);
   }
 
-  public Room getById(long id) {
+  public Room getById(String id) {
     var room = this.repository.findById(id);
 
     return room.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
@@ -36,13 +36,13 @@ public class RoomService {
     return this.repository.save(room);
   }
 
-  public Room update(long id, Room room) {
+  public Room update(String id, Room room) {
     room.setId(id);
 
     return this.repository.save(room);
   }
 
-  public void delete(long id) {
+  public void delete(String id) {
     var room = this.repository.findById(id);
     if (room.isEmpty()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST);

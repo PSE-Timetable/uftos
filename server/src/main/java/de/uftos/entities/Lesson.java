@@ -5,16 +5,16 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import lombok.Data;
+import org.springframework.data.relational.core.mapping.Table;
 
 @Entity
-@Table(name = "lessons")
+@Table("lessons")
 @Data
 public class Lesson {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
-  private long id;
+  private String id;
 
   private int index;
 
