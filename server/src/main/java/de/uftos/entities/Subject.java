@@ -10,6 +10,11 @@ import jakarta.persistence.Table;
 import java.util.List;
 import lombok.Data;
 
+/**
+ * The database entry for subjects.
+ * Contains an ID, the name of the subject as well as the teachers, tags and lessons associated
+ * with it.
+ */
 @Entity
 @Table(name = "subjects")
 @Data

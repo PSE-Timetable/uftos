@@ -18,7 +18,8 @@ public class StudentService {
 
   /**
    * Creates a student service.
-   * @param repository The repository for accessing the student entity.
+   *
+   * @param repository the repository for accessing the student entity.
    */
   @Autowired
   public StudentService(StudentRepository repository) {
@@ -27,6 +28,7 @@ public class StudentService {
 
   /**
    * Gets a page of entries of the student entity.
+   *
    * @param pageable contains the parameters for the page.
    * @return the page of the entries fitting the parameters.
    */
@@ -36,9 +38,10 @@ public class StudentService {
 
   /**
    * Gets a student from their ID.
+   *
    * @param id the ID of the student.
    * @return the student with the given ID.
-   * @throws ResponseStatusException is thrown if the ID doesn't have a coresponding student.
+   * @throws ResponseStatusException is thrown if the ID doesn't have a corresponding student.
    */
   public Student getById(String id) {
     var student = this.repository.findById(id);
@@ -48,8 +51,9 @@ public class StudentService {
 
   /**
    * Creates a new student in the database.
+   *
    * @param student the student which is to be created.
-   * @return the updated student including the ID which has been assigned.
+   * @return the updated student which includes the ID that has been assigned.
    * @throws ResponseStatusException is thrown if the ID defined in the student parameter
    *         is already present in the database.
    */
@@ -63,6 +67,7 @@ public class StudentService {
 
   /**
    * Updates the student with the given ID.
+   *
    * @param id the ID of the student which is to be updated.
    * @param student the updated student information.
    * @return the updated student.
@@ -75,7 +80,9 @@ public class StudentService {
 
   /**
    * Deletes the student with the given ID.
+   *
    * @param id the ID of the student which is to be deleted.
+   * @throws ResponseStatusException is thrown if no student exists with the given ID.
    */
   public void delete(String id) {
     var student = this.repository.findById(id);
