@@ -7,10 +7,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import java.util.List;
 import lombok.Data;
-import org.springframework.data.relational.core.mapping.Table;
 
-@Entity
-@Table("timetables")
+@Entity(name = "timetables")
 @Data
 public class Timetable {
   @Id
