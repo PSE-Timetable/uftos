@@ -35,17 +35,17 @@ public class TagController {
   }
 
   @GetMapping("/{id}")
-  public Tag getTag(@PathVariable long id) {
+  public Tag getTag(@PathVariable String id) {
     return this.tagsService.getById(id);
   }
 
   @PutMapping("/{id}")
-  public Tag updateTag(@PathVariable long id, @RequestBody Tag tags) {
+  public Tag updateTag(@PathVariable String id, @RequestBody Tag tags) {
     return this.tagsService.update(id, tags);
   }
 
   @DeleteMapping("/{id}")
-  public void deleteTag(@PathVariable long id) {
+  public void deleteTag(@PathVariable String id) {
     this.tagsService.delete(id);
   }
 }

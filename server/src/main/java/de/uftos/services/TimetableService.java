@@ -22,7 +22,7 @@ public class TimetableService {
     return this.repository.findAll(pageable);
   }
 
-  public Timetable getById(long id) {
+  public Timetable getById(String id) {
     var timetable = this.repository.findById(id);
 
     return timetable.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
@@ -33,7 +33,7 @@ public class TimetableService {
     return null;
   }
 
-  public void delete(long id) {
+  public void delete(String id) {
     var timetable = this.repository.findById(id);
     if (timetable.isEmpty()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST);

@@ -35,17 +35,17 @@ public class GradeController {
   }
 
   @GetMapping("/{id}")
-  public Grade getGrade(@PathVariable long id) {
+  public Grade getGrade(@PathVariable String id) {
     return this.gradeService.getById(id);
   }
 
   @PutMapping("/{id}")
-  public Grade updateGrade(@PathVariable long id, @RequestBody Grade grade) {
+  public Grade updateGrade(@PathVariable String id, @RequestBody Grade grade) {
     return this.gradeService.update(id, grade);
   }
 
   @DeleteMapping("/{id}")
-  public void deleteGrade(@PathVariable long id) {
+  public void deleteGrade(@PathVariable String id) {
     this.gradeService.delete(id);
   }
 }

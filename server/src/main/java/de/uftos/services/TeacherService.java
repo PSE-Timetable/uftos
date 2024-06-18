@@ -22,7 +22,7 @@ public class TeacherService {
     return this.repository.findAll(pageable);
   }
 
-  public Teacher getById(long id) {
+  public Teacher getById(String id) {
     var teacher = this.repository.findById(id);
 
     return teacher.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
@@ -36,13 +36,13 @@ public class TeacherService {
     return this.repository.save(teacher);
   }
 
-  public Teacher update(long id, Teacher teacher) {
+  public Teacher update(String id, Teacher teacher) {
     teacher.setId(id);
 
     return this.repository.save(teacher);
   }
 
-  public void delete(long id) {
+  public void delete(String id) {
     var teacher = this.repository.findById(id);
     if (teacher.isEmpty()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
