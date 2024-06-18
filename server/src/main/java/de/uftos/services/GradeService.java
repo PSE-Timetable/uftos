@@ -1,7 +1,7 @@
 package de.uftos.services;
 
 import de.uftos.entities.Grade;
-import de.uftos.repositories.GradeRepository;
+import de.uftos.repositories.entities.GradeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

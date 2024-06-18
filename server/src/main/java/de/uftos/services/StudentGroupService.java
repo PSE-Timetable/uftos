@@ -3,7 +3,7 @@ package de.uftos.services;
 import de.uftos.dto.StudentAndGroup;
 import de.uftos.entities.Student;
 import de.uftos.entities.StudentGroup;
-import de.uftos.repositories.StudentGroupRepository;
+import de.uftos.repositories.entities.StudentGroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

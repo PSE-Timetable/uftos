@@ -1,7 +1,7 @@
 package de.uftos.services;
 
 import de.uftos.entities.Room;
-import de.uftos.repositories.RoomRepository;
+import de.uftos.repositories.entities.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

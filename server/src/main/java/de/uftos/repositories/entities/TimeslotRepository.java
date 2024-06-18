@@ -1,4 +1,4 @@
-package de.uftos.repositories;
+package de.uftos.repositories.entities;
 
 import de.uftos.entities.Timeslot;
 import org.springframework.data.repository.ListCrudRepository;

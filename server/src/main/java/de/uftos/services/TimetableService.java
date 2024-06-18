@@ -1,7 +1,7 @@
 package de.uftos.services;
 
 import de.uftos.entities.Timetable;
-import de.uftos.repositories.TimetableRepository;
+import de.uftos.repositories.entities.TimetableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

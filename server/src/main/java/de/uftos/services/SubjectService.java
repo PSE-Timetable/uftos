@@ -1,7 +1,7 @@
 package de.uftos.services;
 
 import de.uftos.entities.Subject;
-import de.uftos.repositories.SubjectRepository;
+import de.uftos.repositories.entities.SubjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
