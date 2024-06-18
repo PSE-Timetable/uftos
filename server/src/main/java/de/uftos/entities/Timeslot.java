@@ -9,17 +9,17 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
 import java.util.List;
 import lombok.Data;
+import org.springframework.data.relational.core.mapping.Table;
 
 @Entity
-@Table(name = "timeslots")
+@Table("timeslots")
 @Data
 public class Timeslot {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
-  private long id;
+  private String id;
 
   @Enumerated(EnumType.STRING)
   private Weekday day;

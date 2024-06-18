@@ -24,7 +24,7 @@ public class TagService {
     return this.repository.findAll(pageable);
   }
 
-  public Tag getById(long id) {
+  public Tag getById(String id) {
     var tag = this.repository.findById(id);
 
     return tag.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
@@ -38,13 +38,13 @@ public class TagService {
     return this.repository.save(tag);
   }
 
-  public Tag update(long id, Tag tag) {
+  public Tag update(String id, Tag tag) {
     tag.setId(id);
 
     return this.repository.save(tag);
   }
 
-  public void delete(long id) {
+  public void delete(String id) {
     var tag = this.repository.findById(id);
     if (tag.isEmpty()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST);

@@ -34,12 +34,12 @@ public class TimetableController {
   }
 
   @GetMapping("/{id}")
-  public Timetable getTimetable(@PathVariable long id) {
+  public Timetable getTimetable(@PathVariable String id) {
     return this.timetablesService.getById(id);
   }
 
   @DeleteMapping("/{id}")
-  public void deleteTimetable(@PathVariable long id) {
+  public void deleteTimetable(@PathVariable String id) {
     this.timetablesService.delete(id);
   }
 }
