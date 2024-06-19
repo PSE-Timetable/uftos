@@ -39,10 +39,25 @@ public class StudentGroup {
   @JsonIgnore
   private List<Lesson> lessons;
 
+  /**
+   * Creates a new student group.
+   * Used if the ID of the student group is known.
+   *
+   * @param id the ID of the student group.
+   */
   public StudentGroup(String id) {
     this.id = id;
   }
 
+  /**
+   * Creates a new student group.
+   * Used if the ID of the student group isn't known.
+   *
+   * @param name the name of the student group.
+   * @param studentIds the IDs of the students that are part of the group.
+   * @param gradeIds the IDs of the grade that are part of the student group.
+   * @param tagIds the IDs of the tags associated with the student group.
+   */
   public StudentGroup(String name, List<String> studentIds, List<String> gradeIds,
                       List<String> tagIds) {
     this.name = name;

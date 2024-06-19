@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * The Rest controller for the student entity.
+ * The REST controller for the student entity.
  * This controller handles /students HTTP requests.
  */
 @RestController
@@ -36,7 +36,7 @@ public class StudentController {
 
   /**
    * Maps the HTTP POST request, to create a new student in the database, to the
-   * {@link StudentService#create(Student) create} function of the student service.
+   * {@link StudentService#create(StudentRequestDto) create} function of the student service.
    *
    * @param student the student which is to be created.
    * @return the created student with the assigned ID.
@@ -72,7 +72,7 @@ public class StudentController {
 
   /**
    * Maps the HTTP PUT request to update a student to the
-   * {@link StudentService#update(String, Student) update} function of the student service.
+   * {@link StudentService#update(String, StudentRequestDto) update} function of the student service.
    *
    * @param id      the ID of the student which is to be updated.
    * @param student the updated information of the student.

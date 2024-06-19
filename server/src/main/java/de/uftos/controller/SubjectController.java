@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * The Rest controller for the subject entity.
+ * The REST controller for the subject entity.
  * This controller handles /subjects HTTP requests.
  */
 @RestController
@@ -36,7 +36,7 @@ public class SubjectController {
 
   /**
    * Maps the HTTP POST request, to create a new subject in the database, to the
-   * {@link SubjectService#create(Subject) create} function of the subject service.
+   * {@link SubjectService#create(SubjectRequestDto) create} function of the subject service.
    *
    * @param subject the subject which is to be created.
    * @return the created subject with the assigned ID.
@@ -72,7 +72,7 @@ public class SubjectController {
 
   /**
    * Maps the HTTP PUT request to update a subject to the
-   * {@link SubjectService#update(String, Subject) update} function of the subject service.
+   * {@link SubjectService#update(String, SubjectRequestDto) update} function of the subject service.
    *
    * @param id      the ID of the subject which is to be updated.
    * @param subject the updated information of the subject.

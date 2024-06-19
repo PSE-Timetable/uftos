@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * The Rest controller for the teacher entity.
+ * The REST controller for the teacher entity.
  * This controller handles /teachers HTTP requests.
  */
 @RestController
@@ -38,7 +38,7 @@ public class TeacherController {
 
   /**
    * Maps the HTTP POST request, to create a new teacher in the database, to the
-   * {@link TeacherService#create(Teacher) create} function of the teacher service.
+   * {@link TeacherService#create(TeacherRequestDto) create} function of the teacher service.
    *
    * @param teacher the teacher which is to be created.
    * @return the created teacher with the assigned ID.
@@ -62,7 +62,7 @@ public class TeacherController {
 
   /**
    * Maps the HTTP GET request for a teacher with the given ID to the
-   * {@link TeacherService#getById(long) getById} function of the teacher service.
+   * {@link TeacherService#getById(String) getById} function of the teacher service.
    *
    * @param id the ID of the teacher.
    * @return the teacher with the given ID.
@@ -79,7 +79,7 @@ public class TeacherController {
 
   /**
    * Maps the HTTP PUT request to update a teacher to the
-   * {@link TeacherService#update(long, Teacher) update} function of the teacher service.
+   * {@link TeacherService#update(String, TeacherRequestDto) update} function of the teacher service.
    *
    * @param id      the ID of the teacher which is to be updated.
    * @param teacher the updated information of the teacher.
@@ -91,7 +91,7 @@ public class TeacherController {
   }
 
   /**
-   * Maps the HTTP DELETE request to the {@link TeacherService#delete(long) delete} function of the
+   * Maps the HTTP DELETE request to the {@link TeacherService#delete(String) delete} function of the
    * teacher service.
    *
    * @param id the ID of the teacher which is to be deleted.

@@ -37,10 +37,23 @@ public class Subject {
   @JsonIgnore
   private List<Lesson> lessons;
 
+  /**
+   * Creates a new subject.
+   * Used if the ID is known.
+   *
+   * @param id the ID of the subject.
+   */
   public Subject(String id) {
     this.id = id;
   }
 
+  /**
+   * Creates a new subject.
+   * Used if the ID isn't known.
+   *
+   * @param name the name of the subject.
+   * @param tagIds the IDs of the tags associated with the subject.
+   */
   public Subject(String name, List<String> tagIds) {
     this.name = name;
     this.tags = tagIds.stream().map(Tag::new).toList();

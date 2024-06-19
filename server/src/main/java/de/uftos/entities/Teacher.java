@@ -38,6 +38,15 @@ public class Teacher {
   @JsonIgnore
   private List<Lesson> lessons;
 
+  /**
+   * Creates a new teacher.
+   *
+   * @param firstName  the first name of the teacher.
+   * @param lastName   the last name of the teacher.
+   * @param acronym    the acronym used for the teacher.
+   * @param subjectIds the IDs of subjects the teacher teaches.
+   * @param tagIds     the IDs of tags associated with the teacher.
+   */
   public Teacher(String firstName, String lastName, String acronym, List<String> subjectIds,
                  List<String> tagIds) {
     this.firstName = firstName;

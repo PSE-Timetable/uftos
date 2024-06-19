@@ -66,8 +66,8 @@ public class StudentService {
   /**
    * Updates the student with the given ID.
    *
-   * @param id      the ID of the student which is to be updated.
-   * @param student the updated student information.
+   * @param id             the ID of the student which is to be updated.
+   * @param studentRequest the updated student information.
    * @return the updated student.
    */
   public Student update(String id, StudentRequestDto studentRequest) {

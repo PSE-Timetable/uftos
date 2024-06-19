@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * The Rest controller for the student group entity.
+ * The REST controller for the student group entity.
  * This controller handles /student-groups HTTP requests.
  */
 @RestController
@@ -37,9 +37,10 @@ public class StudentGroupController {
 
   /**
    * Maps the HTTP POST request, to create a new student group in the database, to the
-   * {@link StudentGroupService#create create} function of the student group service.
+   * {@link StudentGroupService#create(StudentGroupRequestDto) create}
+   * function of the student group service.
    *
-   * @param group the student group which is to be created.
+   * @param studentGroup the student group which is to be created.
    * @return the created student group with the assigned ID.
    */
   @PostMapping()
@@ -76,8 +77,8 @@ public class StudentGroupController {
    * {@link StudentGroupService#addStudents(String, List) addStudents} function of the
    * student group service.
    *
-   * @param id       the ID of the student group.
-   * @param students a list of student which are to be added.
+   * @param id         the ID of the student group.
+   * @param studentIds the IDs of students which are to be added.
    */
   @PostMapping("/{id}/students")
   public StudentGroup addStudents(@PathVariable String id, @RequestBody List<String> studentIds) {
@@ -89,8 +90,8 @@ public class StudentGroupController {
    * {@link StudentGroupService#removeStudents(String, List) removeStudent} function of the
    * student group service.
    *
-   * @param id       the ID of the student group.
-   * @param students the students which are to be removed.
+   * @param id         the ID of the student group.
+   * @param studentIds the students which are to be removed.
    */
   @DeleteMapping("/{id}/students")
   public void removeStudents(@PathVariable String id, @RequestBody List<String> studentIds) {
@@ -99,17 +100,17 @@ public class StudentGroupController {
 
   /**
    * Maps the HTTP PUT request to update a student group to the
-   * {@link StudentGroupService#update(String, StudentGroup) update} function of the
+   * {@link StudentGroupService#update(String, StudentGroupRequestDto) update} function of the
    * student group service.
    *
-   * @param id    the ID of the student group which is to be updated.
-   * @param group the updated information of the student group.
+   * @param id      the ID of the student group which is to be updated.
+   * @param studentGroup the updated information of the student group.
    * @return the updated student group.
    */
   @PutMapping("/{id}")
   public StudentGroup updateStudentGroup(@PathVariable String id,
-                                         @RequestBody StudentGroupRequestDto student) {
-    return this.studentGroupService.update(id, student);
+                                         @RequestBody StudentGroupRequestDto studentGroup) {
+    return this.studentGroupService.update(id, studentGroup);
   }
 
 

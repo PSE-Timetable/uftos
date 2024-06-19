@@ -53,6 +53,13 @@ public class TeacherService {
     return teacher.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
   }
 
+  /**
+   * Gets the information about the lessons that the teacher teaches.
+   *
+   * @param id the ID of the teacher.
+   * @return a list of objects each containing information about a lesson.
+   * @throws ResponseStatusException is thrown if the ID doesn't have a corresponding teacher.
+   */
   public List<LessonResponseDto> getLessonsById(String id) {
     Teacher teacher = this.getById(id);
     // TODO
@@ -63,7 +70,7 @@ public class TeacherService {
    * Creates a new teacher in the database.
    *
    * @param teacher the teacher which is to be created.
-   * @return the updated teacher which includes
+   * @return the updated teacher which includes the ID that was assigned.
    * @throws ResponseStatusException is thrown if the ID defined in the teacher parameter is
    *                                 already present in the database.
    */
@@ -74,8 +81,8 @@ public class TeacherService {
   /**
    * Updates the teacher with the given ID.
    *
-   * @param id      the ID of the teacher which is to be updated.
-   * @param teacher the updated teacher information
+   * @param id             the ID of the teacher which is to be updated.
+   * @param teacherRequest the updated teacher information
    * @return the updated teacher.
    */
   public Teacher update(String id, TeacherRequestDto teacherRequest) {

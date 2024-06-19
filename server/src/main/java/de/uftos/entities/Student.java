@@ -32,13 +32,27 @@ public class Student {
   @ManyToMany
   private List<Tag> tags;
 
+  /**
+   * Creates a new student.
+   * Used if the ID is known.
+   *
+   * @param id the ID of the student.
+   */
   public Student(String id) {
     this.id = id;
   }
 
-  public Student(String firstName, String lastName, List<String> tags) {
+  /**
+   * Creates a new student.
+   * Used if the ID isn't known.
+   *
+   * @param firstName the first name of the student.
+   * @param lastName  the last name of the student.
+   * @param tagIds    the IDs of the tags associated with the student.
+   */
+  public Student(String firstName, String lastName, List<String> tagIds) {
     this.firstName = firstName;
     this.lastName = lastName;
-    this.tags = tags.stream().map(Tag::new).toList();
+    this.tags = tagIds.stream().map(Tag::new).toList();
   }
 }

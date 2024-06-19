@@ -66,8 +66,8 @@ public class SubjectService {
   /**
    * Updates the subject with the given ID.
    *
-   * @param id      the ID of the subject which is to be updated.
-   * @param subject the updated subject information.
+   * @param id             the ID of the subject which is to be updated.
+   * @param subjectRequest the updated subject information.
    * @return the updated subject.
    */
   public Subject update(String id, SubjectRequestDto subjectRequest) {
