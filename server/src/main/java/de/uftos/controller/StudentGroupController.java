@@ -1,6 +1,6 @@
 package de.uftos.controller;
 
-import de.uftos.entities.Student;
+import de.uftos.dto.StudentGroupRequestDto;
 import de.uftos.entities.StudentGroup;
 import de.uftos.services.StudentGroupService;
 import java.util.List;
@@ -27,8 +27,8 @@ public class StudentGroupController {
   }
 
   @PostMapping()
-  public StudentGroup createStudentGroup(@RequestBody StudentGroup student) {
-    return this.studentGroupService.create(student);
+  public StudentGroup createStudentGroup(@RequestBody StudentGroupRequestDto studentGroup) {
+    return this.studentGroupService.create(studentGroup);
   }
 
   @GetMapping()
@@ -42,19 +42,18 @@ public class StudentGroupController {
   }
 
   @PostMapping("/{id}/students")
-  public void addStudents(@PathVariable String id, @RequestBody List<Student> students) {
-    this.studentGroupService.addStudents(id, students);
+  public StudentGroup addStudents(@PathVariable String id, @RequestBody List<String> studentIds) {
+    return this.studentGroupService.addStudents(id, studentIds);
   }
 
   @DeleteMapping("/{id}/students")
-  public void removeStudents(@PathVariable String id, @RequestBody List<Student> students) {
-    this.studentGroupService.removeStudents(id, students);
+  public void removeStudents(@PathVariable String id, @RequestBody List<String> studentIds) {
+    this.studentGroupService.removeStudents(id, studentIds);
   }
-
 
   @PutMapping("/{id}")
   public StudentGroup updateStudentGroup(@PathVariable String id,
-                                         @RequestBody StudentGroup student) {
+                                         @RequestBody StudentGroupRequestDto student) {
     return this.studentGroupService.update(id, student);
   }
 

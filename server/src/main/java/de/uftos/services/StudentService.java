@@ -1,7 +1,9 @@
 package de.uftos.services;
 
+import de.uftos.dto.StudentRequestDto;
 import de.uftos.entities.Student;
 import de.uftos.repositories.StudentRepository;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,20 +25,17 @@ public class StudentService {
   }
 
   public Student getById(String id) {
-    var student = this.repository.findById(id);
+    Optional<Student> student = this.repository.findById(id);
 
     return student.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
   }
 
-  public Student create(Student student) {
-    if (student.getId() != null && this.repository.findById(student.getId()).isPresent()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-    }
-
-    return this.repository.save(student);
+  public Student create(StudentRequestDto student) {
+    return this.repository.save(student.map());
   }
 
-  public Student update(String id, Student student) {
+  public Student update(String id, StudentRequestDto studentRequest) {
+    Student student = studentRequest.map();
     student.setId(id);
 
     return this.repository.save(student);

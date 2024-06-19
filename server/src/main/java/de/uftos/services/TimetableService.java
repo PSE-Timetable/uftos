@@ -1,5 +1,6 @@
 package de.uftos.services;
 
+import de.uftos.dto.TimetableRequestDto;
 import de.uftos.entities.Timetable;
 import de.uftos.repositories.TimetableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,7 @@ public class TimetableService {
     return timetable.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
   }
 
-  public Timetable create(Timetable timetable) {
+  public Timetable create(TimetableRequestDto timetable) {
     // solving magic here
     return null;
   }

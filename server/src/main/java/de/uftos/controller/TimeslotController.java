@@ -1,5 +1,6 @@
 package de.uftos.controller;
 
+import de.uftos.dto.TimeslotRequestDto;
 import de.uftos.entities.Timeslot;
 import de.uftos.services.TimeslotService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +26,8 @@ public class TimeslotController {
   }
 
   @PostMapping()
-  public Timeslot createTimeslot(@RequestBody Timeslot timeslots) {
-    return this.timeslotsService.create(timeslots);
+  public Timeslot createTimeslot(@RequestBody TimeslotRequestDto timeslot) {
+    return this.timeslotsService.create(timeslot);
   }
 
   @GetMapping()
@@ -40,8 +41,9 @@ public class TimeslotController {
   }
 
   @PutMapping("/{id}")
-  public Timeslot updateTimeslot(@PathVariable String id, @RequestBody Timeslot timeslots) {
-    return this.timeslotsService.update(id, timeslots);
+  public Timeslot updateTimeslot(@PathVariable String id,
+                                 @RequestBody TimeslotRequestDto timeslot) {
+    return this.timeslotsService.update(id, timeslot);
   }
 
   @DeleteMapping("/{id}")

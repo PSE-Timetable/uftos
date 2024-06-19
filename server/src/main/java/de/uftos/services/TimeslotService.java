@@ -1,5 +1,6 @@
 package de.uftos.services;
 
+import de.uftos.dto.TimeslotRequestDto;
 import de.uftos.entities.Timeslot;
 import de.uftos.repositories.TimeslotRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,15 +29,12 @@ public class TimeslotService {
     return timeslot.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
   }
 
-  public Timeslot create(Timeslot timeslot) {
-    if (this.repository.findById(timeslot.getId()).isPresent()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-    }
-
-    return this.repository.save(timeslot);
+  public Timeslot create(TimeslotRequestDto timeslot) {
+    return this.repository.save(timeslot.map());
   }
 
-  public Timeslot update(String id, Timeslot timeslot) {
+  public Timeslot update(String id, TimeslotRequestDto timeslotRequest) {
+    Timeslot timeslot = timeslotRequest.map();
     timeslot.setId(id);
 
     return this.repository.save(timeslot);

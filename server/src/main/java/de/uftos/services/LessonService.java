@@ -1,5 +1,6 @@
 package de.uftos.services;
 
+import de.uftos.dto.LessonResponseDto;
 import de.uftos.entities.Lesson;
 import de.uftos.repositories.LessonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +19,9 @@ public class LessonService {
     this.repository = repository;
   }
 
-  public Page<Lesson> get(Pageable pageable) {
-    return this.repository.findAll(pageable);
+  public Page<LessonResponseDto> get(Pageable pageable) {
+    // TODO
+    return null;
   }
 
   public Lesson getById(String id) {

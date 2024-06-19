@@ -1,7 +1,10 @@
 package de.uftos.controller;
 
+import de.uftos.dto.LessonResponseDto;
+import de.uftos.dto.RoomRequestDto;
 import de.uftos.entities.Room;
 import de.uftos.services.RoomService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,7 +28,7 @@ public class RoomController {
   }
 
   @PostMapping()
-  public Room createRoom(@RequestBody Room room) {
+  public Room createRoom(@RequestBody RoomRequestDto room) {
     return this.roomService.create(room);
   }
 
@@ -39,8 +42,13 @@ public class RoomController {
     return this.roomService.getById(id);
   }
 
+  @GetMapping("/{id}/lessons")
+  public List<LessonResponseDto> getLessons(@PathVariable String id) {
+    return this.roomService.getLessonsById(id);
+  }
+
   @PutMapping("/{id}")
-  public Room updateRoom(@PathVariable String id, @RequestBody Room room) {
+  public Room updateRoom(@PathVariable String id, @RequestBody RoomRequestDto room) {
     return this.roomService.update(id, room);
   }
 

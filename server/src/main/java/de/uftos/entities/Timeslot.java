@@ -1,5 +1,6 @@
 package de.uftos.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.uftos.dto.Weekday;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -11,9 +12,11 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import java.util.List;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity(name = "timeslots")
 @Data
+@NoArgsConstructor
 public class Timeslot {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
@@ -27,6 +30,13 @@ public class Timeslot {
   private List<Tag> tags;
 
   @OneToMany
+  @JsonIgnore
   private List<Lesson> lessons;
+
+  public Timeslot(Weekday day, int slot, List<String> tagIds) {
+    this.day = day;
+    this.slot = slot;
+    this.tags = tagIds.stream().map(Tag::new).toList();
+  }
 }
 

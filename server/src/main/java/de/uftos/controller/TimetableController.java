@@ -1,5 +1,6 @@
 package de.uftos.controller;
 
+import de.uftos.dto.TimetableRequestDto;
 import de.uftos.entities.Timetable;
 import de.uftos.services.TimetableService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ public class TimetableController {
   }
 
   @PostMapping()
-  public Timetable createTimetable(@RequestBody Timetable timetables) {
+  public Timetable createTimetable(@RequestBody TimetableRequestDto timetables) {
     return this.timetablesService.create(timetables);
   }
 

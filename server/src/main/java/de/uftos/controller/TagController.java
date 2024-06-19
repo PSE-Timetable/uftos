@@ -1,5 +1,6 @@
 package de.uftos.controller;
 
+import de.uftos.dto.TagRequestDto;
 import de.uftos.entities.Tag;
 import de.uftos.services.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +26,8 @@ public class TagController {
   }
 
   @PostMapping()
-  public Tag createTag(@RequestBody Tag tags) {
-    return this.tagsService.create(tags);
+  public Tag createTag(@RequestBody TagRequestDto tag) {
+    return this.tagsService.create(tag);
   }
 
   @GetMapping()
@@ -40,8 +41,8 @@ public class TagController {
   }
 
   @PutMapping("/{id}")
-  public Tag updateTag(@PathVariable String id, @RequestBody Tag tags) {
-    return this.tagsService.update(id, tags);
+  public Tag updateTag(@PathVariable String id, @RequestBody TagRequestDto tag) {
+    return this.tagsService.update(id, tag);
   }
 
   @DeleteMapping("/{id}")

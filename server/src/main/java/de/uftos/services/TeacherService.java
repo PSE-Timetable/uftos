@@ -1,7 +1,11 @@
 package de.uftos.services;
 
+import de.uftos.dto.LessonResponseDto;
+import de.uftos.dto.TeacherRequestDto;
 import de.uftos.entities.Teacher;
 import de.uftos.repositories.TeacherRepository;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,20 +27,23 @@ public class TeacherService {
   }
 
   public Teacher getById(String id) {
-    var teacher = this.repository.findById(id);
+    Optional<Teacher> teacher = this.repository.findById(id);
 
     return teacher.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
   }
 
-  public Teacher create(Teacher teacher) {
-    if (this.repository.findById(teacher.getId()).isPresent()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-    }
-
-    return this.repository.save(teacher);
+  public List<LessonResponseDto> getLessonsById(String id) {
+    Teacher teacher = this.getById(id);
+    // TODO
+    return null;
   }
 
-  public Teacher update(String id, Teacher teacher) {
+  public Teacher create(TeacherRequestDto teacher) {
+    return this.repository.save(teacher.map());
+  }
+
+  public Teacher update(String id, TeacherRequestDto teacherRequest) {
+    Teacher teacher = teacherRequest.map();
     teacher.setId(id);
 
     return this.repository.save(teacher);
