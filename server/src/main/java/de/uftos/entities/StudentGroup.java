@@ -12,7 +12,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * The database entry for student groups.
+ * The database entity for student groups.
  * Contains an ID, the name of the group and the students in the group, as well as the grades, tags
  * and lessons associated with the student group.
  */

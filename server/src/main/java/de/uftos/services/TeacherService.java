@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
- * The service for accessing the teacher database entry.
+ * The service for accessing the teacher database entity.
  */
 @Service
 public class TeacherService {
@@ -69,8 +69,8 @@ public class TeacherService {
   /**
    * Creates a new teacher in the database.
    *
-   * @param teacher the teacher which is to be created.
-   * @return the updated teacher which includes the ID that was assigned.
+   * @param teacher the information about the teacher which is to be created.
+   * @return the created teacher which includes the ID that was assigned.
    * @throws ResponseStatusException is thrown if the ID defined in the teacher parameter is
    *                                 already present in the database.
    */
@@ -82,7 +82,7 @@ public class TeacherService {
    * Updates the teacher with the given ID.
    *
    * @param id             the ID of the teacher which is to be updated.
-   * @param teacherRequest the updated teacher information
+   * @param teacherRequest the updated teacher information.
    * @return the updated teacher.
    */
   public Teacher update(String id, TeacherRequestDto teacherRequest) {

@@ -12,7 +12,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * The database entry for teachers.
+ * The database entity for teachers.
  * Contains an ID, the first and last name, the acronym as well as tags and the subjects and
  * lessons they teach.
  */

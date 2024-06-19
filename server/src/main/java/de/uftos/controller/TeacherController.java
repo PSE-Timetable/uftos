@@ -72,6 +72,13 @@ public class TeacherController {
     return this.teacherService.getById(id);
   }
 
+  /**
+   * Maps the HTTP GET request, to get the lessons that the teacher teaches, to the
+   * {@link TeacherService#getLessonsById(String) getLessonsById} function of the teacher service.
+   *
+   * @param id the ID of the teacher.
+   * @return information about the lessons that the teacher teaches.
+   */
   @GetMapping("/{id}/lessons")
   public List<LessonResponseDto> getLessons(@PathVariable String id) {
     return this.teacherService.getLessonsById(id);
@@ -79,7 +86,8 @@ public class TeacherController {
 
   /**
    * Maps the HTTP PUT request to update a teacher to the
-   * {@link TeacherService#update(String, TeacherRequestDto) update} function of the teacher service.
+   * {@link TeacherService#update(String, TeacherRequestDto) update} function of the
+   * teacher service.
    *
    * @param id      the ID of the teacher which is to be updated.
    * @param teacher the updated information of the teacher.
@@ -91,8 +99,8 @@ public class TeacherController {
   }
 
   /**
-   * Maps the HTTP DELETE request to the {@link TeacherService#delete(String) delete} function of the
-   * teacher service.
+   * Maps the HTTP DELETE request to the {@link TeacherService#delete(String) delete} function of
+   * the teacher service.
    *
    * @param id the ID of the teacher which is to be deleted.
    */

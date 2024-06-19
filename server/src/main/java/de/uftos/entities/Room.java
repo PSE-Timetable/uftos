@@ -11,6 +11,11 @@ import java.util.List;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * The database entity for rooms.
+ * Contains an ID, the name as well as the building and capacity of the room and the tags and
+ * lessons associated with it.
+ */
 @Entity(name = "rooms")
 @Data
 @NoArgsConstructor
@@ -30,6 +35,14 @@ public class Room {
   @JsonIgnore
   private List<Lesson> lessons;
 
+  /**
+   * Creates a new room.
+   *
+   * @param name         the name of the room.
+   * @param buildingName the name of the building in which room is located.
+   * @param capacity     the capacity of the room.
+   * @param tagIds       the IDs of the tags associated with the room.
+   */
   public Room(String name, String buildingName, int capacity, List<String> tagIds) {
     this.name = name;
     this.buildingName = buildingName;

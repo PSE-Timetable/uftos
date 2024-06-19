@@ -7,6 +7,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
 
+/**
+ * The database entity for lessons.
+ * Contains an ID as well as an index. Also contains the teacher, student groups, room,
+ * timeslot and subject of the lesson and the timetable of which the lesson is a
+ * part of.
+ */
 @Entity(name = "lessons")
 @Data
 public class Lesson {
