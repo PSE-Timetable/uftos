@@ -1,7 +1,10 @@
 package de.uftos.controller;
 
+import de.uftos.dto.LessonResponseDto;
+import de.uftos.dto.TeacherRequestDto;
 import de.uftos.entities.Teacher;
 import de.uftos.services.TeacherService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,7 +28,7 @@ public class TeacherController {
   }
 
   @PostMapping()
-  public Teacher createTeacher(@RequestBody Teacher teacher) {
+  public Teacher createTeacher(@RequestBody TeacherRequestDto teacher) {
     return this.teacherService.create(teacher);
   }
 
@@ -39,8 +42,13 @@ public class TeacherController {
     return this.teacherService.getById(id);
   }
 
+  @GetMapping("/{id}/lessons")
+  public List<LessonResponseDto> getLessons(@PathVariable String id) {
+    return this.teacherService.getLessonsById(id);
+  }
+
   @PutMapping("/{id}")
-  public Teacher updateTeacher(@PathVariable String id, @RequestBody Teacher teacher) {
+  public Teacher updateTeacher(@PathVariable String id, @RequestBody TeacherRequestDto teacher) {
     return this.teacherService.update(id, teacher);
   }
 

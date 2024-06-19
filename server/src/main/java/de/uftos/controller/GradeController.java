@@ -1,7 +1,10 @@
 package de.uftos.controller;
 
-import de.uftos.entities.Grade;
+import de.uftos.dto.GradeRequestDto;
+import de.uftos.dto.GradeResponseDto;
+import de.uftos.dto.LessonResponseDto;
 import de.uftos.services.GradeService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,22 +28,27 @@ public class GradeController {
   }
 
   @PostMapping()
-  public Grade createGrade(@RequestBody Grade grade) {
+  public GradeResponseDto createGrade(@RequestBody GradeRequestDto grade) {
     return this.gradeService.create(grade);
   }
 
   @GetMapping()
-  public Page<Grade> getGrades(Pageable pageable) {
+  public Page<GradeResponseDto> getGrades(Pageable pageable) {
     return this.gradeService.get(pageable);
   }
 
   @GetMapping("/{id}")
-  public Grade getGrade(@PathVariable String id) {
+  public GradeResponseDto getGrade(@PathVariable String id) {
     return this.gradeService.getById(id);
   }
 
+  @GetMapping("/{id}/lessons")
+  public List<LessonResponseDto> getLessons(@PathVariable String id) {
+    return this.gradeService.getLessonsById(id);
+  }
+
   @PutMapping("/{id}")
-  public Grade updateGrade(@PathVariable String id, @RequestBody Grade grade) {
+  public GradeResponseDto updateGrade(@PathVariable String id, @RequestBody GradeRequestDto grade) {
     return this.gradeService.update(id, grade);
   }
 

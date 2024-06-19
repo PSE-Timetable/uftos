@@ -1,5 +1,6 @@
 package de.uftos.controller;
 
+import de.uftos.dto.SubjectRequestDto;
 import de.uftos.entities.Subject;
 import de.uftos.services.SubjectService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class SubjectController {
   }
 
   @PostMapping()
-  public Subject createSubject(@RequestBody Subject subject) {
+  public Subject createSubject(@RequestBody SubjectRequestDto subject) {
     return this.subjectService.create(subject);
   }
 
@@ -40,7 +41,7 @@ public class SubjectController {
   }
 
   @PutMapping("/{id}")
-  public Subject updateSubject(@PathVariable String id, @RequestBody Subject subject) {
+  public Subject updateSubject(@PathVariable String id, @RequestBody SubjectRequestDto subject) {
     return this.subjectService.update(id, subject);
   }
 

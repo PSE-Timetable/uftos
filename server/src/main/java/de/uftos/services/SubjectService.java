@@ -1,7 +1,9 @@
 package de.uftos.services;
 
+import de.uftos.dto.SubjectRequestDto;
 import de.uftos.entities.Subject;
 import de.uftos.repositories.SubjectRepository;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,20 +25,17 @@ public class SubjectService {
   }
 
   public Subject getById(String id) {
-    var subject = this.repository.findById(id);
+    Optional<Subject> subject = this.repository.findById(id);
 
     return subject.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
   }
 
-  public Subject create(Subject subject) {
-    if (subject.getId() != null && this.repository.findById(subject.getId()).isPresent()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-    }
-
-    return this.repository.save(subject);
+  public Subject create(SubjectRequestDto subject) {
+    return this.repository.save(subject.map());
   }
 
-  public Subject update(String id, Subject subject) {
+  public Subject update(String id, SubjectRequestDto subjectRequest) {
+    Subject subject = subjectRequest.map();
     subject.setId(id);
 
     return this.repository.save(subject);

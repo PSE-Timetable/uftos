@@ -1,5 +1,6 @@
 package de.uftos.controller;
 
+import de.uftos.dto.StudentRequestDto;
 import de.uftos.entities.Student;
 import de.uftos.services.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class StudentController {
   }
 
   @PostMapping()
-  public Student createStudent(@RequestBody Student student) {
+  public Student createStudent(@RequestBody StudentRequestDto student) {
     return this.studentService.create(student);
   }
 
@@ -40,7 +41,7 @@ public class StudentController {
   }
 
   @PutMapping("/{id}")
-  public Student updateStudent(@PathVariable String id, @RequestBody Student student) {
+  public Student updateStudent(@PathVariable String id, @RequestBody StudentRequestDto student) {
     return this.studentService.update(id, student);
   }
 

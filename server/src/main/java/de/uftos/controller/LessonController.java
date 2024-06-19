@@ -1,5 +1,6 @@
 package de.uftos.controller;
 
+import de.uftos.dto.LessonResponseDto;
 import de.uftos.entities.Lesson;
 import de.uftos.services.LessonService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ public class LessonController {
   }
 
   @GetMapping()
-  public Page<Lesson> getLessons(Pageable pageable) {
+  public Page<LessonResponseDto> getLessons(Pageable pageable) {
     return this.lessonsService.get(pageable);
   }
 
