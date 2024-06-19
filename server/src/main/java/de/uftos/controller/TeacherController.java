@@ -72,19 +72,19 @@ public class TeacherController {
     return this.teacherService.getById(id);
   }
 
-  /**
-   * Maps the HTTP PUT request to update a teacher to the
-   * {@link TeacherService#update(long, Teacher) update} function of the teacher service.
-   *
-   * @param id the ID of the teacher which is to be updated.
-   * @param teacher the updated information of the teacher.
-   * @return the updated teacher.
-   */
   @GetMapping("/{id}/lessons")
   public List<LessonResponseDto> getLessons(@PathVariable String id) {
     return this.teacherService.getLessonsById(id);
   }
 
+  /**
+   * Maps the HTTP PUT request to update a teacher to the
+   * {@link TeacherService#update(long, Teacher) update} function of the teacher service.
+   *
+   * @param id      the ID of the teacher which is to be updated.
+   * @param teacher the updated information of the teacher.
+   * @return the updated teacher.
+   */
   @PutMapping("/{id}")
   public Teacher updateTeacher(@PathVariable String id, @RequestBody TeacherRequestDto teacher) {
     return this.teacherService.update(id, teacher);

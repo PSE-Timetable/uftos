@@ -57,7 +57,7 @@ public class StudentService {
    * @param student the student which is to be created.
    * @return the updated student which includes the ID that has been assigned.
    * @throws ResponseStatusException is thrown if the ID defined in the student parameter
-   *         is already present in the database.
+   *                                 is already present in the database.
    */
   public Student create(StudentRequestDto student) {
     return this.repository.save(student.map());
@@ -66,7 +66,7 @@ public class StudentService {
   /**
    * Updates the student with the given ID.
    *
-   * @param id the ID of the student which is to be updated.
+   * @param id      the ID of the student which is to be updated.
    * @param student the updated student information.
    * @return the updated student.
    */

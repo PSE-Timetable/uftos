@@ -57,7 +57,7 @@ public class SubjectService {
    * @param subject the subject which to be created.
    * @return The updated subject which includes the ID that has been assigned.
    * @throws ResponseStatusException is thrown if the ID defined in the subject parameter is
-   *         already present in the database.
+   *                                 already present in the database.
    */
   public Subject create(SubjectRequestDto subject) {
     return this.repository.save(subject.map());
@@ -66,7 +66,7 @@ public class SubjectService {
   /**
    * Updates the subject with the given ID.
    *
-   * @param id the ID of the subject which is to be updated.
+   * @param id      the ID of the subject which is to be updated.
    * @param subject the updated subject information.
    * @return the updated subject.
    */

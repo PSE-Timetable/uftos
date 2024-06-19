@@ -53,7 +53,6 @@ public class TeacherService {
     return teacher.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
   }
 
-
   public List<LessonResponseDto> getLessonsById(String id) {
     Teacher teacher = this.getById(id);
     // TODO
@@ -66,7 +65,7 @@ public class TeacherService {
    * @param teacher the teacher which is to be created.
    * @return the updated teacher which includes
    * @throws ResponseStatusException is thrown if the ID defined in the teacher parameter is
-   *         already present in the database.
+   *                                 already present in the database.
    */
   public Teacher create(TeacherRequestDto teacher) {
     return this.repository.save(teacher.map());
@@ -75,7 +74,7 @@ public class TeacherService {
   /**
    * Updates the teacher with the given ID.
    *
-   * @param id the ID of the teacher which is to be updated.
+   * @param id      the ID of the teacher which is to be updated.
    * @param teacher the updated teacher information
    * @return the updated teacher.
    */
