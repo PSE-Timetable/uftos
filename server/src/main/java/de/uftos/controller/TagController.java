@@ -3,6 +3,7 @@ package de.uftos.controller;
 import de.uftos.dto.TagRequestDto;
 import de.uftos.entities.Tag;
 import de.uftos.services.TagService;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -48,14 +49,15 @@ public class TagController {
 
   /**
    * Maps the HTTP GET request for a set of tags from the database to the
-   * {@link TagService#get(Pageable) get} function of the tag service.
+   * {@link TagService#get(Pageable, Optional) get} function of the tag service.
    *
    * @param pageable contains the parameters for the page.
+   * @param name     the name filter.
    * @return the page of tags fitting the parameters.
    */
   @GetMapping()
-  public Page<Tag> getTags(Pageable pageable) {
-    return this.tagsService.get(pageable);
+  public Page<Tag> getTags(Pageable pageable, Optional<String> name) {
+    return this.tagsService.get(pageable, name);
   }
 
   /**
@@ -74,7 +76,7 @@ public class TagController {
    * Maps the HTTP PUT request to update a tag to the
    * {@link TagService#update(String, TagRequestDto) update} function of the tag service.
    *
-   * @param id      the ID of the tag which is to be updated.
+   * @param id  the ID of the tag which is to be updated.
    * @param tag the updated information of the tag.
    * @return the updated tag.
    */

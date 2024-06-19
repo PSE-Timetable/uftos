@@ -3,6 +3,7 @@ package de.uftos.services;
 import de.uftos.dto.TimetableRequestDto;
 import de.uftos.entities.Timetable;
 import de.uftos.repositories.database.TimetableRepository;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,9 +32,10 @@ public class TimetableService {
    * Gets a page of entries of the timetable table.
    *
    * @param pageable contains the parameters for the page.
+   * @param name     the name filter.
    * @return the page of entries fitting the parameters.
    */
-  public Page<Timetable> get(Pageable pageable) {
+  public Page<Timetable> get(Pageable pageable, Optional<String> name) {
     return this.repository.findAll(pageable);
   }
 

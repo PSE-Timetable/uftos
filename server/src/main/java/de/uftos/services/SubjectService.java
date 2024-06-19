@@ -32,9 +32,10 @@ public class SubjectService {
    * Gets a page of entries of the subject table.
    *
    * @param pageable contains the parameters for the page.
+   * @param name the name filter.
    * @return the page of the entries fitting the parameters.
    */
-  public Page<Subject> get(Pageable pageable) {
+  public Page<Subject> get(Pageable pageable, Optional<String> name) {
     return this.repository.findAll(pageable);
   }
 

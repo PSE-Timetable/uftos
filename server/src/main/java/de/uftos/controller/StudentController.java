@@ -3,6 +3,7 @@ package de.uftos.controller;
 import de.uftos.dto.StudentRequestDto;
 import de.uftos.entities.Student;
 import de.uftos.services.StudentService;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -48,14 +49,19 @@ public class StudentController {
 
   /**
    * Maps the HTTP GET request for a set of students from the database, to the
-   * {@link StudentService#get(Pageable) get} function of the student service.
+   * {@link StudentService#get(Pageable, Optional, Optional, Optional)  get} function of
+   * the student service.
    *
-   * @param pageable contains the parameters for the page.
+   * @param pageable  contains the parameters for the page.
+   * @param firstName the first name filter.
+   * @param lastName  the last name filter.
+   * @param tags      the tags filter.
    * @return the page of students fitting the parameters.
    */
   @GetMapping()
-  public Page<Student> getStudents(Pageable pageable) {
-    return this.studentService.get(pageable);
+  public Page<Student> getStudents(Pageable pageable, Optional<String> firstName,
+                                   Optional<String> lastName, Optional<String[]> tags) {
+    return this.studentService.get(pageable, firstName, lastName, tags);
   }
 
   /**
