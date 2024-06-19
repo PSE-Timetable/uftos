@@ -10,6 +10,11 @@ import java.util.List;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * The database entry for students.
+ * Contains an ID, the first and last name as well as tags associated with the student and the
+ * student groups which they are a part of.
+ */
 @Entity(name = "students")
 @Data
 @NoArgsConstructor

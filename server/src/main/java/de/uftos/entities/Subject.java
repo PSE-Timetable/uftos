@@ -11,6 +11,11 @@ import java.util.List;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * The database entry for subjects.
+ * Contains an ID, the name of the subject as well as the teachers, tags and lessons associated
+ * with it.
+ */
 @Entity(name = "subjects")
 @Data
 @NoArgsConstructor
