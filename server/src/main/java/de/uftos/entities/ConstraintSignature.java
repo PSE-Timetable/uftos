@@ -1,15 +1,15 @@
 package de.uftos.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import de.uftos.dto.ResourceType;
 import de.uftos.dto.solver.RewardPenalize;
-import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.MapKey;
 import jakarta.persistence.OneToMany;
 import java.util.List;
-import java.util.Map;
+import lombok.Data;
 
+@Entity(name = "constraint_signature")
+@Data
 public class ConstraintSignature {
   @Id
   private String name;
@@ -17,9 +17,8 @@ public class ConstraintSignature {
   private String description;
   private RewardPenalize defaultType;
 
-  @MapKey
-  @ElementCollection
-  private Map<String, ResourceType> parameters;
+  @OneToMany
+  private List<ConstraintParameter> parameters;
 
   @OneToMany
   @JsonIgnore
