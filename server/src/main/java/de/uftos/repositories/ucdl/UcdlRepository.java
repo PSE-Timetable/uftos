@@ -18,7 +18,7 @@ public interface UcdlRepository {
   String getUcdl();
 
   /**
-   * Sets the contents of the UCDL-file.
+   * Sets the content of the UCDL-file.
    *
    * @param ucdl the new content of the UCDL-file
    */
