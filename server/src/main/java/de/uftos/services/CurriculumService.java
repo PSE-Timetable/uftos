@@ -2,12 +2,12 @@ package de.uftos.services;
 
 
 import de.uftos.dto.CurriculumRequestDto;
+import de.uftos.dto.CurriculumResponseDto;
 import de.uftos.entities.Curriculum;
-import de.uftos.repositories.CurriculumRepository;
+import de.uftos.repositories.database.CurriculumRepository;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -21,8 +21,10 @@ public class CurriculumService {
     this.repository = repository;
   }
 
-  public Page<Curriculum> get(Pageable pageable) {
-    return this.repository.findAll(pageable);
+  public List<CurriculumResponseDto> get() {
+    return this.repository.findAll().stream().map(
+        curriculum -> new CurriculumResponseDto(curriculum.getId(),
+            curriculum.getGrade().getName())).toList();
   }
 
   public Curriculum getById(String id) {

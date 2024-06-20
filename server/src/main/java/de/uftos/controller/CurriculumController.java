@@ -2,11 +2,11 @@ package de.uftos.controller;
 
 
 import de.uftos.dto.CurriculumRequestDto;
+import de.uftos.dto.CurriculumResponseDto;
 import de.uftos.entities.Curriculum;
 import de.uftos.services.CurriculumService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/students")
+@RequestMapping("/curriculum")
 public class CurriculumController {
   private final CurriculumService curriculumService;
 
@@ -32,8 +32,8 @@ public class CurriculumController {
   }
 
   @GetMapping()
-  public Page<Curriculum> getCurriculums(Pageable pageable) {
-    return this.curriculumService.get(pageable);
+  public List<CurriculumResponseDto> getCurriculums() {
+    return this.curriculumService.get();
   }
 
   @GetMapping("/{id}")
