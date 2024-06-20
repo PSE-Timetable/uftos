@@ -5,7 +5,7 @@ import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.data.repository.ListPagingAndSortingRepository;
 
 /**
- * The repository for accessing the lesson database entity.
+ * The repository for accessing the lesson database table.
  */
 public interface LessonRepository extends ListPagingAndSortingRepository<Lesson, String>,
     ListCrudRepository<Lesson, String> {

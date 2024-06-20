@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
- * The service for accessing the grade database entity.
+ * The service providing the logic of the /grades endpoint.
  */
 @Service
 public class GradeService {
@@ -28,7 +28,7 @@ public class GradeService {
   /**
    * Creates a grade service.
    *
-   * @param repository the repository for accessing the grade entity.
+   * @param repository the repository for accessing the grade table.
    */
   @Autowired
   public GradeService(GradeRepository repository) {
@@ -36,7 +36,7 @@ public class GradeService {
   }
 
   /**
-   * Gets a page of entries of the grade entity.
+   * Gets a page of entries of the grade table.
    *
    * @param pageable contains the parameters for the page.
    * @return the page of the entries fitting the parameters.

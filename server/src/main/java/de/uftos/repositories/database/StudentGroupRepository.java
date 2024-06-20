@@ -8,7 +8,7 @@ import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.data.repository.ListPagingAndSortingRepository;
 
 /**
- * The repository for accessing the student group database entity.
+ * The repository for accessing the student group database table.
  */
 public interface StudentGroupRepository
     extends ListPagingAndSortingRepository<StudentGroup, String>,
