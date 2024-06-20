@@ -57,7 +57,7 @@ public class StudentController {
   @GetMapping()
   public Page<Student> getStudents(Pageable pageable, Optional<String> firstName,
                                    Optional<String> lastName, Optional<String[]> tags) {
-    return this.studentService.get(pageable);
+    return this.studentService.get(pageable, firstName, lastName, tags);
   }
 
   /**
