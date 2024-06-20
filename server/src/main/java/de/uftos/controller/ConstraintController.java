@@ -58,12 +58,12 @@ public class ConstraintController {
    * Maps the HTTP GET request for a constraint signature with the given ID to the
    * {@link ConstraintSignatureService#getById(String)}  getById} function of the constraint signature service.
    *
-   * @param id the ID of the student.
+   * @param signatureId the ID of the student.
    * @return the constraint signature with the given ID.
    */
-  @GetMapping("/{id}")
-  public ConstraintSignature getConstraintSignatures(@PathVariable String id) {
-    return this.constraintSignatureService.getById(id);
+  @GetMapping("/{signatureId}")
+  public ConstraintSignature getConstraintSignatures(@PathVariable String signatureId) {
+    return this.constraintSignatureService.getById(signatureId);
   }
 
   /**
