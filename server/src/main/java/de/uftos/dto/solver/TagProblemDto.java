@@ -1,5 +1,6 @@
 package de.uftos.dto.solver;
 
+import de.uftos.dto.ResourceType;
 import java.util.List;
 
 /**
@@ -14,5 +15,9 @@ public record TagProblemDto(
     List<String> subjectIds,
     List<String> teacherIds,
     List<String> timeslotIds
-) {
+) implements ResourceProblemDto {
+  @Override
+  public ResourceType getType() {
+    return ResourceType.TAG;
+  }
 }
