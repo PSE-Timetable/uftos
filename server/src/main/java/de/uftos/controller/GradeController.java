@@ -58,7 +58,7 @@ public class GradeController {
    */
   @GetMapping()
   public Page<GradeResponseDto> getGrades(Pageable pageable, Optional<String> name) {
-    return this.gradeService.get(pageable);
+    return this.gradeService.get(pageable, name);
   }
 
   /**
