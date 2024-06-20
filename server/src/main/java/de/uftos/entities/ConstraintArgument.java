@@ -9,7 +9,7 @@ import jakarta.persistence.ManyToOne;
 import lombok.Data;
 
 /**
- * The database entity for constraint arguments.
+ * The database table for constraint arguments.
  * Contains an ID, the name and value of the argument as well as
  * the constraint instance using the argument.
  */
