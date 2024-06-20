@@ -5,6 +5,7 @@ import de.uftos.dto.TeacherRequestDto;
 import de.uftos.entities.Teacher;
 import de.uftos.services.TeacherService;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -56,7 +57,9 @@ public class TeacherController {
    * @return the page of teachers fitting the parameters.
    */
   @GetMapping()
-  public Page<Teacher> getTeachers(Pageable pageable) {
+  public Page<Teacher> getTeachers(Pageable pageable, Optional<String> firstName,
+                                   Optional<String> lastName, Optional<String> acronym,
+                                   Optional<String[]> subjects, Optional<String[]> tags) {
     return this.teacherService.get(pageable);
   }
 

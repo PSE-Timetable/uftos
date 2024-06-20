@@ -4,6 +4,7 @@ import de.uftos.dto.StudentGroupRequestDto;
 import de.uftos.entities.StudentGroup;
 import de.uftos.services.StudentGroupService;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -56,7 +57,7 @@ public class StudentGroupController {
    * @return the page of student groups fitting the parameters.
    */
   @GetMapping()
-  public Page<StudentGroup> getStudentGroups(Pageable pageable) {
+  public Page<StudentGroup> getStudentGroups(Pageable pageable, Optional<String> name) {
     return this.studentGroupService.get(pageable);
   }
 
@@ -103,7 +104,7 @@ public class StudentGroupController {
    * {@link StudentGroupService#update(String, StudentGroupRequestDto) update} function of the
    * student group service.
    *
-   * @param id      the ID of the student group which is to be updated.
+   * @param id           the ID of the student group which is to be updated.
    * @param studentGroup the updated information of the student group.
    * @return the updated student group.
    */

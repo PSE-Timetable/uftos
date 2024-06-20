@@ -5,6 +5,7 @@ import de.uftos.entities.ConstraintInstance;
 import de.uftos.entities.ConstraintSignature;
 import de.uftos.services.ConstraintInstanceService;
 import de.uftos.services.ConstraintSignatureService;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,7 +31,8 @@ public class ConstraintController {
   }
 
   @GetMapping()
-  public Page<ConstraintSignature> getConstraintSignatures(Pageable pageable) {
+  public Page<ConstraintSignature> getConstraintSignatures(Pageable pageable,
+                                                           Optional<String> name) {
     return this.constraintSignatureService.get(pageable);
   }
 
@@ -47,7 +49,8 @@ public class ConstraintController {
 
   @GetMapping("/{id}/instances")
   public Page<ConstraintInstance> getConstraintInstances(@PathVariable String id,
-                                                         Pageable pageable) {
+                                                         Pageable pageable,
+                                                         Optional<String> argument) {
     return this.constraintInstanceService.get(id, pageable);
   }
 

@@ -3,6 +3,7 @@ package de.uftos.controller;
 import de.uftos.dto.SubjectRequestDto;
 import de.uftos.entities.Subject;
 import de.uftos.services.SubjectService;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -54,7 +55,7 @@ public class SubjectController {
    * @return the page of subjects fitting the parameters.
    */
   @GetMapping()
-  public Page<Subject> getSubjects(Pageable pageable) {
+  public Page<Subject> getSubjects(Pageable pageable, Optional<String> name) {
     return this.subjectService.get(pageable);
   }
 

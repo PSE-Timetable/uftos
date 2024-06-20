@@ -5,6 +5,7 @@ import de.uftos.dto.RoomRequestDto;
 import de.uftos.entities.Room;
 import de.uftos.services.RoomService;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -56,7 +57,9 @@ public class RoomController {
    * @return the page of rooms fitting the parameters.
    */
   @GetMapping()
-  public Page<Room> getRooms(Pageable pageable) {
+  public Page<Room> getRooms(Pageable pageable, Optional<String> name,
+                             Optional<String> buildingName, Optional<Integer> capacity,
+                             Optional<String[]> tags) {
     return this.roomService.get(pageable);
   }
 

@@ -3,6 +3,7 @@ package de.uftos.controller;
 import de.uftos.dto.TimetableRequestDto;
 import de.uftos.entities.Timetable;
 import de.uftos.services.TimetableService;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -53,7 +54,7 @@ public class TimetableController {
    * @return the page of timetable fitting the parameters.
    */
   @GetMapping()
-  public Page<Timetable> getTimetables(Pageable pageable) {
+  public Page<Timetable> getTimetables(Pageable pageable, Optional<String> name) {
     return this.timetablesService.get(pageable);
   }
 

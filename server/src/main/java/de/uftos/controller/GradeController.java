@@ -5,6 +5,7 @@ import de.uftos.dto.GradeResponseDto;
 import de.uftos.dto.LessonResponseDto;
 import de.uftos.services.GradeService;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -56,7 +57,7 @@ public class GradeController {
    * @return the page of grades fitting the parameters.
    */
   @GetMapping()
-  public Page<GradeResponseDto> getGrades(Pageable pageable) {
+  public Page<GradeResponseDto> getGrades(Pageable pageable, Optional<String> name) {
     return this.gradeService.get(pageable);
   }
 
@@ -88,7 +89,7 @@ public class GradeController {
    * Maps the HTTP PUT request to update a grade to the
    * {@link GradeService#update(String, GradeRequestDto) update} function of the grade service.
    *
-   * @param id      the ID of the grade which is to be updated.
+   * @param id    the ID of the grade which is to be updated.
    * @param grade the updated information of the grade.
    * @return the updated grade.
    */
