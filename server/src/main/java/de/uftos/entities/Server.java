@@ -6,6 +6,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Data;
 
+/**
+ * The database entity for server.
+ * Contains an ID and a timeslot length.
+ * There should only ever exist one entity of this kind.
+ */
 @Entity(name = "server")
 @Data
 public class Server {
