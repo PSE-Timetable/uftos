@@ -5,6 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * The database entity for server.
@@ -13,10 +14,15 @@ import lombok.Data;
  */
 @Entity(name = "server")
 @Data
+@NoArgsConstructor
 public class Server {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private String id;
 
   private int timeslotLength;
+
+  public Server(int timeslotLength) {
+    this.timeslotLength = timeslotLength;
+  }
 }
