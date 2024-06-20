@@ -56,7 +56,7 @@ public class SubjectController {
    */
   @GetMapping()
   public Page<Subject> getSubjects(Pageable pageable, Optional<String> name) {
-    return this.subjectService.get(pageable);
+    return this.subjectService.get(pageable, name);
   }
 
   /**
