@@ -11,7 +11,7 @@ import java.util.HashMap;
 public interface UcdlRepository {
 
   /**
-   * Gets the contents of the UCDL-file.
+   * Gets the content of the UCDL-file.
    *
    * @return the UCDL-code contained in the UCDL-file.
    */
@@ -20,7 +20,7 @@ public interface UcdlRepository {
   /**
    * Sets the contents of the UCDL-file.
    *
-   * @param ucdl the new contents of the UCDL-file
+   * @param ucdl the new content of the UCDL-file
    */
   void setUcdl(String ucdl);
 
