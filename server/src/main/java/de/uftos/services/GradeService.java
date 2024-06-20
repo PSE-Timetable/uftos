@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
- * the service providing the logic of the /grades endpoint.
+ * The service providing the logic of the /grades endpoint.
  */
 @Service
 public class GradeService {
