@@ -3,10 +3,9 @@ package de.uftos.controller;
 
 import de.uftos.dto.CurriculumRequestDto;
 import de.uftos.dto.CurriculumResponseDto;
-import de.uftos.entities.Curriculum;
 import de.uftos.services.CurriculumService;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,23 +26,23 @@ public class CurriculumController {
   }
 
   @PostMapping()
-  public Curriculum createCurriculum(@RequestBody CurriculumRequestDto curriculum) {
+  public CurriculumResponseDto createCurriculum(@RequestBody CurriculumRequestDto curriculum) {
     return this.curriculumService.create(curriculum);
   }
 
   @GetMapping()
-  public List<CurriculumResponseDto> getCurriculums() {
+  public Page<CurriculumResponseDto> getCurriculums() {
     return this.curriculumService.get();
   }
 
   @GetMapping("/{id}")
-  public Curriculum getCurriculum(@PathVariable String id) {
+  public CurriculumResponseDto getCurriculum(@PathVariable String id) {
     return this.curriculumService.getById(id);
   }
 
   @PutMapping("/{id}")
-  public Curriculum updateCurriculum(@PathVariable String id,
-                                     @RequestBody CurriculumRequestDto curriculum) {
+  public CurriculumResponseDto updateCurriculum(@PathVariable String id,
+                                                @RequestBody CurriculumRequestDto curriculum) {
     return this.curriculumService.update(id, curriculum);
   }
 
