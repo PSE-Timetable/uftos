@@ -2,6 +2,7 @@ package de.uftos.services;
 
 import de.uftos.entities.ConstraintSignature;
 import de.uftos.repositories.database.ConstraintSignatureRepository;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,7 +33,7 @@ public class ConstraintSignatureService {
    * @param pageable contains the parameters for the page.
    * @return the page of the entries fitting the parameters.
    */
-  public Page<ConstraintSignature> get(Pageable pageable) {
+  public Page<ConstraintSignature> get(Pageable pageable, Optional<String> name) {
     return this.repository.findAll(pageable);
   }
 

@@ -48,9 +48,10 @@ public class TimetableController {
 
   /**
    * Maps the HTTP GET request for a set of timetables from the database to the
-   * {@link TimetableService#get(Pageable) get} function of the timetable service.
+   * {@link TimetableService#get(Pageable, Optional) get} function of the timetable service.
    *
    * @param pageable contains the parameters for the page.
+   * @param name     optional name to filter for
    * @return the page of timetable fitting the parameters.
    */
   @GetMapping()

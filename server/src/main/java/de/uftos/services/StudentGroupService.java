@@ -5,6 +5,7 @@ import de.uftos.dto.StudentGroupRequestDto;
 import de.uftos.entities.StudentGroup;
 import de.uftos.repositories.database.StudentGroupRepository;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,7 +36,7 @@ public class StudentGroupService {
    * @param pageable contains the parameters for the page.
    * @return the page of the entries fitting the parameters.
    */
-  public Page<StudentGroup> get(Pageable pageable) {
+  public Page<StudentGroup> get(Pageable pageable, Optional<String> name) {
     return this.repository.findAll(pageable);
   }
 
@@ -81,7 +82,7 @@ public class StudentGroupService {
   /**
    * Adds students to a student group.
    *
-   * @param id       the ID of the student group.
+   * @param id         the ID of the student group.
    * @param studentIds the IDs of students which are to be added to the student group.
    */
   public StudentGroup addStudents(String id, List<String> studentIds) {
@@ -93,7 +94,7 @@ public class StudentGroupService {
   /**
    * Removes students from a student group.
    *
-   * @param id       the ID of the student group.
+   * @param id         the ID of the student group.
    * @param studentIds the IDs of students which are to be removed.
    */
   public void removeStudents(String id, List<String> studentIds) {

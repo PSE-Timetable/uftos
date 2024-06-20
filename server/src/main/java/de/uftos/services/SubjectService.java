@@ -34,7 +34,7 @@ public class SubjectService {
    * @param pageable contains the parameters for the page.
    * @return the page of the entries fitting the parameters.
    */
-  public Page<Subject> get(Pageable pageable) {
+  public Page<Subject> get(Pageable pageable, Optional<String> name) {
     return this.repository.findAll(pageable);
   }
 

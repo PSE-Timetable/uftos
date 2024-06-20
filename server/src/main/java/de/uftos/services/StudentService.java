@@ -34,7 +34,8 @@ public class StudentService {
    * @param pageable contains the parameters for the page.
    * @return the page of the entries fitting the parameters.
    */
-  public Page<Student> get(Pageable pageable) {
+  public Page<Student> get(Pageable pageable, Optional<String> firstName,
+                           Optional<String> lastName, Optional<String[]> tags) {
     return this.repository.findAll(pageable);
   }
 

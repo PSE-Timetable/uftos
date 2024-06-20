@@ -49,7 +49,7 @@ public class StudentController {
 
   /**
    * Maps the HTTP GET request for a set of students from the database, to the
-   * {@link StudentService#get(Pageable) get} function of the student service.
+   * {@link StudentService#get(Pageable, Optional, Optional, Optional)}  get} function of the student service.
    *
    * @param pageable contains the parameters for the page.
    * @return the page of students fitting the parameters.

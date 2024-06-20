@@ -51,7 +51,7 @@ public class GradeController {
 
   /**
    * Maps the HTTP GET request for a set of grades from the database, to the
-   * {@link GradeService#get(Pageable) get} function of the grade service.
+   * {@link GradeService#get(Pageable, Optional)} get} function of the grade service.
    *
    * @param pageable contains the parameters for the page.
    * @return the page of grades fitting the parameters.

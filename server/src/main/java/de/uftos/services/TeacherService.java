@@ -36,7 +36,9 @@ public class TeacherService {
    * @param pageable contains the parameters for the page.
    * @return the page of entries fitting the parameters.
    */
-  public Page<Teacher> get(Pageable pageable) {
+  public Page<Teacher> get(Pageable pageable, Optional<String> firstName,
+                           Optional<String> lastName, Optional<String> acronym,
+                           Optional<String[]> subjects, Optional<String[]> tags) {
     return this.repository.findAll(pageable);
   }
 
