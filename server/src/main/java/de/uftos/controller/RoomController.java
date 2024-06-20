@@ -60,7 +60,7 @@ public class RoomController {
   public Page<Room> getRooms(Pageable pageable, Optional<String> name,
                              Optional<String> buildingName, Optional<Integer> capacity,
                              Optional<String[]> tags) {
-    return this.roomService.get(pageable);
+    return this.roomService.get(pageable, name, buildingName, capacity, tags);
   }
 
   /**
