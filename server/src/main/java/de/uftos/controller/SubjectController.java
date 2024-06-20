@@ -72,7 +72,8 @@ public class SubjectController {
 
   /**
    * Maps the HTTP PUT request to update a subject to the
-   * {@link SubjectService#update(String, SubjectRequestDto) update} function of the subject service.
+   * {@link SubjectService#update(String, SubjectRequestDto) update} function of
+   * the subject service.
    *
    * @param id      the ID of the subject which is to be updated.
    * @param subject the updated information of the subject.

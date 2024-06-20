@@ -72,7 +72,8 @@ public class StudentController {
 
   /**
    * Maps the HTTP PUT request to update a student to the
-   * {@link StudentService#update(String, StudentRequestDto) update} function of the student service.
+   * {@link StudentService#update(String, StudentRequestDto) update} function of
+   * the student service.
    *
    * @param id      the ID of the student which is to be updated.
    * @param student the updated information of the student.
