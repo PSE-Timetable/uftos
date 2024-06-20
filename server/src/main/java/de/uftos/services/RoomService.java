@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
- * The service for accessing the room database entity.
+ * The service providing the logic of the /rooms endpoint.
  */
 @Service
 public class RoomService {
@@ -23,7 +23,7 @@ public class RoomService {
   /**
    * Creates a lesson service.
    *
-   * @param repository the repository for accessing the lesson entity.
+   * @param repository the repository for accessing the lesson table.
    */
   @Autowired
   public RoomService(RoomRepository repository) {
@@ -31,7 +31,7 @@ public class RoomService {
   }
 
   /**
-   * Gets a page of entries of the lesson entity.
+   * Gets a page of entries of the lesson table.
    *
    * @param pageable contains the parameters for the page.
    * @return the page of entries fitting the parameters.
