@@ -20,7 +20,7 @@ public class ServerController {
   /**
    * Creates the server controller.
    *
-   * @param serverService the service for the student entity.
+   * @param serverService the service for the server entity.
    */
   @Autowired
   public ServerController(ServerService serverService) {
