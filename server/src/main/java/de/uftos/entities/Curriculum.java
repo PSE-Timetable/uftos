@@ -10,6 +10,10 @@ import java.util.List;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * The database entity for curriculums.
+ * Contains an ID, a grade to which the lessons are applied to and a list of lesson counts.
+ */
 @Entity(name = "curriculum")
 @Data
 @NoArgsConstructor
@@ -25,6 +29,12 @@ public class Curriculum {
   @ManyToMany
   private List<LessonsCount> lessonsCounts;
 
+  /**
+   * Creates a new curriculum.
+   *
+   * @param grade         the grade to which the curriculum applies to.
+   * @param lessonsCounts the lesson counts which apply to the given grade.
+   */
   public Curriculum(Grade grade, List<LessonsCount> lessonsCounts) {
     this.grade = grade;
     this.lessonsCounts = lessonsCounts;

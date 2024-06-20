@@ -8,6 +8,11 @@ import jakarta.persistence.OneToMany;
 import java.util.List;
 import lombok.Data;
 
+/**
+ * The database entity for constraint signatures.
+ * Contains an ID, the name of the grade as well as the student groups that in the
+ * grade as well as the tags associated with it.
+ */
 @Entity(name = "constraint_signature")
 @Data
 public class ConstraintSignature {

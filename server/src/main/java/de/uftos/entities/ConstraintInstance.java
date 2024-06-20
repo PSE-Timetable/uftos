@@ -10,6 +10,11 @@ import jakarta.persistence.OneToMany;
 import java.util.List;
 import lombok.Data;
 
+/**
+ * The database entity for constraint instances.
+ * Contains an ID, the signature of the corresponding constraint definition, a list of constraint
+ * arguments as well as the information whether the instance gets hard/soft penalized/rewarded.
+ */
 @Entity(name = "constraint_instance")
 @Data
 public class ConstraintInstance {
