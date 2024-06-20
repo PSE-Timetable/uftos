@@ -17,41 +17,92 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * The REST controller for the room entity.
+ * This controller handles /rooms HTTP requests.
+ */
 @RestController
 @RequestMapping("/rooms")
 public class RoomController {
   private final RoomService roomService;
 
+  /**
+   * Creates a room controller.
+   *
+   * @param roomService the service for the room entity.
+   */
   @Autowired
   public RoomController(RoomService roomService) {
     this.roomService = roomService;
   }
 
+  /**
+   * Maps the HTTP POST request, to create a new room in the database, to the
+   * {@link RoomService#create(RoomRequestDto) create} function of the room service.
+   *
+   * @param room the room which is to be created.
+   * @return the created room with the assigned ID.
+   */
   @PostMapping()
   public Room createRoom(@RequestBody RoomRequestDto room) {
     return this.roomService.create(room);
   }
 
+  /**
+   * Maps the HTTP GET request for a set of rooms from the database to the
+   * {@link RoomService#get(Pageable) get} function of the room service.
+   *
+   * @param pageable contains the parameters for the page.
+   * @return the page of rooms fitting the parameters.
+   */
   @GetMapping()
   public Page<Room> getRooms(Pageable pageable) {
     return this.roomService.get(pageable);
   }
 
+  /**
+   * Maps the HTTP GET request for a room with the given ID to the
+   * {@link RoomService#getById(String) getById} function of the room service.
+   *
+   * @param id the ID of the room.
+   * @return the room with the given ID.
+   */
   @GetMapping("/{id}")
   public Room getRoom(@PathVariable String id) {
     return this.roomService.getById(id);
   }
 
+  /**
+   * Maps the HTTP GET request, to get the lessons that get taught in the room, to the
+   * {@link RoomService#getLessonsById(String) getLessonsById} function of the room service.
+   *
+   * @param id the ID of the room.
+   * @return information about the lessons that get taught in the room.
+   */
   @GetMapping("/{id}/lessons")
   public List<LessonResponseDto> getLessons(@PathVariable String id) {
     return this.roomService.getLessonsById(id);
   }
 
+  /**
+   * Maps the HTTP PUT request to update a room to the
+   * {@link RoomService#update(String, RoomRequestDto) update} function of the room service.
+   *
+   * @param id   the ID of the room which is to be updated.
+   * @param room the updated information of the room.
+   * @return the updated room.
+   */
   @PutMapping("/{id}")
   public Room updateRoom(@PathVariable String id, @RequestBody RoomRequestDto room) {
     return this.roomService.update(id, room);
   }
 
+  /**
+   * Maps the HTTP DELETE request to the {@link RoomService#delete(String) delete} function of the
+   * room service.
+   *
+   * @param id the ID of the room which is to be deleted.
+   */
   @DeleteMapping("/{id}")
   public void deleteRoom(@PathVariable String id) {
     this.roomService.delete(id);

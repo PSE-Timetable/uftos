@@ -10,6 +10,10 @@ import java.util.List;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * The database entity for a timetable.
+ * Contains the id and the name of the timetable as well as the lessons that are a part of it.
+ */
 @Entity(name = "timetables")
 @Data
 @NoArgsConstructor
@@ -24,6 +28,11 @@ public class Timetable {
   @JsonIgnore
   private List<Lesson> lessons;
 
+  /**
+   * Creates a new timetable.
+   *
+   * @param name the name of the timetable.
+   */
   public Timetable(String name) {
     this.name = name;
   }

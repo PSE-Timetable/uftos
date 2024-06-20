@@ -17,41 +17,92 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * The REST controller for the grade entity.
+ * This controller handles /grades HTTP requests.
+ */
 @RestController
 @RequestMapping("/grades")
 public class GradeController {
   private final GradeService gradeService;
 
+  /**
+   * Creates the grade controller.
+   *
+   * @param gradeService the service for the grade entity.
+   */
   @Autowired
   public GradeController(GradeService gradeService) {
     this.gradeService = gradeService;
   }
 
+  /**
+   * Maps the HTTP POST request, to create a new grade in the database, to the
+   * {@link GradeService#create(GradeRequestDto) create} function of the grade service.
+   *
+   * @param grade the grade which is to be created.
+   * @return the created grade with the assigned ID.
+   */
   @PostMapping()
   public GradeResponseDto createGrade(@RequestBody GradeRequestDto grade) {
     return this.gradeService.create(grade);
   }
 
+  /**
+   * Maps the HTTP GET request for a set of grades from the database, to the
+   * {@link GradeService#get(Pageable) get} function of the grade service.
+   *
+   * @param pageable contains the parameters for the page.
+   * @return the page of grades fitting the parameters.
+   */
   @GetMapping()
   public Page<GradeResponseDto> getGrades(Pageable pageable) {
     return this.gradeService.get(pageable);
   }
 
+  /**
+   * Maps the HTTP GET request for a grade with the given ID to the
+   * {@link GradeService#getById(String) getById} function of the grade service.
+   *
+   * @param id the ID of the grade.
+   * @return the grade with the given ID.
+   */
   @GetMapping("/{id}")
   public GradeResponseDto getGrade(@PathVariable String id) {
     return this.gradeService.getById(id);
   }
 
+  /**
+   * Maps the HTTP GET request, to get the lessons that are taught in the grade, to the
+   * {@link GradeService#getLessonsById(String) getLessonsById} function of the grade service.
+   *
+   * @param id the ID of the grade.
+   * @return information about the lessons that are taught in the grade.
+   */
   @GetMapping("/{id}/lessons")
   public List<LessonResponseDto> getLessons(@PathVariable String id) {
     return this.gradeService.getLessonsById(id);
   }
 
+  /**
+   * Maps the HTTP PUT request to update a grade to the
+   * {@link GradeService#update(String, GradeRequestDto) update} function of the grade service.
+   *
+   * @param id      the ID of the grade which is to be updated.
+   * @param grade the updated information of the grade.
+   * @return the updated grade.
+   */
   @PutMapping("/{id}")
   public GradeResponseDto updateGrade(@PathVariable String id, @RequestBody GradeRequestDto grade) {
     return this.gradeService.update(id, grade);
   }
 
+  /**
+   * Maps the HTTP DELETE request to the {@link GradeService#delete(String) delete} function of the
+   * grade service.
+   *
+   * @param id the ID of the grade which is to be deleted.
+   */
   @DeleteMapping("/{id}")
   public void deleteGrade(@PathVariable String id) {
     this.gradeService.delete(id);
