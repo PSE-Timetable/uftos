@@ -41,7 +41,7 @@ public class ConstraintSignatureService {
    *
    * @param id the ID of the constraintSignature.
    * @return the constraintSignature with the given ID.
-   * @throws ResponseStatusException is thrown if the ID doesn't have a corresponding constraintSignature.
+   * @throws ResponseStatusException if the ID doesn't have a corresponding constraintSignature.
    */
   public ConstraintSignature getById(String id) {
     return this.repository.findById(id)

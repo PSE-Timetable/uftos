@@ -28,11 +28,11 @@ public class ConstraintInstanceService {
   }
 
   /**
-   * Creates a new constraint instance
+   * Creates a new constraint instance.
    *
-   * @param signatureId the constraint signature id
-   * @param request     the constraint instance request object
-   * @return the newly created constraint instance
+   * @param signatureId the constraint signature id.
+   * @param request     the constraint instance request object.
+   * @return the newly created constraint instance.
    */
   public ConstraintInstance create(String signatureId, ConstraintInstanceRequestDto request) {
     return null;
@@ -54,7 +54,7 @@ public class ConstraintInstanceService {
    *
    * @param id the ID of the constraintInstance.
    * @return the constraintInstance with the given ID.
-   * @throws ResponseStatusException is thrown if the ID doesn't have a corresponding constraintInstance.
+   * @throws ResponseStatusException if the ID doesn't have a corresponding constraintInstance.
    */
   public ConstraintInstance getById(String signatureId, String id) {
     return this.repository.findById(id)
