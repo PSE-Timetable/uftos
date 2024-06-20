@@ -58,7 +58,7 @@ public class StudentGroupController {
    */
   @GetMapping()
   public Page<StudentGroup> getStudentGroups(Pageable pageable, Optional<String> name) {
-    return this.studentGroupService.get(pageable);
+    return this.studentGroupService.get(pageable, name);
   }
 
   /**
