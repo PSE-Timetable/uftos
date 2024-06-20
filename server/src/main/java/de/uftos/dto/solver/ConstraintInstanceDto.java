@@ -11,6 +11,5 @@ import java.util.List;
 public record ConstraintInstanceDto(
     String definitionName,
     List<ResourceProblemDto> parameters
-
 ) {
 }
