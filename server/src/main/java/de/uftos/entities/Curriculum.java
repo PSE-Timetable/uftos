@@ -11,7 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * The database entity for curriculums.
+ * The database table for curriculums.
  * Contains an ID, a grade to which the lessons are applied to and a list of lesson counts.
  */
 @Entity(name = "curriculum")
