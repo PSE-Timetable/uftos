@@ -40,6 +40,7 @@ public class GradeService {
    * Gets a page of entries of the grade entity.
    *
    * @param pageable contains the parameters for the page.
+   * @param name     the name filter.
    * @return the page of the entries fitting the parameters.
    */
   public Page<GradeResponseDto> get(Pageable pageable, Optional<String> name) {

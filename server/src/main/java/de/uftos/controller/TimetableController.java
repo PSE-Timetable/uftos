@@ -51,7 +51,7 @@ public class TimetableController {
    * {@link TimetableService#get(Pageable, Optional) get} function of the timetable service.
    *
    * @param pageable contains the parameters for the page.
-   * @param name     optional name to filter for
+   * @param name     optional name to filter for.
    * @return the page of timetable fitting the parameters.
    */
   @GetMapping()

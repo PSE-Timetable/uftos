@@ -32,6 +32,7 @@ public class TimetableService {
    * Gets a page of entries of the timetable entity.
    *
    * @param pageable contains the parameters for the page.
+   * @param name     the name filter.
    * @return the page of entries fitting the parameters.
    */
   public Page<Timetable> get(Pageable pageable, Optional<String> name) {

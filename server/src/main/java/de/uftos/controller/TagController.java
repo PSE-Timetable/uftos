@@ -49,9 +49,10 @@ public class TagController {
 
   /**
    * Maps the HTTP GET request for a set of tags from the database to the
-   * {@link TagService#get(Pageable) get} function of the tag service.
+   * {@link TagService#get(Pageable, Optional) get} function of the tag service.
    *
    * @param pageable contains the parameters for the page.
+   * @param name     the name filter.
    * @return the page of tags fitting the parameters.
    */
   @GetMapping()

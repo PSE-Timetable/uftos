@@ -49,9 +49,10 @@ public class SubjectController {
 
   /**
    * Maps the HTTP GET request for a set of subjects from the database to the
-   * {@link SubjectService#get(Pageable) get} function of the subject service.
+   * {@link SubjectService#get(Pageable, Optional) get} function of the subject service.
    *
    * @param pageable contains the parameters for the page.
+   * @param name     the name filter.
    * @return the page of subjects fitting the parameters.
    */
   @GetMapping()

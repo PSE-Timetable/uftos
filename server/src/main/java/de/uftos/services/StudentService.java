@@ -31,7 +31,10 @@ public class StudentService {
   /**
    * Gets a page of entries of the student entity.
    *
-   * @param pageable contains the parameters for the page.
+   * @param pageable  contains the parameters for the page.
+   * @param firstName the first name filter.
+   * @param lastName  the last name filter.
+   * @param tags      the tags filter.
    * @return the page of the entries fitting the parameters.
    */
   public Page<Student> get(Pageable pageable, Optional<String> firstName,

@@ -34,6 +34,7 @@ public class StudentGroupService {
    * Gets a page of entries of the student group entity.
    *
    * @param pageable contains the parameters for the page.
+   * @param name     the name filter.
    * @return the page of the entries fitting the parameters.
    */
   public Page<StudentGroup> get(Pageable pageable, Optional<String> name) {

@@ -51,9 +51,14 @@ public class RoomController {
 
   /**
    * Maps the HTTP GET request for a set of rooms from the database to the
-   * {@link RoomService#get(Pageable) get} function of the room service.
+   * {@link RoomService#get(Pageable, Optional, Optional, Optional, Optional)  get} function of
+   * the room service.
    *
-   * @param pageable contains the parameters for the page.
+   * @param pageable     contains the parameters for the page.
+   * @param name         the name filter.
+   * @param buildingName the building name filter.
+   * @param capacity     the capacity filter.
+   * @param tags         the tags filter.
    * @return the page of rooms fitting the parameters.
    */
   @GetMapping()

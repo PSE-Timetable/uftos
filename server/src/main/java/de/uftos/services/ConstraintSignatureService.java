@@ -31,6 +31,7 @@ public class ConstraintSignatureService {
    * Gets a page of entries of the constraintSignature entity.
    *
    * @param pageable contains the parameters for the page.
+   * @param name     the name filter.
    * @return the page of the entries fitting the parameters.
    */
   public Page<ConstraintSignature> get(Pageable pageable, Optional<String> name) {
@@ -42,7 +43,8 @@ public class ConstraintSignatureService {
    *
    * @param id the ID of the constraintSignature.
    * @return the constraintSignature with the given ID.
-   * @throws ResponseStatusException is thrown if the ID doesn't have a corresponding constraintSignature.
+   * @throws ResponseStatusException is thrown if the ID doesn't have a corresponding
+   *                                 constraintSignature.
    */
   public ConstraintSignature getById(String id) {
     return this.repository.findById(id)
