@@ -60,7 +60,7 @@ public class TeacherController {
   public Page<Teacher> getTeachers(Pageable pageable, Optional<String> firstName,
                                    Optional<String> lastName, Optional<String> acronym,
                                    Optional<String[]> subjects, Optional<String[]> tags) {
-    return this.teacherService.get(pageable);
+    return this.teacherService.get(pageable, firstName, lastName, acronym, subjects, tags);
   }
 
   /**
