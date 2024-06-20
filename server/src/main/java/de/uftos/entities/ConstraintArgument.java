@@ -1,27 +1,24 @@
 package de.uftos.entities;
 
-import de.uftos.dto.solver.RewardPenalize;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import java.util.List;
 import lombok.Data;
 
-@Entity(name = "constraint_instance")
+@Entity(name = "constraint_argument")
 @Data
-public class ConstraintInstance {
+public class ConstraintArgument {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private String id;
 
+  private String name;
+  private String value;
+
   @ManyToOne
-  private ConstraintSignature signature;
-
-  @OneToMany
-  private List<ConstraintArgument> arguments;
-
-  private RewardPenalize type;
+  @JsonIgnore
+  private ConstraintInstance constraintInstance;
 }
