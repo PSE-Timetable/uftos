@@ -20,7 +20,7 @@ public class UcdlEditorController {
   private final UcdlEditorService editorService;
 
   /**
-   * Creates an editor service.
+   * Creates an editor controller.
    *
    * @param editorService the service for the UCDL editor.
    */
