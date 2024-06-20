@@ -2,7 +2,7 @@ package de.uftos.services;
 
 import de.uftos.dto.LessonResponseDto;
 import de.uftos.entities.Lesson;
-import de.uftos.repositories.LessonRepository;
+import de.uftos.repositories.database.LessonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

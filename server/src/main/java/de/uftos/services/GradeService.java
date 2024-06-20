@@ -6,7 +6,7 @@ import de.uftos.dto.LessonResponseDto;
 import de.uftos.entities.Grade;
 import de.uftos.entities.Student;
 import de.uftos.entities.StudentGroup;
-import de.uftos.repositories.GradeRepository;
+import de.uftos.repositories.database.GradeRepository;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;

@@ -3,7 +3,7 @@ package de.uftos.services;
 import de.uftos.dto.StudentAndGroup;
 import de.uftos.dto.StudentGroupRequestDto;
 import de.uftos.entities.StudentGroup;
-import de.uftos.repositories.StudentGroupRepository;
+import de.uftos.repositories.database.StudentGroupRepository;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

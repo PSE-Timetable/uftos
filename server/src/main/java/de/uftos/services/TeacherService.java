@@ -3,7 +3,7 @@ package de.uftos.services;
 import de.uftos.dto.LessonResponseDto;
 import de.uftos.dto.TeacherRequestDto;
 import de.uftos.entities.Teacher;
-import de.uftos.repositories.TeacherRepository;
+import de.uftos.repositories.database.TeacherRepository;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;

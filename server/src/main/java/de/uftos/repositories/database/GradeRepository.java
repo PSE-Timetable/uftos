@@ -1,4 +1,4 @@
-package de.uftos.repositories;
+package de.uftos.repositories.database;
 
 import de.uftos.entities.Grade;
 import org.springframework.data.repository.ListCrudRepository;

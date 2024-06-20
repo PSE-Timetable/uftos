@@ -2,7 +2,7 @@ package de.uftos.services;
 
 import de.uftos.dto.TagRequestDto;
 import de.uftos.entities.Tag;
-import de.uftos.repositories.TagRepository;
+import de.uftos.repositories.database.TagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

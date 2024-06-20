@@ -1,4 +1,4 @@
-package de.uftos.repositories;
+package de.uftos.repositories.database;
 
 import de.uftos.dto.StudentAndGroup;
 import de.uftos.entities.StudentGroup;

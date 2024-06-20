@@ -2,7 +2,7 @@ package de.uftos.services;
 
 import de.uftos.dto.StudentRequestDto;
 import de.uftos.entities.Student;
-import de.uftos.repositories.StudentRepository;
+import de.uftos.repositories.database.StudentRepository;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
