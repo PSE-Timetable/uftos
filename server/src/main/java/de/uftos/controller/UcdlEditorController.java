@@ -4,7 +4,7 @@ import de.uftos.dto.parser.ParsingResponse;
 import de.uftos.services.UcdlEditorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,7 +36,7 @@ public class UcdlEditorController {
    * @param file the file which contains the new UCDL code.
    * @return a response whether the file could be parsed successfully or not.
    */
-  @PostMapping()
+  @PutMapping()
   public ParsingResponse set(@RequestBody MultipartFile file) {
     return this.editorService.setUcdl(file);
   }
@@ -48,7 +48,7 @@ public class UcdlEditorController {
    * @return a file containing the current UCDL code.
    */
   @GetMapping()
-  public MultipartFile getTimetables() {
+  public MultipartFile getUcdl() {
     return this.editorService.getUcdl();
   }
 
