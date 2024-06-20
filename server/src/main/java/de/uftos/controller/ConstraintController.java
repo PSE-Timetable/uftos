@@ -41,17 +41,17 @@ public class ConstraintController {
     return this.constraintSignatureService.getById(id);
   }
 
-  @PostMapping("/{id}/instances")
-  public ConstraintInstance createConstraintInstance(@PathVariable String id,
+  @PostMapping("/{signatureId}/instances")
+  public ConstraintInstance createConstraintInstance(@PathVariable String signatureId,
                                                      ConstraintInstanceRequestDto request) {
-    return this.constraintInstanceService.create(id, request);
+    return this.constraintInstanceService.create(signatureId, request);
   }
 
-  @GetMapping("/{id}/instances")
-  public Page<ConstraintInstance> getConstraintInstances(@PathVariable String id,
+  @GetMapping("/{signatureId}/instances")
+  public Page<ConstraintInstance> getConstraintInstances(@PathVariable String signatureId,
                                                          Pageable pageable,
                                                          Optional<String> argument) {
-    return this.constraintInstanceService.get(id, pageable);
+    return this.constraintInstanceService.get(signatureId, pageable);
   }
 
   @GetMapping("/{signatureId}/instances/{id}")
