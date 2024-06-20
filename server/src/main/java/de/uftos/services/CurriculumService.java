@@ -4,7 +4,7 @@ package de.uftos.services;
 import de.uftos.dto.CurriculumRequestDto;
 import de.uftos.dto.CurriculumResponseDto;
 import de.uftos.entities.Curriculum;
-import de.uftos.repositories.CurriculumRepository;
+import de.uftos.repositories.database.CurriculumRepository;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
