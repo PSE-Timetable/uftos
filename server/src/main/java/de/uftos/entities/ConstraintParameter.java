@@ -12,7 +12,7 @@ import jakarta.persistence.ManyToOne;
 import lombok.Data;
 
 /**
- * The database entity for constraint parameters.
+ * The database table for constraint parameters.
  * Contains an ID, the name and type of the parameter as well as the constraint signature using it.
  */
 @Entity(name = "constraint_parameter")
