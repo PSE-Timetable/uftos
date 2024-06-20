@@ -56,7 +56,7 @@ public class TagController {
    */
   @GetMapping()
   public Page<Tag> getTags(Pageable pageable, Optional<String> name) {
-    return this.tagsService.get(pageable);
+    return this.tagsService.get(pageable, name);
   }
 
   /**
