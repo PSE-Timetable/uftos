@@ -31,9 +31,9 @@ public class ConstraintInstanceService {
   /**
    * Creates a new constraint instance.
    *
-   * @param signatureId the constraint signature id
-   * @param request     the constraint instance request object
-   * @return the newly created constraint instance
+   * @param signatureId the constraint signature id.
+   * @param request     the constraint instance request object.
+   * @return the newly created constraint instance.
    */
   public ConstraintInstance create(String signatureId, ConstraintInstanceRequestDto request) {
     return null;
@@ -44,7 +44,6 @@ public class ConstraintInstanceService {
    *
    * @param signatureId the ID of the signature for the instances.
    * @param pageable    contains the parameters for the page.
-   * @param argument    the argument filter.
    * @return the page of the entries fitting the parameters.
    */
   public Page<ConstraintInstance> get(String signatureId, Pageable pageable,
@@ -57,8 +56,7 @@ public class ConstraintInstanceService {
    *
    * @param id the ID of the constraintInstance.
    * @return the constraintInstance with the given ID.
-   * @throws ResponseStatusException is thrown if the ID doesn't have a corresponding
-   *                                 constraintInstance.
+   * @throws ResponseStatusException if the ID doesn't have a corresponding constraintInstance.
    */
   public ConstraintInstance getById(String signatureId, String id) {
     return this.repository.findById(id)

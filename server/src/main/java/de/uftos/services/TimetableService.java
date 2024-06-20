@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
- * The service for accessing the timetable database entity.
+ * The service providing the logic of the /timetables endpoint.
  */
 @Service
 public class TimetableService {
@@ -21,7 +21,7 @@ public class TimetableService {
   /**
    * Creates a timetable service.
    *
-   * @param repository the repository for accessing the timetable entity.
+   * @param repository the repository for accessing the timetable table.
    */
   @Autowired
   public TimetableService(TimetableRepository repository) {
@@ -29,7 +29,7 @@ public class TimetableService {
   }
 
   /**
-   * Gets a page of entries of the timetable entity.
+   * Gets a page of entries of the timetable table.
    *
    * @param pageable contains the parameters for the page.
    * @param name     the name filter.

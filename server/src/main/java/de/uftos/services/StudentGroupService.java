@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
- * The service for accessing the student group database entity.
+ * The service providing the logic of the /student-groups endpoint.
  */
 @Service
 public class StudentGroupService {
@@ -23,7 +23,7 @@ public class StudentGroupService {
   /**
    * Creates a student group service.
    *
-   * @param repository the repository for accessing the student entity.
+   * @param repository the repository for accessing the student group table.
    */
   @Autowired
   public StudentGroupService(StudentGroupRepository repository) {
@@ -31,7 +31,7 @@ public class StudentGroupService {
   }
 
   /**
-   * Gets a page of entries of the student group entity.
+   * Gets a page of entries of the student group table.
    *
    * @param pageable contains the parameters for the page.
    * @param name     the name filter.

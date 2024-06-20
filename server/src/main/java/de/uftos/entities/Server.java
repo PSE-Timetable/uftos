@@ -4,23 +4,25 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * The database table for lesson counts.
- * Contains an ID, the subject it applies to and a count for the amount of lessons.
+ * The database entity for server.
+ * Contains an ID and a timeslot length.
+ * There should only ever exist one entity of this kind.
  */
-@Entity(name = "lessons_count")
+@Entity(name = "server")
 @Data
 @NoArgsConstructor
-public class LessonsCount {
-
+public class Server {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private String id;
-  @ManyToOne
-  private Subject subject;
-  private Integer count;
+
+  private int timeslotLength;
+
+  public Server(int timeslotLength) {
+    this.timeslotLength = timeslotLength;
+  }
 }

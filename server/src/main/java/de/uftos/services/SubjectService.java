@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
- * The service for accessing the subject database entity.
+ * The service providing the logic of the /subjects endpoint.
  */
 @Service
 public class SubjectService {
@@ -21,7 +21,7 @@ public class SubjectService {
   /**
    * Creates a subject service.
    *
-   * @param repository The repository for accessing the subject entity.
+   * @param repository The repository for accessing the subject table.
    */
   @Autowired
   public SubjectService(SubjectRepository repository) {
@@ -29,7 +29,7 @@ public class SubjectService {
   }
 
   /**
-   * Gets a page of entries of the subject entity.
+   * Gets a page of entries of the subject table.
    *
    * @param pageable contains the parameters for the page.
    * @param name the name filter.

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
- * The service for accessing the teacher database entity.
+ * The service providing the logic of the /lessons endpoint.
  */
 @Service
 public class LessonService {
@@ -20,7 +20,7 @@ public class LessonService {
   /**
    * Creates a lesson service.
    *
-   * @param repository the repository for accessing the lesson entity.
+   * @param repository the repository for accessing the lesson table.
    */
   @Autowired
   public LessonService(LessonRepository repository) {
@@ -28,7 +28,7 @@ public class LessonService {
   }
 
   /**
-   * Gets a page of entries of the lesson entity.
+   * Gets a page of entries of the lesson table.
    *
    * @param pageable contains the parameters for the page.
    * @return the page of entries fitting the parameters.
@@ -70,7 +70,7 @@ public class LessonService {
   /**
    * Updates the lesson with the given ID.
    *
-   * @param id             the ID of the lesson which is to be updated.
+   * @param id     the ID of the lesson which is to be updated.
    * @param lesson the updated lesson information.
    * @return the updated lesson.
    */

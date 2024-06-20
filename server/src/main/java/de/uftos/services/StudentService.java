@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
- * The service for accessing the student database entity.
+ * The service providing the logic of the /students endpoint.
  */
 @Service
 public class StudentService {
@@ -21,7 +21,7 @@ public class StudentService {
   /**
    * Creates a student service.
    *
-   * @param repository the repository for accessing the student entity.
+   * @param repository the repository for accessing the student table.
    */
   @Autowired
   public StudentService(StudentRepository repository) {
@@ -29,7 +29,7 @@ public class StudentService {
   }
 
   /**
-   * Gets a page of entries of the student entity.
+   * Gets a page of entries of the student table.
    *
    * @param pageable  contains the parameters for the page.
    * @param firstName the first name filter.

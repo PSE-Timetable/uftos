@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
- * The service for accessing the teacher database entity.
+ * The service providing the logic of the /teachers endpoint.
  */
 @Service
 public class TeacherService {
@@ -23,15 +23,15 @@ public class TeacherService {
   /**
    * Creates a teacher service.
    *
-   * @param repository the repository for accessing the teacher entity.
+   * @param repository the repository for accessing the teacher table.
    */
   @Autowired
   public TeacherService(TeacherRepository repository) {
     this.repository = repository;
   }
 
-  /*
-   * Gets a page of entries of the teacher entity.
+  /**
+   * Gets a page of entries of the teacher table.
    *
    * @param pageable contains the parameters for the page.
    * @return the page of entries fitting the parameters.

@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
- * The service for accessing the tag database entity.
+ * The service providing the logic of the /tags endpoint.
  */
 @Service
 public class TagService {
@@ -21,7 +21,7 @@ public class TagService {
   /**
    * Creates a tag service.
    *
-   * @param repository the repository for accessing the tag entity.
+   * @param repository the repository for accessing the tag table.
    */
   @Autowired
   public TagService(TagRepository repository) {
@@ -29,7 +29,7 @@ public class TagService {
   }
 
   /**
-   * Gets a page of entries of the tag entity.
+   * Gets a page of entries of the tag table.
    *
    * @param pageable contains the parameters for the page.
    * @param name     the name filter.

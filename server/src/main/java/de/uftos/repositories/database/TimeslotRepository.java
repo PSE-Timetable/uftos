@@ -5,7 +5,7 @@ import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.data.repository.ListPagingAndSortingRepository;
 
 /**
- * The repository for accessing the timeslot database entity.
+ * The repository for accessing the timeslot database table.
  */
 public interface TimeslotRepository extends ListPagingAndSortingRepository<Timeslot, String>,
     ListCrudRepository<Timeslot, String> {

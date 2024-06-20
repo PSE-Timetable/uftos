@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
- * The service for accessing the timeslot database entity.
+ * The service providing the logic of the /timeslots endpoint.
  */
 @Service
 public class TimeslotService {
@@ -20,7 +20,7 @@ public class TimeslotService {
   /**
    * Creates a timeslot service.
    *
-   * @param repository the repository for accessing the timeslot entity.
+   * @param repository the repository for accessing the timeslot table.
    */
   @Autowired
   public TimeslotService(TimeslotRepository repository) {
@@ -28,7 +28,7 @@ public class TimeslotService {
   }
 
   /**
-   * Gets a page of entries of the timeslot entity.
+   * Gets a page of entries of the timeslot table.
    *
    * @param pageable contains the parameters for the page.
    * @return the page of entries fitting the parameters.

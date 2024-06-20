@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 
 /**
  * The database entity for grades.
- * Contains an ID, the name of the grade as well as the student groups that in the
+ * Contains an ID, the name of the grade as well as the student groups that are in the
  * grade as well as the tags associated with it.
  */
 @Entity(name = "grades")
