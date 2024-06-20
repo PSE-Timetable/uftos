@@ -42,7 +42,8 @@ public class ConstraintController {
 
   /**
    * Maps the HTTP GET request for a set of constraints signatures from the database, to the
-   * {@link ConstraintSignatureService#get(Pageable, Optional) get} function of the constraint signature service.
+   * {@link ConstraintSignatureService#get(Pageable, Optional) get} function of the
+   * constraint signature service.
    *
    * @param pageable contains the parameters for the page.
    * @param name     the name filter.
@@ -56,7 +57,8 @@ public class ConstraintController {
 
   /**
    * Maps the HTTP GET request for a constraint signature with the given ID to the
-   * {@link ConstraintSignatureService#getById(String)}  getById} function of the constraint signature service.
+   * {@link ConstraintSignatureService#getById(String)}  getById} function of the
+   * constraint signature service.
    *
    * @param signatureId the ID of the student.
    * @return the constraint signature with the given ID.
@@ -68,7 +70,8 @@ public class ConstraintController {
 
   /**
    * Maps the HTTP POST request, to create a new constraint instance in the database, to the
-   * {@link ConstraintInstanceService#create(String, ConstraintInstanceRequestDto) create} function of the constraint instance service.
+   * {@link ConstraintInstanceService#create(String, ConstraintInstanceRequestDto) create} function
+   * of the constraint instance service.
    *
    * @param signatureId the constraint signature for which an instance is to be created.
    * @return the created student with the assigned ID.
@@ -81,7 +84,8 @@ public class ConstraintController {
 
   /**
    * Maps the HTTP GET request for a constraint signature with the given ID to the
-   * {@link ConstraintSignatureService#getById(String)}  getById} function of the constraint signature service.
+   * {@link ConstraintSignatureService#getById(String)}  getById} function of
+   * the constraint signature service.
    *
    * @param signatureId the constraint signature for which an instance is to be created.
    * @param pageable    contains the parameters for the page.
@@ -97,7 +101,8 @@ public class ConstraintController {
 
   /**
    * Maps the HTTP GET request for a constraint instance with the given ID to the
-   * {@link ConstraintInstanceService#getById(String, String)  getById} function of the constraint instance service.
+   * {@link ConstraintInstanceService#getById(String, String)  getById} function of
+   * the constraint instance service.
    *
    * @param signatureId the constraint signature for which an instance is to be created.
    * @param id          the id of the instance to return.
@@ -111,8 +116,8 @@ public class ConstraintController {
 
   /**
    * Maps the HTTP PUT request to update a student to the
-   * {@link ConstraintInstanceService#update(String, String, ConstraintInstanceRequestDto) update} function of
-   * the student service.
+   * {@link ConstraintInstanceService#update(String, String, ConstraintInstanceRequestDto) update}
+   * function of the student service.
    *
    * @param signatureId the constraint signature for which an instance is to be created.
    * @param id          the id of the instance to return.
@@ -126,6 +131,13 @@ public class ConstraintController {
     return this.constraintInstanceService.update(signatureId, id, request);
   }
 
+  /**
+   * Maps the HTTP DELETE request to the
+   * {@link ConstraintInstanceService#delete(String, String) delete} function of
+   * the student service.
+   *
+   * @param id the ID of the student which is to be deleted.
+   */
   @DeleteMapping("/{signatureId}/instances/{id}")
   public void deleteConstraintInstance(@PathVariable String signatureId,
                                        @PathVariable String id
