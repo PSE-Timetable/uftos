@@ -55,7 +55,7 @@ public class TimetableController {
    */
   @GetMapping()
   public Page<Timetable> getTimetables(Pageable pageable, Optional<String> name) {
-    return this.timetablesService.get(pageable);
+    return this.timetablesService.get(pageable, name);
   }
 
   /**
