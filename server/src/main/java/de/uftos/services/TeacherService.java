@@ -31,13 +31,6 @@ public class TeacherService {
   }
 
   /**
-   * Gets a page of entries of the teacher table.
-   *
-   * @param pageable contains the parameters for the page.
-   * @return the page of entries fitting the parameters.
-   */
-
-  /**
    * Gets a page of entries of the teacher entity.
    *
    * @param pageable  contains the parameters for the page.

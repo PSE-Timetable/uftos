@@ -49,15 +49,6 @@ public class TeacherController {
     return this.teacherService.create(teacher);
   }
 
-  /*
-   * Maps the HTTP GET request for a set of teachers from the database to the
-   * {@link TeacherService#get(Pageable, Optional, Optional, Optional, Optional, Optional) get}
-   * function of the teacher service.
-   *
-   * @param pageable contains the parameters for the page.
-   * @return the page of teachers fitting the parameters.
-   */
-
   /**
    * Maps the HTTP GET request for a set of teachers from the database to the
    * {@link TeacherService#get(Pageable, Optional, Optional, Optional, Optional, Optional) get}
