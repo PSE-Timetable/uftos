@@ -11,7 +11,7 @@ import java.util.concurrent.Future;
 /**
  * The solver repository provides functionality for solving timetable scheduling problems.
  */
-public class SolverRepositoryUcdl implements SolverRepository {
+public class SolverRepositoryImpl implements SolverRepository {
   @Override
   public Future<TimetableSolutionDto> solve(TimetableProblemDto timetable,
                                             HashMap<String, ConstraintDefinitionDto> constaintDefinitions,
