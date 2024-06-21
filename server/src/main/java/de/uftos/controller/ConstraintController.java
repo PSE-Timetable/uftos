@@ -64,7 +64,7 @@ public class ConstraintController {
    * @return the constraint signature with the given ID.
    */
   @GetMapping("/{signatureId}")
-  public ConstraintSignature getConstraintSignatures(@PathVariable String signatureId) {
+  public ConstraintSignature getConstraintSignature(@PathVariable String signatureId) {
     return this.constraintSignatureService.getById(signatureId);
   }
 
