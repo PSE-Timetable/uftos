@@ -33,10 +33,16 @@ public class RoomService {
   /**
    * Gets a page of entries of the lesson table.
    *
-   * @param pageable contains the parameters for the page.
+   * @param pageable     contains the parameters for the page.
+   * @param name         the name filter.
+   * @param buildingName the building name filter.
+   * @param capacity     the capacity filter.
+   * @param tags         the tags filter.
    * @return the page of entries fitting the parameters.
    */
-  public Page<Room> get(Pageable pageable) {
+  public Page<Room> get(Pageable pageable, Optional<String> name,
+                        Optional<String> buildingName, Optional<Integer> capacity,
+                        Optional<String[]> tags) {
     return this.repository.findAll(pageable);
   }
 

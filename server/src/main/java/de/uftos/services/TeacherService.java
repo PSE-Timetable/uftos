@@ -31,12 +31,19 @@ public class TeacherService {
   }
 
   /**
-   * Gets a page of entries of the teacher table.
+   * Gets a page of entries of the teacher entity.
    *
-   * @param pageable contains the parameters for the page.
+   * @param pageable  contains the parameters for the page.
+   * @param firstName the first name filter.
+   * @param lastName  the last name filter.
+   * @param acronym   the acronym filter.
+   * @param subjects  the subjects filter.
+   * @param tags      the tags filter.
    * @return the page of entries fitting the parameters.
    */
-  public Page<Teacher> get(Pageable pageable) {
+  public Page<Teacher> get(Pageable pageable, Optional<String> firstName,
+                           Optional<String> lastName, Optional<String> acronym,
+                           Optional<String[]> subjects, Optional<String[]> tags) {
     return this.repository.findAll(pageable);
   }
 

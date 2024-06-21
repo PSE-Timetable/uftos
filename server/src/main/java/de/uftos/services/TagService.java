@@ -3,6 +3,7 @@ package de.uftos.services;
 import de.uftos.dto.TagRequestDto;
 import de.uftos.entities.Tag;
 import de.uftos.repositories.database.TagRepository;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,9 +32,10 @@ public class TagService {
    * Gets a page of entries of the tag table.
    *
    * @param pageable contains the parameters for the page.
+   * @param name     the name filter.
    * @return the page of entries fitting the parameters.
    */
-  public Page<Tag> get(Pageable pageable) {
+  public Page<Tag> get(Pageable pageable, Optional<String> name) {
     return this.repository.findAll(pageable);
   }
 

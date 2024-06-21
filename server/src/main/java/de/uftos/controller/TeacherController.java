@@ -5,6 +5,7 @@ import de.uftos.dto.TeacherRequestDto;
 import de.uftos.entities.Teacher;
 import de.uftos.services.TeacherService;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -50,14 +51,22 @@ public class TeacherController {
 
   /**
    * Maps the HTTP GET request for a set of teachers from the database to the
-   * {@link TeacherService#get(Pageable) get} function of the teacher service.
+   * {@link TeacherService#get(Pageable, Optional, Optional, Optional, Optional, Optional) get}
+   * function of the teacher service.
    *
-   * @param pageable contains the parameters for the page.
+   * @param pageable  contains the parameters for the page.
+   * @param firstName the first name filter.
+   * @param lastName  the last name filter.
+   * @param acronym   the acronym filter.
+   * @param subjects  the subjects filter.
+   * @param tags      the tags filter.
    * @return the page of teachers fitting the parameters.
    */
   @GetMapping()
-  public Page<Teacher> getTeachers(Pageable pageable) {
-    return this.teacherService.get(pageable);
+  public Page<Teacher> getTeachers(Pageable pageable, Optional<String> firstName,
+                                   Optional<String> lastName, Optional<String> acronym,
+                                   Optional<String[]> subjects, Optional<String[]> tags) {
+    return this.teacherService.get(pageable, firstName, lastName, acronym, subjects, tags);
   }
 
   /**

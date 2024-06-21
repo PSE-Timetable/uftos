@@ -3,6 +3,7 @@ package de.uftos.services;
 import de.uftos.dto.ConstraintInstanceRequestDto;
 import de.uftos.entities.ConstraintInstance;
 import de.uftos.repositories.database.ConstraintInstanceRepository;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -45,7 +46,8 @@ public class ConstraintInstanceService {
    * @param pageable    contains the parameters for the page.
    * @return the page of the entries fitting the parameters.
    */
-  public Page<ConstraintInstance> get(String signatureId, Pageable pageable) {
+  public Page<ConstraintInstance> get(String signatureId, Pageable pageable,
+                                      Optional<String> argument) {
     return this.repository.findAll(pageable);
   }
 
