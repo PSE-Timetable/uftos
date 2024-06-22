@@ -1,5 +1,6 @@
 package de.uftos.controller;
 
+import de.uftos.dto.LessonResponseDto;
 import de.uftos.dto.StudentGroupRequestDto;
 import de.uftos.entities.StudentGroup;
 import de.uftos.services.StudentGroupService;
@@ -72,6 +73,19 @@ public class StudentGroupController {
   @GetMapping("/{id}")
   public StudentGroup getStudentGroup(@PathVariable String id) {
     return this.studentGroupService.getById(id);
+  }
+
+  /**
+   * Maps the HTTP GET request, to get the lessons that the student group attends, to the
+   * {@link StudentGroupService#getLessonsById(String) getLessonsById}
+   * function of the student group service.
+   *
+   * @param id the ID of the student group.
+   * @return information about the lessons that the student group attends.
+   */
+  @GetMapping("/{id}/lessons")
+  public List<LessonResponseDto> getLessons(@PathVariable String id) {
+    return this.studentGroupService.getLessonsById(id);
   }
 
   /**

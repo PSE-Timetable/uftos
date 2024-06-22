@@ -1,5 +1,6 @@
 package de.uftos.services;
 
+import de.uftos.dto.LessonResponseDto;
 import de.uftos.dto.StudentAndGroup;
 import de.uftos.dto.StudentGroupRequestDto;
 import de.uftos.entities.StudentGroup;
@@ -49,9 +50,22 @@ public class StudentGroupService {
    * @throws ResponseStatusException is thrown if the ID doesn't have a corresponding student group.
    */
   public StudentGroup getById(String id) {
-    var group = this.repository.findById(id);
+    Optional<StudentGroup> group = this.repository.findById(id);
 
     return group.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+  }
+
+  /**
+   * Gets the information about the lessons that the student group attends.
+   *
+   * @param id the ID of the student group.
+   * @return a list of objects each containing information about a lesson.
+   * @throws ResponseStatusException is thrown if the ID doesn't have a corresponding student group.
+   */
+  public List<LessonResponseDto> getLessonsById(String id) {
+    StudentGroup studentGroup = this.getById(id);
+    // TODO
+    return null;
   }
 
   /**
