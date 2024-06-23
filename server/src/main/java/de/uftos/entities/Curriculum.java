@@ -1,5 +1,6 @@
 package de.uftos.entities;
 
+import de.uftos.dto.LessonsCountRequestDto;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -32,11 +33,10 @@ public class Curriculum {
   /**
    * Creates a new curriculum.
    *
-   * @param grade         the grade to which the curriculum applies to.
+   * @param gradeId       the grade id to which the curriculum applies to.
    * @param lessonsCounts the lesson counts which apply to the given grade.
    */
-  public Curriculum(Grade grade, List<LessonsCount> lessonsCounts) {
-    this.grade = grade;
-    this.lessonsCounts = lessonsCounts;
+  public Curriculum(String gradeId, List<LessonsCountRequestDto> lessonsCounts) {
+    // TODO implement
   }
 }

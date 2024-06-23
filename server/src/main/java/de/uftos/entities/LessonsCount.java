@@ -23,4 +23,14 @@ public class LessonsCount {
   @ManyToOne
   private Subject subject;
   private Integer count;
+
+  /**
+   * Creates a new lesson count.
+   *
+   * @param subjectId the id of the subject.
+   * @param count     the number of timeslots this subject will be hold per week.
+   */
+  public LessonsCount(String subjectId, int count) {
+    // TODO implement
+  }
 }

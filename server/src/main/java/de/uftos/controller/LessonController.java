@@ -1,5 +1,6 @@
 package de.uftos.controller;
 
+import de.uftos.dto.LessonRequestDto;
 import de.uftos.dto.LessonResponseDto;
 import de.uftos.entities.Lesson;
 import de.uftos.services.LessonService;
@@ -36,13 +37,13 @@ public class LessonController {
 
   /**
    * Maps the HTTP POST request, to create a new lesson in the database, to the
-   * {@link LessonService#create(Lesson) create} function of the lesson service.
+   * {@link LessonService#create(LessonRequestDto) create} function of the lesson service.
    *
    * @param lesson the lessons which is to be created.
    * @return the created lesson with the assigned ID.
    */
   @PostMapping()
-  public Lesson createLesson(@RequestBody Lesson lesson) {
+  public Lesson createLesson(@RequestBody LessonRequestDto lesson) {
     return this.lessonsService.create(lesson);
   }
 
@@ -72,14 +73,14 @@ public class LessonController {
 
   /**
    * Maps the HTTP PUT request to update a lesson to the
-   * {@link LessonService#update(String, Lesson) update} function of the lesson service.
+   * {@link LessonService#update(String, LessonRequestDto) update} function of the lesson service.
    *
    * @param id     the ID of the lesson which is to be updated.
    * @param lesson the updated information of the lesson.
    * @return the updated lesson.
    */
   @PutMapping("/{id}")
-  public Lesson updateLesson(@PathVariable String id, @RequestBody Lesson lesson) {
+  public Lesson updateLesson(@PathVariable String id, @RequestBody LessonRequestDto lesson) {
     return this.lessonsService.update(id, lesson);
   }
 
