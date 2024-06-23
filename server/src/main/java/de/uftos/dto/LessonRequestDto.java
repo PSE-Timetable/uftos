@@ -13,7 +13,7 @@ import de.uftos.entities.Lesson;
  * @param subjectId      the id of the subject to be hold in the lesson.
  * @param timetableId    the id of the timetable.
  */
-public record LessonRequestDto(String index, String teacherId, String studentGroupId, String roomId,
+public record LessonRequestDto(int index, String teacherId, String studentGroupId, String roomId,
                                String timeslotId, String subjectId, String timetableId) {
   /**
    * Maps the information from the data transfer object to a new lesson entity.

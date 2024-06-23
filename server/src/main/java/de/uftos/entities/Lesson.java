@@ -53,7 +53,7 @@ public class Lesson {
    * @param subjectId      the id of the subject to be hold in the lesson.
    * @param timetableId    the id of the timetable.
    */
-  public Lesson(String index, String teacherId, String studentGroupId, String roomId,
+  public Lesson(int index, String teacherId, String studentGroupId, String roomId,
                 String timeslotId, String subjectId, String timetableId) {
     // TODO implement
   }
