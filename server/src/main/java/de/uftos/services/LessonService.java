@@ -1,5 +1,6 @@
 package de.uftos.services;
 
+import de.uftos.dto.LessonRequestDto;
 import de.uftos.dto.LessonResponseDto;
 import de.uftos.entities.Lesson;
 import de.uftos.repositories.database.LessonRepository;
@@ -54,12 +55,13 @@ public class LessonService {
   /**
    * Creates a new lesson in the database.
    *
-   * @param lesson the information about the lesson which is to be created.
+   * @param lessonRequestDto the information about the lesson which is to be created.
    * @return the created lesson which includes the ID that was assigned.
    * @throws ResponseStatusException is thrown if the ID defined in the lesson parameter is
    *                                 already present in the database.
    */
-  public Lesson create(Lesson lesson) {
+  public Lesson create(LessonRequestDto lessonRequestDto) {
+    Lesson lesson = lessonRequestDto.map();
     if (this.repository.findById(lesson.getId()).isPresent()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
     }
@@ -70,11 +72,12 @@ public class LessonService {
   /**
    * Updates the lesson with the given ID.
    *
-   * @param id     the ID of the lesson which is to be updated.
-   * @param lesson the updated lesson information.
+   * @param id               the ID of the lesson which is to be updated.
+   * @param lessonRequestDto the updated lesson information.
    * @return the updated lesson.
    */
-  public Lesson update(String id, Lesson lesson) {
+  public Lesson update(String id, LessonRequestDto lessonRequestDto) {
+    Lesson lesson = lessonRequestDto.map();
     lesson.setId(id);
 
     return this.repository.save(lesson);

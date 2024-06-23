@@ -74,7 +74,7 @@ public class CurriculumController {
 
   /**
    * Maps the HTTP PUT request to update a curriculum to the
-   * {@link CurriculumService#update(String, CurriculumRequestDto)}  update} function of
+   * {@link CurriculumService#update(String, CurriculumRequestDto) update} function of
    * the curriculum service.
    *
    * @param id         the ID of the curriculum which is to be updated.

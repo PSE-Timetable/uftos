@@ -6,6 +6,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * The database entity for lessons.
@@ -15,6 +16,7 @@ import lombok.Data;
  */
 @Entity(name = "lessons")
 @Data
+@NoArgsConstructor
 public class Lesson {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
@@ -39,4 +41,21 @@ public class Lesson {
 
   @ManyToOne
   private Timetable timetable;
+
+  /**
+   * Creates a new lesson.
+   *
+   * @param index          the index of the lesson.
+   * @param teacherId      the id of the teacher that will hold the lesson.
+   * @param studentGroupId the id of the student group that will attend the lesson.
+   * @param roomId         the id of the room where the lesson will be hold.
+   * @param timeslotId     the id of the timeslot of when the lesson will be hold.
+   * @param subjectId      the id of the subject to be hold in the lesson.
+   * @param timetableId    the id of the timetable.
+   */
+  public Lesson(String index, String teacherId, String studentGroupId, String roomId,
+                String timeslotId, String subjectId, String timetableId) {
+    // TODO implement
+  }
+
 }
