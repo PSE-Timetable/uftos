@@ -5,6 +5,6 @@ WORKDIR /app
 COPY --chown=node:node package*.json ./
 RUN npm ci
 COPY --chown=node:node . .
-EXPOSE 3000
-#CMD ["node ./node_modules/.bin/vite dev --host 0.0.0.0 --port 3000"]
-ENTRYPOINT ["npm", "run", "dev"]
+EXPOSE 5173
+#CMD ["node ./node_modules/.bin/vite dev --host 0.0.0.0"]
+ENTRYPOINT ["npm", "run", "dev", "--", "--host", "0.0.0.0"]

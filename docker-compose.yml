@@ -31,7 +31,7 @@ services:
     build:
       context: ./web
     ports:
-      - 3000:3000
+      - 5173:5173
     volumes:
       - ./web:/app
       - /app/node_modules
