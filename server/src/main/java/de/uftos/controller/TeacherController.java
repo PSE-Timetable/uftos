@@ -89,7 +89,7 @@ public class TeacherController {
    * @return information about the lessons that the teacher teaches.
    */
   @GetMapping("/{id}/lessons")
-  public List<LessonResponseDto> getLessons(@PathVariable String id) {
+  public List<LessonResponseDto> getTeacherLessons(@PathVariable String id) {
     return this.teacherService.getLessonsById(id);
   }
 
