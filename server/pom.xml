@@ -15,7 +15,7 @@
     <description>A user friendly timetable optimizer</description>
     <properties>
         <java.version>21</java.version>
-        <timefold-solver.version>1.9.0</timefold-solver.version>
+        <timefold-solver.version>1.11.0</timefold-solver.version>
     </properties>
     <dependencies>
         <dependency>
