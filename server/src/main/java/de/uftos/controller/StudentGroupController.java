@@ -84,7 +84,7 @@ public class StudentGroupController {
    * @return information about the lessons that the student group attends.
    */
   @GetMapping("/{id}/lessons")
-  public List<LessonResponseDto> getLessons(@PathVariable String id) {
+  public List<LessonResponseDto> getStudentGroupLessons(@PathVariable String id) {
     return this.studentGroupService.getLessonsById(id);
   }
 
@@ -97,7 +97,8 @@ public class StudentGroupController {
    * @param studentIds the IDs of students which are to be added.
    */
   @PostMapping("/{id}/students")
-  public StudentGroup addStudents(@PathVariable String id, @RequestBody List<String> studentIds) {
+  public StudentGroup addStudentsToStudentGroup(@PathVariable String id,
+                                                  @RequestBody List<String> studentIds) {
     return this.studentGroupService.addStudents(id, studentIds);
   }
 
@@ -110,7 +111,8 @@ public class StudentGroupController {
    * @param studentIds the students which are to be removed.
    */
   @DeleteMapping("/{id}/students")
-  public void removeStudents(@PathVariable String id, @RequestBody List<String> studentIds) {
+  public void removeStudentsFromStudentGroup(@PathVariable String id,
+                                             @RequestBody List<String> studentIds) {
     this.studentGroupService.removeStudents(id, studentIds);
   }
 

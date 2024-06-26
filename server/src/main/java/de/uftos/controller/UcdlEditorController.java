@@ -37,7 +37,7 @@ public class UcdlEditorController {
    * @return a response whether the file could be parsed successfully or not.
    */
   @PutMapping()
-  public ParsingResponse set(@RequestBody MultipartFile file) {
+  public ParsingResponse setUcdlFile(@RequestBody MultipartFile file) {
     return this.editorService.setUcdl(file);
   }
 
@@ -48,7 +48,7 @@ public class UcdlEditorController {
    * @return a file containing the current UCDL code.
    */
   @GetMapping()
-  public MultipartFile getUcdl() {
+  public MultipartFile getUcdlFile() {
     return this.editorService.getUcdl();
   }
 

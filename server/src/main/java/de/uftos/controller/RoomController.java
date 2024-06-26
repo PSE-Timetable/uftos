@@ -88,7 +88,7 @@ public class RoomController {
    * @return information about the lessons that get taught in the room.
    */
   @GetMapping("/{id}/lessons")
-  public List<LessonResponseDto> getLessons(@PathVariable String id) {
+  public List<LessonResponseDto> getRoomLessons(@PathVariable String id) {
     return this.roomService.getLessonsById(id);
   }
 
