@@ -20,7 +20,7 @@
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
 
-    --primary: 120 100% 50%;
+    --primary: 197 52% 35%;
     --primary-foreground: 0 100% 50%;
 
     --secondary: 210 40% 96.1%;
@@ -75,6 +75,5 @@
   }
   body {
     @apply bg-background text-foreground;
-    @apply m-4; /* Tailwind CSS margin utility */
   }
 }
