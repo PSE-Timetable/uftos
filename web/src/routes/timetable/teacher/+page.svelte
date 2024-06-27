@@ -47,3 +47,37 @@
   </Select.Root>
 </div>
 <Timeslot />
+
+<div class="h-[100px]"></div>
+<!-- These empty divs are needed so that VITE doesn't let these bad apples fall.
+     There has to be a better fix!
+-->
+<div class="row-span-3"></div>
+<div class="row-span-4"></div>
+
+<div
+  class="inline-grid grid-flow-row gap-2 grid-cols-[max-content,repeat(5,1fr)] bg-white p-8 rounded-3xl w-full">
+  <Timeslot />
+  <Lesson color="orange" leftCorner="Tur" length={3} rightCorner="102" title="Deutsch" />
+  <Lesson color="purple" leftCorner="Tur" rightCorner="102" title="Deutsch" />
+  <Lesson color="red" leftCorner="Tur" rightCorner="102" title="Deutsch" />
+  <Lesson color="green" leftCorner="Tur" rightCorner="102" title="Deutsch" />
+  <Lesson color="aquamarine" leftCorner="Tur" rightCorner="102" title="Deutsch" />
+  <Timeslot begin="8:35" end="9:20" index="2." />
+  <Lesson color="aquamarine" leftCorner="Tur" rightCorner="102" title="Deutsch" />
+  <Lesson color="aquamarine" leftCorner="Tur" rightCorner="102" title="Deutsch" />
+  <Lesson color="aquamarine" leftCorner="Tur" rightCorner="102" title="Deutsch" />
+  <Lesson color="aquamarine" leftCorner="Tur" rightCorner="102" title="Deutsch" />
+  <Timeslot begin="9:25" end="10:10" index="3." />
+  <Lesson color="blue" leftCorner="Tur" rightCorner="102" title="Deutsch" />
+  <Lesson color="lightBlue" leftCorner="Tur" rightCorner="102" title="Deutsch" />
+  <Lesson color="lightBlue" leftCorner="Tur" rightCorner="102" title="Deutsch" />
+  <Lesson color="brown" leftCorner="Tur" rightCorner="102" title="Deutsch" />
+  <div class="col-span-full"></div>
+  <Timeslot begin="10:30" end="11:15" index="4." />
+  <Lesson color="blue" leftCorner="Tur" rightCorner="102" title="Deutsch" />
+  <Lesson color="lightBlue" leftCorner="Tur" rightCorner="102" title="Deutsch" />
+  <Lesson color="brown" leftCorner="Tur" rightCorner="102" title="Deutsch" />
+  <Lesson color="yellow" leftCorner="Tur" rightCorner="102" title="Deutsch" />
+  <Lesson color="blue" leftCorner="Tur" rightCorner="102" title="Deutsch" />
+</div>

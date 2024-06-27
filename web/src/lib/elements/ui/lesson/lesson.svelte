@@ -15,7 +15,8 @@
   let title: string = 'Deutsch';
   let leftCorner: string = 'Suc';
   let rightCorner: string = '105';
-  export { title, leftCorner, rightCorner };
+  let length: number = 1;
+  export { title, leftCorner, rightCorner, length };
 
   export let color: Color = 'red';
   const colorClasses: Record<Color, string> = {
@@ -31,9 +32,10 @@
   };
 </script>
 
-<div class="flex flex-col w-[200px] {colorClasses[color]} p-4 items-center rounded-lg gap-2">
+<div
+  class="row-span-{length} flex flex-col {colorClasses[color]} p-4 items-center rounded-lg gap-2 justify-between w-full h-full">
   <p>{ title }</p>
-  <div class="flex flex-row justify-between w-full">
+  <div class="flex flex-row justify-between w-full gap-6">
     <p>{ leftCorner }</p>
     <p>{ rightCorner }</p>
   </div>

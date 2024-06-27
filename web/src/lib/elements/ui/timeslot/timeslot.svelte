@@ -5,7 +5,7 @@
   export { begin, end, index };
 </script>
 
-<div class="flex flex-col w-min items-center gap-0.5">
+<div class="flex flex-col w-min items-center gap-0.5 col-[1]">
   <div class="flex w-max ">
     <p> { begin }</p>
   </div>
