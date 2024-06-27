@@ -1,6 +1,7 @@
 package de.uftos.dto.parser;
 
 import de.uftos.dto.ResourceType;
+import de.uftos.dto.solver.RewardPenalize;
 import java.util.HashMap;
 
 /**
@@ -12,6 +13,8 @@ import java.util.HashMap;
  */
 public record ConstraintDefinitionDto(
     String name,
+    String description,
+    RewardPenalize defaultType,
     HashMap<String, ResourceType> parameters,
     AbstractSyntaxTreeDto root
 ) {
