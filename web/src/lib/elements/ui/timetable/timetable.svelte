@@ -1,5 +1,8 @@
 <script lang="ts">
-  export let begin: string = '7:45';
-  export let end: string = '8:30';
-  export let index: string = '1.';
+  import type { LessonResponseDto } from '$lib/sdk/fetch-client';
+
+  let begin: string = '7:45';
+  let end: string = '8:30';
+  let index: string = '1.';
+  export { begin, end, index };
 </script>
