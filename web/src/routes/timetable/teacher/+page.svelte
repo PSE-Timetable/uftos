@@ -1,13 +1,8 @@
 <script>
-  import Checkbox from '$lib/elements/ui/checkbox/checkbox.svelte';
   import * as Select from '$lib/elements/ui/select';
-  import * as Tabs from '$lib/elements/ui/tabs';
   import Lesson from '$lib/components/ui/lesson/lesson.svelte';
   import Timeslot from '$lib/elements/ui/timeslot/timeslot.svelte';
-  import Button from '$lib/elements/ui/button/button.svelte';
-  import DataTable from '$lib/elements/ui/dataTable/data-table.svelte';
-  import Navbar from '$lib/elements/ui/navbar/navbar.svelte';
-
+  import * as Tabs from '$lib/elements/ui/tabs';
 
   const classes = [
     { value: '5A', label: '5A' },
