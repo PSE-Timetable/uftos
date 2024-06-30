@@ -3,13 +3,13 @@ services:
     image: postgres:16.3-alpine3.18
     restart: unless-stopped
     ports:
-      - ${DB_PORT}:5432
+      - 5432:5432
     volumes:
       - pgdata:/var/lib/postgresql/data
     environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: uftos
+      POSTGRES_PASSWORD: superSecurePassword
+      POSTGRES_DB: uftos
   api:
     image: uftos-server-dev:latest
     build:
@@ -24,8 +24,12 @@ services:
       - ./server:/app
     depends_on:
       - db
-    env_file: 
-      - .env
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: uftos
+      DB_PASSWORD: superSecurePassword
+      DB_NAME: uftos
   web:
     image: uftos-web-dev:latest
     build:
