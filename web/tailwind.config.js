@@ -15,6 +15,15 @@ const config = {
     },
     extend: {
       colors: {
+        subjectPurple: '#BD90E9',
+        subjectOrange: '#F7B37E',
+        subjectLightBlue: '#7CC8EE',
+        subjectBlue: '#81A0EA',
+        subjectGreen: '#9ADD8D',
+        subjectRed: '#F79298',
+        subjectYellow: '#F1C56A',
+        subjectBrown: '#CCAB94',
+        subjectAquamarine: '#59CFC2',
         border: 'hsl(var(--border) / <alpha-value>)',
         input: 'hsl(var(--input) / <alpha-value>)',
         ring: 'hsl(var(--ring) / <alpha-value>)',
