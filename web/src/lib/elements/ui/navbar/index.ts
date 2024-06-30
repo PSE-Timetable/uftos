@@ -1,1 +1,1 @@
-export { default as Root, default as Navbar } from './navbar.svelte';
+export { default as Navbar, default as Root } from './navbar.svelte';
