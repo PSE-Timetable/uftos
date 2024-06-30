@@ -21,7 +21,6 @@
         <Tabs.Trigger value="teacher">Lehrer</Tabs.Trigger>
         <Tabs.Trigger value="room">Raum</Tabs.Trigger>
       </Tabs.List>
-
     </Tabs.Root>
 
     <div class="flex flex-row items-baseline gap-2">
@@ -44,15 +43,7 @@
     </div>
   </div>
 
-  <!-- These empty divs are needed so that VITE doesn't let these bad apples fall.
-       There has to be a better fix!
-  -->
-  <div class="row-span-2"></div>
-  <div class="row-span-3"></div>
-  <div class="row-span-4"></div>
-
-  <div
-    class="inline-grid grid-flow-row gap-2 grid-cols-[max-content,repeat(5,1fr)] bg-white p-4 rounded-2xl w-full">
+  <div class="inline-grid grid-flow-row gap-2 grid-cols-[max-content,repeat(5,1fr)] bg-white p-4 rounded-2xl w-full">
     <Timeslot />
     <Lesson color="orange" leftCorner="Tur" length={2} rightCorner="102" title="Deutsch" />
     <Lesson color="purple" leftCorner="Tur" rightCorner="102" title="Deutsch" />

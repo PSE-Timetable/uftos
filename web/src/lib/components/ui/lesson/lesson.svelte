@@ -1,14 +1,5 @@
 <script context="module" lang="ts">
-  export type Color =
-    | 'purple'
-    | 'orange'
-    | 'lightBlue'
-    | 'blue'
-    | 'green'
-    | 'red'
-    | 'yellow'
-    | 'brown'
-    | 'aquamarine';
+  export type Color = 'purple' | 'orange' | 'lightBlue' | 'blue' | 'green' | 'red' | 'yellow' | 'brown' | 'aquamarine';
 </script>
 
 <script lang="ts">
@@ -33,10 +24,13 @@
 </script>
 
 <div
-  class="row-span-{length} flex flex-col {colorClasses[color]} p-4 items-center rounded-lg gap-2 justify-between w-full h-full">
-  <p>{ title }</p>
+  class="row-span-{length} flex flex-col {colorClasses[
+    color
+  ]} p-4 items-center rounded-lg gap-2 justify-between w-full h-full"
+>
+  <p>{title}</p>
   <div class="flex flex-row justify-between w-full gap-6">
-    <p>{ leftCorner }</p>
-    <p>{ rightCorner }</p>
+    <p>{leftCorner}</p>
+    <p>{rightCorner}</p>
   </div>
 </div>

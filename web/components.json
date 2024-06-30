@@ -1,14 +1,14 @@
 {
-	"$schema": "https://shadcn-svelte.com/schema.json",
-	"style": "default",
-	"tailwind": {
-		"config": "tailwind.config.js",
-		"css": "src/app.css",
-		"baseColor": "slate"
-	},
-	"aliases": {
-		"components": "$lib/elements",
-		"utils": "$lib/utils"
-	},
-	"typescript": true
+  "$schema": "https://shadcn-svelte.com/schema.json",
+  "aliases": {
+    "components": "$lib/elements",
+    "utils": "$lib/utils"
+  },
+  "style": "default",
+  "tailwind": {
+    "baseColor": "slate",
+    "config": "tailwind.config.js",
+    "css": "src/app.css"
+  },
+  "typescript": true
 }
