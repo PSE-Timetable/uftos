@@ -13,14 +13,14 @@
   import { Button } from '$lib/elements/ui/button';
   import ArrowUpDown from 'lucide-svelte/icons/arrow-up-down';
   import ChevronDown from 'lucide-svelte/icons/chevron-down';
-  import { Input } from '$lib/elements/ui/input';
+  import * as Input from '$lib/elements/ui/input';
   import * as DropdownMenu from '$lib/elements/ui/dropdown-menu';
   import DataTableCheckbox from './data-table-checkbox.svelte';
 
   interface DataItem {
     id: string;
 
-    [key: string]: string;
+    [key: string]: string | string[] | number;
   }
 
   export let data: DataItem[];
@@ -89,7 +89,7 @@
         header: '',
         id: 'actions',
         cell: ({ value }) => {
-          return createRender(DataTableActions, { id: value });
+          return createRender(DataTableActions, { id: value.toString() });
         },
         plugins: {
           sort: {

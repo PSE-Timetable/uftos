@@ -1,6 +1,6 @@
-import type { LayoutLoad, PageLoad } from './$types';
+import type { LayoutLoad } from './$types';
 
-export const load = (async () => {
+export const load = (() => {
   return {
     meta: {
       title: 'UFTOS',
