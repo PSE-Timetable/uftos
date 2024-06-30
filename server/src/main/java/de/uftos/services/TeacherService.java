@@ -4,11 +4,12 @@ import de.uftos.dto.LessonResponseDto;
 import de.uftos.dto.TeacherRequestDto;
 import de.uftos.entities.Teacher;
 import de.uftos.repositories.database.TeacherRepository;
-import java.util.List;
+import jakarta.persistence.criteria.Predicate;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -44,7 +45,57 @@ public class TeacherService {
   public Page<Teacher> get(Pageable pageable, Optional<String> firstName,
                            Optional<String> lastName, Optional<String> acronym,
                            Optional<String[]> subjects, Optional<String[]> tags) {
-    return this.repository.findAll(pageable);
+    Specification<Teacher> spec = (Specification
+        .where(firstNameFilter(firstName))
+        .or(lastNameFilter(lastName))
+        .or(acronymFilter(acronym)))
+        .and(subjectsFilter(subjects))
+        .and(tagsFilter(tags));
+    return this.repository.findAll(spec, pageable);
+  }
+
+  private Specification<Teacher> firstNameFilter(Optional<String> firstName) {
+    return ((root, query, cb) -> firstName.isPresent()
+        ? cb.like(root.get("firstName"), "%" + firstName.get() + "%") : cb.disjunction());
+    //.disjunction() is false if no predicates are added.
+  }
+
+  private Specification<Teacher> lastNameFilter(Optional<String> lastName) {
+    return ((root, query, cb) -> lastName.isPresent()
+        ? cb.like(root.get("lastName"), "%" + lastName.get() + "%") : cb.disjunction());
+  }
+
+  private Specification<Teacher> acronymFilter(Optional<String> acronym) {
+    return ((root, query, cb) -> acronym.isPresent()
+        ? cb.like(root.get("acronym"), "%" + acronym.get() + "%") : cb.disjunction());
+  }
+
+  private Specification<Teacher> subjectsFilter(Optional<String[]> subjects) {
+    return ((root, query, cb) -> {
+      if (subjects.isPresent() && subjects.get().length != 0) {
+        Predicate andPredicate = cb.conjunction(); //empty conjunction
+        for (String subject : subjects.get()) {
+          andPredicate = cb.and(andPredicate, cb.isMember(subject, root.get("subjects")));
+        }
+        return andPredicate;
+      } else {
+        return cb.conjunction(); //returns true (empty conjunction is true)
+      }
+    });
+  }
+
+  private Specification<Teacher> tagsFilter(Optional<String[]> tags) {
+    return ((root, query, cb) -> {
+      if (tags.isPresent() && tags.get().length != 0) {
+        Predicate andPredicate = cb.conjunction(); //empty conjunction
+        for (String tag : tags.get()) {
+          andPredicate = cb.and(andPredicate, cb.isMember(tag, root.get("tag")));
+        }
+        return andPredicate;
+      } else {
+        return cb.conjunction(); //returns true (empty conjunction is true)
+      }
+    });
   }
 
   /**
@@ -64,13 +115,12 @@ public class TeacherService {
    * Gets the information about the lessons that the teacher teaches.
    *
    * @param id the ID of the teacher.
-   * @return a list of objects each containing information about a lesson.
+   * @return a LessonResponseDto containing information about a lesson.
    * @throws ResponseStatusException is thrown if the ID doesn't have a corresponding teacher.
    */
-  public List<LessonResponseDto> getLessonsById(String id) {
-    Teacher teacher = this.getById(id);
-    // TODO
-    return null;
+  public LessonResponseDto getLessonsById(String id) { //TODO: filter for lesson of current year.
+    Teacher teacher = getById(id);
+    return LessonResponseDto.createResponseDtoFromLessons(teacher.getLessons());
   }
 
   /**
@@ -95,7 +145,6 @@ public class TeacherService {
   public Teacher update(String id, TeacherRequestDto teacherRequest) {
     Teacher teacher = teacherRequest.map();
     teacher.setId(id);
-
     return this.repository.save(teacher);
   }
 
