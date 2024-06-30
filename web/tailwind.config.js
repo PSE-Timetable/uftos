@@ -15,7 +15,6 @@ const config = {
     },
     extend: {
       colors: {
-        white: '#FFFFFF',
         subjectPurple: '#BD90E9',
         subjectOrange: '#F7B37E',
         subjectLightBlue: '#7CC8EE',
