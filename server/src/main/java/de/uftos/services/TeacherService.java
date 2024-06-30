@@ -115,7 +115,7 @@ public class TeacherService {
    * Gets the information about the lessons that the teacher teaches.
    *
    * @param id the ID of the teacher.
-   * @return a LessonResponseDto containing information about a lesson.
+   * @return a LessonResponseDto containing information about the lessons.
    * @throws ResponseStatusException is thrown if the ID doesn't have a corresponding teacher.
    */
   public LessonResponseDto getLessonsById(String id) { //TODO: filter for lesson of current year.
