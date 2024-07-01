@@ -1,24 +1,16 @@
 <script lang="ts">
   import * as Select from '$lib/elements/ui/select';
-  import Timeslot from '$lib/elements/ui/timeslot/timeslot.svelte';
-  import { WorkingHoursEnum } from '$lib/utils';
+  import { WorkingHoursEnum, type TimeInterval } from '$lib/utils';
 
-  export let timeIntervals: { start: WorkingHoursEnum; end: WorkingHoursEnum }[];
-
-  // Use the enum to create the timesOfDay array
   const timesOfDay = Object.values(WorkingHoursEnum).map((time) => ({ value: time, label: time }));
 
-  export let start: WorkingHoursEnum = WorkingHoursEnum['10:00'];
-  export let end: WorkingHoursEnum = WorkingHoursEnum['10:00'];
-  // Initialize selected times based on props
+  export let start: string = WorkingHoursEnum['10:00'];
+  export let end: string = WorkingHoursEnum['10:00'];
+
   let selectedStart = { value: start, label: start };
   let selectedEnd = { value: end, label: end };
 
-  function addItem() {
-    console.log(timeIntervals);
-    timeIntervals.push({ start: WorkingHoursEnum['14:00'], end: WorkingHoursEnum['17:00'] });
-    console.log(timeIntervals);
-  }
+  export let onItemAdd: (item: TimeInterval) => void;
 </script>
 
 <div class="flex flex-row text-sm items-center gap-2 pr-2">
@@ -57,7 +49,14 @@
   </Select.Root>
 
   <div class="flex flex-row h-full gap-2">
-    <svg on:click={addItem} width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg
+      on:click={() => onItemAdd({ start: start, end: end })}
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <g clip-path="url(#clip0_150_8642)">
         <circle cx="12" cy="12" r="11" stroke="#2B6E89" stroke-width="2" />
         <rect x="11" y="6" width="2" height="12" rx="1" fill="#2B6E89" />

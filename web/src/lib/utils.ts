@@ -44,6 +44,11 @@ export enum WeekdDay {
   'saturday' = 'Samstag',
   'sunday' = 'Sonntag',
 }
+
+export interface TimeInterval {
+  start: string;
+  end: string;
+}
 export const flyAndScale = (
   node: Element,
   params: FlyAndScaleParams = { y: -8, x: 0, start: 0.95, duration: 150 },
