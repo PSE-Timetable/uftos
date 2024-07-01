@@ -44,6 +44,11 @@ export enum WeekdDay {
   'saturday' = 'Samstag',
   'sunday' = 'Sonntag',
 }
+
+export interface TimeInterval {
+  start: string;
+  end: string;
+}
 export const flyAndScale = (
   node: Element,
   // eslint-disable-next-line unicorn/no-object-as-default-parameter

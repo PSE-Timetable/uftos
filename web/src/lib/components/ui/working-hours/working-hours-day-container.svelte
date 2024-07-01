@@ -4,11 +4,11 @@
   import { ChevronDown } from 'lucide-svelte';
   import { Button } from '$lib/elements/ui/button/index.js';
   import WorkingHoursItem from './working-hours-item.svelte';
-  import { WorkingHoursEnum, WeekdDay } from '$lib/utils';
+  import { WorkingHoursEnum, WeekdDay, type TimeInterval } from '$lib/utils';
 
   export let weekDay: WeekdDay = WeekdDay.monday;
 
-  export let timeIntervals = [
+  export let timeIntervals: TimeInterval[] = [
     { start: WorkingHoursEnum['8:00'], end: WorkingHoursEnum['10:00'] },
     { start: WorkingHoursEnum['14:00'], end: WorkingHoursEnum['17:00'] },
   ];
@@ -30,7 +30,15 @@
   </div>
   <Collapsible.Content class="space-y-2">
     {#each timeIntervals as timeInterval}
-      <WorkingHoursItem {timeIntervals} start={timeInterval.start} end={timeInterval.end} />
+      <WorkingHoursItem
+        onItemAdd={(item) => {
+          timeIntervals.push(item);
+          // don't ask, I'm not crazy. It just works. Svelte magic
+          timeIntervals = timeIntervals;
+        }}
+        start={timeInterval.start}
+        end={timeInterval.end}
+      />
     {/each}
   </Collapsible.Content>
 </Collapsible.Root>
