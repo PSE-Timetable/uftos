@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createTable, Render, Subscribe, createRender } from 'svelte-headless-table';
-  import { readable } from 'svelte/store';
+  import { writable } from 'svelte/store';
   import * as Table from '$lib/elements/ui/table';
   import DataTableActions from './data-table-actions.svelte';
   import {
@@ -17,30 +17,16 @@
   import * as DropdownMenu from '$lib/elements/ui/dropdown-menu';
   import DataTableCheckbox from './data-table-checkbox.svelte';
 
-  //unrelated demo data from shadcn
-  type Payment = {
+  interface DataItem {
     id: string;
-    amount: number;
-    status: 'pending' | 'processing' | 'success' | 'failed';
-    email: string;
-  };
 
-  export const data: Payment[] = [
-    {
-      id: '728ed52f',
-      amount: 100,
-      status: 'pending',
-      email: 'm@example.com',
-    },
-    {
-      id: '489e1d42',
-      amount: 125,
-      status: 'processing',
-      email: 'example@gmail.com',
-    },
-  ];
+    [key: string]: string;
+  }
 
-  const table = createTable(readable(data), {
+  export let data: DataItem[];
+  export let columnNames;
+
+  const table = createTable(writable(data), {
     page: addPagination(),
     sort: addSortBy(),
     filter: addTableFilter({
@@ -50,10 +36,15 @@
     select: addSelectedRows(),
   });
 
-  //TODO: creating columns from arguments given
-  const columns = table.createColumns([
+  let idKey = Object.keys(data[0])[0];
+  console.log(idKey);
+  let columns = table.createColumns([
     table.column({
-      accessor: 'id',
+      //first column only contains the checkboxes.
+      accessor: (item) => {
+        return item[idKey]; //'item' is of type 'unknown' error dont know how to fix
+      },
+      id: 'id',
       header: (_, { pluginStates }) => {
         const { allPageRowsSelected } = pluginStates.select;
         return createRender(DataTableCheckbox, {
@@ -74,32 +65,40 @@
         },
       },
     }),
-    table.column({
-      accessor: 'amount',
-      header: 'Name',
-    }),
-    table.column({
-      accessor: 'status',
-      header: 'Gebäude',
-    }),
-    table.column({
-      accessor: 'email',
-      header: 'Kapazität',
-    }),
-    table.column({
-      accessor: ({ id }) => id,
-      header: '',
-      id: 'actions',
-      cell: ({ value }) => {
-        return createRender(DataTableActions, { id: value });
-      },
-      plugins: {
-        sort: {
-          disable: true,
-        },
-      },
-    }),
   ]);
+  for (const [i, columnName] of columnNames.entries()) {
+    let currentKey = Object.keys(data[0])[i + 1];
+    columns = columns.concat(
+      table.createColumns([
+        table.column({
+          accessor: (item: DataItem) => {
+            return item[currentKey];
+          },
+          header: columnName,
+        }),
+      ]),
+    );
+  }
+
+  columns = columns.concat(
+    table.createColumns([
+      table.column({
+        accessor: (item) => {
+          return item[idKey];
+        },
+        header: '',
+        id: 'actions',
+        cell: ({ value }) => {
+          return createRender(DataTableActions, { id: value });
+        },
+        plugins: {
+          sort: {
+            disable: true,
+          },
+        },
+      }),
+    ]),
+  );
 
   const { headerRows, pageRows, tableAttrs, tableBodyAttrs, pluginStates, flatColumns, rows } =
     table.createViewModel(columns);
@@ -120,11 +119,12 @@
 
 <div>
   <div class="flex items-center py-4">
-    <Input class="max-w-sm" placeholder="Suche..." type="text" bind:value={$filterValue} />
+    <Input bind:value={$filterValue} class="max-w-sm" placeholder="Suche..." type="text" />
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild let:builder>
-        <Button variant="outline" class="ml-auto" builders={[builder]}>
-          Filter <ChevronDown class="ml-2 h-4 w-4" />
+        <Button builders={[builder]} class="ml-auto" variant="outline">
+          Filter
+          <ChevronDown class="ml-2 h-4 w-4" />
         </Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
@@ -184,11 +184,11 @@
       {Object.keys($selectedDataIds).length} von{' '}
       {$rows.length} Zeile(n) ausgewählt.
     </div>
-    <Button variant="outline" size="sm" on:click={() => ($pageIndex = $pageIndex - 1)} disabled={!$hasPreviousPage}
-      >Zurück</Button
-    >
-    <Button variant="outline" size="sm" disabled={!$hasNextPage} on:click={() => ($pageIndex = $pageIndex + 1)}
-      >Weiter</Button
-    >
+    <Button disabled={!$hasPreviousPage} on:click={() => ($pageIndex = $pageIndex - 1)} size="sm" variant="outline"
+      >Zurück
+    </Button>
+    <Button disabled={!$hasNextPage} on:click={() => ($pageIndex = $pageIndex + 1)} size="sm" variant="outline"
+      >Weiter
+    </Button>
   </div>
 </div>

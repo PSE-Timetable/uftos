@@ -9,7 +9,7 @@
   });
 </script>
 
-<div class="flex flex-row justify-start bg-foreground md:p-4 text-white -m-4">
+<div class="flex flex-row justify-start bg-foreground md:p-4 text-white">
   <Button
     on:click={() => {
       window.history.back(); //not the best solution to go back to previous page (href="../" doesnt seem to work)
