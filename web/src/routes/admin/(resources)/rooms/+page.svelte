@@ -1,5 +1,4 @@
 <script lang="ts">
-  import pageName from '../pageName';
   import DataTable from '$lib/elements/ui/dataTable/data-table.svelte';
   let columnNames = ['Name', 'Gebäude', 'Kapazität', 'test'];
 
@@ -18,8 +17,6 @@
       email: ['test1', 'test2'],
     },
   ];
-
-  pageName.set('Raummanagment');
 </script>
 
 <!--not yet formatted-->
