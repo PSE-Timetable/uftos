@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * The database table for constraint arguments.
@@ -15,6 +16,7 @@ import lombok.Data;
  */
 @Entity(name = "constraint_argument")
 @Data
+@NoArgsConstructor
 public class ConstraintArgument {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
@@ -26,4 +28,9 @@ public class ConstraintArgument {
   @ManyToOne
   @JsonIgnore
   private ConstraintInstance constraintInstance;
+
+  public ConstraintArgument(String name, String value) {
+    this.name = name;
+    this.value = value;
+  }
 }
