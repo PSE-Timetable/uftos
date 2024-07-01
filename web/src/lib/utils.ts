@@ -3,6 +3,43 @@ import { cubicOut } from 'svelte/easing';
 import type { TransitionConfig } from 'svelte/transition';
 import { twMerge } from 'tailwind-merge';
 
+export const WorkingHours = [
+  '8:00',
+  '8:30',
+  '9:00',
+  '9:30',
+  '10:00',
+  '10:30',
+  '11:00',
+  '11:30',
+  '12:00',
+  '12:30',
+  '13:00',
+  '13:30',
+  '14:00',
+  '14:30',
+  '15:00',
+  '15:30',
+  '16:00',
+  '16:30',
+  '17:00',
+] as const;
+
+export enum WeekDay {
+  MONDAY = 'Montag',
+  TUESDAY = 'Dienstag',
+  WEDNESDAY = 'Mittwoch',
+  THURSDAY = 'Donnerstag',
+  FRIDAY = 'Freitag',
+  SATURDAY = 'Samstag',
+  SUNDAY = 'Sonntag',
+}
+
+export interface TimeInterval {
+  start: (typeof WorkingHours)[number];
+  end: (typeof WorkingHours)[number];
+}
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -13,42 +50,7 @@ type FlyAndScaleParams = {
   start?: number;
   duration?: number;
 };
-export enum WorkingHoursEnum {
-  '8:00' = '8:00',
-  '8:30' = '8:30',
-  '9:00' = '9:00',
-  '9:30' = '9:30',
-  '10:00' = '10:00',
-  '10:30' = '10:30',
-  '11:00' = '11:00',
-  '11:30' = '11:30',
-  '12:00' = '12:00',
-  '12:30' = '12:30',
-  '13:00' = '13:00',
-  '13:30' = '13:30',
-  '14:00' = '14:00',
-  '14:30' = '14:30',
-  '15:00' = '15:00',
-  '15:30' = '15:30',
-  '16:00' = '16:00',
-  '16:30' = '16:30',
-  '17:00' = '17:00',
-}
 
-export enum WeekdDay {
-  'monday' = 'Montag',
-  'tuesday' = 'Dienstag',
-  'wednesday' = 'Mittwoch',
-  'thursday' = 'Donnerstag',
-  'friday' = 'Freitag',
-  'saturday' = 'Samstag',
-  'sunday' = 'Sonntag',
-}
-
-export interface TimeInterval {
-  start: string;
-  end: string;
-}
 export const flyAndScale = (
   node: Element,
   // eslint-disable-next-line unicorn/no-object-as-default-parameter
