@@ -5,9 +5,8 @@
   import Lesson from '$lib/elements/ui/lesson/lesson.svelte';
   import Timeslot from '$lib/elements/ui/timeslot/timeslot.svelte';
   import Button from '$lib/elements/ui/button/button.svelte';
-  import DataTable from "$lib/elements/ui/dataTable/data-table.svelte";
-  import Navbar from "$lib/elements/ui/navbar/navbar.svelte";
-
+  import DataTable from '$lib/elements/ui/dataTable/data-table.svelte';
+  import Navbar from '$lib/elements/ui/navbar/navbar.svelte';
 
   const classes = [
     { value: '5A', label: '5A' },
@@ -26,7 +25,6 @@
         <Tabs.Trigger value="teacher">Lehrer</Tabs.Trigger>
         <Tabs.Trigger value="room">Raum</Tabs.Trigger>
       </Tabs.List>
-
     </Tabs.Root>
 
     <div class="flex flex-row items-baseline gap-2">
@@ -56,8 +54,7 @@
   <div class="row-span-3"></div>
   <div class="row-span-4"></div>
 
-  <div
-    class="inline-grid grid-flow-row gap-2 grid-cols-[max-content,repeat(5,1fr)] bg-white p-4 rounded-2xl w-full">
+  <div class="inline-grid grid-flow-row gap-2 grid-cols-[max-content,repeat(5,1fr)] bg-white p-4 rounded-2xl w-full">
     <Timeslot />
     <Lesson color="orange" leftCorner="Tur" length={2} rightCorner="102" title="Deutsch" />
     <Lesson color="purple" leftCorner="Tur" rightCorner="102" title="Deutsch" />

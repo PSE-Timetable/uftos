@@ -1,8 +1,8 @@
 <script lang="ts">
-    import { Tabs as TabsPrimitive } from 'bits-ui';
-    import { cn } from '$lib/utils.js';
+  import { Tabs as TabsPrimitive } from 'bits-ui';
+  import { cn } from '$lib/utils.js';
 
-    type $$Props = TabsPrimitive.ContentProps;
+  type $$Props = TabsPrimitive.ContentProps;
 
   let className: $$Props['class'] = undefined;
   export let value: $$Props['value'];
@@ -12,9 +12,9 @@
 <TabsPrimitive.Content
   {...$$restProps}
   class={cn(
-		"mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-		className
-	)}
+    'mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+    className,
+  )}
   {value}
 >
   <slot />

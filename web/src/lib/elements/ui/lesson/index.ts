@@ -1,1 +1,1 @@
-export { default as Root, default as Lesson } from './lesson.svelte';
+export { default as Lesson, default as Root } from './lesson.svelte';

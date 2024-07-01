@@ -6,5 +6,3 @@
   let index: string = '1.';
   export { begin, end, index };
 </script>
-
-

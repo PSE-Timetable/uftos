@@ -15,7 +15,7 @@
   import ChevronDown from 'lucide-svelte/icons/chevron-down';
   import { Input } from '$lib/elements/ui/input';
   import * as DropdownMenu from '$lib/elements/ui/dropdown-menu';
-  import DataTableCheckbox from "./data-table-checkbox.svelte";
+  import DataTableCheckbox from './data-table-checkbox.svelte';
 
   //unrelated demo data from shadcn
   type Payment = {
@@ -63,7 +63,7 @@
       cell: ({ row }, { pluginStates }) => {
         const { getRowState } = pluginStates.select;
         const { isSelected } = getRowState(row);
- 
+
         return createRender(DataTableCheckbox, {
           checked: isSelected,
         });
@@ -101,7 +101,7 @@
     }),
   ]);
 
-  const { headerRows, pageRows, tableAttrs, tableBodyAttrs, pluginStates, flatColumns , rows} =
+  const { headerRows, pageRows, tableAttrs, tableBodyAttrs, pluginStates, flatColumns, rows } =
     table.createViewModel(columns);
   const { hasNextPage, hasPreviousPage, pageIndex } = pluginStates.page;
   const { filterValue } = pluginStates.filter;
@@ -147,7 +147,7 @@
               {#each headerRow.cells as cell (cell.id)}
                 <Subscribe attrs={cell.attrs()} let:attrs props={cell.props()} let:props>
                   <Table.Head {...attrs} class="[&:has([role=checkbox])]:pl-3">
-                    {#if (cell.id !== 'actions' && cell.id !== "id")}
+                    {#if cell.id !== 'actions' && cell.id !== 'id'}
                       <Button variant="ghost" on:click={props.sort.toggle}>
                         <Render of={cell.render()} />
                         <ArrowUpDown class={'ml-2 h-4 w-4'} />
@@ -165,8 +165,7 @@
       <Table.Body {...$tableBodyAttrs}>
         {#each $pageRows as row (row.id)}
           <Subscribe rowAttrs={row.attrs()} let:rowAttrs>
-            <Table.Row {...rowAttrs} {...rowAttrs}
-            data-state={$selectedDataIds[row.id] && "selected"}>
+            <Table.Row {...rowAttrs} {...rowAttrs} data-state={$selectedDataIds[row.id] && 'selected'}>
               {#each row.cells as cell (cell.id)}
                 <Subscribe attrs={cell.attrs()} let:attrs>
                   <Table.Cell {...attrs}>
@@ -182,7 +181,7 @@
   </div>
   <div class="flex items-center justify-end space-x-4 py-4">
     <div class="flex-1 text-sm text-muted-foreground">
-      {Object.keys($selectedDataIds).length} von{" "}
+      {Object.keys($selectedDataIds).length} von{' '}
       {$rows.length} Zeile(n) ausgewählt.
     </div>
     <Button variant="outline" size="sm" on:click={() => ($pageIndex = $pageIndex - 1)} disabled={!$hasPreviousPage}
