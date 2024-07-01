@@ -31,9 +31,19 @@
   <Collapsible.Content class="space-y-2">
     {#each timeIntervals as timeInterval}
       <WorkingHoursItem
-        onItemAdd={(item) => {
-          timeIntervals.push(item);
-          // don't ask, I'm not crazy. It just works. Svelte magic
+        onItemAdd={(interval) => {
+          timeIntervals.push(interval);
+          // Don't ask, I'm not crazy. It just works. Svelte magic
+          timeIntervals = timeIntervals;
+        }}
+        onItemDelete={(interval) => {
+          // I'm not using filter because if there were multiple intervals with the same start and end, it would remove them all
+          const indexToRemove = timeIntervals.findIndex((ti) => ti.start === interval.start && ti.end === interval.end);
+          if (indexToRemove !== -1) {
+            // Remove the item at the found index
+            timeIntervals.splice(indexToRemove, 1);
+          }
+          // Again, svelte magic
           timeIntervals = timeIntervals;
         }}
         start={timeInterval.start}
