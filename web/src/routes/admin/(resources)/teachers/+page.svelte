@@ -1,5 +1,5 @@
 <script lang="ts">
-  import WorkingHours from '$lib/components/ui/working-hours/working-hours.svelte';
+  import WorkingHours from '$lib/components/ui/working-hours/working-hours-day-container.svelte';
 
 </script>
 123
