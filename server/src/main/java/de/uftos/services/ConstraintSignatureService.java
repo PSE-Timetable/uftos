@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -35,7 +36,11 @@ public class ConstraintSignatureService {
    * @return the page of the entries fitting the parameters.
    */
   public Page<ConstraintSignature> get(Pageable pageable, Optional<String> name) {
-    return this.repository.findAll(pageable);
+    Specification<ConstraintSignature> specification = Specification.where(
+        ((root, query, cb) -> cb.like(cb.lower(root.get("id")),
+            "%" + name.orElse("").toLowerCase() + "%")));
+
+    return this.repository.findAll(specification, pageable);
   }
 
   /**
