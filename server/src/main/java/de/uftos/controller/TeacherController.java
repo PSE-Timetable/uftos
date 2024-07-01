@@ -4,7 +4,6 @@ import de.uftos.dto.LessonResponseDto;
 import de.uftos.dto.TeacherRequestDto;
 import de.uftos.entities.Teacher;
 import de.uftos.services.TeacherService;
-import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -89,7 +88,7 @@ public class TeacherController {
    * @return information about the lessons that the teacher teaches.
    */
   @GetMapping("/{id}/lessons")
-  public List<LessonResponseDto> getTeacherLessons(@PathVariable String id) {
+  public LessonResponseDto getTeacherLessons(@PathVariable String id) {
     return this.teacherService.getLessonsById(id);
   }
 
