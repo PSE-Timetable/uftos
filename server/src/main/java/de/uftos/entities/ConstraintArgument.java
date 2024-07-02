@@ -1,11 +1,9 @@
 package de.uftos.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
 import lombok.Data;
 
 /**
@@ -22,8 +20,4 @@ public class ConstraintArgument {
 
   private String name;
   private String value;
-
-  @ManyToOne
-  @JsonIgnore
-  private ConstraintInstance constraintInstance;
 }

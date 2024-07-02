@@ -4,6 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import java.util.List;
 import lombok.Data;
@@ -25,9 +27,15 @@ public class Grade {
   private String name;
 
   @ManyToMany
+  @JoinTable(name = "grades_student_groups",
+      joinColumns = @JoinColumn(name = "grades_id"),
+      inverseJoinColumns = @JoinColumn(name = "student_groups_id"))
   private List<StudentGroup> studentGroups;
 
   @ManyToMany
+  @JoinTable(name = "grades_tags",
+      joinColumns = @JoinColumn(name = "grades_id"),
+      inverseJoinColumns = @JoinColumn(name = "tags_id"))
   private List<Tag> tags;
 
   public Grade(String id) {

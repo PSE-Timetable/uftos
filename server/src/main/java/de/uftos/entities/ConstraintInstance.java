@@ -1,6 +1,7 @@
 package de.uftos.entities;
 
 import de.uftos.dto.solver.RewardPenalize;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,7 +26,7 @@ public class ConstraintInstance {
   @ManyToOne
   private ConstraintSignature signature;
 
-  @OneToMany
+  @OneToMany(cascade = CascadeType.REMOVE)
   private List<ConstraintArgument> arguments;
 
   private RewardPenalize type;

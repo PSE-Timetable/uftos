@@ -2,6 +2,7 @@ package de.uftos.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.uftos.dto.solver.RewardPenalize;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
@@ -25,7 +26,7 @@ public class ConstraintSignature {
   @OneToMany
   private List<ConstraintParameter> parameters;
 
-  @OneToMany
   @JsonIgnore
+  @OneToMany(mappedBy = "signature", cascade = CascadeType.REMOVE)
   private List<ConstraintInstance> instances;
 }

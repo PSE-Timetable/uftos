@@ -24,8 +24,8 @@ public class Timetable {
 
   private String name;
 
-  @OneToMany
   @JsonIgnore
+  @OneToMany(mappedBy = "timetable")
   private List<Lesson> lessons;
 
   /**
