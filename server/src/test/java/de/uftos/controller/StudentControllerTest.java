@@ -5,47 +5,62 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
 import io.restassured.http.ContentType;
+import java.util.List;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 class StudentControllerTest {
 
-  static String jochenId;
+  static String karenId;
   static String jasonId;
+  static String tagId;
 
   @BeforeAll
   static void createTestStudents() {
-    jochenId = given().contentType(ContentType.JSON)
+    tagId = given().contentType(ContentType.JSON)
         .body("""
                     {
-                      "firstName": "Jochen",
-                      "lastName": "Musterman",
-                      "tagIds": []
+                      "tagName": "Sehebehinderung"
                     }""")
         .when()
-        .post("/students")
+        .post("/tags")
         .then()
         .statusCode(200)
         .body("id", notNullValue())
-        .body("firstName", equalTo("Jochen"))
-        .body("lastName", equalTo("Musterman"))
+        .body("name", equalTo("Sehebehinderung"))
         .extract()
         .body().jsonPath().getString("id");
+    System.out.println("tag id: " + tagId);
 
+    StringBuilder builder = new StringBuilder();
+    builder.append("{").append("\"firstName\": \"Jason\",").append("\"lastName\": \"Musterman\",").append("\"tagIds\": [\"").append(tagId).append("\"]}");
     jasonId = given().contentType(ContentType.JSON)
-        .body("""
-                    {
-                      "firstName": "Jason",
-                      "lastName": "Musterman",
-                      "tagIds": []
-                    }""")
+        .body(builder.toString())
         .when()
         .post("/students")
         .then()
         .statusCode(200)
         .body("id", notNullValue())
         .body("firstName", equalTo("Jason"))
+        .body("lastName", equalTo("Musterman"))
+        .log().ifValidationFails()
+        .extract()
+        .body().jsonPath().getString("id");
+
+    karenId = given().contentType(ContentType.JSON)
+        .body("""
+                    {
+                      "firstName": "Karen",
+                      "lastName": "Musterman",
+                      "tagIds": []
+                    }""")
+        .when()
+        .post("/students")
+        .then()
+        .statusCode(200)
+        .body("id", notNullValue())
+        .body("firstName", equalTo("Karen"))
         .body("lastName", equalTo("Musterman"))
         .extract()
         .body().jsonPath().getString("id");
@@ -62,13 +77,32 @@ class StudentControllerTest {
                         "string"
                       ]
                     }""")
-        .param("firstName", "Jochen")
+        .param("firstName", "Karen")
         .when()
         .get("/students")
         .then()
         .statusCode(200)
         .body("totalElements", equalTo(1))
-        .body("content[0].id", equalTo(jochenId))
+        .body("content[0].id", equalTo(karenId))
+        .log()
+        .ifValidationFails();
+
+    given().contentType(ContentType.JSON)
+        .body("""
+                    {
+                      "page": 0,
+                      "size": 10,
+                      "sort": [
+                        "string"
+                      ]
+                    }""")
+        .param("tags", List.of(tagId))
+        .when()
+        .get("/students")
+        .then()
+        .statusCode(200)
+        .body("totalElements", equalTo(1))
+        .body("content[0].id", equalTo(jasonId))
         .log()
         .ifValidationFails();
   }
@@ -83,7 +117,13 @@ class StudentControllerTest {
 
     given().contentType(ContentType.JSON)
         .when()
-        .delete("/students/{id}", jochenId)
+        .delete("/students/{id}", karenId)
+        .then()
+        .statusCode(200);
+
+    given().contentType(ContentType.JSON)
+        .when()
+        .delete("/tags/{id}", tagId)
         .then()
         .statusCode(200);
   }
