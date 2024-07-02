@@ -1,7 +1,7 @@
 package de.uftos.repositories.ucdl;
 
-import de.uftos.dto.parser.ConstraintDefinitionDto;
-import de.uftos.dto.parser.ParsingResponse;
+import de.uftos.dto.ucdl.ConstraintDefinitionDto;
+import de.uftos.dto.ucdl.ParsingResponse;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.HashMap;

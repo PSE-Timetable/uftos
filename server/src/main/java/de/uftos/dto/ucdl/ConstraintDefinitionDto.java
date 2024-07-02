@@ -1,4 +1,4 @@
-package de.uftos.dto.parser;
+package de.uftos.dto.ucdl;
 
 import de.uftos.dto.ResourceType;
 import de.uftos.dto.solver.RewardPenalize;

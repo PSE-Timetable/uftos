@@ -1,4 +1,4 @@
-package de.uftos.dto.parser;
+package de.uftos.dto.ucdl;
 
 /**
  * The response when attempting to parse a UCDL-file.

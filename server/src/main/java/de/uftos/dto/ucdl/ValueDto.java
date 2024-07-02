@@ -1,6 +1,4 @@
-package de.uftos.dto.parser;
-
-import de.uftos.ucdl.UcdlToken;
+package de.uftos.dto.ucdl;
 
 /**
  * The abstract syntax tree containing a value of type T.

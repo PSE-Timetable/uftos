@@ -1,13 +1,12 @@
 package de.uftos.repositories.ucdl;
 
-import de.uftos.dto.parser.ConstraintDefinitionDto;
-import de.uftos.dto.parser.ParsingResponse;
+import de.uftos.dto.ucdl.ConstraintDefinitionDto;
+import de.uftos.dto.ucdl.ParsingResponse;
 import de.uftos.repositories.ucdl.parser.UcdlParser;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Reader;
 import java.text.ParseException;
 import java.util.HashMap;
 import org.springframework.stereotype.Repository;

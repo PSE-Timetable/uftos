@@ -1,4 +1,4 @@
-package de.uftos.ucdl;
+package de.uftos.dto.ucdl;
 
 /**
  * Token which can be parsed from a correct UCDL-file for the definition of a constraint.

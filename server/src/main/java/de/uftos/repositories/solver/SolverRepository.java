@@ -1,6 +1,6 @@
 package de.uftos.repositories.solver;
 
-import de.uftos.dto.parser.ConstraintDefinitionDto;
+import de.uftos.dto.ucdl.ConstraintDefinitionDto;
 import de.uftos.dto.solver.ConstraintInstanceDto;
 import de.uftos.dto.solver.TimetableProblemDto;
 import de.uftos.dto.solver.TimetableSolutionDto;
