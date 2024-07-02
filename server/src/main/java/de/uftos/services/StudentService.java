@@ -3,6 +3,7 @@ package de.uftos.services;
 import de.uftos.dto.StudentRequestDto;
 import de.uftos.entities.Student;
 import de.uftos.repositories.database.StudentRepository;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -56,9 +57,7 @@ public class StudentService {
       spec = spec.or(createFilter(lastName.get(), "lastName"));
     }
     if (tags.isPresent()) {
-      for (String tag : tags.get()) {
-        spec = spec.or(dropDownFilter(tag, "tags"));
-      }
+      spec = spec.or(dropDownFilter(List.of(tags.get())));
     }
 
     return spec;
@@ -68,8 +67,11 @@ public class StudentService {
     return ((root, query, cb) ->  cb.like(root.get(paramName), "%" + param + "%"));
   }
 
-  private Specification<Student> dropDownFilter(String param, String paramName) {
-    return (root, query, cb) -> cb.isMember(param, root.get(paramName + ".id"));
+  private Specification<Student> dropDownFilter(List<String> tagIds) {
+    return (root, query, cb) -> {
+      // Create a predicate to check if the tag ID matches
+      return root.join("tags").get("id").in(tagIds);
+    };
   }
 
   /**
