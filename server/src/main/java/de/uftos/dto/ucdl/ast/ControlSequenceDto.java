@@ -5,10 +5,9 @@ import de.uftos.dto.ucdl.UcdlToken;
 /**
  * The abstract syntax tree containing a control sequence.
  */
-public record ControlSequenceDto() implements AbstractSyntaxTreeDto {
-  //todo:
+public record ControlSequenceDto(UcdlToken token, AbstractSyntaxTreeDto param, AbstractSyntaxTreeDto body) implements AbstractSyntaxTreeDto {
   @Override
   public UcdlToken getToken() {
-    return null;
+    return token;
   }
 }

@@ -5,10 +5,9 @@ import de.uftos.dto.ucdl.UcdlToken;
 /**
  * The abstract syntax tree containing a boolean quantifier.
  */
-public record QuantifierDto() implements AbstractSyntaxTreeDto {
-  //todo:
+public record QuantifierDto(UcdlToken token, AbstractSyntaxTreeDto elements, AbstractSyntaxTreeDto body) implements AbstractSyntaxTreeDto {
   @Override
   public UcdlToken getToken() {
-    return null;
+    return token;
   }
 }
