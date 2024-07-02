@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import java.util.List;
@@ -26,16 +28,23 @@ public class Subject {
 
   private String name;
 
-  @ManyToMany
   @JsonIgnore
+  @ManyToMany(mappedBy = "subjects")
   private List<Teacher> teachers;
 
   @ManyToMany
+  @JoinTable(name = "subjects_tags",
+      joinColumns = @JoinColumn(name = "subjects_id"),
+      inverseJoinColumns = @JoinColumn(name = "tags_id"))
   private List<Tag> tags;
 
-  @OneToMany
   @JsonIgnore
+  @OneToMany(mappedBy = "subject")
   private List<Lesson> lessons;
+
+  @JsonIgnore
+  @OneToMany(mappedBy = "subject")
+  private List<LessonsCount> lessonsCounts;
 
   /**
    * Creates a new subject.
@@ -51,7 +60,7 @@ public class Subject {
    * Creates a new subject.
    * Used if the ID isn't known.
    *
-   * @param name the name of the subject.
+   * @param name   the name of the subject.
    * @param tagIds the IDs of the tags associated with the subject.
    */
   public Subject(String name, List<String> tagIds) {
