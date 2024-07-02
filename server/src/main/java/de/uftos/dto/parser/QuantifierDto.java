@@ -2,10 +2,7 @@ package de.uftos.dto.parser;
 
 import de.uftos.dto.ResourceType;
 
-/**
- * The abstract syntax tree containing a control sequence.
- */
-public record ControlSequenceDto(SemanticToken token, String variableName, ResourceType variableType, AbstractSyntaxTreeDto body) implements AbstractSyntaxTreeDto {
+public record QuantifierDto(SemanticToken token, String variableName, ResourceType variableType, AbstractSyntaxTreeDto body) implements AbstractSyntaxTreeDto {
 
   @Override
   public SemanticToken getToken() {

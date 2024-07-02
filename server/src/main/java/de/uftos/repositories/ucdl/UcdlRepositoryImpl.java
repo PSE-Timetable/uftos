@@ -62,6 +62,16 @@ public class UcdlRepositoryImpl implements UcdlRepository {
   }
 
   @Override
+  public ParsingResponse parseString(String string) {
+    try {
+      UcdlParser.getDefinitions(string);
+    } catch (ParseException | IOException e) {
+      return new ParsingResponse(false, e.getMessage());
+    }
+    return new ParsingResponse(true, "Parsing was successful!");
+  }
+
+  @Override
   public HashMap<String, ConstraintDefinitionDto> getConstraints()
       throws ParseException, IOException {
     if (currentDefinitions == null) {

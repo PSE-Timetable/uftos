@@ -19,7 +19,7 @@ public interface UcdlRepository {
   String getUcdl();
 
   /**
-   * Sets the content of the UCDL-file.
+   * Sets the content of the UCDL-file to the given String.
    *
    * @param ucdl the new content of the UCDL-file
    */
@@ -31,6 +31,14 @@ public interface UcdlRepository {
    * @return a ParsingResponse containing information about whether parsing was successful or not.
    */
   ParsingResponse parseFile();
+
+  /**
+   * Attempts to parse the given String and returns whether parsing was successful or not.
+   *
+   * @param string the String which gets parsed.
+   * @return a ParsingResponse containing information about whether parsing was successful or not.
+   */
+  ParsingResponse parseString(String string);
 
   /**
    * Parses the UCDL-file and returns all constraint definitions contained by the file.
