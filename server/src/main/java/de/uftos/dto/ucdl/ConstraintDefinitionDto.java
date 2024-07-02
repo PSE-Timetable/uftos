@@ -2,6 +2,7 @@ package de.uftos.dto.ucdl;
 
 import de.uftos.dto.ResourceType;
 import de.uftos.dto.solver.RewardPenalize;
+import de.uftos.dto.ucdl.ast.AbstractSyntaxTreeDto;
 import java.util.HashMap;
 
 /**

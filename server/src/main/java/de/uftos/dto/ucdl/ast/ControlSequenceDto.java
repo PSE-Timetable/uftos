@@ -1,4 +1,6 @@
-package de.uftos.dto.ucdl;
+package de.uftos.dto.ucdl.ast;
+
+import de.uftos.dto.ucdl.UcdlToken;
 
 /**
  * The abstract syntax tree containing a control sequence.

@@ -1,7 +1,7 @@
 package de.uftos.repositories.ucdl.parser;
 
-import de.uftos.dto.ucdl.AbstractSyntaxTreeDto;
-import de.uftos.dto.ucdl.ValueDto;
+import de.uftos.dto.ucdl.ast.AbstractSyntaxTreeDto;
+import de.uftos.dto.ucdl.ast.ValueDto;
 
 public class DefinitionParser {
   public static AbstractSyntaxTreeDto parseDefinition(String definition) {

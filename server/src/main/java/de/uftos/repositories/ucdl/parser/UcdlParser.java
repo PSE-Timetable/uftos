@@ -3,7 +3,7 @@ package de.uftos.repositories.ucdl.parser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import de.uftos.dto.ResourceType;
-import de.uftos.dto.ucdl.AbstractSyntaxTreeDto;
+import de.uftos.dto.ucdl.ast.AbstractSyntaxTreeDto;
 import de.uftos.dto.ucdl.ConstraintDefinitionDto;
 import de.uftos.dto.solver.RewardPenalize;
 import java.io.IOException;
