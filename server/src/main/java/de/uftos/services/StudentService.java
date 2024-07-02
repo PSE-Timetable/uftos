@@ -49,13 +49,17 @@ public class StudentService {
                                                          Optional<String[]> tags) {
     Specification<Student> spec = Specification.where(null);
 
-    firstName.ifPresent(param -> spec.or(createFilter(param, "firstName")));
-    lastName.ifPresent(param -> spec.or(createFilter(param, "lastName")));
-    tags.ifPresent(param -> {
-      for (String tag : param) {
-        spec.or(createFilter(tag, "tags"));
+    if (firstName.isPresent()) {
+      spec = spec.or(createFilter(firstName.get(), "firstName"));
+    }
+    if (lastName.isPresent()) {
+      spec = spec.or(createFilter(lastName.get(), "lastName"));
+    }
+    if (tags.isPresent()) {
+      for (String tag : tags.get()) {
+        spec = spec.or(createFilter(tag, "tags"));
       }
-    });
+    }
 
     return spec;
   }
