@@ -4,6 +4,8 @@ package de.uftos.ucdl;
  * Token which can be parsed from a correct UCDL-file for the definition of a constraint.
  */
 public enum UcdlToken {
+  //probably requires a more granular classification of AST-classes (eg. booloperatordto/filterdto/resourceoperatordto/...)
+
   //control sequences
   CODEBLOCK, //-> operatordto
   FOR, //-> controlsequencedto
@@ -29,12 +31,15 @@ public enum UcdlToken {
 
   //sets and elements
   IN, //-> operatordto
+  OF, //-> operatordto
   FLATMAP, //-> operatordto
   FILTER, //-> operatordto
+  IS_EMPTY, //-> operatordto
+  SIZE, //-> operatordto
   RESOURCE_SET, //-> valuedto
   NUMBER_SET, //-> valuedto
   ATTRIBUTE, //-> valuedto
-  ELEMENT, //-> valuedto
+  ELEMENT, //-> valuedto; probably not necessary
   NUMBER, //-> valuedto
   RESOURCE, //-> valuedto
   PARAMETER, //-> valuedto
