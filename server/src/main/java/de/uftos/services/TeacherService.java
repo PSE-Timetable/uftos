@@ -4,7 +4,6 @@ import de.uftos.dto.LessonResponseDto;
 import de.uftos.dto.TeacherRequestDto;
 import de.uftos.entities.Teacher;
 import de.uftos.repositories.database.TeacherRepository;
-import jakarta.persistence.criteria.Predicate;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -45,57 +44,30 @@ public class TeacherService {
   public Page<Teacher> get(Pageable pageable, Optional<String> firstName,
                            Optional<String> lastName, Optional<String> acronym,
                            Optional<String[]> subjects, Optional<String[]> tags) {
-    Specification<Teacher> spec = (Specification
-        .where(firstNameFilter(firstName))
-        .or(lastNameFilter(lastName))
-        .or(acronymFilter(acronym)))
-        .and(subjectsFilter(subjects))
-        .and(tagsFilter(tags));
+    Specification<Teacher> spec = Specification.where(null);
+    firstName.ifPresent((param) -> spec.or(createFilter(param, "firstName")));
+    lastName.ifPresent((param) -> spec.or(createFilter(param, "lastName")));
+    acronym.ifPresent((param) -> spec.or(createFilter(param, "acronym")));
+    subjects.ifPresent((param) -> {
+      for (String subjectId : param) {
+        spec.and(dropDownFilter(subjectId, "subjects"));
+      }
+    });
+    tags.ifPresent((param) -> {
+      for (String tagId : param) {
+        spec.and(dropDownFilter(tagId, "tags"));
+      }
+    });
     return this.repository.findAll(spec, pageable);
   }
 
-  private Specification<Teacher> firstNameFilter(Optional<String> firstName) {
-    return ((root, query, cb) -> firstName.isPresent()
-        ? cb.like(root.get("firstName"), "%" + firstName.get() + "%") : cb.disjunction());
-    //.disjunction() is false if no predicates are added.
+  private Specification<Teacher> createFilter(String param, String paramName) {
+    //TODO: case insensitive filter
+    return (root, query, cb) -> cb.like(root.get(paramName), "%" + param + "%");
   }
 
-  private Specification<Teacher> lastNameFilter(Optional<String> lastName) {
-    return ((root, query, cb) -> lastName.isPresent()
-        ? cb.like(root.get("lastName"), "%" + lastName.get() + "%") : cb.disjunction());
-  }
-
-  private Specification<Teacher> acronymFilter(Optional<String> acronym) {
-    return ((root, query, cb) -> acronym.isPresent()
-        ? cb.like(root.get("acronym"), "%" + acronym.get() + "%") : cb.disjunction());
-  }
-
-  private Specification<Teacher> subjectsFilter(Optional<String[]> subjects) {
-    return ((root, query, cb) -> {
-      if (subjects.isPresent() && subjects.get().length != 0) {
-        Predicate andPredicate = cb.conjunction(); //empty conjunction
-        for (String subject : subjects.get()) {
-          andPredicate = cb.and(andPredicate, cb.isMember(subject, root.get("subjects")));
-        }
-        return andPredicate;
-      } else {
-        return cb.conjunction(); //returns true (empty conjunction is true)
-      }
-    });
-  }
-
-  private Specification<Teacher> tagsFilter(Optional<String[]> tags) {
-    return ((root, query, cb) -> {
-      if (tags.isPresent() && tags.get().length != 0) {
-        Predicate andPredicate = cb.conjunction(); //empty conjunction
-        for (String tag : tags.get()) {
-          andPredicate = cb.and(andPredicate, cb.isMember(tag, root.get("tag")));
-        }
-        return andPredicate;
-      } else {
-        return cb.conjunction(); //returns true (empty conjunction is true)
-      }
-    });
+  private Specification<Teacher> dropDownFilter(String param, String paramName) {
+    return (root, query, cb) -> cb.isMember(param, root.get(paramName + ".id"));
   }
 
   /**
