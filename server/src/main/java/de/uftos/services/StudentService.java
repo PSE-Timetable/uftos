@@ -57,7 +57,7 @@ public class StudentService {
     }
     if (tags.isPresent()) {
       for (String tag : tags.get()) {
-        spec = spec.or(createFilter(tag, "tags"));
+        spec = spec.or(dropDownFilter(tag, "tags"));
       }
     }
 
@@ -66,6 +66,10 @@ public class StudentService {
 
   private Specification<Student> createFilter(String param, String paramName) {
     return ((root, query, cb) ->  cb.like(root.get(paramName), "%" + param + "%"));
+  }
+
+  private Specification<Student> dropDownFilter(String param, String paramName) {
+    return (root, query, cb) -> cb.isMember(param, root.get(paramName + ".id"));
   }
 
   /**
