@@ -1,11 +1,12 @@
 package de.uftos.entities;
 
 import de.uftos.dto.LessonsCountRequestDto;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import java.util.List;
 import lombok.Data;
@@ -19,7 +20,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class Curriculum {
-
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private String id;
@@ -27,7 +27,7 @@ public class Curriculum {
   @OneToOne
   private Grade grade;
 
-  @ManyToMany
+  @OneToMany(cascade = CascadeType.REMOVE)
   private List<LessonsCount> lessonsCounts;
 
   /**

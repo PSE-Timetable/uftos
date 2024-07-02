@@ -8,6 +8,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import java.util.List;
@@ -32,10 +34,13 @@ public class Timeslot {
   private int slot;
 
   @ManyToMany
+  @JoinTable(name = "timeslots_tags",
+      joinColumns = @JoinColumn(name = "timeslots_id"),
+      inverseJoinColumns = @JoinColumn(name = "tags_id"))
   private List<Tag> tags;
 
-  @OneToMany
   @JsonIgnore
+  @OneToMany(mappedBy = "timeslot")
   private List<Lesson> lessons;
 
   /**
