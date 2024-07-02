@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -39,7 +40,28 @@ public class StudentService {
    */
   public Page<Student> get(Pageable pageable, Optional<String> firstName,
                            Optional<String> lastName, Optional<String[]> tags) {
-    return this.repository.findAll(pageable);
+    Specification<Student> spec = createSpecification(firstName, lastName, tags);
+    return this.repository.findAll(spec, pageable);
+  }
+
+  private Specification<Student> createSpecification(Optional<String> firstName,
+                                                         Optional<String> lastName,
+                                                         Optional<String[]> tags) {
+    Specification<Student> spec = Specification.where(null);
+
+    firstName.ifPresent(param -> spec.or(createFilter(param, "firstName")));
+    lastName.ifPresent(param -> spec.or(createFilter(param, "lastName")));
+    tags.ifPresent(param -> {
+      for (String tag : param) {
+        spec.or(createFilter(tag, "tags"));
+      }
+    });
+
+    return spec;
+  }
+
+  private Specification<Student> createFilter(String param, String paramName) {
+    return ((root, query, cb) ->  cb.like(root.get(paramName), "%" + param + "%"));
   }
 
   /**
