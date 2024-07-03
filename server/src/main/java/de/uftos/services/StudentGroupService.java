@@ -1,5 +1,6 @@
 package de.uftos.services;
 
+import de.uftos.builders.SpecificationBuilder;
 import de.uftos.dto.LessonResponseDto;
 import de.uftos.dto.StudentAndGroup;
 import de.uftos.dto.StudentGroupRequestDto;
@@ -10,6 +11,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -39,8 +41,12 @@ public class StudentGroupService {
    * @return the page of the entries fitting the parameters.
    */
   public Page<StudentGroup> get(Pageable pageable, Optional<String> name) {
-    return this.repository.findAll(pageable);
+    Specification<StudentGroup> spec = new SpecificationBuilder<StudentGroup>()
+            .optionOrEquals(name, "name")
+            .build();
+    return this.repository.findAll(spec, pageable);
   }
+
 
   /**
    * Gets a student group from their ID.
@@ -51,7 +57,6 @@ public class StudentGroupService {
    */
   public StudentGroup getById(String id) {
     Optional<StudentGroup> group = this.repository.findById(id);
-
     return group.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
   }
 
@@ -59,13 +64,12 @@ public class StudentGroupService {
    * Gets the information about the lessons that the student group attends.
    *
    * @param id the ID of the student group.
-   * @return a list of objects each containing information about a lesson.
+   * @return a LessonResponseDto containing information about the lessons.
    * @throws ResponseStatusException is thrown if the ID doesn't have a corresponding student group.
    */
-  public List<LessonResponseDto> getLessonsById(String id) {
+  public LessonResponseDto getLessonsById(String id) {
     StudentGroup studentGroup = this.getById(id);
-    // TODO
-    return null;
+    return LessonResponseDto.createResponseDtoFromLessons(studentGroup.getLessons());
   }
 
   /**
@@ -90,7 +94,6 @@ public class StudentGroupService {
   public StudentGroup update(String id, StudentGroupRequestDto groupRequest) {
     StudentGroup group = groupRequest.map();
     group.setId(id);
-
     return this.repository.save(group);
   }
 

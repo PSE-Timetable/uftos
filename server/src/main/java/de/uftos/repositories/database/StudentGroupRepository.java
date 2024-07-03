@@ -3,16 +3,22 @@ package de.uftos.repositories.database;
 import de.uftos.dto.StudentAndGroup;
 import de.uftos.entities.StudentGroup;
 import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.data.repository.ListPagingAndSortingRepository;
+import org.springframework.lang.NonNull;
 
 /**
  * The repository for accessing the student group database table.
  */
 public interface StudentGroupRepository
     extends ListPagingAndSortingRepository<StudentGroup, String>,
-    ListCrudRepository<StudentGroup, String> {
+    ListCrudRepository<StudentGroup, String>, JpaSpecificationExecutor<StudentGroup> {
   /**
    * Adds students to student groups.
    *

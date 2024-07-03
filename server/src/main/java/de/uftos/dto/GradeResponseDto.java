@@ -1,7 +1,12 @@
 package de.uftos.dto;
 
+import de.uftos.entities.Grade;
+import de.uftos.entities.StudentGroup;
 import de.uftos.entities.Tag;
+import de.uftos.entities.Student;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A data transfer object used in the grade HTTP responses.
@@ -14,4 +19,21 @@ import java.util.List;
  */
 public record GradeResponseDto(String id, String name, List<String> studentGroupIds,
                                List<String> studentIds, List<Tag> tags) {
+
+    /**
+     * Creates a GradeResponseDto from the provided grade.
+     *
+     * @param grade the grade from which the DTO is to be created.
+     * @return the created GradeResponseDto.
+     */
+    public static GradeResponseDto createResponseDtoFromGrade(Grade grade) {
+        Set<String> studentGroupIds = new HashSet<>();
+        Set<String> studentIds = new HashSet<>();
+        for (StudentGroup studentGroup : grade.getStudentGroups()) {
+            studentGroupIds.add(studentGroup.getId());
+            studentGroup.getStudents().stream().map(Student::getId).forEach(studentIds::add);
+        }
+        return new GradeResponseDto(grade.getId(), grade.getName(), studentGroupIds.stream().toList(),
+                studentIds.stream().toList(), grade.getTags());
+    }
 }

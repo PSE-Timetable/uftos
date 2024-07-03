@@ -81,10 +81,10 @@ public class StudentGroupController {
    * function of the student group service.
    *
    * @param id the ID of the student group.
-   * @return information about the lessons that the student group attends.
+   * @return a LessonResponseDto with information about the lessons that the student group attends.
    */
   @GetMapping("/{id}/lessons")
-  public List<LessonResponseDto> getStudentGroupLessons(@PathVariable String id) {
+  public LessonResponseDto getStudentGroupLessons(@PathVariable String id) {
     return this.studentGroupService.getLessonsById(id);
   }
 

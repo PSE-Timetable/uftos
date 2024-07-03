@@ -1,12 +1,11 @@
 package de.uftos.dto;
 
-import de.uftos.entities.Room;
-import de.uftos.entities.Subject;
-import de.uftos.entities.Tag;
-import de.uftos.entities.Teacher;
-import de.uftos.entities.Timeslot;
-import de.uftos.entities.Timetable;
+import de.uftos.entities.*;
+
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A data transfer object used in the lessons HTTP responses.
@@ -23,8 +22,45 @@ public record LessonResponseDto(List<BulkLesson> lessons,
                                 List<GradeResponseDto> grades, List<Room> rooms,
                                 List<Subject> subjects, Timetable timetable) {
   private record BulkLesson(String id, int index, String teacherId, String roomId,
-                            List<String> gradeIds, List<Tag> tags, Timeslot timeslot,
+                            List<String> gradeIds, Timeslot timeslot,
                             String subjectId) {
+  }
+
+  /**
+   * Creates a LessonResponseDto from a list of lessons. Each lesson has to be in the same
+   * timetable.
+   *
+   * @param lessons the list of lessons.
+   * @return the LessonResponseDto containing information about all the lessons.
+   */
+  public static LessonResponseDto createResponseDtoFromLessons(List<Lesson> lessons) {
+    List<BulkLesson> bulkLessons = new ArrayList<>();
+    Set<Teacher> teachers = new HashSet<>();
+    Set<Grade> grades = new HashSet<>();
+    List<GradeResponseDto> gradeResponseDtos = new ArrayList<>();
+    Set<Room> rooms = new HashSet<>();
+    Set<Subject> subjects = new HashSet<>();
+    // Sets to avoid duplicates
+    Timetable timetable = lessons.get(0).getTimetable();
+
+    for (Lesson lesson : lessons) {
+      List<String> gradeIds = new ArrayList<>();
+      for (Grade grade : lesson.getStudentGroup().getGrades()) {
+        gradeIds.add(grade.getId());
+        grades.add(grade);
+      }
+      bulkLessons.add(new BulkLesson(
+              lesson.getId(), lesson.getIndex(), lesson.getTeacher().getId(),
+              lesson.getRoom().getId(), gradeIds, lesson.getTimeslot(), lesson.getSubject().getId()));
+      teachers.add(lesson.getTeacher());
+      rooms.add(lesson.getRoom());
+      subjects.add(lesson.getSubject());
+    }
+    grades.stream().map(GradeResponseDto::createResponseDtoFromGrade)
+            .forEach(gradeResponseDtos::add);
+
+    return new LessonResponseDto(bulkLessons, teachers.stream().toList(), gradeResponseDtos,
+            rooms.stream().toList(), subjects.stream().toList(), timetable);
   }
 }
 
