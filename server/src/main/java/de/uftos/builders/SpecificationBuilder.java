@@ -41,7 +41,9 @@ public class SpecificationBuilder<T> {
     if (param.isEmpty()) {
       return this;
     }
-    specification = specification.or(createOrFilter(param.get(), paramName));
+    specification =
+        specification.or(
+            ((root, query, cb) -> cb.like(root.get(paramName), "%" + param.get() + "%")));
     return this;
   }
 
@@ -61,32 +63,9 @@ public class SpecificationBuilder<T> {
       return this;
     }
     specification = specification.and(
-        createJoinFilter(relationName, attributeName, List.of(attributeValue.get())));
+        (root, query, cb) -> root.join(relationName).get(attributeName)
+            .in(List.of(attributeValue.get()))
+    );
     return this;
-  }
-
-  /**
-   * Creates an OR filter specification for the given parameter name and value.
-   *
-   * @param param     The value to filter by.
-   * @param paramName The name of the parameter to filter on.
-   * @return A specification representing the OR filter.
-   */
-  private Specification<T> createOrFilter(String param, String paramName) {
-    return ((root, query, cb) -> cb.like(root.get(paramName), "%" + param + "%"));
-  }
-
-  /**
-   * Creates a filter specification by joining with the given relation and
-   * filtering on the given attribute.
-   *
-   * @param relationName    The name of the relation to join.
-   * @param attributeName   The name of the attribute in the joined relation to filter on.
-   * @param attributeValues The list of attribute values to filter by.
-   * @return A specification representing the join filter.
-   */
-  private Specification<T> createJoinFilter(String relationName, String attributeName,
-                                            List<String> attributeValues) {
-    return (root, query, cb) -> root.join(relationName).get(attributeName).in(attributeValues);
   }
 }
