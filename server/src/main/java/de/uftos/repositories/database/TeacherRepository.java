@@ -1,6 +1,8 @@
 package de.uftos.repositories.database;
 
+import de.uftos.entities.Lesson;
 import de.uftos.entities.Teacher;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -17,5 +19,4 @@ public interface TeacherRepository extends ListPagingAndSortingRepository<Teache
 
   @NonNull
   Page<Teacher> findAll(@NonNull Specification<Teacher> spec, @NonNull Pageable pageable);
-
 }

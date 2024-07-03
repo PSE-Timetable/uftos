@@ -1,9 +1,13 @@
 package de.uftos.services;
 
+import de.uftos.builders.SpecificationBuilder;
 import de.uftos.dto.LessonResponseDto;
 import de.uftos.dto.TeacherRequestDto;
+import de.uftos.entities.Lesson;
 import de.uftos.entities.Teacher;
+import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.TeacherRepository;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,6 +23,7 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class TeacherService {
   private final TeacherRepository repository;
+  private final ServerRepository serverRepository;
 
   /**
    * Creates a teacher service.
@@ -26,8 +31,9 @@ public class TeacherService {
    * @param repository the repository for accessing the teacher table.
    */
   @Autowired
-  public TeacherService(TeacherRepository repository) {
+  public TeacherService(TeacherRepository repository, ServerRepository serverRepository) {
     this.repository = repository;
+    this.serverRepository = serverRepository;
   }
 
   /**
@@ -44,30 +50,14 @@ public class TeacherService {
   public Page<Teacher> get(Pageable pageable, Optional<String> firstName,
                            Optional<String> lastName, Optional<String> acronym,
                            Optional<String[]> subjects, Optional<String[]> tags) {
-    Specification<Teacher> spec = Specification.where(null);
-    firstName.ifPresent((param) -> spec.or(createFilter(param, "firstName")));
-    lastName.ifPresent((param) -> spec.or(createFilter(param, "lastName")));
-    acronym.ifPresent((param) -> spec.or(createFilter(param, "acronym")));
-    subjects.ifPresent((param) -> {
-      for (String subjectId : param) {
-        spec.and(dropDownFilter(subjectId, "subjects"));
-      }
-    });
-    tags.ifPresent((param) -> {
-      for (String tagId : param) {
-        spec.and(dropDownFilter(tagId, "tags"));
-      }
-    });
+    Specification<Teacher> spec = new SpecificationBuilder<Teacher>()
+        .optionOrEquals(firstName, "firstName")
+        .optionOrEquals(lastName, "lastName")
+        .optionOrEquals(acronym, "acronym")
+        .optionalAndJoinIn(subjects, "subjects", "id")
+        .optionalAndJoinIn(tags, "tags", "id")
+        .build();
     return this.repository.findAll(spec, pageable);
-  }
-
-  private Specification<Teacher> createFilter(String param, String paramName) {
-    //TODO: case insensitive filter
-    return (root, query, cb) -> cb.like(root.get(paramName), "%" + param + "%");
-  }
-
-  private Specification<Teacher> dropDownFilter(String param, String paramName) {
-    return (root, query, cb) -> cb.isMember(param, root.get(paramName + ".id"));
   }
 
   /**
@@ -90,9 +80,12 @@ public class TeacherService {
    * @return a LessonResponseDto containing information about the lessons.
    * @throws ResponseStatusException is thrown if the ID doesn't have a corresponding teacher.
    */
-  public LessonResponseDto getLessonsById(String id) { //TODO: filter for lesson of current year.
+  public LessonResponseDto getLessonsById(String id) {
     Teacher teacher = getById(id);
-    return LessonResponseDto.createResponseDtoFromLessons(teacher.getLessons());
+    List<Lesson> lessons = teacher.getLessons();
+    lessons.removeIf(lesson -> !lesson.getYear().equals(
+        serverRepository.findAll().getFirst().getCurrentYear()));
+    return LessonResponseDto.createResponseDtoFromLessons(lessons);
   }
 
   /**

@@ -22,7 +22,10 @@ public class Server {
 
   private int timeslotLength;
 
-  public Server(int timeslotLength) {
+  private String currentYear;
+
+  public Server(int timeslotLength, String currentYear) {
     this.timeslotLength = timeslotLength;
+    this.currentYear = currentYear;
   }
 }

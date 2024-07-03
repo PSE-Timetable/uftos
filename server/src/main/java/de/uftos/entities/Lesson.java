@@ -49,6 +49,8 @@ public class Lesson {
   @JoinColumn(name = "timetables", nullable = false)
   private Timetable timetable;
 
+  private String year;
+
   /**
    * Creates a new lesson.
    *
@@ -61,7 +63,7 @@ public class Lesson {
    * @param timetableId    the id of the timetable.
    */
   public Lesson(int index, String teacherId, String studentGroupId, String roomId,
-                String timeslotId, String subjectId, String timetableId) {
+                String timeslotId, String subjectId, String timetableId, String year) {
     // TODO implement
   }
 

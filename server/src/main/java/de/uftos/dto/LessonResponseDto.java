@@ -46,7 +46,7 @@ public record LessonResponseDto(List<BulkLesson> lessons,
     Set<Room> rooms = new HashSet<>();
     Set<Subject> subjects = new HashSet<>();
     // Sets to avoid duplicates
-    Timetable timetable = lessons.get(0).getTimetable();
+    Timetable timetable = lessons.getFirst().getTimetable();
 
     for (Lesson lesson : lessons) {
       List<String> gradeIds = new ArrayList<>();
