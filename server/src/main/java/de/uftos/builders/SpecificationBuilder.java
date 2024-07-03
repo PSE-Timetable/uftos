@@ -37,7 +37,7 @@ public class SpecificationBuilder<T> {
    * @return The current instance of {@code SpecificationBuilder} with the
    *     OR filter added if the parameter is present.
    */
-  public SpecificationBuilder<T> addOptionalOr(Optional<String> param, String paramName) {
+  public SpecificationBuilder<T> optionalOr(Optional<String> param, String paramName) {
     if (param.isEmpty()) {
       return this;
     }
@@ -57,8 +57,8 @@ public class SpecificationBuilder<T> {
    * @return The current instance of {@code SpecificationBuilder} with the join filter
    *     added if the attribute value array is present.
    */
-  public SpecificationBuilder<T> addOptionalJoinFilter(Optional<String[]> attributeValue,
-                                                       String relationName, String attributeName) {
+  public SpecificationBuilder<T> optionalJoinFilter(Optional<String[]> attributeValue,
+                                                    String relationName, String attributeName) {
     if (attributeValue.isEmpty()) {
       return this;
     }
