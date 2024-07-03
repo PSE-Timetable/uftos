@@ -115,7 +115,7 @@ class StudentsTest {
   }
 
   @Test
-  void getAllStudentsTest() throws JSONException {
+  void getAllStudents() throws JSONException {
     given().contentType(ContentType.JSON)
         .body(generatePageJson(0, 10, Collections.emptyList()))
         .when()
@@ -127,7 +127,7 @@ class StudentsTest {
   }
 
   @Test
-  void getStudentsWithTagTest() throws JSONException {
+  void getStudentsWithTag() throws JSONException {
     given().contentType(ContentType.JSON)
         .body(generatePageJson(0, 10, Collections.emptyList()))
         .param("tags", List.of(tagId))
@@ -141,7 +141,7 @@ class StudentsTest {
   }
 
   @Test
-  void getStudentsWithNameTest() throws JSONException {
+  void getStudentsWithName() throws JSONException {
     given().contentType(ContentType.JSON)
         .body(generatePageJson(0, 10, Collections.emptyList()))
         .param("firstName", FIRST_STUDENT_FIRST_NAME)
