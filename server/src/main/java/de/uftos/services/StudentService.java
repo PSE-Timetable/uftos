@@ -1,9 +1,9 @@
 package de.uftos.services;
 
+import de.uftos.builders.SpecificationBuilder;
 import de.uftos.dto.StudentRequestDto;
 import de.uftos.entities.Student;
 import de.uftos.repositories.database.StudentRepository;
-import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -41,37 +41,12 @@ public class StudentService {
    */
   public Page<Student> get(Pageable pageable, Optional<String> firstName,
                            Optional<String> lastName, Optional<String[]> tags) {
-    Specification<Student> spec = createSpecification(firstName, lastName, tags);
+    Specification<Student> spec = new SpecificationBuilder<Student>()
+        .addOptionalOr(firstName, "firstName")
+        .addOptionalOr(lastName, "lastName")
+        .addOptionalJoinFilter(tags, "tags", "id")
+        .build();
     return this.repository.findAll(spec, pageable);
-  }
-
-  private Specification<Student> createSpecification(Optional<String> firstName,
-                                                         Optional<String> lastName,
-                                                         Optional<String[]> tags) {
-    Specification<Student> spec = Specification.where(null);
-
-    if (firstName.isPresent()) {
-      spec = spec.or(createFilter(firstName.get(), "firstName"));
-    }
-    if (lastName.isPresent()) {
-      spec = spec.or(createFilter(lastName.get(), "lastName"));
-    }
-    if (tags.isPresent()) {
-      spec = spec.or(dropDownFilter(List.of(tags.get())));
-    }
-
-    return spec;
-  }
-
-  private Specification<Student> createFilter(String param, String paramName) {
-    return ((root, query, cb) ->  cb.like(root.get(paramName), "%" + param + "%"));
-  }
-
-  private Specification<Student> dropDownFilter(List<String> tagIds) {
-    return (root, query, cb) -> {
-      // Create a predicate to check if the tag ID matches
-      return root.join("tags").get("id").in(tagIds);
-    };
   }
 
   /**
