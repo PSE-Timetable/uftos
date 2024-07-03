@@ -8,7 +8,6 @@ import io.restassured.http.ContentType;
 import java.util.List;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 class StudentControllerTest {
@@ -65,6 +64,26 @@ class StudentControllerTest {
         .body("lastName", equalTo("Musterman"))
         .extract()
         .body().jsonPath().getString("id");
+  }
+
+  @Test
+  void getAllStudentsTest() {
+    given().contentType(ContentType.JSON)
+        .body("""
+                    {
+                      "page": 0,
+                      "size": 10,
+                      "sort": [
+                        "string"
+                      ]
+                    }""")
+        .when()
+        .get("/students")
+        .then()
+        .statusCode(200)
+        .body("totalElements", equalTo(2))
+        .log()
+        .ifValidationFails();
   }
 
   @Test
