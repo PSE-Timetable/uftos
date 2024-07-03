@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import java.util.List;
@@ -29,13 +31,19 @@ public class Teacher {
   private String acronym;
 
   @ManyToMany
+  @JoinTable(name = "teachers_subjects",
+      joinColumns = @JoinColumn(name = "teachers_id"),
+      inverseJoinColumns = @JoinColumn(name = "subjects_id"))
   private List<Subject> subjects;
 
   @ManyToMany
+  @JoinTable(name = "teachers_tags",
+      joinColumns = @JoinColumn(name = "teachers_id"),
+      inverseJoinColumns = @JoinColumn(name = "tags_id"))
   private List<Tag> tags;
 
-  @OneToMany
   @JsonIgnore
+  @OneToMany(mappedBy = "teacher")
   private List<Lesson> lessons;
 
   /**

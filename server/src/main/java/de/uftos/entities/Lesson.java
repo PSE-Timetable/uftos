@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,21 +26,27 @@ public class Lesson {
   private int index;
 
   @ManyToOne
+  @JoinColumn(name = "teachers_id", nullable = false)
   private Teacher teacher;
 
   @ManyToOne
+  @JoinColumn(name = "student_groups_id", nullable = false)
   private StudentGroup studentGroup;
 
   @ManyToOne
+  @JoinColumn(name = "rooms_id", nullable = false)
   private Room room;
 
   @ManyToOne
+  @JoinColumn(name = "timeslots_id", nullable = false)
   private Timeslot timeslot;
 
   @ManyToOne
+  @JoinColumn(name = "subjects_id", nullable = false)
   private Subject subject;
 
   @ManyToOne
+  @JoinColumn(name = "timetables", nullable = false)
   private Timetable timetable;
 
   /**

@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,11 +17,12 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class LessonsCount {
-
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private String id;
+
   @ManyToOne
+  @JoinColumn(name = "subjects_id", nullable = false)
   private Subject subject;
   private Integer count;
 

@@ -185,12 +185,10 @@
       {$rows.length} Zeile(n) ausgewählt.
     </div>
     <Button disabled={!$hasPreviousPage} on:click={() => ($pageIndex = $pageIndex - 1)} size="sm" variant="outline"
-    >Zurück
-    </Button
-    >
+      >Zurück
+    </Button>
     <Button disabled={!$hasNextPage} on:click={() => ($pageIndex = $pageIndex + 1)} size="sm" variant="outline"
-    >Weiter
-    </Button
-    >
+      >Weiter
+    </Button>
   </div>
 </div>

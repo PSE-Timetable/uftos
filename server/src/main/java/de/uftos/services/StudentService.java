@@ -1,5 +1,6 @@
 package de.uftos.services;
 
+import de.uftos.builders.SpecificationBuilder;
 import de.uftos.dto.StudentRequestDto;
 import de.uftos.entities.Student;
 import de.uftos.repositories.database.StudentRepository;
@@ -7,6 +8,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -39,7 +41,12 @@ public class StudentService {
    */
   public Page<Student> get(Pageable pageable, Optional<String> firstName,
                            Optional<String> lastName, Optional<String[]> tags) {
-    return this.repository.findAll(pageable);
+    Specification<Student> spec = new SpecificationBuilder<Student>()
+        .optionOrEquals(firstName, "firstName")
+        .optionOrEquals(lastName, "lastName")
+        .optionalAndJoinIn(tags, "tags", "id")
+        .build();
+    return this.repository.findAll(spec, pageable);
   }
 
   /**

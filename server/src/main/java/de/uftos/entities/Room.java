@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import java.util.List;
@@ -29,10 +31,13 @@ public class Room {
   private int capacity;
 
   @ManyToMany
+  @JoinTable(name = "rooms_tags",
+      joinColumns = @JoinColumn(name = "rooms_id"),
+      inverseJoinColumns = @JoinColumn(name = "tags_id"))
   private List<Tag> tags;
 
-  @OneToMany
   @JsonIgnore
+  @OneToMany(mappedBy = "room")
   private List<Lesson> lessons;
 
   /**

@@ -2,8 +2,8 @@
   import pageName from '../pageName';
   import DataTable from '$lib/elements/ui/dataTable/data-table.svelte';
   let columnNames = ['Name', 'Gebäude', 'Kapazität', 'test'];
-  
-   //demo data from shadcn
+
+  //demo data from shadcn
   const data = [
     {
       id: '728ed52f',
@@ -15,7 +15,7 @@
       id: '489e1d42',
       amount: 125,
       status: 'processing',
-      email: ['test1','test2'],
+      email: ['test1', 'test2'],
     },
   ];
 

@@ -1,1 +1,0 @@
-export { default as Root, default as Lesson } from './lesson.svelte';

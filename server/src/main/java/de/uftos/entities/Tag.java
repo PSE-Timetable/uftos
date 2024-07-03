@@ -25,32 +25,32 @@ public class Tag {
 
   private String name;
 
-  @ManyToMany
   @JsonIgnore
+  @ManyToMany(mappedBy = "tags")
   private List<Student> students;
 
-  @ManyToMany
   @JsonIgnore
+  @ManyToMany(mappedBy = "tags")
   private List<Teacher> teachers;
 
-  @ManyToMany
   @JsonIgnore
+  @ManyToMany(mappedBy = "tags")
   private List<StudentGroup> studentGroups;
 
-  @ManyToMany
   @JsonIgnore
+  @ManyToMany(mappedBy = "tags")
   private List<Room> rooms;
 
-  @ManyToMany
   @JsonIgnore
+  @ManyToMany(mappedBy = "tags")
   private List<Subject> subjects;
 
-  @ManyToMany
   @JsonIgnore
+  @ManyToMany(mappedBy = "tags")
   private List<Grade> grades;
 
-  @ManyToMany
   @JsonIgnore
+  @ManyToMany(mappedBy = "tags")
   private List<Timeslot> timeslots;
 
   /**
