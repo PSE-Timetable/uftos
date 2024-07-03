@@ -11,11 +11,11 @@
     addSelectedRows,
   } from 'svelte-headless-table/plugins';
   import { Button } from '$lib/elements/ui/button';
-  import ArrowUpDown from 'lucide-svelte/icons/arrow-up-down';
   import ChevronDown from 'lucide-svelte/icons/chevron-down';
-  import * as Input from '$lib/elements/ui/input';
   import * as DropdownMenu from '$lib/elements/ui/dropdown-menu';
   import DataTableCheckbox from './data-table-checkbox.svelte';
+  import { ArrowDown, ArrowUp } from 'lucide-svelte';
+  import Input from '$lib/elements/ui/input/input.svelte';
 
   interface DataItem {
     id: string;
@@ -26,7 +26,9 @@
   export let data: DataItem[];
   export let columnNames;
 
-  const table = createTable(writable(data), {
+  let tableData = writable(data);
+
+  const table = createTable(tableData, {
     page: addPagination(),
     sort: addSortBy(),
     filter: addTableFilter({
@@ -37,12 +39,11 @@
   });
 
   let idKey = Object.keys(data[0])[0];
-  console.log(idKey);
   let columns = table.createColumns([
     table.column({
       //first column only contains the checkboxes.
       accessor: (item) => {
-        return item[idKey]; //'item' is of type 'unknown' error dont know how to fix
+        return item[idKey];
       },
       id: 'id',
       header: (_, { pluginStates }) => {
@@ -114,7 +115,7 @@
     .filter(([, hide]) => !hide)
     .map(([id]) => id);
 
-  const hidableCols = ['status', 'email', 'amount'];
+  const hidableCols = columnNames;
 </script>
 
 <div>
@@ -146,11 +147,14 @@
             <Table.Row>
               {#each headerRow.cells as cell (cell.id)}
                 <Subscribe attrs={cell.attrs()} let:attrs props={cell.props()} let:props>
-                  <Table.Head {...attrs} class="[&:has([role=checkbox])]:pl-3">
+                  <Table.Head {...attrs} class="[&:has([role=checkbox])]:pl-3 text-white bg-foreground">
                     {#if cell.id !== 'actions' && cell.id !== 'id'}
                       <Button variant="ghost" on:click={props.sort.toggle}>
                         <Render of={cell.render()} />
-                        <ArrowUpDown class={'ml-2 h-4 w-4'} />
+                        <div class="flex ml-2">
+                          <ArrowUp class="h-4 w-4 {props.sort.order === 'desc' ? 'text-accent' : ''}" />
+                          <ArrowDown class="ml-[-4px] h-4 w-4 {props.sort.order === 'asc' ? 'text-accent' : ''}" />
+                        </div>
                       </Button>
                     {:else}
                       <Render of={cell.render()} />
@@ -168,7 +172,7 @@
             <Table.Row {...rowAttrs} {...rowAttrs} data-state={$selectedDataIds[row.id] && 'selected'}>
               {#each row.cells as cell (cell.id)}
                 <Subscribe attrs={cell.attrs()} let:attrs>
-                  <Table.Cell {...attrs}>
+                  <Table.Cell {...attrs} class="bg-white">
                     <Render of={cell.render()} />
                   </Table.Cell>
                 </Subscribe>
