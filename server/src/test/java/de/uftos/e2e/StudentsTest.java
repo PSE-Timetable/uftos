@@ -48,7 +48,7 @@ class StudentsTest {
         .statusCode(200)
         .body("id", notNullValue())
         .body("firstName", equalTo(SECOND_STUDENT_FIRST_NAME))
-        .body("lastName", equalTo(FIRST_STUDENT_LAST_NAME))
+        .body("lastName", equalTo(SECOND_STUDENT_LAST_NAME))
         .log().ifValidationFails()
         .extract()
         .body().jsonPath().getString("id");
