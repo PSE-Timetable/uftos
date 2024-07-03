@@ -1,4 +1,4 @@
-package de.uftos.controller;
+package de.uftos.e2e;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
@@ -13,7 +13,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-class StudentControllerTest {
+class StudentsTest {
 
   private static final String FIRST_STUDENT_FIRST_NAME = "Karen";
   private static final String FIRST_STUDENT_LAST_NAME = "Musterman";
