@@ -52,9 +52,9 @@ public class TeacherService {
                            Optional<String> lastName, Optional<String> acronym,
                            Optional<String[]> subjects, Optional<String[]> tags) {
     Specification<Teacher> spec = new SpecificationBuilder<Teacher>()
-        .optionOrEquals(firstName, "firstName")
-        .optionOrEquals(lastName, "lastName")
-        .optionOrEquals(acronym, "acronym")
+        .optionalOrEquals(firstName, "firstName")
+        .optionalOrEquals(lastName, "lastName")
+        .optionalOrEquals(acronym, "acronym")
         .optionalAndJoinIn(subjects, "subjects", "id")
         .optionalAndJoinIn(tags, "tags", "id")
         .build();

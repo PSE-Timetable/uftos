@@ -49,9 +49,7 @@ public record LessonResponseDto(List<BulkLesson> lessons,
         gradeIds.add(grade.getId());
         grades.add(grade);
       }
-      bulkLessons.add(new BulkLesson(
-          lesson.getId(), lesson.getIndex(), lesson.getTeacher().getId(),
-          lesson.getRoom().getId(), gradeIds, lesson.getTimeslot(), lesson.getSubject().getId()));
+      bulkLessons.add(new BulkLesson(lesson, gradeIds));
       teachers.add(lesson.getTeacher());
       rooms.add(lesson.getRoom());
       subjects.add(lesson.getSubject());
@@ -66,6 +64,10 @@ public record LessonResponseDto(List<BulkLesson> lessons,
   private record BulkLesson(String id, int index, String teacherId, String roomId,
                             List<String> gradeIds, Timeslot timeslot,
                             String subjectId) {
+    private BulkLesson(Lesson lesson, List<String> gradesId) {
+      this(lesson.getId(), lesson.getIndex(), lesson.getTeacher().getId(),
+          lesson.getRoom().getId(), gradesId, lesson.getTimeslot(), lesson.getSubject().getId());
+    }
   }
 }
 
