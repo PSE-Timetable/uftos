@@ -235,11 +235,11 @@ export type Student = {
     tags: Tag[];
 };
 export type StudentGroup = {
-    grades?: Grade[];
-    id?: string;
-    name?: string;
-    students?: Student[];
-    tags?: Tag[];
+    grades: Grade[];
+    id: string;
+    name: string;
+    students: Student[];
+    tags: Tag[];
 };
 export type Lesson = {
     id: string;
