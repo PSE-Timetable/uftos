@@ -1,7 +1,7 @@
 package de.uftos.services;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
 import de.uftos.dto.LessonResponseDto;
 import de.uftos.entities.Grade;
@@ -15,39 +15,39 @@ import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.TeacherRepository;
 import java.util.List;
 import java.util.Optional;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class TeacherServiceTests {
 
-  @MockBean
-  static TeacherRepository teacherRepository;
-  @MockBean
-  static ServerRepository serverRepository;
+  @Mock
+  private TeacherRepository teacherRepository;
 
-  static Room room1;
-  static Room room2;
+  @Mock
+  private ServerRepository serverRepository;
 
-  //error: Autowired members must be defined in valid Spring bean (@Component|@Service|...)
-  @Autowired
-  private final TeacherService teacherService =
-      new TeacherService(teacherRepository, serverRepository);
+  @InjectMocks
+  private TeacherService teacherService;
 
-  @BeforeAll
-  public static void setUp() {
+  private Room room1;
+  private Room room2;
+
+  @BeforeEach
+  public void setUp() {
+    System.out.println("begin");
+
     Teacher teacher1 = new Teacher("Max", "Mustermann", "MM",
         List.of("1", "2", "3"), List.of("1", "2", "3"));
     teacher1.setId("123");
     Student student1 = new Student();
     student1.setId("123");
     Student student2 = new Student();
-    student1.setId("345");
+    student2.setId("345");
     StudentGroup studentGroup1 = new StudentGroup();
     studentGroup1.setStudents(List.of(student1, student2));
     studentGroup1.setId("654");
@@ -56,7 +56,7 @@ public class TeacherServiceTests {
     Student student4 = new Student();
     student4.setId("325");
     StudentGroup studentGroup2 = new StudentGroup();
-    studentGroup2.setStudents(List.of(student1, student2));
+    studentGroup2.setStudents(List.of(student3, student4));
     studentGroup2.setId("674");
     room1 = new Room();
     room1.setId("534");
@@ -87,8 +87,9 @@ public class TeacherServiceTests {
 
     teacher1.setLessons(List.of(lesson1, lesson2, lesson3));
 
-    Mockito.when(serverRepository.findAll()).thenReturn(List.of(new Server(45, "2024")));
-    Mockito.when(teacherRepository.findById("123")).thenReturn(Optional.of(teacher1));
+    when(serverRepository.findAll()).thenReturn(List.of(new Server(45, "2024")));
+    when(teacherRepository.findById("123")).thenReturn(Optional.of(teacher1));
+    System.out.println("run");
   }
 
   @Test
@@ -102,8 +103,5 @@ public class TeacherServiceTests {
     assertEquals("674", result.grades().getFirst().studentGroupIds().get(1));
     assertEquals("123", result.grades().getFirst().studentIds().getFirst());
     assertEquals("345", result.grades().getFirst().studentIds().get(1));
-    fail();
   }
-
-
 }
