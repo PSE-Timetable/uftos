@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import java.util.List;
+import java.util.Objects;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -37,6 +38,19 @@ public class Curriculum {
    * @param lessonsCounts the lesson counts which apply to the given grade.
    */
   public Curriculum(String gradeId, List<LessonsCountRequestDto> lessonsCounts) {
-    // TODO implement
+    this.grade = new Grade(gradeId);
+    this.lessonsCounts = lessonsCounts.stream().map(LessonsCountRequestDto::map).toList();
+  }
+
+  @Override
+  public boolean equals(Object other) {
+    if (this == other) {
+      return true;
+    }
+    if (other == null || getClass() != other.getClass()) {
+      return false;
+    }
+    Curriculum that = (Curriculum) other;
+    return Objects.equals(id, that.id);
   }
 }

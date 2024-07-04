@@ -10,6 +10,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import java.util.List;
+import java.util.Objects;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -62,5 +63,27 @@ public class Teacher {
     this.acronym = acronym;
     this.subjects = subjectIds.stream().map(Subject::new).toList();
     this.tags = tagIds.stream().map(Tag::new).toList();
+  }
+
+  /**
+   * Creates a new teacher.
+   * Used if the ID is known.
+   *
+   * @param id the ID of the teacher.
+   */
+  public Teacher(String id) {
+    this.id = id;
+  }
+
+  @Override
+  public boolean equals(Object other) {
+    if (this == other) {
+      return true;
+    }
+    if (other == null || getClass() != other.getClass()) {
+      return false;
+    }
+    Teacher teacher = (Teacher) other;
+    return Objects.equals(id, teacher.id);
   }
 }
