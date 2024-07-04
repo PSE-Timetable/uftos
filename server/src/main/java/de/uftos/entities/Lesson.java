@@ -62,14 +62,29 @@ public class Lesson {
    * @param timeslotId     the id of the timeslot of when the lesson will be hold.
    * @param subjectId      the id of the subject to be hold in the lesson.
    * @param timetableId    the id of the timetable.
+   * @param year           the year of the timetable.
    */
   public Lesson(int index, String teacherId, String studentGroupId, String roomId,
                 String timeslotId, String subjectId, String timetableId, String year) {
-    // TODO implement
+    this.index = index;
+    this.teacher = new Teacher(teacherId);
+    this.studentGroup = new StudentGroup(studentGroupId);
+    this.room = new Room(roomId);
+    this.timeslot = new Timeslot(timeslotId);
+    this.subject = new Subject(subjectId);
+    this.timetable = new Timetable(timetableId);
+    this.year = year;
   }
 
   @Override
-  public int hashCode() {
-    return Objects.hash(id, index);
+  public boolean equals(Object other) {
+    if (this == other) {
+      return true;
+    }
+    if (other == null || getClass() != other.getClass()) {
+      return false;
+    }
+    Lesson lesson = (Lesson) other;
+    return Objects.equals(id, lesson.id);
   }
 }

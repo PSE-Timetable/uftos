@@ -76,7 +76,14 @@ public class StudentGroup {
   }
 
   @Override
-  public int hashCode() {
-    return Objects.hash(id, name);
+  public boolean equals(Object other) {
+    if (this == other) {
+      return true;
+    }
+    if (other == null || getClass() != other.getClass()) {
+      return false;
+    }
+    StudentGroup that = (StudentGroup) other;
+    return Objects.equals(id, that.id);
   }
 }

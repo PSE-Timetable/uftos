@@ -7,6 +7,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import java.util.Objects;
 import lombok.Data;
 
 /**
@@ -24,4 +25,16 @@ public class ConstraintParameter {
 
   @Enumerated(EnumType.STRING)
   private ResourceType parameterType;
+
+  @Override
+  public boolean equals(Object other) {
+    if (this == other) {
+      return true;
+    }
+    if (other == null || getClass() != other.getClass()) {
+      return false;
+    }
+    ConstraintParameter that = (ConstraintParameter) other;
+    return Objects.equals(id, that.id);
+  }
 }

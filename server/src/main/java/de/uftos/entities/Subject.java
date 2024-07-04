@@ -10,6 +10,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import java.util.List;
+import java.util.Objects;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -66,5 +67,17 @@ public class Subject {
   public Subject(String name, List<String> tagIds) {
     this.name = name;
     this.tags = tagIds.stream().map(Tag::new).toList();
+  }
+
+  @Override
+  public boolean equals(Object other) {
+    if (this == other) {
+      return true;
+    }
+    if (other == null || getClass() != other.getClass()) {
+      return false;
+    }
+    Subject subject = (Subject) other;
+    return Objects.equals(id, subject.id);
   }
 }

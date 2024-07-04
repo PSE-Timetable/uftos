@@ -65,8 +65,25 @@ public class Teacher {
     this.tags = tagIds.stream().map(Tag::new).toList();
   }
 
+  /**
+   * Creates a new teacher.
+   * Used if the ID is known.
+   *
+   * @param id the ID of the teacher.
+   */
+  public Teacher(String id) {
+    this.id = id;
+  }
+
   @Override
-  public int hashCode() {
-    return Objects.hash(id, firstName, lastName, acronym);
+  public boolean equals(Object other) {
+    if (this == other) {
+      return true;
+    }
+    if (other == null || getClass() != other.getClass()) {
+      return false;
+    }
+    Teacher teacher = (Teacher) other;
+    return Objects.equals(id, teacher.id);
   }
 }
