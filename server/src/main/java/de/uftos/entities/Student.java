@@ -61,6 +61,15 @@ public class Student {
     this.tags = tagIds.stream().map(Tag::new).toList();
   }
 
+  /**
+   * Creates a new student.
+   * Used if the ID is known.
+   *
+   * @param firstName the first name of the student.
+   * @param lastName  the last name of the student.
+   * @param groups    the list of student groups in which the student is.
+   * @param tags      the list of tags associated with the student.
+   */
   public Student(String id, String firstName, String lastName, List<StudentGroup> groups,
                  List<Tag> tags) {
     this.id = id;
