@@ -8,7 +8,7 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/api': { target: 'http://uftos_api:8080', changeOrigin: true, ws: true },
+      '/api': { target: 'http://uftos-api:8080', changeOrigin: true, ws: true },
     },
   },
 });
