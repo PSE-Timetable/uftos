@@ -6,6 +6,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import java.util.Objects;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,32 +25,42 @@ import lombok.NoArgsConstructor;
 public class Lesson {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
+  @NotEmpty
   private String id;
 
+  @PositiveOrZero
+  @NotNull
   private int index;
 
+  @NotEmpty
   private String year;
 
+  @NotNull
   @ManyToOne
   @JoinColumn(name = "teachers_id", nullable = false)
   private Teacher teacher;
 
+  @NotNull
   @ManyToOne
   @JoinColumn(name = "student_groups_id", nullable = false)
   private StudentGroup studentGroup;
 
+  @NotNull
   @ManyToOne
   @JoinColumn(name = "rooms_id", nullable = false)
   private Room room;
 
+  @NotNull
   @ManyToOne
   @JoinColumn(name = "timeslots_id", nullable = false)
   private Timeslot timeslot;
 
+  @NotNull
   @ManyToOne
   @JoinColumn(name = "subjects_id", nullable = false)
   private Subject subject;
 
+  @NotNull
   @ManyToOne
   @JoinColumn(name = "timetables", nullable = false)
   private Timetable timetable;
