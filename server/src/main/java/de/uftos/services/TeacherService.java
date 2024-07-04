@@ -7,6 +7,7 @@ import de.uftos.entities.Lesson;
 import de.uftos.entities.Teacher;
 import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.TeacherRepository;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,7 +83,7 @@ public class TeacherService {
    */
   public LessonResponseDto getLessonsById(String id) {
     Teacher teacher = getById(id);
-    List<Lesson> lessons = teacher.getLessons();
+    List<Lesson> lessons = new ArrayList<>(teacher.getLessons());
     lessons.removeIf(lesson -> !lesson.getYear().equals(
         serverRepository.findAll().getFirst().getCurrentYear()));
     return LessonResponseDto.createResponseDtoFromLessons(lessons);

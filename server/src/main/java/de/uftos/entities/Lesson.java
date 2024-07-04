@@ -6,6 +6,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.util.Objects;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -67,4 +68,8 @@ public class Lesson {
     // TODO implement
   }
 
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, index);
+  }
 }

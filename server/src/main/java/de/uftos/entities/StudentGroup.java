@@ -10,6 +10,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import java.util.List;
+import java.util.Objects;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -72,5 +73,10 @@ public class StudentGroup {
     this.students = studentIds.stream().map(Student::new).toList();
     this.grades = gradeIds.stream().map(Grade::new).toList();
     this.tags = tagIds.stream().map(Tag::new).toList();
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, name);
   }
 }

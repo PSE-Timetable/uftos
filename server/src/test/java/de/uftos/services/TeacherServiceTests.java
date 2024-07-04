@@ -10,11 +10,13 @@ import de.uftos.entities.Room;
 import de.uftos.entities.Server;
 import de.uftos.entities.Student;
 import de.uftos.entities.StudentGroup;
+import de.uftos.entities.Subject;
 import de.uftos.entities.Teacher;
 import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.TeacherRepository;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -67,25 +69,33 @@ public class TeacherServiceTests {
     grade1.setStudentGroups(List.of(studentGroup1, studentGroup2));
     studentGroup1.setGrades(List.of(grade1));
     studentGroup2.setGrades(List.of(grade1));
+
+    Subject subject = new Subject();
+    subject.setId(UUID.randomUUID().toString());
+
     Lesson lesson1 = new Lesson();
     lesson1.setTeacher(teacher1);
     lesson1.setRoom(room1);
     lesson1.setStudentGroup(studentGroup1);
     lesson1.setYear("2024");
+    lesson1.setSubject(subject);
 
     Lesson lesson2 = new Lesson();
     lesson2.setTeacher(teacher1);
     lesson2.setRoom(room1);
     lesson2.setStudentGroup(studentGroup1);
     lesson2.setYear("2022");
+    lesson2.setSubject(subject);
 
     Lesson lesson3 = new Lesson();
     lesson3.setTeacher(teacher1);
     lesson3.setRoom(room2);
     lesson3.setStudentGroup(studentGroup2);
     lesson3.setYear("2024");
+    lesson3.setSubject(subject);
 
     teacher1.setLessons(List.of(lesson1, lesson2, lesson3));
+    teacher1.setSubjects(List.of(subject));
 
     when(serverRepository.findAll()).thenReturn(List.of(new Server(45, "2024")));
     when(teacherRepository.findById("123")).thenReturn(Optional.of(teacher1));

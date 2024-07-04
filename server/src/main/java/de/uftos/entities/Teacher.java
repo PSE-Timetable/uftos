@@ -10,6 +10,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import java.util.List;
+import java.util.Objects;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -62,5 +63,10 @@ public class Teacher {
     this.acronym = acronym;
     this.subjects = subjectIds.stream().map(Subject::new).toList();
     this.tags = tagIds.stream().map(Tag::new).toList();
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, firstName, lastName, acronym);
   }
 }
