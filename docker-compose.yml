@@ -1,6 +1,7 @@
 services:
   db:
     image: postgres:16.3-alpine3.18
+    container_name: uftos_db
     restart: unless-stopped
     ports:
       - 5432:5432
@@ -12,6 +13,7 @@ services:
       POSTGRES_DB: uftos
   api:
     image: uftos-server-dev:latest
+    container_name: uftos_api
     build:
       context: ./
       dockerfile: server/Dockerfile
@@ -32,6 +34,7 @@ services:
       DB_NAME: uftos
   web:
     image: uftos-web-dev:latest
+    container_name: uftos_web
     build:
       context: ./web
     ports:
