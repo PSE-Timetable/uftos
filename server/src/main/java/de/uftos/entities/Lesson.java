@@ -26,6 +26,8 @@ public class Lesson {
 
   private int index;
 
+  private String year;
+
   @ManyToOne
   @JoinColumn(name = "teachers_id", nullable = false)
   private Teacher teacher;
@@ -50,7 +52,6 @@ public class Lesson {
   @JoinColumn(name = "timetables", nullable = false)
   private Timetable timetable;
 
-  private String year;
 
   /**
    * Creates a new lesson.
