@@ -54,4 +54,8 @@ public class Room {
     this.capacity = capacity;
     this.tags = tagIds.stream().map(Tag::new).toList();
   }
+
+  public Room(String id) {
+    this.id = id;
+  }
 }

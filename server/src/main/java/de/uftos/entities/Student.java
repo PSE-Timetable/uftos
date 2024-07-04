@@ -60,4 +60,13 @@ public class Student {
     this.lastName = lastName;
     this.tags = tagIds.stream().map(Tag::new).toList();
   }
+
+  public Student(String id, String firstName, String lastName, List<StudentGroup> groups,
+                 List<Tag> tags) {
+    this.id = id;
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.groups = groups;
+    this.tags = tags;
+  }
 }

@@ -26,11 +26,6 @@ public record LessonResponseDto(List<BulkLesson> lessons,
                                 List<Teacher> teachers,
                                 List<GradeResponseDto> grades, List<Room> rooms,
                                 List<Subject> subjects, Timetable timetable) {
-  private record BulkLesson(String id, int index, String teacherId, String roomId,
-                            List<String> gradeIds, Timeslot timeslot,
-                            String subjectId) {
-  }
-
   /**
    * Creates a LessonResponseDto from a list of lessons. Each lesson has to be in the same
    * timetable.
@@ -46,7 +41,7 @@ public record LessonResponseDto(List<BulkLesson> lessons,
     Set<Room> rooms = new HashSet<>();
     Set<Subject> subjects = new HashSet<>();
     // Sets to avoid duplicates
-    Timetable timetable = lessons.getFirst().getTimetable();
+    Timetable timetable = lessons.isEmpty() ? null : lessons.getFirst().getTimetable();
 
     for (Lesson lesson : lessons) {
       List<String> gradeIds = new ArrayList<>();
@@ -66,6 +61,11 @@ public record LessonResponseDto(List<BulkLesson> lessons,
 
     return new LessonResponseDto(bulkLessons, teachers.stream().toList(), gradeResponseDtos,
         rooms.stream().toList(), subjects.stream().toList(), timetable);
+  }
+
+  private record BulkLesson(String id, int index, String teacherId, String roomId,
+                            List<String> gradeIds, Timeslot timeslot,
+                            String subjectId) {
   }
 }
 

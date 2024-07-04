@@ -1,6 +1,9 @@
 package de.uftos.services;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 import de.uftos.dto.LessonResponseDto;
@@ -14,17 +17,20 @@ import de.uftos.entities.Subject;
 import de.uftos.entities.Teacher;
 import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.TeacherRepository;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class TeacherServiceTests {
 
   @Mock
@@ -39,79 +45,104 @@ public class TeacherServiceTests {
   private Room room1;
   private Room room2;
 
-  @BeforeEach
-  public void setUp() {
-    System.out.println("begin");
+  private static void assertResulArraysSizes(LessonResponseDto result, int teachers, int lessons,
+                                             int rooms, int grades) {
+    assertAll("Testing whether the sizes of the arrays are correct",
+        () -> assertEquals(teachers, result.teachers().size()),
+        () -> assertEquals(lessons, result.lessons().size()),
+        () -> assertEquals(rooms, result.rooms().size()),
+        () -> assertEquals(grades, result.grades().size())
+    );
+  }
 
+  @BeforeEach
+  void setUp() {
     Teacher teacher1 = new Teacher("Max", "Mustermann", "MM",
         List.of("1", "2", "3"), List.of("1", "2", "3"));
     teacher1.setId("123");
-    Student student1 = new Student();
-    student1.setId("123");
-    Student student2 = new Student();
-    student2.setId("345");
-    StudentGroup studentGroup1 = new StudentGroup();
+
+    Teacher teacher2 = new Teacher("Alex", "Mustermann", "MA",
+        List.of("1", "2", "3"), List.of("1", "2", "3"));
+    teacher2.setId("456");
+    teacher2.setLessons(Collections.emptyList());
+
+    Student student1 = new Student("123");
+    Student student2 = new Student("345");
+    Student student3 = new Student("153");
+    Student student4 = new Student("325");
+
+    StudentGroup studentGroup1 = new StudentGroup("654");
     studentGroup1.setStudents(List.of(student1, student2));
-    studentGroup1.setId("654");
-    Student student3 = new Student();
-    student3.setId("153");
-    Student student4 = new Student();
-    student4.setId("325");
-    StudentGroup studentGroup2 = new StudentGroup();
+
+    StudentGroup studentGroup2 = new StudentGroup("674");
     studentGroup2.setStudents(List.of(student3, student4));
-    studentGroup2.setId("674");
-    room1 = new Room();
-    room1.setId("534");
-    room2 = new Room();
-    room2.setId("574");
-    Grade grade1 = new Grade();
-    grade1.setId("723");
+
+    Grade grade1 = new Grade("723");
     grade1.setStudentGroups(List.of(studentGroup1, studentGroup2));
+
     studentGroup1.setGrades(List.of(grade1));
     studentGroup2.setGrades(List.of(grade1));
 
     Subject subject = new Subject();
-    subject.setId(UUID.randomUUID().toString());
+    subject.setId("789");
 
-    Lesson lesson1 = new Lesson();
-    lesson1.setTeacher(teacher1);
-    lesson1.setRoom(room1);
-    lesson1.setStudentGroup(studentGroup1);
-    lesson1.setYear("2024");
-    lesson1.setSubject(subject);
+    room1 = new Room("534");
+    room2 = new Room("574");
 
-    Lesson lesson2 = new Lesson();
-    lesson2.setTeacher(teacher1);
-    lesson2.setRoom(room1);
-    lesson2.setStudentGroup(studentGroup1);
-    lesson2.setYear("2022");
-    lesson2.setSubject(subject);
-
-    Lesson lesson3 = new Lesson();
-    lesson3.setTeacher(teacher1);
-    lesson3.setRoom(room2);
-    lesson3.setStudentGroup(studentGroup2);
-    lesson3.setYear("2024");
-    lesson3.setSubject(subject);
+    Lesson lesson1 = createLesson(teacher1, room1, studentGroup1, "2024", subject);
+    Lesson lesson2 = createLesson(teacher1, room1, studentGroup1, "2022", subject);
+    Lesson lesson3 = createLesson(teacher1, room2, studentGroup2, "2024", subject);
 
     teacher1.setLessons(List.of(lesson1, lesson2, lesson3));
     teacher1.setSubjects(List.of(subject));
 
-    when(serverRepository.findAll()).thenReturn(List.of(new Server(45, "2024")));
+    Server server = new Server(45, "2024");
+    when(serverRepository.findAll()).thenReturn(List.of(server));
     when(teacherRepository.findById("123")).thenReturn(Optional.of(teacher1));
-    System.out.println("run");
+    when(teacherRepository.findById("456")).thenReturn(Optional.of(teacher2));
   }
 
   @Test
-  public void getLessonsByIdTest() {
+  void emptyLessons() {
+    assertDoesNotThrow(() -> teacherService.getLessonsById("456"));
+    LessonResponseDto result = teacherService.getLessonsById("456");
+    assertResulArraysSizes(result, 0, 0, 0, 0);
+  }
+
+  @Test
+  void lessonsById() {
     LessonResponseDto result = teacherService.getLessonsById("123");
-    assertEquals(1, result.teachers().size());
-    assertEquals(2, result.lessons().size());
-    assertEquals(room1, result.rooms().getFirst());
-    assertEquals(room2, result.rooms().get(1));
-    assertEquals("654", result.grades().getFirst().studentGroupIds().getFirst());
-    assertEquals("674", result.grades().getFirst().studentGroupIds().get(1));
-    assertEquals("123", result.grades().getFirst().studentIds().getFirst());
-    assertEquals("345", result.grades().getFirst().studentIds().get(1));
+    assertResulArraysSizes(result, 1, 2, 2, 1);
+    assertAll("Testing whether the sizes of the arrays are correct",
+        () -> assertEquals(2, result.grades().getFirst().studentGroupIds().size()),
+        () -> assertEquals(4, result.grades().getFirst().studentIds().size())
+    );
+
+    assertAll("Testing whether all the rooms are there",
+        () -> assertTrue(result.rooms().contains(room1)),
+        () -> assertTrue(result.rooms().contains(room2))
+    );
+
+    assertAll("Testing whether all the student groups are there",
+        () -> assertTrue(result.grades().getFirst().studentGroupIds().contains("674")),
+        () -> assertTrue(result.grades().getFirst().studentGroupIds().contains("654"))
+    );
+
+    assertAll("Testing whether all the students are there",
+        () -> assertTrue(result.grades().getFirst().studentIds().contains("123")),
+        () -> assertTrue(result.grades().getFirst().studentIds().contains("345"))
+    );
+  }
+
+  private Lesson createLesson(Teacher teacher, Room room, StudentGroup studentGroup,
+                              String number,
+                              Subject subject) {
+    Lesson lesson = new Lesson();
+    lesson.setTeacher(teacher);
+    lesson.setRoom(room);
+    lesson.setStudentGroup(studentGroup);
+    lesson.setYear(number);
+    lesson.setSubject(subject);
+    return lesson;
   }
 }
