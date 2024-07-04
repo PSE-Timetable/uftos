@@ -2,7 +2,7 @@
   import * as Select from '$lib/elements/ui/select';
   import Lesson from '$lib/components/ui/lesson/lesson.svelte';
   import Timeslot from '$lib/elements/ui/timeslot/timeslot.svelte';
-  import * as Tabs from '$lib/elements/ui/tabs';
+  import * as Tabs from '$lib/elements/ui/tabs/index';
 
   const classes = [
     { value: '5A', label: '5A' },

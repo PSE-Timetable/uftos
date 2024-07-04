@@ -24,6 +24,6 @@ public class UftosApplication {
 
   @Bean
   ApplicationRunner init(ServerRepository serverRepository) {
-    return (ApplicationArguments args) -> serverRepository.save(new Server(45));
+    return (ApplicationArguments args) -> serverRepository.save(new Server(45, "2024"));
   }
 }

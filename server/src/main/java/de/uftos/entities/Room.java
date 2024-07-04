@@ -10,6 +10,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import java.util.List;
+import java.util.Objects;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -53,5 +54,21 @@ public class Room {
     this.buildingName = buildingName;
     this.capacity = capacity;
     this.tags = tagIds.stream().map(Tag::new).toList();
+  }
+
+  public Room(String id) {
+    this.id = id;
+  }
+
+  @Override
+  public boolean equals(Object other) {
+    if (this == other) {
+      return true;
+    }
+    if (other == null || getClass() != other.getClass()) {
+      return false;
+    }
+    Room room = (Room) other;
+    return Objects.equals(id, room.id);
   }
 }

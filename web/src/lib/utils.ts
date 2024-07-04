@@ -16,6 +16,7 @@ type FlyAndScaleParams = {
 
 export const flyAndScale = (
   node: Element,
+  // eslint-disable-next-line unicorn/no-object-as-default-parameter
   params: FlyAndScaleParams = { y: -8, x: 0, start: 0.95, duration: 150 },
 ): TransitionConfig => {
   const style = getComputedStyle(node);
@@ -32,8 +33,11 @@ export const flyAndScale = (
   };
 
   const styleToString = (style: Record<string, number | string | undefined>): string => {
+    // eslint-disable-next-line unicorn/no-array-reduce
     return Object.keys(style).reduce((str, key) => {
-      if (style[key] === undefined) return str;
+      if (style[key] === undefined) {
+        return str;
+      }
       return str + `${key}:${style[key]};`;
     }, '');
   };

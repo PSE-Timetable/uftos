@@ -1,7 +1,12 @@
 package de.uftos.dto;
 
-import de.uftos.entities.*;
-
+import de.uftos.entities.Grade;
+import de.uftos.entities.Lesson;
+import de.uftos.entities.Room;
+import de.uftos.entities.Subject;
+import de.uftos.entities.Teacher;
+import de.uftos.entities.Timeslot;
+import de.uftos.entities.Timetable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -21,11 +26,6 @@ public record LessonResponseDto(List<BulkLesson> lessons,
                                 List<Teacher> teachers,
                                 List<GradeResponseDto> grades, List<Room> rooms,
                                 List<Subject> subjects, Timetable timetable) {
-  private record BulkLesson(String id, int index, String teacherId, String roomId,
-                            List<String> gradeIds, Timeslot timeslot,
-                            String subjectId) {
-  }
-
   /**
    * Creates a LessonResponseDto from a list of lessons. Each lesson has to be in the same
    * timetable.
@@ -40,8 +40,7 @@ public record LessonResponseDto(List<BulkLesson> lessons,
     List<GradeResponseDto> gradeResponseDtos = new ArrayList<>();
     Set<Room> rooms = new HashSet<>();
     Set<Subject> subjects = new HashSet<>();
-    // Sets to avoid duplicates
-    Timetable timetable = lessons.get(0).getTimetable();
+    Timetable timetable = lessons.isEmpty() ? null : lessons.getFirst().getTimetable();
 
     for (Lesson lesson : lessons) {
       List<String> gradeIds = new ArrayList<>();
@@ -49,18 +48,25 @@ public record LessonResponseDto(List<BulkLesson> lessons,
         gradeIds.add(grade.getId());
         grades.add(grade);
       }
-      bulkLessons.add(new BulkLesson(
-              lesson.getId(), lesson.getIndex(), lesson.getTeacher().getId(),
-              lesson.getRoom().getId(), gradeIds, lesson.getTimeslot(), lesson.getSubject().getId()));
+      bulkLessons.add(new BulkLesson(lesson, gradeIds));
       teachers.add(lesson.getTeacher());
       rooms.add(lesson.getRoom());
       subjects.add(lesson.getSubject());
     }
     grades.stream().map(GradeResponseDto::createResponseDtoFromGrade)
-            .forEach(gradeResponseDtos::add);
+        .forEach(gradeResponseDtos::add);
 
     return new LessonResponseDto(bulkLessons, teachers.stream().toList(), gradeResponseDtos,
-            rooms.stream().toList(), subjects.stream().toList(), timetable);
+        rooms.stream().toList(), subjects.stream().toList(), timetable);
+  }
+
+  private record BulkLesson(String id, int index, String teacherId, String roomId,
+                            List<String> gradeIds, Timeslot timeslot,
+                            String subjectId) {
+    private BulkLesson(Lesson lesson, List<String> gradesId) {
+      this(lesson.getId(), lesson.getIndex(), lesson.getTeacher().getId(),
+          lesson.getRoom().getId(), gradesId, lesson.getTimeslot(), lesson.getSubject().getId());
+    }
   }
 }
 

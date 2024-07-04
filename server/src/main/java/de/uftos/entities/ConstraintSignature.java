@@ -7,6 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import java.util.List;
+import java.util.Objects;
 import lombok.Data;
 
 /**
@@ -29,4 +30,16 @@ public class ConstraintSignature {
   @JsonIgnore
   @OneToMany(mappedBy = "signature", cascade = CascadeType.REMOVE)
   private List<ConstraintInstance> instances;
+
+  @Override
+  public boolean equals(Object other) {
+    if (this == other) {
+      return true;
+    }
+    if (other == null || getClass() != other.getClass()) {
+      return false;
+    }
+    ConstraintSignature that = (ConstraintSignature) other;
+    return Objects.equals(name, that.name);
+  }
 }
