@@ -4,8 +4,12 @@ import de.uftos.builders.SpecificationBuilder;
 import de.uftos.dto.LessonResponseDto;
 import de.uftos.dto.StudentAndGroup;
 import de.uftos.dto.StudentGroupRequestDto;
+import de.uftos.entities.Lesson;
 import de.uftos.entities.StudentGroup;
+import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.StudentGroupRepository;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +26,7 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class StudentGroupService {
   private final StudentGroupRepository repository;
+  private final ServerRepository serverRepository;
 
   /**
    * Creates a student group service.
@@ -29,8 +34,9 @@ public class StudentGroupService {
    * @param repository the repository for accessing the student group table.
    */
   @Autowired
-  public StudentGroupService(StudentGroupRepository repository) {
+  public StudentGroupService(StudentGroupRepository repository, ServerRepository serverRepository) {
     this.repository = repository;
+    this.serverRepository = serverRepository;
   }
 
   /**
@@ -40,9 +46,10 @@ public class StudentGroupService {
    * @param name     the name filter.
    * @return the page of the entries fitting the parameters.
    */
+  //no tags filter?
   public Page<StudentGroup> get(Pageable pageable, Optional<String> name) {
     Specification<StudentGroup> spec = new SpecificationBuilder<StudentGroup>()
-            .optionOrEquals(name, "name")
+            .optionalOrEquals(name, "name")
             .build();
     return this.repository.findAll(spec, pageable);
   }
@@ -56,8 +63,8 @@ public class StudentGroupService {
    * @throws ResponseStatusException is thrown if the ID doesn't have a corresponding student group.
    */
   public StudentGroup getById(String id) {
-    Optional<StudentGroup> group = this.repository.findById(id);
-    return group.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+    Optional<StudentGroup> studentGroup = this.repository.findById(id);
+    return studentGroup.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
   }
 
   /**
@@ -68,8 +75,11 @@ public class StudentGroupService {
    * @throws ResponseStatusException is thrown if the ID doesn't have a corresponding student group.
    */
   public LessonResponseDto getLessonsById(String id) {
-    StudentGroup studentGroup = this.getById(id);
-    return LessonResponseDto.createResponseDtoFromLessons(studentGroup.getLessons());
+    StudentGroup studentGroup = getById(id);
+    List<Lesson> lessons = new ArrayList<>(studentGroup.getLessons());
+    lessons.removeIf(lesson -> !lesson.getYear().equals(
+            serverRepository.findAll().getFirst().getCurrentYear()));
+    return LessonResponseDto.createResponseDtoFromLessons(lessons);
   }
 
   /**
