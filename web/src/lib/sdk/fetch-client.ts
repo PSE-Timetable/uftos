@@ -1,5 +1,5 @@
 /**
- * OpenAPI definition
+ * UFTOS OpenAPI definition
  * v0
  * DO NOT MODIFY - This file has been generated using oazapfts.
  * See https://www.npmjs.com/package/oazapfts
@@ -8,11 +8,11 @@ import * as Oazapfts from "@oazapfts/runtime";
 import * as QS from "@oazapfts/runtime/query";
 export const defaults: Oazapfts.Defaults<Oazapfts.CustomHeaders> = {
     headers: {},
-    baseUrl: "http://localhost:8080",
+    baseUrl: "http://localhost:5173/api",
 };
 const oazapfts = Oazapfts.runtime(defaults);
 export const servers = {
-    generatedServerUrl: "http://localhost:8080"
+    uftosApiUrl: "http://localhost:5173/api"
 };
 export type Pageable = {
     page?: number;
