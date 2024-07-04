@@ -64,6 +64,22 @@ public class SpecificationBuilder<T> {
     }
     specification = specification.and(
         (root, query, cb) -> root.join(relationName).get(attributeName)
+            .in((Object[]) attributeValue.get())
+    );
+    return this;
+  }
+
+  public SpecificationBuilder<T> andEqual(String attributeValue, String attribute) {
+    specification = specification.and((root, query, cb) -> cb.equal(root.get(attribute), attributeValue)))
+  }
+
+  public SpecificationBuilder<T> optionalAndJoinEquals(Optional<String> attributeValue,
+                                                       String relationName, String attributeName) {
+    if (attributeValue.isEmpty()) {
+      return this;
+    }
+    specification = specification.and(
+        (root, query, cb) -> root.join(relationName).get(attributeName)
             .in(List.of(attributeValue.get()))
     );
     return this;
