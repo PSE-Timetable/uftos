@@ -20,7 +20,8 @@ public record LessonRequestDto(int index, String teacherId, String studentGroupI
    *
    * @return the new lesson entity.
    */
-  public Lesson map() {
-    return new Lesson(index, teacherId, studentGroupId, roomId, timeslotId, subjectId, timetableId);
+  public Lesson map() { //TODO: update API for defining year
+    return new Lesson(index, teacherId, studentGroupId, roomId, timeslotId, subjectId, timetableId,
+        "2024");
   }
 }

@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import java.util.Objects;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -26,5 +27,17 @@ public class ConstraintArgument {
   public ConstraintArgument(String name, String value) {
     this.name = name;
     this.value = value;
+  }
+
+  @Override
+  public boolean equals(Object other) {
+    if (this == other) {
+      return true;
+    }
+    if (other == null || getClass() != other.getClass()) {
+      return false;
+    }
+    ConstraintArgument that = (ConstraintArgument) other;
+    return Objects.equals(id, that.id);
   }
 }

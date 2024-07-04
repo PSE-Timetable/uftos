@@ -1,14 +1,19 @@
 package de.uftos.services;
 
+import de.uftos.builders.SpecificationBuilder;
 import de.uftos.dto.LessonResponseDto;
 import de.uftos.dto.TeacherRequestDto;
+import de.uftos.entities.Lesson;
 import de.uftos.entities.Teacher;
+import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.TeacherRepository;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -19,6 +24,7 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class TeacherService {
   private final TeacherRepository repository;
+  private final ServerRepository serverRepository;
 
   /**
    * Creates a teacher service.
@@ -26,8 +32,9 @@ public class TeacherService {
    * @param repository the repository for accessing the teacher table.
    */
   @Autowired
-  public TeacherService(TeacherRepository repository) {
+  public TeacherService(TeacherRepository repository, ServerRepository serverRepository) {
     this.repository = repository;
+    this.serverRepository = serverRepository;
   }
 
   /**
@@ -44,7 +51,14 @@ public class TeacherService {
   public Page<Teacher> get(Pageable pageable, Optional<String> firstName,
                            Optional<String> lastName, Optional<String> acronym,
                            Optional<String[]> subjects, Optional<String[]> tags) {
-    return this.repository.findAll(pageable);
+    Specification<Teacher> spec = new SpecificationBuilder<Teacher>()
+        .optionalOrEquals(firstName, "firstName")
+        .optionalOrEquals(lastName, "lastName")
+        .optionalOrEquals(acronym, "acronym")
+        .optionalAndJoinIn(subjects, "subjects", "id")
+        .optionalAndJoinIn(tags, "tags", "id")
+        .build();
+    return this.repository.findAll(spec, pageable);
   }
 
   /**
@@ -64,13 +78,15 @@ public class TeacherService {
    * Gets the information about the lessons that the teacher teaches.
    *
    * @param id the ID of the teacher.
-   * @return a list of objects each containing information about a lesson.
+   * @return a LessonResponseDto containing information about the lessons.
    * @throws ResponseStatusException is thrown if the ID doesn't have a corresponding teacher.
    */
-  public List<LessonResponseDto> getLessonsById(String id) {
-    Teacher teacher = this.getById(id);
-    // TODO
-    return null;
+  public LessonResponseDto getLessonsById(String id) {
+    Teacher teacher = getById(id);
+    List<Lesson> lessons = new ArrayList<>(teacher.getLessons());
+    lessons.removeIf(lesson -> !lesson.getYear().equals(
+        serverRepository.findAll().getFirst().getCurrentYear()));
+    return LessonResponseDto.createResponseDtoFromLessons(lessons);
   }
 
   /**
@@ -95,7 +111,6 @@ public class TeacherService {
   public Teacher update(String id, TeacherRequestDto teacherRequest) {
     Teacher teacher = teacherRequest.map();
     teacher.setId(id);
-
     return this.repository.save(teacher);
   }
 
