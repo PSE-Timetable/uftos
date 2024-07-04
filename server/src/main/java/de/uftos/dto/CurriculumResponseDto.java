@@ -1,6 +1,8 @@
 package de.uftos.dto;
 
 import de.uftos.entities.LessonsCount;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -11,6 +13,7 @@ import java.util.List;
  * @param grade         the respective grade the curriculum belongs to.
  * @param lessonsCounts a list of objects representing how often a lesson should be scheduled.
  */
-public record CurriculumResponseDto(String id, String name, GradeResponseDto grade,
-                                    List<LessonsCount> lessonsCounts) {
+public record CurriculumResponseDto(@NotEmpty String id, @NotEmpty String name,
+                                    @NotNull GradeResponseDto grade,
+                                    @NotNull List<LessonsCount> lessonsCounts) {
 }

@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.NotEmpty;
 import java.util.List;
 import java.util.Objects;
 import lombok.Data;
@@ -21,8 +22,10 @@ import lombok.NoArgsConstructor;
 public class Timetable {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
+  @NotEmpty
   private String id;
 
+  @NotEmpty
   private String name;
 
   @JsonIgnore

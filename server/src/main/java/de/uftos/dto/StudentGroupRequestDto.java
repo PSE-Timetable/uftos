@@ -1,6 +1,8 @@
 package de.uftos.dto;
 
 import de.uftos.entities.StudentGroup;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -11,8 +13,9 @@ import java.util.List;
  * @param gradeIds   the IDs of the grades that are part of the student group.
  * @param tagIds     the IDs of the tags associated with the student group.
  */
-public record StudentGroupRequestDto(String name, List<String> studentIds, List<String> gradeIds,
-                                     List<String> tagIds) {
+public record StudentGroupRequestDto(@NotEmpty String name, @NotNull List<String> studentIds,
+                                     @NotNull List<String> gradeIds,
+                                     @NotNull List<String> tagIds) {
   /**
    * Maps the information from the data transfer object to a new student group entity.
    *
