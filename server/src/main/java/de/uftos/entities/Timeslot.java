@@ -12,6 +12,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import java.util.List;
 import java.util.Objects;
 import lombok.Data;
@@ -28,12 +31,18 @@ import lombok.NoArgsConstructor;
 public class Timeslot {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
+  @NotEmpty
   private String id;
 
+  @NotNull
   @Enumerated(EnumType.STRING)
   private Weekday day;
+
+  @PositiveOrZero
+  @NotNull
   private int slot;
 
+  @NotNull
   @ManyToMany
   @JoinTable(name = "timeslots_tags",
       joinColumns = @JoinColumn(name = "timeslots_id"),
