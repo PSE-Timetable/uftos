@@ -9,6 +9,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Objects;
 import lombok.Data;
@@ -25,14 +27,17 @@ import lombok.NoArgsConstructor;
 public class Subject {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
+  @NotEmpty
   private String id;
 
+  @NotEmpty
   private String name;
 
   @JsonIgnore
   @ManyToMany(mappedBy = "subjects")
   private List<Teacher> teachers;
 
+  @NotNull
   @ManyToMany
   @JoinTable(name = "subjects_tags",
       joinColumns = @JoinColumn(name = "subjects_id"),
