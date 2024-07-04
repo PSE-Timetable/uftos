@@ -6,4 +6,9 @@ export default defineConfig({
   test: {
     include: ['src/**/*.{test,spec}.{js,ts}'],
   },
+  server: {
+    proxy: {
+      '/api': { target: 'http://uftos-api:8080', changeOrigin: true, ws: true },
+    },
+  },
 });
