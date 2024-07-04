@@ -67,9 +67,4 @@ public class Grade {
     Grade grade = (Grade) other;
     return Objects.equals(id, grade.id);
   }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(id, name);
-  }
 }
