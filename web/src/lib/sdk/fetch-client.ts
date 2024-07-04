@@ -25,10 +25,10 @@ export type ConstraintParameter = {
     parameterType?: ParameterType;
 };
 export type ConstraintSignature = {
-    defaultType?: DefaultType;
-    description?: string;
-    name?: string;
-    parameters?: ConstraintParameter[];
+    defaultType: DefaultType;
+    description: string;
+    name: string;
+    parameters: ConstraintParameter[];
 };
 export type SortObject = {
     ascending?: boolean;
@@ -64,10 +64,10 @@ export type ConstraintArgument = {
     value?: string;
 };
 export type ConstraintInstance = {
-    arguments?: ConstraintArgument[];
-    id?: string;
-    signature?: ConstraintSignature;
-    "type"?: Type;
+    arguments: ConstraintArgument[];
+    id: string;
+    signature: ConstraintSignature;
+    "type": Type;
 };
 export type PageConstraintInstance = {
     content?: ConstraintInstance[];
@@ -89,8 +89,8 @@ export type ConstraintInstanceRequestDto = {
     "type"?: Type;
 };
 export type Tag = {
-    id?: string;
-    name?: string;
+    id: string;
+    name: string;
 };
 export type GradeResponseDto = {
     id: string;
@@ -159,10 +159,10 @@ export type GradeRequestDto = {
     tagIds: string[];
 };
 export type Timeslot = {
-    day?: Day;
-    id?: string;
-    slot?: number;
-    tags?: Tag[];
+    day: Day;
+    id: string;
+    slot: number;
+    tags: Tag[];
 };
 export type BulkLesson = {
     gradeIds: string[];
@@ -229,28 +229,28 @@ export type Grade = {
     tags?: Tag[];
 };
 export type Student = {
-    firstName?: string;
-    id?: string;
-    lastName?: string;
-    tags?: Tag[];
+    firstName: string;
+    id: string;
+    lastName: string;
+    tags: Tag[];
 };
 export type StudentGroup = {
-    grades?: Grade[];
-    id?: string;
-    name?: string;
-    students?: Student[];
-    tags?: Tag[];
+    grades: Grade[];
+    id: string;
+    name: string;
+    students: Student[];
+    tags: Tag[];
 };
 export type Lesson = {
-    id?: string;
-    index?: number;
-    room?: Room;
-    studentGroup?: StudentGroup;
-    subject?: Subject;
-    teacher?: Teacher;
-    timeslot?: Timeslot;
-    timetable?: Timetable;
-    year?: string;
+    id: string;
+    index: number;
+    room: Room;
+    studentGroup: StudentGroup;
+    subject: Subject;
+    teacher: Teacher;
+    timeslot: Timeslot;
+    timetable: Timetable;
+    year: string;
 };
 export type PageRoom = {
     content?: Room[];
