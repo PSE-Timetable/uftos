@@ -1,5 +1,5 @@
 /**
- * OpenAPI definition
+ * UFTOS OpenAPI definition
  * v0
  * DO NOT MODIFY - This file has been generated using oazapfts.
  * See https://www.npmjs.com/package/oazapfts
@@ -8,11 +8,11 @@ import * as Oazapfts from "@oazapfts/runtime";
 import * as QS from "@oazapfts/runtime/query";
 export const defaults: Oazapfts.Defaults<Oazapfts.CustomHeaders> = {
     headers: {},
-    baseUrl: "http://localhost:8080",
+    baseUrl: "http://localhost:5173/api",
 };
 const oazapfts = Oazapfts.runtime(defaults);
 export const servers = {
-    generatedServerUrl: "http://localhost:8080"
+    uftosApiUrl: "http://localhost:5173/api"
 };
 export type Pageable = {
     page?: number;
@@ -25,10 +25,10 @@ export type ConstraintParameter = {
     parameterType?: ParameterType;
 };
 export type ConstraintSignature = {
-    defaultType?: DefaultType;
-    description?: string;
-    name?: string;
-    parameters?: ConstraintParameter[];
+    defaultType: DefaultType;
+    description: string;
+    name: string;
+    parameters: ConstraintParameter[];
 };
 export type SortObject = {
     ascending?: boolean;
@@ -64,10 +64,10 @@ export type ConstraintArgument = {
     value?: string;
 };
 export type ConstraintInstance = {
-    arguments?: ConstraintArgument[];
-    id?: string;
-    signature?: ConstraintSignature;
-    "type"?: Type;
+    arguments: ConstraintArgument[];
+    id: string;
+    signature: ConstraintSignature;
+    "type": Type;
 };
 export type PageConstraintInstance = {
     content?: ConstraintInstance[];
@@ -83,26 +83,26 @@ export type PageConstraintInstance = {
     totalPages?: number;
 };
 export type ConstraintInstanceRequestDto = {
-    arguments?: {
+    arguments: {
         [key: string]: string;
     };
     "type"?: Type;
 };
 export type Tag = {
-    id?: string;
-    name?: string;
+    id: string;
+    name: string;
 };
 export type GradeResponseDto = {
-    id?: string;
-    name?: string;
-    studentGroupIds?: string[];
-    studentIds?: string[];
-    tags?: Tag[];
+    id: string;
+    name: string;
+    studentGroupIds: string[];
+    studentIds: string[];
+    tags: Tag[];
 };
 export type Subject = {
-    id?: string;
-    name?: string;
-    tags?: Tag[];
+    id: string;
+    name: string;
+    tags: Tag[];
 };
 export type LessonsCount = {
     count?: number;
@@ -110,10 +110,10 @@ export type LessonsCount = {
     subject?: Subject;
 };
 export type CurriculumResponseDto = {
-    grade?: GradeResponseDto;
-    id?: string;
-    lessonsCounts?: LessonsCount[];
-    name?: string;
+    grade: GradeResponseDto;
+    id: string;
+    lessonsCounts: LessonsCount[];
+    name: string;
 };
 export type PageCurriculumResponseDto = {
     content?: CurriculumResponseDto[];
@@ -129,12 +129,12 @@ export type PageCurriculumResponseDto = {
     totalPages?: number;
 };
 export type LessonsCountRequestDto = {
-    count?: number;
-    subjectId?: string;
+    count: number;
+    subjectId: string;
 };
 export type CurriculumRequestDto = {
-    gradeId?: string;
-    lessonsCounts?: LessonsCountRequestDto[];
+    gradeId: string;
+    lessonsCounts: LessonsCountRequestDto[];
 };
 export type ParsingResponse = {
     message?: string;
@@ -154,52 +154,51 @@ export type PageGradeResponseDto = {
     totalPages?: number;
 };
 export type GradeRequestDto = {
-    name?: string;
-    studentGroupsIds?: string[];
-    tagIds?: string[];
+    name: string;
+    studentGroupsIds: string[];
+    tagIds: string[];
 };
 export type Timeslot = {
-    day?: Day;
-    id?: string;
-    slot?: number;
-    tags?: Tag[];
+    day: Day;
+    id: string;
+    slot: number;
+    tags: Tag[];
 };
 export type BulkLesson = {
-    gradeIds?: string[];
-    id?: string;
+    gradeIds: string[];
+    id: string;
     index?: number;
-    roomId?: string;
-    subjectId?: string;
-    tags?: Tag[];
-    teacherId?: string;
-    timeslot?: Timeslot;
+    roomId: string;
+    subjectId: string;
+    teacherId: string;
+    timeslot: Timeslot;
 };
 export type Room = {
-    buildingName?: string;
-    capacity?: number;
-    id?: string;
-    name?: string;
-    tags?: Tag[];
+    buildingName: string;
+    capacity: number;
+    id: string;
+    name: string;
+    tags: Tag[];
 };
 export type Teacher = {
-    acronym?: string;
-    firstName?: string;
-    id?: string;
-    lastName?: string;
-    subjects?: Subject[];
-    tags?: Tag[];
+    acronym: string;
+    firstName: string;
+    id: string;
+    lastName: string;
+    subjects: Subject[];
+    tags: Tag[];
 };
 export type Timetable = {
-    id?: string;
-    name?: string;
+    id: string;
+    name: string;
 };
 export type LessonResponseDto = {
-    grades?: GradeResponseDto[];
-    lessons?: BulkLesson[];
-    rooms?: Room[];
-    subjects?: Subject[];
-    teachers?: Teacher[];
-    timetable?: Timetable;
+    grades: GradeResponseDto[];
+    lessons: BulkLesson[];
+    rooms: Room[];
+    subjects: Subject[];
+    teachers: Teacher[];
+    timetable: Timetable;
 };
 export type PageLessonResponseDto = {
     content?: LessonResponseDto[];
@@ -215,13 +214,13 @@ export type PageLessonResponseDto = {
     totalPages?: number;
 };
 export type LessonRequestDto = {
-    index?: number;
-    roomId?: string;
-    studentGroupId?: string;
-    subjectId?: string;
-    teacherId?: string;
-    timeslotId?: string;
-    timetableId?: string;
+    index: number;
+    roomId: string;
+    studentGroupId: string;
+    subjectId: string;
+    teacherId: string;
+    timeslotId: string;
+    timetableId: string;
 };
 export type Grade = {
     id?: string;
@@ -230,27 +229,28 @@ export type Grade = {
     tags?: Tag[];
 };
 export type Student = {
-    firstName?: string;
-    id?: string;
-    lastName?: string;
-    tags?: Tag[];
+    firstName: string;
+    id: string;
+    lastName: string;
+    tags: Tag[];
 };
 export type StudentGroup = {
-    grades?: Grade[];
-    id?: string;
-    name?: string;
-    students?: Student[];
-    tags?: Tag[];
+    grades: Grade[];
+    id: string;
+    name: string;
+    students: Student[];
+    tags: Tag[];
 };
 export type Lesson = {
-    id?: string;
-    index?: number;
-    room?: Room;
-    studentGroup?: StudentGroup;
-    subject?: Subject;
-    teacher?: Teacher;
-    timeslot?: Timeslot;
-    timetable?: Timetable;
+    id: string;
+    index: number;
+    room: Room;
+    studentGroup: StudentGroup;
+    subject: Subject;
+    teacher: Teacher;
+    timeslot: Timeslot;
+    timetable: Timetable;
+    year: string;
 };
 export type PageRoom = {
     content?: Room[];
@@ -266,17 +266,17 @@ export type PageRoom = {
     totalPages?: number;
 };
 export type RoomRequestDto = {
-    buildingName?: string;
-    capacity?: number;
-    name?: string;
-    tagIds?: string[];
+    buildingName: string;
+    capacity: number;
+    name: string;
+    tagIds: string[];
 };
 export type ServerStatisticsResponseDto = {
-    classCount?: number;
-    resourceCount?: number;
-    roomCount?: number;
-    studentCount?: number;
-    teacherCount?: number;
+    classCount: number;
+    resourceCount: number;
+    roomCount: number;
+    studentCount: number;
+    teacherCount: number;
 };
 export type PageStudentGroup = {
     content?: StudentGroup[];
@@ -292,10 +292,10 @@ export type PageStudentGroup = {
     totalPages?: number;
 };
 export type StudentGroupRequestDto = {
-    gradeIds?: string[];
-    name?: string;
-    studentIds?: string[];
-    tagIds?: string[];
+    gradeIds: string[];
+    name: string;
+    studentIds: string[];
+    tagIds: string[];
 };
 export type PageStudent = {
     content?: Student[];
@@ -311,9 +311,9 @@ export type PageStudent = {
     totalPages?: number;
 };
 export type StudentRequestDto = {
-    firstName?: string;
-    lastName?: string;
-    tagIds?: string[];
+    firstName: string;
+    lastName: string;
+    tagIds: string[];
 };
 export type PageSubject = {
     content?: Subject[];
@@ -329,8 +329,8 @@ export type PageSubject = {
     totalPages?: number;
 };
 export type SubjectRequestDto = {
-    name?: string;
-    tagIds?: string[];
+    name: string;
+    tagIds: string[];
 };
 export type PageTag = {
     content?: Tag[];
@@ -346,7 +346,7 @@ export type PageTag = {
     totalPages?: number;
 };
 export type TagRequestDto = {
-    tagName?: string;
+    tagName: string;
 };
 export type PageTeacher = {
     content?: Teacher[];
@@ -362,11 +362,11 @@ export type PageTeacher = {
     totalPages?: number;
 };
 export type TeacherRequestDto = {
-    acronym?: string;
-    firstName?: string;
-    lastName?: string;
-    subjectIds?: string[];
-    tagIds?: string[];
+    acronym: string;
+    firstName: string;
+    lastName: string;
+    subjectIds: string[];
+    tagIds: string[];
 };
 export type PageTimeslot = {
     content?: Timeslot[];
@@ -382,9 +382,9 @@ export type PageTimeslot = {
     totalPages?: number;
 };
 export type TimeslotRequestDto = {
-    day?: Day;
-    slot?: number;
-    tagIds?: string[];
+    day: Day;
+    slot: number;
+    tagIds: string[];
 };
 export type PageTimetable = {
     content?: Timetable[];
@@ -400,7 +400,7 @@ export type PageTimetable = {
     totalPages?: number;
 };
 export type TimetableRequestDto = {
-    name?: string;
+    name: string;
 };
 export function getConstraintSignatures(pageable: Pageable, { name }: {
     name?: string;
@@ -995,7 +995,7 @@ export function updateTeacher(id: string, teacherRequestDto: TeacherRequestDto, 
 export function getTeacherLessons(id: string, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
-        data: LessonResponseDto[];
+        data: LessonResponseDto;
     }>(`/teachers/${encodeURIComponent(id)}/lessons`, {
         ...opts
     }));

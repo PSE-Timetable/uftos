@@ -6,6 +6,8 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Objects;
 import lombok.Data;
@@ -19,11 +21,15 @@ import lombok.Data;
 @Data
 public class ConstraintSignature {
   @Id
+  @NotEmpty
   private String name;
 
+  @NotEmpty
   private String description;
+  @NotEmpty
   private RewardPenalize defaultType;
 
+  @NotNull
   @OneToMany
   private List<ConstraintParameter> parameters;
 

@@ -9,6 +9,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import java.util.List;
 import java.util.Objects;
 import lombok.Data;
@@ -25,18 +28,25 @@ import lombok.NoArgsConstructor;
 public class Room {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
+  @NotEmpty
   private String id;
 
+  @NotEmpty
   private String name;
+  @NotEmpty
   private String buildingName;
+  @Positive
+  @NotNull
   private int capacity;
 
+  @NotNull
   @ManyToMany
   @JoinTable(name = "rooms_tags",
       joinColumns = @JoinColumn(name = "rooms_id"),
       inverseJoinColumns = @JoinColumn(name = "tags_id"))
   private List<Tag> tags;
 
+  @NotNull
   @JsonIgnore
   @OneToMany(mappedBy = "room")
   private List<Lesson> lessons;

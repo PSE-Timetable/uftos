@@ -1,6 +1,8 @@
 package de.uftos.dto;
 
 import de.uftos.entities.Timeslot;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 /**
@@ -10,7 +12,8 @@ import java.util.List;
  * @param slot   the slot in the day of the timeslot.
  * @param tagIds the IDs of the tags associated with the timeslot.
  */
-public record TimeslotRequestDto(Weekday day, int slot, List<String> tagIds) {
+public record TimeslotRequestDto(@NotNull Weekday day, @PositiveOrZero @NotNull int slot,
+                                 @NotNull List<String> tagIds) {
 
   /**
    * Maps the information from the data transfer object to a new timeslot entity.

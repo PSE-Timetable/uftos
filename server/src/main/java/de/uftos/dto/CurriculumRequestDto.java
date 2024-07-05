@@ -1,6 +1,8 @@
 package de.uftos.dto;
 
 import de.uftos.entities.Curriculum;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -9,8 +11,8 @@ import java.util.List;
  * @param gradeId       the grade id the curriculum belongs to.
  * @param lessonsCounts a list of objects representing how often a lesson should be scheduled.
  */
-public record CurriculumRequestDto(String gradeId,
-                                   List<LessonsCountRequestDto> lessonsCounts) {
+public record CurriculumRequestDto(@NotEmpty String gradeId,
+                                   @NotNull List<LessonsCountRequestDto> lessonsCounts) {
   /**
    * Maps the information from the data transfer object to a new curriculum entity.
    *
