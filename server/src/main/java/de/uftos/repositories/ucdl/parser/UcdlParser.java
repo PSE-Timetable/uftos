@@ -57,7 +57,9 @@ public class UcdlParser {
   }
 
   private static AbstractSyntaxTreeDto parseDefinition(String definition) {
-    return DefinitionParser.parseDefinition(definition);
+    AbstractSyntaxTreeDto parsedDefinition = DefinitionParser.parseDefinition(definition);
+    System.out.println(parsedDefinition);
+    return parsedDefinition;
   }
 
   private static ResourceType getResourceType(String resourceType) {

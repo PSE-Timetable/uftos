@@ -213,31 +213,31 @@ public class SyntaxChecker/*@bgen(jjtree)*/implements SyntaxCheckerTreeConstants
     try {
       if (jj_2_15(3)) {
         CONTROLSEQUENCE();
-        CONTROLSEQUENCELIST();
       } else if (jj_2_16(3)) {
         CONTROLSEQUENCE();
+        CONTROLSEQUENCELIST();
       } else {
         jj_consume_token(-1);
         throw new ParseException();
       }
     } catch (Throwable jjte000) {
-                                  if (jjtc000) {
-                                    jjtree.clearNodeScope(jjtn000);
-                                    jjtc000 = false;
-                                  } else {
-                                    jjtree.popNode();
-                                  }
-                                  if (jjte000 instanceof RuntimeException) {
-                                    {if (true) throw (RuntimeException)jjte000;}
-                                  }
-                                  if (jjte000 instanceof ParseException) {
-                                    {if (true) throw (ParseException)jjte000;}
-                                  }
-                                  {if (true) throw (Error)jjte000;}
+                                   if (jjtc000) {
+                                     jjtree.clearNodeScope(jjtn000);
+                                     jjtc000 = false;
+                                   } else {
+                                     jjtree.popNode();
+                                   }
+                                   if (jjte000 instanceof RuntimeException) {
+                                     {if (true) throw (RuntimeException)jjte000;}
+                                   }
+                                   if (jjte000 instanceof ParseException) {
+                                     {if (true) throw (ParseException)jjte000;}
+                                   }
+                                   {if (true) throw (Error)jjte000;}
     } finally {
-                                  if (jjtc000) {
-                                    jjtree.closeNodeScope(jjtn000, true);
-                                  }
+                                   if (jjtc000) {
+                                     jjtree.closeNodeScope(jjtn000, true);
+                                   }
     }
   }
 
@@ -831,32 +831,32 @@ public class SyntaxChecker/*@bgen(jjtree)*/implements SyntaxCheckerTreeConstants
     try {
       if (jj_2_43(3)) {
         ELEMENTATTRIBUTE();
-        jj_consume_token(FLATMAP);
-        ELEMENTATTRIBUTELIST();
       } else if (jj_2_44(3)) {
         ELEMENTATTRIBUTE();
+        jj_consume_token(FLATMAP);
+        ELEMENTATTRIBUTELIST();
       } else {
         jj_consume_token(-1);
         throw new ParseException();
       }
     } catch (Throwable jjte000) {
-                                   if (jjtc000) {
-                                     jjtree.clearNodeScope(jjtn000);
-                                     jjtc000 = false;
-                                   } else {
-                                     jjtree.popNode();
-                                   }
-                                   if (jjte000 instanceof RuntimeException) {
-                                     {if (true) throw (RuntimeException)jjte000;}
-                                   }
-                                   if (jjte000 instanceof ParseException) {
-                                     {if (true) throw (ParseException)jjte000;}
-                                   }
-                                   {if (true) throw (Error)jjte000;}
+                                    if (jjtc000) {
+                                      jjtree.clearNodeScope(jjtn000);
+                                      jjtc000 = false;
+                                    } else {
+                                      jjtree.popNode();
+                                    }
+                                    if (jjte000 instanceof RuntimeException) {
+                                      {if (true) throw (RuntimeException)jjte000;}
+                                    }
+                                    if (jjte000 instanceof ParseException) {
+                                      {if (true) throw (ParseException)jjte000;}
+                                    }
+                                    {if (true) throw (Error)jjte000;}
     } finally {
-                                   if (jjtc000) {
-                                     jjtree.closeNodeScope(jjtn000, true);
-                                   }
+                                    if (jjtc000) {
+                                      jjtree.closeNodeScope(jjtn000, true);
+                                    }
     }
   }
 
@@ -1080,40 +1080,40 @@ public class SyntaxChecker/*@bgen(jjtree)*/implements SyntaxCheckerTreeConstants
     try {
       if (jj_2_58(3)) {
         ATTRIBUTE();
-        jj_consume_token(FLATMAP);
-        ATTRIBUTELIST();
       } else if (jj_2_59(3)) {
         ATTRIBUTE();
         FILTER();
-        jj_consume_token(FLATMAP);
-        ATTRIBUTELIST();
       } else if (jj_2_60(3)) {
         ATTRIBUTE();
+        jj_consume_token(FLATMAP);
+        ATTRIBUTELIST();
       } else if (jj_2_61(3)) {
         ATTRIBUTE();
         FILTER();
+        jj_consume_token(FLATMAP);
+        ATTRIBUTELIST();
       } else {
         jj_consume_token(-1);
         throw new ParseException();
       }
     } catch (Throwable jjte000) {
-                            if (jjtc000) {
-                              jjtree.clearNodeScope(jjtn000);
-                              jjtc000 = false;
-                            } else {
-                              jjtree.popNode();
-                            }
-                            if (jjte000 instanceof RuntimeException) {
-                              {if (true) throw (RuntimeException)jjte000;}
-                            }
-                            if (jjte000 instanceof ParseException) {
-                              {if (true) throw (ParseException)jjte000;}
-                            }
-                            {if (true) throw (Error)jjte000;}
+                             if (jjtc000) {
+                               jjtree.clearNodeScope(jjtn000);
+                               jjtc000 = false;
+                             } else {
+                               jjtree.popNode();
+                             }
+                             if (jjte000 instanceof RuntimeException) {
+                               {if (true) throw (RuntimeException)jjte000;}
+                             }
+                             if (jjte000 instanceof ParseException) {
+                               {if (true) throw (ParseException)jjte000;}
+                             }
+                             {if (true) throw (Error)jjte000;}
     } finally {
-                            if (jjtc000) {
-                              jjtree.closeNodeScope(jjtn000, true);
-                            }
+                             if (jjtc000) {
+                               jjtree.closeNodeScope(jjtn000, true);
+                             }
     }
   }
 
@@ -1197,16 +1197,16 @@ public class SyntaxChecker/*@bgen(jjtree)*/implements SyntaxCheckerTreeConstants
     try {
       if (jj_2_62(3)) {
         SET();
-        jj_consume_token(COMMA);
-        FILTERLIST();
       } else if (jj_2_63(3)) {
-        SET();
-      } else if (jj_2_64(3)) {
         BOOL();
+      } else if (jj_2_64(3)) {
+        SET();
         jj_consume_token(COMMA);
         FILTERLIST();
       } else if (jj_2_65(3)) {
         BOOL();
+        jj_consume_token(COMMA);
+        FILTERLIST();
       } else {
         jj_consume_token(-1);
         throw new ParseException();
@@ -1687,19 +1687,15 @@ public class SyntaxChecker/*@bgen(jjtree)*/implements SyntaxCheckerTreeConstants
     finally { jj_save(64, xla); }
   }
 
-  static private boolean jj_3_60() {
-    if (jj_3R_32()) return true;
-    return false;
-  }
-
   static private boolean jj_3_54() {
     if (jj_3R_28()) return true;
     if (jj_3R_30()) return true;
     return false;
   }
 
-  static private boolean jj_3_65() {
-    if (jj_3R_1()) return true;
+  static private boolean jj_3_61() {
+    if (jj_3R_32()) return true;
+    if (jj_3R_30()) return true;
     return false;
   }
 
@@ -1708,8 +1704,10 @@ public class SyntaxChecker/*@bgen(jjtree)*/implements SyntaxCheckerTreeConstants
     return false;
   }
 
-  static private boolean jj_3_44() {
-    if (jj_3R_26()) return true;
+  static private boolean jj_3_65() {
+    if (jj_3R_1()) return true;
+    if (jj_scan_token(COMMA)) return true;
+    if (jj_3R_33()) return true;
     return false;
   }
 
@@ -1723,23 +1721,10 @@ public class SyntaxChecker/*@bgen(jjtree)*/implements SyntaxCheckerTreeConstants
     return false;
   }
 
-  static private boolean jj_3_64() {
-    if (jj_3R_1()) return true;
-    if (jj_scan_token(COMMA)) return true;
-    if (jj_3R_33()) return true;
-    return false;
-  }
-
   static private boolean jj_3_28() {
     if (jj_scan_token(LPAREN)) return true;
     if (jj_3R_1()) return true;
     if (jj_scan_token(RPAREN)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_59() {
-    if (jj_3R_32()) return true;
-    if (jj_3R_30()) return true;
     return false;
   }
 
@@ -1749,8 +1734,10 @@ public class SyntaxChecker/*@bgen(jjtree)*/implements SyntaxCheckerTreeConstants
     return false;
   }
 
-  static private boolean jj_3_63() {
-    if (jj_3R_7()) return true;
+  static private boolean jj_3_60() {
+    if (jj_3R_32()) return true;
+    if (jj_scan_token(FLATMAP)) return true;
+    if (jj_3R_29()) return true;
     return false;
   }
 
@@ -1776,10 +1763,24 @@ public class SyntaxChecker/*@bgen(jjtree)*/implements SyntaxCheckerTreeConstants
     return false;
   }
 
+  static private boolean jj_3_64() {
+    if (jj_3R_7()) return true;
+    if (jj_scan_token(COMMA)) return true;
+    if (jj_3R_33()) return true;
+    return false;
+  }
+
   static private boolean jj_3_30() {
     if (jj_3R_20()) return true;
     if (jj_3R_21()) return true;
     if (jj_3R_20()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_44() {
+    if (jj_3R_26()) return true;
+    if (jj_scan_token(FLATMAP)) return true;
+    if (jj_3R_23()) return true;
     return false;
   }
 
@@ -1798,8 +1799,14 @@ public class SyntaxChecker/*@bgen(jjtree)*/implements SyntaxCheckerTreeConstants
     return false;
   }
 
-  static private boolean jj_3_16() {
-    if (jj_3R_14()) return true;
+  static private boolean jj_3_59() {
+    if (jj_3R_32()) return true;
+    if (jj_3R_30()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_63() {
+    if (jj_3R_1()) return true;
     return false;
   }
 
@@ -1843,8 +1850,6 @@ public class SyntaxChecker/*@bgen(jjtree)*/implements SyntaxCheckerTreeConstants
 
   static private boolean jj_3_62() {
     if (jj_3R_7()) return true;
-    if (jj_scan_token(COMMA)) return true;
-    if (jj_3R_33()) return true;
     return false;
   }
 
@@ -1857,12 +1862,6 @@ public class SyntaxChecker/*@bgen(jjtree)*/implements SyntaxCheckerTreeConstants
     if (jj_scan_token(SIZE)) return true;
     if (jj_scan_token(LPAREN)) return true;
     if (jj_3R_7()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_30() {
-    if (jj_scan_token(LBRACKET)) return true;
-    if (jj_3R_33()) return true;
     return false;
   }
 
@@ -1882,6 +1881,12 @@ public class SyntaxChecker/*@bgen(jjtree)*/implements SyntaxCheckerTreeConstants
     return false;
   }
 
+  static private boolean jj_3R_30() {
+    if (jj_scan_token(LBRACKET)) return true;
+    if (jj_3R_33()) return true;
+    return false;
+  }
+
   static private boolean jj_3_34() {
     if (jj_scan_token(SMALLEREQUALS)) return true;
     return false;
@@ -1894,8 +1899,23 @@ public class SyntaxChecker/*@bgen(jjtree)*/implements SyntaxCheckerTreeConstants
     return false;
   }
 
+  static private boolean jj_3_58() {
+    if (jj_3R_32()) return true;
+    return false;
+  }
+
   static private boolean jj_3R_24() {
     if (jj_scan_token(STRING)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_23() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_43()) {
+    jj_scanpos = xsp;
+    if (jj_3_44()) return true;
+    }
     return false;
   }
 
@@ -1911,37 +1931,18 @@ public class SyntaxChecker/*@bgen(jjtree)*/implements SyntaxCheckerTreeConstants
     return false;
   }
 
-  static private boolean jj_3_58() {
-    if (jj_3R_32()) return true;
-    if (jj_scan_token(FLATMAP)) return true;
-    if (jj_3R_29()) return true;
-    return false;
-  }
-
   static private boolean jj_3R_32() {
     if (jj_scan_token(STRING)) return true;
     return false;
   }
 
-  static private boolean jj_3R_23() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_43()) {
-    jj_scanpos = xsp;
-    if (jj_3_44()) return true;
-    }
+  static private boolean jj_3_43() {
+    if (jj_3R_26()) return true;
     return false;
   }
 
   static private boolean jj_3_41() {
     if (jj_3R_24()) return true;
-    return false;
-  }
-
-  static private boolean jj_3_43() {
-    if (jj_3R_26()) return true;
-    if (jj_scan_token(FLATMAP)) return true;
-    if (jj_3R_23()) return true;
     return false;
   }
 
@@ -1957,6 +1958,11 @@ public class SyntaxChecker/*@bgen(jjtree)*/implements SyntaxCheckerTreeConstants
     jj_scanpos = xsp;
     if (jj_3_46()) return true;
     }
+    return false;
+  }
+
+  static private boolean jj_3_16() {
+    if (jj_3R_14()) return true;
     return false;
   }
 
@@ -2187,15 +2193,15 @@ public class SyntaxChecker/*@bgen(jjtree)*/implements SyntaxCheckerTreeConstants
     return false;
   }
 
+  static private boolean jj_3_15() {
+    if (jj_3R_14()) return true;
+    return false;
+  }
+
   static private boolean jj_3R_10() {
     if (jj_3R_11()) return true;
     if (jj_scan_token(IMPLIES)) return true;
     if (jj_3R_11()) return true;
-    return false;
-  }
-
-  static private boolean jj_3_15() {
-    if (jj_3R_14()) return true;
     return false;
   }
 
@@ -2384,12 +2390,6 @@ public class SyntaxChecker/*@bgen(jjtree)*/implements SyntaxCheckerTreeConstants
 
   static private boolean jj_3_3() {
     if (jj_3R_3()) return true;
-    return false;
-  }
-
-  static private boolean jj_3_61() {
-    if (jj_3R_32()) return true;
-    if (jj_3R_30()) return true;
     return false;
   }
 
