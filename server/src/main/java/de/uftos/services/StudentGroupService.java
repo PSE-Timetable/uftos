@@ -46,7 +46,6 @@ public class StudentGroupService {
    * @param name     the name filter.
    * @return the page of the entries fitting the parameters.
    */
-  //no tags filter?
   public Page<StudentGroup> get(Pageable pageable, Optional<String> name) {
     Specification<StudentGroup> spec = new SpecificationBuilder<StudentGroup>()
             .optionalOrEquals(name, "name")
