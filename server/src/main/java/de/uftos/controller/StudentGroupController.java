@@ -52,15 +52,16 @@ public class StudentGroupController {
 
   /**
    * Maps the HTTP GET request for a set of student groups from the database, to the
-   * {@link StudentGroupService#get(Pageable, Optional)  get} function of the student group service.
+   * {@link StudentGroupService#get(Pageable, Optional, Optional)  get} function of the student group service.
    *
    * @param pageable contains the parameters for the page.
    * @param name     the name filter.
+   * @param tags     the tags filter.
    * @return the page of student groups fitting the parameters.
    */
   @GetMapping()
-  public Page<StudentGroup> getStudentGroups(Pageable pageable, Optional<String> name) {
-    return this.studentGroupService.get(pageable, name);
+  public Page<StudentGroup> getStudentGroups(Pageable pageable, Optional<String> name, Optional<String[]> tags) {
+    return this.studentGroupService.get(pageable, name, tags);
   }
 
   /**

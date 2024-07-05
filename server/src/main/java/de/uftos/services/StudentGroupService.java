@@ -44,11 +44,13 @@ public class StudentGroupService {
    *
    * @param pageable contains the parameters for the page.
    * @param name     the name filter.
+   * @param tags     the tags filter.
    * @return the page of the entries fitting the parameters.
    */
-  public Page<StudentGroup> get(Pageable pageable, Optional<String> name) {
+  public Page<StudentGroup> get(Pageable pageable, Optional<String> name, Optional<String[]> tags) {
     Specification<StudentGroup> spec = new SpecificationBuilder<StudentGroup>()
             .optionalOrEquals(name, "name")
+            .optionalAndJoinIn(tags, "tags", "id")
             .build();
     return this.repository.findAll(spec, pageable);
   }
