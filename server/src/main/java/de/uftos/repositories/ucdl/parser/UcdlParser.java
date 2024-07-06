@@ -27,14 +27,11 @@ public class UcdlParser {
       }
     });
 
-    System.out.println("-------------------------");
-
     return constraints;
   }
 
   private static ConstraintDefinitionDto parseConstraintDefinition(String name, JsonNode constraintDefinition)
       throws ParseException {
-    constraintDefinition.fieldNames().forEachRemaining(System.out::println);
     String description = constraintDefinition.get("description").textValue();
     RewardPenalize defaultType = switch (constraintDefinition.get("default_type").textValue())
     {
@@ -57,9 +54,7 @@ public class UcdlParser {
   }
 
   private static AbstractSyntaxTreeDto parseDefinition(String definition) {
-    AbstractSyntaxTreeDto parsedDefinition = DefinitionParser.parseDefinition(definition);
-    System.out.println(parsedDefinition);
-    return parsedDefinition;
+    return DefinitionParser.parseDefinition(definition);
   }
 
   private static ResourceType getResourceType(String resourceType) {
