@@ -82,7 +82,7 @@ public class GradeController {
    * @return information about the lessons that are taught in the grade.
    */
   @GetMapping("/{id}/lessons")
-  public List<LessonResponseDto> getGradeLessons(@PathVariable String id) {
+  public LessonResponseDto getGradeLessons(@PathVariable String id) {
     return this.gradeService.getLessonsById(id);
   }
 

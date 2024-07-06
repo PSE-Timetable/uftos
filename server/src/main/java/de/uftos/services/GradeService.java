@@ -4,13 +4,16 @@ import de.uftos.dto.GradeRequestDto;
 import de.uftos.dto.GradeResponseDto;
 import de.uftos.dto.LessonResponseDto;
 import de.uftos.entities.Grade;
+import de.uftos.entities.Lesson;
 import de.uftos.entities.Student;
 import de.uftos.entities.StudentGroup;
 import de.uftos.repositories.database.GradeRepository;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import de.uftos.repositories.database.ServerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -25,6 +28,7 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class GradeService {
   private final GradeRepository repository;
+  private final ServerRepository serverRepository;
 
   /**
    * Creates a grade service.
@@ -32,8 +36,9 @@ public class GradeService {
    * @param repository the repository for accessing the grade table.
    */
   @Autowired
-  public GradeService(GradeRepository repository) {
+  public GradeService(GradeRepository repository, ServerRepository serverRepository) {
     this.repository = repository;
+    this.serverRepository = serverRepository;
   }
 
   /**
@@ -72,12 +77,18 @@ public class GradeService {
    * @return a list of objects each containing information about a lesson.
    * @throws ResponseStatusException is thrown if the ID doesn't have a corresponding grade.
    */
-  public List<LessonResponseDto> getLessonsById(String id) {
+  public LessonResponseDto getLessonsById(String id) {
     Grade grade = this.repository.findById(id)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
 
-    // TODO
-    return null;
+    Stream<StudentGroup> studentGroupStream = Stream.of(grade.getStudentGroups()).flatMap(Collection::stream);
+    // Different student groups can have the same lessons, Set used to prevent duplicates
+    Set<Lesson> lessons = studentGroupStream.map(StudentGroup::getLessons).flatMap(Collection::stream).collect(Collectors.toSet());
+
+    lessons.removeIf(lesson -> !lesson.getYear().equals(
+            serverRepository.findAll().getFirst().getCurrentYear()));
+
+    return LessonResponseDto.createResponseDtoFromLessons(lessons.stream().toList());
   }
 
   /**
