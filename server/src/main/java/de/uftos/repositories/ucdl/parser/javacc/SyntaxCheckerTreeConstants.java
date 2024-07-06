@@ -10,35 +10,37 @@ public interface SyntaxCheckerTreeConstants
   public int JJTCODEBLOCK = 4;
   public int JJTCONTROLSEQUENCELIST = 5;
   public int JJTCONTROLSEQUENCE = 6;
-  public int JJTCONTROLSEQUENCERETURN = 7;
-  public int JJTRETURN = 8;
-  public int JJTFOR = 9;
-  public int JJTIF = 10;
+  public int JJTRETURN = 7;
+  public int JJTFOR = 8;
+  public int JJTIF = 9;
+  public int JJTCONTROLSEQUENCERETURN = 10;
   public int JJTFORALL = 11;
   public int JJTEXISTS = 12;
   public int JJTIMPLIES = 13;
-  public int JJTOR = 14;
-  public int JJTAND = 15;
-  public int JJTNOT = 16;
-  public int JJTISEMPTY = 17;
-  public int JJTEQUATION = 18;
-  public int JJTELEMENTEQUATION = 19;
-  public int JJTNUMBEREQUATION = 20;
-  public int JJTELEMENT = 21;
-  public int JJTELEMENTNAME = 22;
-  public int JJTELEMENTATTRIBUTELIST = 23;
-  public int JJTELEMENTATTRIBUTE = 24;
-  public int JJTNUMBERELEMENT = 25;
-  public int JJTNUMBERSET = 26;
-  public int JJTNUMBERLIST = 27;
-  public int JJTSET = 28;
-  public int JJTSETNAME = 29;
-  public int JJTATTRIBUTELIST = 30;
-  public int JJTATTRIBUTE = 31;
-  public int JJTVARIABLE = 32;
-  public int JJTPARAMETERNAME = 33;
-  public int JJTFILTER = 34;
-  public int JJTFILTERLIST = 35;
+  public int JJTOPTIONALIMPLIES = 14;
+  public int JJTOR = 15;
+  public int JJTOPTIONALOR = 16;
+  public int JJTAND = 17;
+  public int JJTOPTIONALAND = 18;
+  public int JJTNOT = 19;
+  public int JJTISEMPTY = 20;
+  public int JJTELEMENTINSETOREQUATION = 21;
+  public int JJTELEMENTINSET = 22;
+  public int JJTEQUATION = 23;
+  public int JJTELEMENTEQUATION = 24;
+  public int JJTELEMENT = 25;
+  public int JJTELEMENTNAME = 26;
+  public int JJTELEMENTATTRIBUTELIST = 27;
+  public int JJTNUMBERELEMENT = 28;
+  public int JJTSET = 29;
+  public int JJTSETNAME = 30;
+  public int JJTSETMODIFICATION = 31;
+  public int JJTNUMBERSET = 32;
+  public int JJTNUMBERLIST = 33;
+  public int JJTATTRIBUTE = 34;
+  public int JJTVALUEREFERENCE = 35;
+  public int JJTFILTER = 36;
+  public int JJTFILTERLIST = 37;
 
 
   public String[] jjtNodeName = {
@@ -49,35 +51,37 @@ public interface SyntaxCheckerTreeConstants
     "CODEBLOCK",
     "CONTROLSEQUENCELIST",
     "CONTROLSEQUENCE",
-    "CONTROLSEQUENCERETURN",
     "RETURN",
     "FOR",
     "IF",
+    "CONTROLSEQUENCERETURN",
     "FORALL",
     "EXISTS",
     "IMPLIES",
+    "OPTIONALIMPLIES",
     "OR",
+    "OPTIONALOR",
     "AND",
+    "OPTIONALAND",
     "NOT",
     "ISEMPTY",
+    "ELEMENTINSETOREQUATION",
+    "ELEMENTINSET",
     "EQUATION",
     "ELEMENTEQUATION",
-    "NUMBEREQUATION",
     "ELEMENT",
     "ELEMENTNAME",
     "ELEMENTATTRIBUTELIST",
-    "ELEMENTATTRIBUTE",
     "NUMBERELEMENT",
-    "NUMBERSET",
-    "NUMBERLIST",
     "SET",
     "SETNAME",
-    "ATTRIBUTELIST",
+    "SETMODIFICATION",
+    "NUMBERSET",
+    "NUMBERLIST",
     "ATTRIBUTE",
-    "VARIABLE",
-    "PARAMETERNAME",
+    "VALUEREFERENCE",
     "FILTER",
     "FILTERLIST",
   };
 }
-/* JavaCC - OriginalChecksum=42658a83fa248d5812b330ba17f9af61 (do not edit this line) */
+/* JavaCC - OriginalChecksum=edda98796ddc0b2ed6208768ff5d5ef1 (do not edit this line) */

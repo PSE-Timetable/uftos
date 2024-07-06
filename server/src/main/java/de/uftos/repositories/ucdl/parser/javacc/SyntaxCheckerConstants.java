@@ -69,9 +69,13 @@ public interface SyntaxCheckerConstants {
   /** RegularExpression Id. */
   int SIZE = 34;
   /** RegularExpression Id. */
-  int NUM = 35;
+  int ELEMENTATTRIBUTE = 35;
   /** RegularExpression Id. */
-  int STRING = 36;
+  int SETATTRIBUTE = 36;
+  /** RegularExpression Id. */
+  int NUM = 37;
+  /** RegularExpression Id. */
+  int STRING = 38;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -113,6 +117,8 @@ public interface SyntaxCheckerConstants {
     "\"return\"",
     "\"isEmpty\"",
     "\"size\"",
+    "<ELEMENTATTRIBUTE>",
+    "<SETATTRIBUTE>",
     "<NUM>",
     "<STRING>",
   };
