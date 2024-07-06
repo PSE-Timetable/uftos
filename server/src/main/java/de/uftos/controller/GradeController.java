@@ -55,11 +55,12 @@ public class GradeController {
    *
    * @param pageable contains the parameters for the page.
    * @param name     the name filter.
+   * @param tags     the tags filter.
    * @return the page of grades fitting the parameters.
    */
   @GetMapping()
-  public Page<GradeResponseDto> getGrades(Pageable pageable, Optional<String> name) {
-    return this.gradeService.get(pageable, name);
+  public Page<GradeResponseDto> getGrades(Pageable pageable, Optional<String> name, Optional<String[]> tags) {
+    return this.gradeService.get(pageable, name, tags);
   }
 
   /**
