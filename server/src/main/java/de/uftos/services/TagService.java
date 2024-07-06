@@ -1,12 +1,15 @@
 package de.uftos.services;
 
+import de.uftos.builders.SpecificationBuilder;
 import de.uftos.dto.TagRequestDto;
 import de.uftos.entities.Tag;
+import de.uftos.entities.Teacher;
 import de.uftos.repositories.database.TagRepository;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -36,7 +39,9 @@ public class TagService {
    * @return the page of entries fitting the parameters.
    */
   public Page<Tag> get(Pageable pageable, Optional<String> name) {
-    return this.repository.findAll(pageable);
+    Specification<Tag> spec = new SpecificationBuilder<Tag>()
+            .optionalOrEquals(name, "name").build();
+    return this.repository.findAll(spec, pageable);
   }
 
   /**

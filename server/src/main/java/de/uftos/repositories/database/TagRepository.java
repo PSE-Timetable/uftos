@@ -1,6 +1,7 @@
 package de.uftos.repositories.database;
 
 import de.uftos.entities.Tag;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.data.repository.ListPagingAndSortingRepository;
 
@@ -8,5 +9,5 @@ import org.springframework.data.repository.ListPagingAndSortingRepository;
  * The repository for accessing the tag database table.
  */
 public interface TagRepository extends ListPagingAndSortingRepository<Tag, String>,
-    ListCrudRepository<Tag, String> {
+    ListCrudRepository<Tag, String>, JpaSpecificationExecutor<Tag> {
 }
