@@ -1,6 +1,5 @@
 <script lang="ts">
   import { createTable, Render, Subscribe, createRender } from 'svelte-headless-table';
-  import { writable } from 'svelte/store';
   import * as Table from '$lib/elements/ui/table';
   import DataTableActions from './data-table-actions.svelte';
   import {
@@ -14,6 +13,7 @@
   import ChevronDown from 'lucide-svelte/icons/chevron-down';
   import * as DropdownMenu from '$lib/elements/ui/dropdown-menu';
   import DataTableCheckbox from './data-table-checkbox.svelte';
+  import DataTableHeaderCheckbox from './data-table-header-checkbox.svelte';
   import { ArrowDown, ArrowUp } from 'lucide-svelte';
   import Input from '$lib/elements/ui/input/input.svelte';
 
@@ -23,10 +23,9 @@
     [key: string]: string | string[] | number;
   }
 
-  export let data: DataItem[];
+  export let tableData;
   export let columnNames;
-
-  let tableData = writable(data);
+  export let keys;
 
   const table = createTable(tableData, {
     page: addPagination(),
@@ -38,17 +37,16 @@
     select: addSelectedRows(),
   });
 
-  let idKey = Object.keys(data[0])[0];
   let columns = table.createColumns([
     table.column({
       //first column only contains the checkboxes.
       accessor: (item) => {
-        return item[idKey];
+        return item[keys[0]];
       },
       id: 'id',
       header: (_, { pluginStates }) => {
         const { allPageRowsSelected } = pluginStates.select;
-        return createRender(DataTableCheckbox, {
+        return createRender(DataTableHeaderCheckbox, {
           checked: allPageRowsSelected,
         });
       },
@@ -68,12 +66,11 @@
     }),
   ]);
   for (const [i, columnName] of columnNames.entries()) {
-    let currentKey = Object.keys(data[0])[i + 1];
     columns = columns.concat(
       table.createColumns([
         table.column({
-          accessor: (item: DataItem) => {
-            return item[currentKey];
+          accessor: (item) => {
+            return item[keys[i + 1]];
           },
           header: columnName,
         }),
@@ -85,7 +82,7 @@
     table.createColumns([
       table.column({
         accessor: (item) => {
-          return item[idKey];
+          return item[keys[0]];
         },
         header: '',
         id: 'actions',
@@ -118,12 +115,12 @@
   const hidableCols = columnNames;
 </script>
 
-<div>
+<div class = "border-foreground">
   <div class="flex items-center py-4">
-    <Input bind:value={$filterValue} class="max-w-sm" placeholder="Suche..." type="text" />
+    <Input bind:value={$filterValue} class="max-w-sm rounded-none border-0 border-b-4 border-foreground focus-visible:ring-0 focus-visible:border-b-4" placeholder="Suche..." type="text" />
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild let:builder>
-        <Button builders={[builder]} class="ml-auto" variant="outline">
+        <Button builders={[builder]} class="ml-auto" variant="secondary">
           Filter
           <ChevronDown class="ml-2 h-4 w-4" />
         </Button>
@@ -139,17 +136,17 @@
       </DropdownMenu.Content>
     </DropdownMenu.Root>
   </div>
-  <div class="rounded-md border">
+  <div>
     <Table.Root {...$tableAttrs}>
-      <Table.Header>
+      <Table.Header class="bg-foreground">
         {#each $headerRows as headerRow}
           <Subscribe rowAttrs={headerRow.attrs()}>
             <Table.Row>
               {#each headerRow.cells as cell (cell.id)}
                 <Subscribe attrs={cell.attrs()} let:attrs props={cell.props()} let:props>
-                  <Table.Head {...attrs} class="[&:has([role=checkbox])]:pl-3 text-white bg-foreground">
+                  <Table.Head {...attrs} class="[&:has([role=checkbox])]:pl-4">
                     {#if cell.id !== 'actions' && cell.id !== 'id'}
-                      <Button variant="ghost" on:click={props.sort.toggle}>
+                      <Button variant="ghost" on:click={props.sort.toggle} class="text-white">
                         <Render of={cell.render()} />
                         <div class="flex ml-2">
                           <ArrowUp class="h-4 w-4 {props.sort.order === 'desc' ? 'text-accent' : ''}" />
@@ -172,7 +169,7 @@
             <Table.Row {...rowAttrs} {...rowAttrs} data-state={$selectedDataIds[row.id] && 'selected'}>
               {#each row.cells as cell (cell.id)}
                 <Subscribe attrs={cell.attrs()} let:attrs>
-                  <Table.Cell {...attrs} class="bg-white">
+                  <Table.Cell {...attrs}>
                     <Render of={cell.render()} />
                   </Table.Cell>
                 </Subscribe>
@@ -188,10 +185,10 @@
       {Object.keys($selectedDataIds).length} von{' '}
       {$rows.length} Zeile(n) ausgewählt.
     </div>
-    <Button disabled={!$hasPreviousPage} on:click={() => ($pageIndex = $pageIndex - 1)} size="sm" variant="outline"
+    <Button disabled={!$hasPreviousPage} on:click={() => ($pageIndex = $pageIndex - 1)} size="sm" variant="secondary"
       >Zurück
     </Button>
-    <Button disabled={!$hasNextPage} on:click={() => ($pageIndex = $pageIndex + 1)} size="sm" variant="outline"
+    <Button disabled={!$hasNextPage} on:click={() => ($pageIndex = $pageIndex + 1)} size="sm" variant="secondary"
       >Weiter
     </Button>
   </div>
