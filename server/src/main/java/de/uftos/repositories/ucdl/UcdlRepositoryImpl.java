@@ -1,5 +1,6 @@
 package de.uftos.repositories.ucdl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import de.uftos.dto.ucdl.ConstraintDefinitionDto;
 import de.uftos.dto.ucdl.ParsingResponse;
 import de.uftos.repositories.ucdl.parser.UcdlParser;
@@ -61,15 +62,18 @@ public class UcdlRepositoryImpl implements UcdlRepository {
   }
 
   @Override
-  public HashMap<String, ConstraintDefinitionDto> getConstraints()
-      throws ParseException, IOException {
+  public HashMap<String, ConstraintDefinitionDto> getConstraints() {
     if (currentDefinitions == null) {
-      this.setCurrentDefinitions();
+      try {
+        this.setCurrentDefinitions();
+      } catch (ParseException | IOException e) {
+        return null;
+      }
     }
     return this.currentDefinitions;
   }
 
-  private void setCurrentDefinitions() throws ParseException, IOException {
+  private void setCurrentDefinitions() throws ParseException, JsonProcessingException {
     this.currentDefinitions = UcdlParser.getDefinitions(this.getUcdl());
   }
 }

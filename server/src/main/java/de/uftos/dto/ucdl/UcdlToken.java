@@ -42,6 +42,5 @@ public enum UcdlToken {
   ELEMENT, //-> valuedto; probably not necessary
   NUMBER, //-> valuedto
   RESOURCE, //-> valuedto
-  PARAMETER, //-> valuedto
-  VARIABLE //-> valuedto
+  VALUE_REFERENCE //-> valuedto
 }

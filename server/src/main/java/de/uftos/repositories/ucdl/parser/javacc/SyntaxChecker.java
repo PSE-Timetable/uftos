@@ -132,11 +132,13 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     SimpleNode jjtn000 = new SimpleNode(JJTSTART);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
+    jjtn000.jjtSetFirstToken(getToken(1));
     try {
       DEFINITION();
       jj_consume_token(0);
       jjtree.closeNodeScope(jjtn000, true);
       jjtc000 = false;
+      jjtn000.jjtSetLastToken(getToken(0));
       {
         if (true) {
           return jjtn000;
@@ -171,6 +173,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
       }
     }
     throw new Error("Missing return statement in function");
@@ -181,6 +184,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     SimpleNode jjtn000 = new SimpleNode(JJTDEFINITION);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
+    jjtn000.jjtSetFirstToken(getToken(1));
     try {
       if (jj_2_1(2)) {
         BOOL();
@@ -219,6 +223,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
       }
     }
   }
@@ -228,6 +233,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     SimpleNode jjtn000 = new SimpleNode(JJTBOOL);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
+    jjtn000.jjtSetFirstToken(getToken(1));
     try {
       if (jj_2_3(2)) {
         FORALL();
@@ -270,6 +276,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
       }
     }
   }
@@ -279,6 +286,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     SimpleNode jjtn000 = new SimpleNode(JJTBOOLVALUE);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
+    jjtn000.jjtSetFirstToken(getToken(1));
     try {
       if (jj_2_7(2)) {
         jj_consume_token(TRUE);
@@ -291,6 +299,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
       }
     }
   }
@@ -300,6 +309,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     SimpleNode jjtn000 = new SimpleNode(JJTCODEBLOCK);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
+    jjtn000.jjtSetFirstToken(getToken(1));
     try {
       CONTROLSEQUENCELIST();
       RETURN();
@@ -332,6 +342,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
       }
     }
   }
@@ -341,6 +352,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     SimpleNode jjtn000 = new SimpleNode(JJTCONTROLSEQUENCELIST);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
+    jjtn000.jjtSetFirstToken(getToken(1));
     try {
       if (jj_2_9(2)) {
         CONTROLSEQUENCE();
@@ -348,6 +360,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
       } else {
         jjtree.closeNodeScope(jjtn000, true);
         jjtc000 = false;
+        jjtn000.jjtSetLastToken(getToken(0));
 
       }
     } catch (Throwable jjte000) {
@@ -379,6 +392,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
       }
     }
   }
@@ -388,6 +402,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     SimpleNode jjtn000 = new SimpleNode(JJTCONTROLSEQUENCE);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
+    jjtn000.jjtSetFirstToken(getToken(1));
     try {
       if (jj_2_10(2)) {
         IF();
@@ -426,6 +441,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
       }
     }
   }
@@ -435,6 +451,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     SimpleNode jjtn000 = new SimpleNode(JJTRETURN);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
+    jjtn000.jjtSetFirstToken(getToken(1));
     try {
       jj_consume_token(RETURN);
       BOOLVALUE();
@@ -467,6 +484,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
       }
     }
   }
@@ -476,6 +494,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     SimpleNode jjtn000 = new SimpleNode(JJTFOR);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
+    jjtn000.jjtSetFirstToken(getToken(1));
     try {
       jj_consume_token(FOR);
       jj_consume_token(LPAREN);
@@ -516,6 +535,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
       }
     }
   }
@@ -525,6 +545,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     SimpleNode jjtn000 = new SimpleNode(JJTIF);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
+    jjtn000.jjtSetFirstToken(getToken(1));
     try {
       jj_consume_token(IF);
       jj_consume_token(LPAREN);
@@ -562,6 +583,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
       }
     }
   }
@@ -571,6 +593,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     SimpleNode jjtn000 = new SimpleNode(JJTCONTROLSEQUENCERETURN);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
+    jjtn000.jjtSetFirstToken(getToken(1));
     try {
       if (jj_2_12(2)) {
         CONTROLSEQUENCE();
@@ -610,6 +633,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
       }
     }
   }
@@ -619,6 +643,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     SimpleNode jjtn000 = new SimpleNode(JJTFORALL);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
+    jjtn000.jjtSetFirstToken(getToken(1));
     try {
       jj_consume_token(FORALL);
       jj_consume_token(LPAREN);
@@ -658,6 +683,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
       }
     }
   }
@@ -667,6 +693,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     SimpleNode jjtn000 = new SimpleNode(JJTEXISTS);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
+    jjtn000.jjtSetFirstToken(getToken(1));
     try {
       jj_consume_token(EXISTS);
       jj_consume_token(LPAREN);
@@ -706,6 +733,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
       }
     }
   }
@@ -715,6 +743,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     SimpleNode jjtn000 = new SimpleNode(JJTIMPLIES);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
+    jjtn000.jjtSetFirstToken(getToken(1));
     try {
       OR();
       OPTIONALIMPLIES();
@@ -747,6 +776,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
       }
     }
   }
@@ -756,6 +786,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     SimpleNode jjtn000 = new SimpleNode(JJTOPTIONALIMPLIES);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
+    jjtn000.jjtSetFirstToken(getToken(1));
     try {
       if (jj_2_14(2)) {
         jj_consume_token(IMPLIES);
@@ -763,6 +794,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
       } else {
         jjtree.closeNodeScope(jjtn000, true);
         jjtc000 = false;
+        jjtn000.jjtSetLastToken(getToken(0));
 
       }
     } catch (Throwable jjte000) {
@@ -794,6 +826,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
       }
     }
   }
@@ -803,6 +836,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     SimpleNode jjtn000 = new SimpleNode(JJTOR);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
+    jjtn000.jjtSetFirstToken(getToken(1));
     try {
       AND();
       OPTIONALOR();
@@ -835,6 +869,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
       }
     }
   }
@@ -844,6 +879,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     SimpleNode jjtn000 = new SimpleNode(JJTOPTIONALOR);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
+    jjtn000.jjtSetFirstToken(getToken(1));
     try {
       if (jj_2_15(2)) {
         jj_consume_token(OR);
@@ -851,6 +887,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
       } else {
         jjtree.closeNodeScope(jjtn000, true);
         jjtc000 = false;
+        jjtn000.jjtSetLastToken(getToken(0));
 
       }
     } catch (Throwable jjte000) {
@@ -882,6 +919,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
       }
     }
   }
@@ -891,6 +929,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     SimpleNode jjtn000 = new SimpleNode(JJTAND);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
+    jjtn000.jjtSetFirstToken(getToken(1));
     try {
       NOT();
       OPTIONALAND();
@@ -923,6 +962,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
       }
     }
   }
@@ -932,6 +972,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     SimpleNode jjtn000 = new SimpleNode(JJTOPTIONALAND);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
+    jjtn000.jjtSetFirstToken(getToken(1));
     try {
       if (jj_2_16(2)) {
         jj_consume_token(AND);
@@ -939,6 +980,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
       } else {
         jjtree.closeNodeScope(jjtn000, true);
         jjtc000 = false;
+        jjtn000.jjtSetLastToken(getToken(0));
 
       }
     } catch (Throwable jjte000) {
@@ -970,6 +1012,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
       }
     }
   }
@@ -979,6 +1022,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     SimpleNode jjtn000 = new SimpleNode(JJTNOT);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
+    jjtn000.jjtSetFirstToken(getToken(1));
     try {
       if (jj_2_20(2)) {
         BOOLVALUE();
@@ -1035,6 +1079,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
       }
     }
   }
@@ -1044,6 +1089,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     SimpleNode jjtn000 = new SimpleNode(JJTISEMPTY);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
+    jjtn000.jjtSetFirstToken(getToken(1));
     try {
       jj_consume_token(ISEMPTY);
       jj_consume_token(LPAREN);
@@ -1078,6 +1124,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
       }
     }
   }
@@ -1087,6 +1134,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     SimpleNode jjtn000 = new SimpleNode(JJTELEMENTINSETOREQUATION);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
+    jjtn000.jjtSetFirstToken(getToken(1));
     try {
       ELEMENT();
       if (jj_2_24(2)) {
@@ -1126,6 +1174,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
       }
     }
   }
@@ -1135,6 +1184,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     SimpleNode jjtn000 = new SimpleNode(JJTELEMENTINSET);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
+    jjtn000.jjtSetFirstToken(getToken(1));
     try {
       jj_consume_token(IN);
       SET();
@@ -1167,6 +1217,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
       }
     }
   }
@@ -1176,6 +1227,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     SimpleNode jjtn000 = new SimpleNode(JJTEQUATION);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
+    jjtn000.jjtSetFirstToken(getToken(1));
     try {
       ELEMENTEQUATION();
       ELEMENT();
@@ -1208,6 +1260,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
       }
     }
   }
@@ -1217,6 +1270,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     SimpleNode jjtn000 = new SimpleNode(JJTELEMENTEQUATION);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
+    jjtn000.jjtSetFirstToken(getToken(1));
     try {
       if (jj_2_26(2)) {
         jj_consume_token(SMALLER);
@@ -1237,6 +1291,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
       }
     }
   }
@@ -1246,6 +1301,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     SimpleNode jjtn000 = new SimpleNode(JJTELEMENT);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
+    jjtn000.jjtSetFirstToken(getToken(1));
     try {
       if (jj_2_32(2)) {
         ELEMENTNAME();
@@ -1285,6 +1341,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
       }
     }
   }
@@ -1294,6 +1351,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     SimpleNode jjtn000 = new SimpleNode(JJTELEMENTNAME);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
+    jjtn000.jjtSetFirstToken(getToken(1));
     try {
       if (jj_2_34(2)) {
         jj_consume_token(THIS);
@@ -1332,6 +1390,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
       }
     }
   }
@@ -1341,6 +1400,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     SimpleNode jjtn000 = new SimpleNode(JJTELEMENTATTRIBUTELIST);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
+    jjtn000.jjtSetFirstToken(getToken(1));
     try {
       if (jj_2_36(2)) {
         jj_consume_token(FLATMAP);
@@ -1349,6 +1409,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
       } else {
         jjtree.closeNodeScope(jjtn000, true);
         jjtc000 = false;
+        jjtn000.jjtSetLastToken(getToken(0));
 
       }
     } catch (Throwable jjte000) {
@@ -1380,6 +1441,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
       }
     }
   }
@@ -1389,6 +1451,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     SimpleNode jjtn000 = new SimpleNode(JJTNUMBERELEMENT);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
+    jjtn000.jjtSetFirstToken(getToken(1));
     try {
       if (jj_2_37(2)) {
         jj_consume_token(NUM);
@@ -1430,6 +1493,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
       }
     }
   }
@@ -1439,6 +1503,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     SimpleNode jjtn000 = new SimpleNode(JJTSET);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
+    jjtn000.jjtSetFirstToken(getToken(1));
     try {
       SETNAME();
       SETMODIFICATION();
@@ -1471,6 +1536,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
       }
     }
   }
@@ -1480,6 +1546,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     SimpleNode jjtn000 = new SimpleNode(JJTSETNAME);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
+    jjtn000.jjtSetFirstToken(getToken(1));
     try {
       if (jj_2_39(2)) {
         ELEMENT();
@@ -1518,6 +1585,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
       }
     }
   }
@@ -1527,6 +1595,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     SimpleNode jjtn000 = new SimpleNode(JJTSETMODIFICATION);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
+    jjtn000.jjtSetFirstToken(getToken(1));
     try {
       if (jj_2_41(2)) {
         jj_consume_token(FLATMAP);
@@ -1541,6 +1610,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
       } else {
         jjtree.closeNodeScope(jjtn000, true);
         jjtc000 = false;
+        jjtn000.jjtSetLastToken(getToken(0));
 
       }
     } catch (Throwable jjte000) {
@@ -1572,6 +1642,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
       }
     }
   }
@@ -1581,6 +1652,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     SimpleNode jjtn000 = new SimpleNode(JJTNUMBERSET);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
+    jjtn000.jjtSetFirstToken(getToken(1));
     try {
       jj_consume_token(LBRACKET);
       jj_consume_token(NUM);
@@ -1615,6 +1687,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
       }
     }
   }
@@ -1624,6 +1697,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     SimpleNode jjtn000 = new SimpleNode(JJTNUMBERLIST);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
+    jjtn000.jjtSetFirstToken(getToken(1));
     try {
       if (jj_2_43(2)) {
         jj_consume_token(COMMA);
@@ -1632,6 +1706,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
       } else {
         jjtree.closeNodeScope(jjtn000, true);
         jjtc000 = false;
+        jjtn000.jjtSetLastToken(getToken(0));
 
       }
     } catch (Throwable jjte000) {
@@ -1663,6 +1738,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
       }
     }
   }
@@ -1672,6 +1748,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     SimpleNode jjtn000 = new SimpleNode(JJTATTRIBUTE);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
+    jjtn000.jjtSetFirstToken(getToken(1));
     try {
       if (jj_2_44(2)) {
         jj_consume_token(ELEMENTATTRIBUTE);
@@ -1684,6 +1761,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
       }
     }
   }
@@ -1693,6 +1771,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     SimpleNode jjtn000 = new SimpleNode(JJTVALUEREFERENCE);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
+    jjtn000.jjtSetFirstToken(getToken(1));
     try {
       if (jj_2_46(2)) {
         jj_consume_token(STRING);
@@ -1707,6 +1786,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
       }
     }
   }
@@ -1716,6 +1796,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     SimpleNode jjtn000 = new SimpleNode(JJTFILTER);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
+    jjtn000.jjtSetFirstToken(getToken(1));
     try {
       if (jj_2_55(2)) {
         NUMBERSET();
@@ -1751,6 +1832,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
           } else {
             jjtree.closeNodeScope(jjtn000, true);
             jjtc000 = false;
+            jjtn000.jjtSetLastToken(getToken(0));
 
           }
         } else {
@@ -1789,6 +1871,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
       }
     }
   }
@@ -1798,6 +1881,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     SimpleNode jjtn000 = new SimpleNode(JJTFILTERLIST);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
+    jjtn000.jjtSetFirstToken(getToken(1));
     try {
       if (jj_2_61(2)) {
         jj_consume_token(COMMA);
@@ -1806,6 +1890,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
       } else {
         jjtree.closeNodeScope(jjtn000, true);
         jjtc000 = false;
+        jjtn000.jjtSetLastToken(getToken(0));
 
       }
     } catch (Throwable jjte000) {
@@ -1837,6 +1922,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
       }
     }
   }

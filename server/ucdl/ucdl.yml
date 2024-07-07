@@ -1,4 +1,3 @@
-
 studentTeacherTag:
   description: "Student {student} requires Tag {tag} from their Teachers"
   default_type: SOFT_PENALIZE
@@ -27,6 +26,18 @@ avoidTeacherCollision:
       }
     }
     return false
+avoidRoomCollision:
+  description: "Rooms may not be occupied by multiple lessons at the same time"
+  default_type: HARD_PENALIZE
+  parameter:
+  definition: >-
+    forall(room : this.rooms) {
+      forall(lesson1 : room.lessons) {
+        forall(lesson2 : room.lessons) {
+          lesson1 != lesson2 implies lesson1.timeslot != lesson2.timeslot
+        }
+      }
+    }
 teacherTeachesDuringTimeslot:
   description: "Teacher {teacher} does work during Timeslot {timeslot}"
   default_type: SOFT_PENALIZE
@@ -34,6 +45,26 @@ teacherTeachesDuringTimeslot:
     teacher: Teacher
     timeslot: Timeslot
   definition: >-
+    if (timeslot in teacher.lessons.timeslot) {
+      return true
+    }
+    return false
+test:
+  description: "Teacher {teacher} does work during Timeslot {timeslot}"
+  default_type: SOFT_PENALIZE
+  parameter:
+    teacher: Teacher
+    timeslot: Timeslot
+  definition: >-
+    if (timeslot in teacher.lessons.timeslot) {
+      return true
+    }
+    if (timeslot in teacher.lessons.timeslot) {
+      return true
+    }
+    if (timeslot in teacher.lessons.timeslot) {
+      return true
+    }
     if (timeslot in teacher.lessons.timeslot) {
       return true
     }
