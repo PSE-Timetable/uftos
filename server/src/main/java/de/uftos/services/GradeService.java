@@ -86,11 +86,16 @@ public class GradeService {
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
 
     Stream<StudentGroup> studentGroupStream = Stream.of(grade.getStudentGroups()).flatMap(Collection::stream);
+//    System.out.println(Stream.of(grade.getStudentGroups()).count());
     // Different student groups can have the same lessons, Set used to prevent duplicates
-    Set<Lesson> lessons = studentGroupStream.map(StudentGroup::getLessons).flatMap(Collection::stream).collect(Collectors.toSet());
+    // getLessons returns null if there is no lesson, these nulls need to be filtered out
+    Set<Lesson> lessons = studentGroupStream.map(StudentGroup::getLessons).filter(Objects::nonNull).flatMap(Collection::stream).collect(Collectors.toSet());
+    System.out.println("Lessons in getLessonsById method: " + lessons);
 
     lessons.removeIf(lesson -> !lesson.getYear().equals(
             serverRepository.findAll().getFirst().getCurrentYear()));
+
+
 
     return LessonResponseDto.createResponseDtoFromLessons(lessons.stream().toList());
   }

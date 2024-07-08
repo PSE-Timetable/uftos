@@ -69,6 +69,24 @@ public class GradeServiceTests {
     studentGroup4.setId("g678");
 
 
+    room1 = new Room("534");
+    room2 = new Room("574");
+
+    Subject subject = new Subject("789");
+
+    Teacher teacher1 = new Teacher("Te1");
+    Teacher teacher2 = new Teacher("Te2");
+
+    Lesson lesson1 = createLesson(teacher1, room1, studentGroup1, "2024", subject);
+    Lesson lesson2 = createLesson(teacher2, room1, studentGroup1, "2022", subject);
+    Lesson lesson3 = createLesson(teacher1, room2, studentGroup2, "2024", subject);
+    Lesson lesson4 = createLesson(teacher1, room2, studentGroup2, "2022", subject);
+    Lesson lesson5 = createLesson(teacher1, room2, studentGroup2, "2024", subject);
+
+    studentGroup1.setLessons(List.of(lesson1, lesson2, lesson3));
+
+
+
     Grade grade1 = new Grade("5", List.of(studentGroup1.getName(), studentGroup2.getName()),
         List.of("T1", "T2"));
     grade1.setId("123");
@@ -83,23 +101,14 @@ public class GradeServiceTests {
     grade3.setId("567");
 
 
-    Subject subject = new Subject("789");
 
-    room1 = new Room("534");
-    room2 = new Room("574");
 
-    Teacher teacher1 = new Teacher("Te1");
-    Teacher teacher2 = new Teacher("Te2");
 
-    // TODO lesson constructor with student group array as parameter, look at grade entity studentgroups
+    // TODO lesson constructor with student group array as parameter
+    // TODO inconsistency in Grade entity when the corresponding student groups change
+    // check if grade entity creates new studentgroups even when group with the same id already exists
 
-    Lesson lesson1 = createLesson(teacher1, room1, studentGroup1, "2024", subject);
-    Lesson lesson2 = createLesson(teacher2, room1, studentGroup1, "2022", subject);
-    Lesson lesson3 = createLesson(teacher1, room2, studentGroup2, "2024", subject);
-    Lesson lesson4 = createLesson(teacher1, room2, studentGroup2, "2022", subject);
-    Lesson lesson5 = createLesson(teacher1, room2, studentGroup2, "2024", subject);
 
-    studentGroup1.setLessons(List.of(lesson1, lesson2, lesson3));
     studentGroup2.setLessons(List.of(lesson4, lesson5));
     studentGroup3.setLessons(List.of());
     studentGroup4.setLessons(List.of());
@@ -121,7 +130,10 @@ public class GradeServiceTests {
 
   @Test
   void lessonsById() {
+    Grade grade2 = gradeRepository.findById("123").orElseThrow();
+    System.out.println(grade2.getStudentGroups());
     LessonResponseDto result = gradeService.getLessonsById("123");
+    System.out.println("ResultDto: " + result.toString());
     //should be lessons 1-5
     assertResulArraysSizes(result, 2, 5, 2, 1);
     assertAll("Testing whether the sizes of the arrays are correct",
