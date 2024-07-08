@@ -11,6 +11,7 @@ import org.springframework.data.jpa.domain.Specification;
  *
  * @param <T> The type of the entity to which the specification applies.
  */
+@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class SpecificationBuilder<T> {
 
   private Specification<T> specification;

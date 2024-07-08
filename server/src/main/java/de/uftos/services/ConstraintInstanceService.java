@@ -94,9 +94,13 @@ public class ConstraintInstanceService {
     }
 
     for (ConstraintParameter parameter : signature.getParameters()) {
-      boolean exists =
-          this.getResourceTypeMapping(parameter.getId()).get(parameter.getParameterType());
+      String value = request.arguments().get(parameter.getParameterName());
+      if (value == null || value.isEmpty()) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+            "Parameter %s with could not be found".formatted(parameter.getParameterName()));
+      }
 
+      boolean exists = this.getResourceTypeMapping(value).get(parameter.getParameterType());
       if (!exists) {
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
             "%s with id %s could not be found".formatted(parameter.getParameterName(),
