@@ -83,8 +83,8 @@ public class SpecificationBuilder<T> {
       return this;
     }
     specification = specification.and(
-        (root, query, cb) -> cb.like(cb.lower(root.join(relationName).get(attributeName)),
-            "%" + attributeValue.get().toLowerCase() + "%")
+        (root, query, cb) -> equalsIgnoreCase(cb, root.join(relationName).get(attributeName),
+            attributeValue.get())
     );
     return this;
   }
