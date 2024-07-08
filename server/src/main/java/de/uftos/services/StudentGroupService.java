@@ -8,7 +8,6 @@ import de.uftos.entities.Lesson;
 import de.uftos.entities.StudentGroup;
 import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.StudentGroupRepository;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -49,9 +48,9 @@ public class StudentGroupService {
    */
   public Page<StudentGroup> get(Pageable pageable, Optional<String> name, Optional<String[]> tags) {
     Specification<StudentGroup> spec = new SpecificationBuilder<StudentGroup>()
-            .optionalOrEquals(name, "name")
-            .optionalAndJoinIn(tags, "tags", "id")
-            .build();
+        .optionalOrEquals(name, "name")
+        .optionalAndJoinIn(tags, "tags", "id")
+        .build();
     return this.repository.findAll(spec, pageable);
   }
 
@@ -79,7 +78,7 @@ public class StudentGroupService {
     StudentGroup studentGroup = getById(id);
     List<Lesson> lessons = new ArrayList<>(studentGroup.getLessons());
     lessons.removeIf(lesson -> !lesson.getYear().equals(
-            serverRepository.findAll().getFirst().getCurrentYear()));
+        serverRepository.findAll().getFirst().getCurrentYear()));
     return LessonResponseDto.createResponseDtoFromLessons(lessons);
   }
 
