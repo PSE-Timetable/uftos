@@ -1,21 +1,15 @@
 package de.uftos.controller;
 
 import de.uftos.dto.ConstraintInstanceRequestDto;
-import de.uftos.dto.ResourceType;
-import de.uftos.dto.solver.RewardPenalize;
-import de.uftos.entities.ConstraintArgument;
 import de.uftos.entities.ConstraintInstance;
-import de.uftos.entities.ConstraintParameter;
 import de.uftos.entities.ConstraintSignature;
 import de.uftos.repositories.database.ConstraintInstanceRepository;
 import de.uftos.repositories.database.ConstraintSignatureRepository;
 import de.uftos.services.ConstraintInstanceService;
 import de.uftos.services.ConstraintSignatureService;
-import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -66,42 +60,7 @@ public class ConstraintController {
   @GetMapping()
   public Page<ConstraintSignature> getConstraintSignatures(Pageable pageable,
                                                            Optional<String> name) {
-    ConstraintParameter constraintParameter = new ConstraintParameter();
-    constraintParameter.setParameterName("teacher123");
-    constraintParameter.setParameterType(ResourceType.TEACHER);
-
-    ConstraintSignature constraintSignature = new ConstraintSignature();
-    constraintSignature.setName("Teacher constraint");
-    constraintSignature.setDefaultType(RewardPenalize.HARD_PENALIZE);
-    constraintSignature.setDescription("Description");
-    constraintSignature.setParameters(List.of(constraintParameter));
-
-    constraintSignatureRepository.save(constraintSignature);
-
-    ConstraintArgument constraintArgument = new ConstraintArgument();
-    constraintArgument.setValue("Musterman");
-    constraintArgument.setConstraintParameter(constraintParameter);
-
-
-    ConstraintInstance constraintInstance = new ConstraintInstance();
-    constraintInstance.setSignature(constraintSignature);
-    constraintInstance.setType(RewardPenalize.HARD_PENALIZE);
-    constraintInstance.setArguments(List.of(constraintArgument));
-
-    constraintInstanceRepository.save(constraintInstance);
-
-    Page<ConstraintInstance> page =
-        constraintInstanceService.get(constraintSignature.getName(), PageRequest.of(0, 20),
-            Optional.of("Musterman"));
-    if (page.getContent().isEmpty()) {
-      System.out.println("fuck");
-    } else {
-      System.out.println(
-          "Argument value: " + page.getContent().getFirst().getArguments().getFirst().getValue());
-    }
-
     return this.constraintSignatureService.get(pageable, name);
-
   }
 
   /**
