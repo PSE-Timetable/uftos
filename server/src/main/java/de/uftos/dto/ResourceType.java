@@ -13,5 +13,6 @@ public enum ResourceType {
   TAG,
   TEACHER,
   TIMESLOT,
-  NUMBER
+  NUMBER,
+  TIMETABLE
 }

@@ -4,7 +4,9 @@ import de.uftos.dto.ResourceType;
 import de.uftos.dto.ucdl.UcdlToken;
 import de.uftos.dto.ucdl.ast.AbstractSyntaxTreeDto;
 import de.uftos.dto.ucdl.ast.ControlSequenceDto;
+import de.uftos.dto.ucdl.ast.ElementDto;
 import de.uftos.dto.ucdl.ast.OperatorDto;
+import de.uftos.dto.ucdl.ast.QuantifierDto;
 import de.uftos.dto.ucdl.ast.SetDto;
 import de.uftos.dto.ucdl.ast.ValueDto;
 import de.uftos.repositories.ucdl.parser.javacc.Node;
@@ -32,7 +34,8 @@ public class DefinitionParser {
         return buildAst(root.jjtGetChild(0), parameters);
       }
       case "BOOLVALUE" -> {
-        return null;
+        return new ValueDto<>(UcdlToken.BOOL_VALUE,
+            Boolean.parseBoolean(((SimpleNode) root).jjtGetFirstToken().image));
       }
       case "CODEBLOCK" -> { //list of control sequences followed by one return
         List<AbstractSyntaxTreeDto> params = new ArrayList<>();
@@ -61,7 +64,7 @@ public class DefinitionParser {
         return new OperatorDto(UcdlToken.CODEBLOCK, params);
       }
       case "CONTROLSEQUENCELIST" -> {
-        return null;
+        throw new IllegalStateException();
       }
       case "RETURN" -> {
         SimpleNode boolVal = (SimpleNode) root.jjtGetChild(0);
@@ -164,13 +167,43 @@ public class DefinitionParser {
         return new ControlSequenceDto(UcdlToken.IF, bool, body, returnValue);
       }
       case "CONTROLSEQUENCERETURN" -> {
-        throw new ParseException("");
+        throw new IllegalStateException();
       }
       case "FORALL" -> {
-        return null;
+        List<AbstractSyntaxTreeDto> variableDefinition = new ArrayList<>();
+        ValueDto<String> varName = (ValueDto<String>) buildAst(root.jjtGetChild(0), parameters);
+        variableDefinition.add(varName); //variable name
+        if (parameters.containsKey(varName.value())) {
+          throw new ParseException("Variable name \"" + varName.value() +
+              "\" does already exist inside this namespace!");
+        }
+        SetDto set = (SetDto) buildAst(root.jjtGetChild(1), parameters);
+        variableDefinition.add(set); //set
+        OperatorDto variable = new OperatorDto(UcdlToken.OF, variableDefinition);
+
+        parameters.put(varName.value(), set.type()); //adding the new variable
+        AbstractSyntaxTreeDto body = buildAst(root.jjtGetChild(1), parameters);
+        parameters.remove(varName.value()); //removing the new variable
+
+        return new QuantifierDto(UcdlToken.FOR_ALL, variable, body);
       }
       case "EXISTS" -> {
-        return null;
+        List<AbstractSyntaxTreeDto> variableDefinition = new ArrayList<>();
+        ValueDto<String> varName = (ValueDto<String>) buildAst(root.jjtGetChild(0), parameters);
+        variableDefinition.add(varName); //variable name
+        if (parameters.containsKey(varName.value())) {
+          throw new ParseException("Variable name \"" + varName.value() +
+              "\" does already exist inside this namespace!");
+        }
+        SetDto set = (SetDto) buildAst(root.jjtGetChild(1), parameters);
+        variableDefinition.add(set); //set
+        OperatorDto variable = new OperatorDto(UcdlToken.OF, variableDefinition);
+
+        parameters.put(varName.value(), set.type()); //adding the new variable
+        AbstractSyntaxTreeDto body = buildAst(root.jjtGetChild(1), parameters);
+        parameters.remove(varName.value()); //removing the new variable
+
+        return new QuantifierDto(UcdlToken.EXISTS, variable, body);
       }
       case "IMPLIES" -> {
         AbstractSyntaxTreeDto firstArgument = buildAst(root.jjtGetChild(0), parameters);
@@ -185,7 +218,7 @@ public class DefinitionParser {
         return firstArgument;
       }
       case "OPTIONALIMPLIES" -> {
-        return null;
+        throw new IllegalStateException();
       }
       case "OR" -> {
         AbstractSyntaxTreeDto firstArgument = buildAst(root.jjtGetChild(0), parameters);
@@ -200,7 +233,7 @@ public class DefinitionParser {
         return firstArgument;
       }
       case "OPTIONALOR" -> {
-        return null;
+        throw new IllegalStateException();
       }
       case "AND" -> {
         AbstractSyntaxTreeDto firstArgument = buildAst(root.jjtGetChild(0), parameters);
@@ -215,34 +248,115 @@ public class DefinitionParser {
         return firstArgument;
       }
       case "OPTIONALAND" -> {
-        return null;
+        throw new IllegalStateException();
       }
       case "NOT" -> {
-        return null;
+        if (((SimpleNode) root).jjtGetFirstToken().image.equals("NOT")) {
+          List<AbstractSyntaxTreeDto> param = new ArrayList<>();
+          param.add(buildAst(root.jjtGetChild(0), parameters));
+          return new OperatorDto(UcdlToken.NOT, param);
+        }
+        return buildAst(root.jjtGetChild(0), parameters);
       }
       case "ISEMPTY" -> {
-        return null;
+        List<AbstractSyntaxTreeDto> param = new ArrayList<>();
+        param.add(buildAst(root.jjtGetChild(0), parameters));
+        return new OperatorDto(UcdlToken.IS_EMPTY, param);
       }
       case "ELEMENTINSETOREQUATION" -> {
-        return null;
+        List<AbstractSyntaxTreeDto> params = new ArrayList<>();
+        params.add(buildAst(root.jjtGetChild(0), parameters));
+
+        Node secondPart = root.jjtGetChild(1);
+
+        if (secondPart.toString().equals("ELEMENTINSET")) {
+          params.add(buildAst(secondPart.jjtGetChild(0), parameters));
+          return new OperatorDto(UcdlToken.IN, params);
+        }
+
+        if (secondPart.toString().equals("EQUATION")) {
+          params.add(buildAst(secondPart.jjtGetChild(1), parameters));
+          UcdlToken token;
+          switch (((SimpleNode) secondPart.jjtGetChild(0)).jjtGetFirstToken().image) {
+            case ">":
+              token = UcdlToken.GREATER;
+              break;
+            case "<":
+              token = UcdlToken.SMALLER;
+              break;
+            case ">=":
+              token = UcdlToken.GREATER_EQUALS;
+              break;
+            case "<=":
+              token = UcdlToken.SMALLER_EQUALS;
+              break;
+            case "=", "==":
+              token = UcdlToken.EQUALS;
+              break;
+            case "!=":
+              token = UcdlToken.NOT_EQUALS;
+              break;
+            default:
+              throw new IllegalStateException();
+          }
+          if (token == UcdlToken.GREATER || token == UcdlToken.SMALLER ||
+              token == UcdlToken.GREATER_EQUALS || token == UcdlToken.SMALLER_EQUALS) {
+            for (AbstractSyntaxTreeDto ast : params) {
+              if (ast.getToken() != UcdlToken.NUMBER && ast.getToken() != UcdlToken.SIZE) {
+                throw new ParseException(
+                    "Illegal comparison argument! Only numbers can be compared using \"<\",\">\",\"<=\",\">=\"!");
+              }
+            }
+          }
+          return new OperatorDto(token, params);
+        }
+        throw new IllegalStateException();
       }
       case "ELEMENTINSET" -> {
-        return null;
+        throw new IllegalStateException();
       }
       case "EQUATION" -> {
-        return null;
+        throw new IllegalStateException();
       }
       case "ELEMENTEQUATION" -> {
-        return null;
+        throw new IllegalStateException();
       }
       case "ELEMENT" -> {
-        return null;
+        if (root.jjtGetChild(0).toString().equals("NUMBERELEMENT")) {
+          return buildAst(root.jjtGetChild(0), parameters);
+        }
+
+        ValueDto<String> elementName = (ValueDto<String>) buildAst(root.jjtGetChild(0), parameters);
+
+        ResourceType elementType;
+        if (elementName.value().equals("this")) {
+          elementType = ResourceType.TIMETABLE;
+        } else {
+          elementType = parameters.get(elementName.value());
+        }
+
+        List<AbstractSyntaxTreeDto> attributes = new ArrayList<>();
+
+        Node attributeList = root.jjtGetChild(1);
+        while (attributeList.jjtGetNumChildren() > 0) {
+          String attribute = ((SimpleNode) attributeList).jjtGetLastToken().image;
+          elementType = getNextResourceType(elementType, attribute);
+          //^ also performs semantic check whether the attribute is applicable to the given type
+          attributes.add(new ValueDto<String>(UcdlToken.ATTRIBUTE, attribute));
+          attributeList = attributeList.jjtGetChild(0);
+        }
+
+        return new ElementDto(UcdlToken.ELEMENT, elementName, attributes, elementType);
       }
       case "ELEMENTNAME" -> {
-        return null;
+        String image = ((SimpleNode) root).jjtGetFirstToken().image;
+        if (!parameters.containsKey(image) && !image.equals("this")) {
+          throw new ParseException("Parameter/Variable \"" + image + "\" does not exist!");
+        }
+        return new ValueDto<>(UcdlToken.VALUE_REFERENCE, image);
       }
       case "ELEMENTATTRIBUTELIST" -> {
-        return null;
+        throw new IllegalStateException();
       }
       case "NUMBERELEMENT" -> {
         if (((SimpleNode) root).jjtGetFirstToken().image.equals("SIZE")) {
@@ -280,11 +394,145 @@ public class DefinitionParser {
         return null;
       }
       case "FILTERLIST" -> {
-        return null;
+        throw new IllegalStateException();
       }
       default -> {
         throw new IllegalStateException();
       }
+    }
+  }
+
+  private static ResourceType getNextResourceType(ResourceType currentType, String attribute)
+      throws ParseException {
+    System.out.println(currentType + ";" + attribute);
+    switch (attribute) {
+      case "index":
+        if (currentType != ResourceType.LESSON) {
+          throw new ParseException(
+              "Attribute \"" + attribute + "\" is only available for lessons!");
+        }
+        return ResourceType.NUMBER;
+      case "teacher":
+        if (currentType != ResourceType.LESSON) {
+          throw new ParseException(
+              "Attribute \"" + attribute + "\" is only available for lessons!");
+        }
+        return ResourceType.TEACHER;
+      case "timeslot":
+        if (currentType != ResourceType.LESSON) {
+          throw new ParseException(
+              "Attribute \"" + attribute + "\" is only available for lessons!");
+        }
+        return ResourceType.TIMESLOT;
+      case "room":
+        if (currentType != ResourceType.LESSON) {
+          throw new ParseException(
+              "Attribute \"" + attribute + "\" is only available for lessons!");
+        }
+        return ResourceType.ROOM;
+      case "subject":
+        if (currentType != ResourceType.LESSON) {
+          throw new ParseException(
+              "Attribute \"" + attribute + "\" is only available for lessons!");
+        }
+        return ResourceType.SUBJECT;
+      case "studentGroup":
+        if (currentType != ResourceType.LESSON) {
+          throw new ParseException(
+              "Attribute \"" + attribute + "\" is only available for lessons!");
+        }
+        return ResourceType.STUDENT_GROUP;
+      case "grade":
+        if (currentType != ResourceType.STUDENT_GROUP) {
+          throw new ParseException(
+              "Attribute \"" + attribute + "\" is only available for studentGroups!");
+        }
+        return ResourceType.GRADE;
+      case "day":
+        if (currentType != ResourceType.TIMESLOT) {
+          throw new ParseException(
+              "Attribute \"" + attribute + "\" is only available for timeslots!");
+        }
+        return ResourceType.NUMBER;
+      case "slot":
+        if (currentType != ResourceType.TIMESLOT) {
+          throw new ParseException(
+              "Attribute \"" + attribute + "\" is only available for timeslots!");
+        }
+        return ResourceType.NUMBER;
+      case "students":
+        if (currentType != ResourceType.TIMETABLE && currentType != ResourceType.STUDENT_GROUP &&
+            currentType != ResourceType.TAG) {
+          throw new ParseException(
+              "Attribute \"" + attribute +
+                  "\" is only available for \"this\"(outside filters), studentGroups and tags!");
+        }
+        return ResourceType.STUDENT;
+      case "teachers":
+        if (currentType != ResourceType.TIMETABLE && currentType != ResourceType.TAG) {
+          throw new ParseException(
+              "Attribute \"" + attribute +
+                  "\" is only available for \"this\"(outside filters) and tags!");
+        }
+        return ResourceType.TEACHER;
+      case "studentGroups":
+        if (currentType != ResourceType.TIMETABLE && currentType != ResourceType.STUDENT &&
+            currentType != ResourceType.GRADE && currentType != ResourceType.TAG) {
+          throw new ParseException(
+              "Attribute \"" + attribute +
+                  "\" is only available for \"this\"(outside filters), students, grades and tags!");
+        }
+        return ResourceType.STUDENT_GROUP;
+      case "rooms":
+        if (currentType != ResourceType.TIMETABLE && currentType != ResourceType.TAG) {
+          throw new ParseException(
+              "Attribute \"" + attribute +
+                  "\" is only available for \"this\"(outside filters) and tags!");
+        }
+        return ResourceType.ROOM;
+      case "subjects":
+        if (currentType != ResourceType.TIMETABLE && currentType != ResourceType.TEACHER &&
+            currentType != ResourceType.TAG) {
+          throw new ParseException(
+              "Attribute \"" + attribute +
+                  "\" is only available for \"this\"(outside filters), teachers and tags!");
+        }
+        return ResourceType.SUBJECT;
+      case "grades":
+        if (currentType != ResourceType.TIMETABLE && currentType != ResourceType.TAG) {
+          throw new ParseException(
+              "Attribute \"" + attribute +
+                  "\" is only available for \"this\"(outside filters) and tags!");
+        }
+        return ResourceType.GRADE;
+      case "timeslots":
+        if (currentType != ResourceType.TIMETABLE && currentType != ResourceType.TAG) {
+          throw new ParseException(
+              "Attribute \"" + attribute +
+                  "\" is only available for \"this\"(outside filters) and tags!");
+        }
+        return ResourceType.TIMESLOT;
+      case "lessons":
+        if (currentType != ResourceType.TIMETABLE && currentType != ResourceType.TEACHER &&
+            currentType != ResourceType.STUDENT_GROUP && currentType != ResourceType.ROOM &&
+            currentType != ResourceType.SUBJECT && currentType != ResourceType.TIMESLOT) {
+          throw new ParseException(
+              "Attribute \"" + attribute +
+                  "\" is only available for \"this\"(outside filters), teachers, studentGroups, rooms, subjects and timeslots!");
+        }
+        return ResourceType.LESSON;
+      case "tags":
+        if (currentType != ResourceType.TIMETABLE && currentType != ResourceType.STUDENT &&
+            currentType != ResourceType.TEACHER && currentType != ResourceType.STUDENT_GROUP &&
+            currentType != ResourceType.ROOM && currentType != ResourceType.SUBJECT &&
+            currentType != ResourceType.GRADE && currentType != ResourceType.TIMESLOT) {
+          throw new ParseException(
+              "Attribute \"" + attribute +
+                  "\" is only available for \"this\"(outside filters), students, teachers, studentGroups, rooms, subjects grades and timeslots!");
+        }
+        return ResourceType.TAG;
+      default:
+        throw new ParseException("Illegal attribute name: " + attribute);
     }
   }
 }
