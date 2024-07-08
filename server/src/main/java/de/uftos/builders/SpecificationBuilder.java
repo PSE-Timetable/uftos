@@ -1,6 +1,8 @@
 package de.uftos.builders;
 
-import java.util.List;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.Predicate;
 import java.util.Optional;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -70,18 +72,35 @@ public class SpecificationBuilder<T> {
   }
 
   public SpecificationBuilder<T> andEqual(String attributeValue, String attribute) {
-    specification = specification.and((root, query, cb) -> cb.equal(root.get(attribute), attributeValue)))
+    specification =
+        specification.and((root, query, cb) -> cb.equal(root.get(attribute), attributeValue));
+    return this;
   }
 
-  public SpecificationBuilder<T> optionalAndJoinEquals(Optional<String> attributeValue,
-                                                       String relationName, String attributeName) {
+  public SpecificationBuilder<T> optionalAndJoinLike(Optional<String> attributeValue,
+                                                     String relationName, String attributeName) {
     if (attributeValue.isEmpty()) {
       return this;
     }
     specification = specification.and(
-        (root, query, cb) -> root.join(relationName).get(attributeName)
-            .in(List.of(attributeValue.get()))
+        (root, query, cb) -> cb.like(cb.lower(root.join(relationName).get(attributeName)),
+            "%" + attributeValue.get().toLowerCase() + "%")
     );
     return this;
+  }
+
+  public SpecificationBuilder<T> andJoinEquals(String attributeValue,
+                                               String relationName, String attributeName) {
+    if (attributeValue.isEmpty()) {
+      return this;
+    }
+    specification = specification.and(
+        (root, query, cb) -> cb.equal(root.join(relationName).get(attributeName), attributeValue)
+    );
+    return this;
+  }
+
+  private Predicate equalsIgnoreCase(CriteriaBuilder cb, Expression<String> value, String pattern) {
+    return cb.like(cb.lower(value), "%" + pattern.toLowerCase() + "%");
   }
 }

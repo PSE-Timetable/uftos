@@ -24,11 +24,11 @@ public class ConstraintSignature {
   private String description;
   private RewardPenalize defaultType;
 
-  @OneToMany
+  @OneToMany(cascade = CascadeType.ALL)
   private List<ConstraintParameter> parameters;
 
   @JsonIgnore
-  @OneToMany(mappedBy = "signature", cascade = CascadeType.REMOVE)
+  @OneToMany(mappedBy = "signature", cascade = CascadeType.ALL)
   private List<ConstraintInstance> instances;
 
   @Override

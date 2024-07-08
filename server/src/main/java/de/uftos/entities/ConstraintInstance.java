@@ -27,7 +27,7 @@ public class ConstraintInstance {
   @ManyToOne
   private ConstraintSignature signature;
 
-  @OneToMany(cascade = CascadeType.REMOVE)
+  @OneToMany(cascade = CascadeType.ALL)
   private List<ConstraintArgument> arguments;
 
   private RewardPenalize type;

@@ -1,9 +1,12 @@
 package de.uftos.entities;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import java.util.Objects;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,11 +24,13 @@ public class ConstraintArgument {
   @GeneratedValue(strategy = GenerationType.UUID)
   private String id;
 
-  private String name;
+  @ManyToOne(cascade = CascadeType.ALL)
+  @JoinColumn(name = "constraint_parameter_id", nullable = false)
+  private ConstraintParameter constraintParameter;
   private String value;
 
+
   public ConstraintArgument(String name, String value) {
-    this.name = name;
     this.value = value;
   }
 

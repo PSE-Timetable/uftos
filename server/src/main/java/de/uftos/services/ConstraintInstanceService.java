@@ -18,10 +18,6 @@ import de.uftos.repositories.database.SubjectRepository;
 import de.uftos.repositories.database.TagRepository;
 import de.uftos.repositories.database.TeacherRepository;
 import de.uftos.repositories.database.TimeslotRepository;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.Expression;
-import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.Predicate;
 import java.util.AbstractMap;
 import java.util.List;
 import java.util.Map;
@@ -128,27 +124,11 @@ public class ConstraintInstanceService {
   public Page<ConstraintInstance> get(String signatureId, Pageable pageable,
                                       Optional<String> argument) {
     Specification<ConstraintInstance> specification = new SpecificationBuilder<ConstraintInstance>()
-        .andEqual(signatureId, "id")
-        .optionalAndJoinEquals(argument, "arguments", "id")
+        .andJoinEquals(signatureId, "signature", "name")
+        .optionalAndJoinLike(argument, "arguments", "value")
         .build();
 
-  /*  Specification<ConstraintInstance> specification =
-        Specification.where(((root, query, cb) -> cb.equal(root.get("id"), signatureId)));
-*/
-    if (argument.isPresent()) {
-      specification.and((root, query, cb) -> {
-        Join<ConstraintInstance, ConstraintArgument> instancesWithArguments =
-            root.join("constraint_argument");
-        return cb.like(cb.lower(instancesWithArguments.get("value")),
-            "%" + argument.get().toLowerCase() + "%");
-      });
-    }
-
     return this.repository.findAll(specification, pageable);
-  }
-
-  private Predicate equalsIgnoreCase(CriteriaBuilder cb, Expression<String> value, String pattern) {
-    return cb.like(cb.lower(value), "%" + pattern.toLowerCase() + "%");
   }
 
   /**
