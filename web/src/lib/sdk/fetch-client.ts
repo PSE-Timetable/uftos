@@ -100,6 +100,7 @@ export type GradeResponseDto = {
     tags: Tag[];
 };
 export type Subject = {
+    color?: string;
     id: string;
     name: string;
     tags: Tag[];
@@ -329,6 +330,7 @@ export type PageSubject = {
     totalPages?: number;
 };
 export type SubjectRequestDto = {
+    color?: string;
     name: string;
     tagIds: string[];
 };
