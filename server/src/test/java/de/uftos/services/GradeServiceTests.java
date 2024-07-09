@@ -18,6 +18,7 @@ import org.mockito.quality.Strictness;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
@@ -86,27 +87,18 @@ public class GradeServiceTests {
     studentGroup1.setLessons(List.of(lesson1, lesson2, lesson3));
 
 
-
     Grade grade1 = new Grade("5", List.of(studentGroup1.getName(), studentGroup2.getName()),
         List.of("T1", "T2"));
     grade1.setId("123");
     studentGroup1.setGrades(List.of(grade1));
     studentGroup2.setGrades(List.of(grade1));
-    //TODO consistency check between student groups and grades? If grade has studentGroup, student group should also have grade and vice versa
+
     Grade grade2 = new Grade("7", List.of(studentGroup3.getName(), studentGroup4.getName()),
         List.of("T2", "T3"));
     grade2.setId("456");
     Grade grade3 = new Grade("7b", List.of(studentGroup1.getName(), studentGroup5.getName()),
         List.of("T2", "T3"));
     grade3.setId("567");
-
-
-
-
-
-    // TODO lesson constructor with student group array as parameter
-    // TODO inconsistency in Grade entity when the corresponding student groups change
-    // check if grade entity creates new studentgroups even when group with the same id already exists
 
 
     studentGroup2.setLessons(List.of(lesson4, lesson5));
@@ -119,6 +111,54 @@ public class GradeServiceTests {
     when(gradeRepository.findById("123")).thenReturn(Optional.of(grade1));
     when(gradeRepository.findById("456")).thenReturn(Optional.of(grade2));
     when(gradeRepository.findById("567")).thenReturn(Optional.of(grade3));
+  }
+
+  @Test
+  void testConsistencyGradeStudentGroup() {
+    StudentGroup studentGroup =
+        new StudentGroup("5-Ethik", List.of("S1", "S2"), List.of(), List.of());
+    studentGroup.setId("g123");
+
+    Grade grade = new Grade("5", List.of(studentGroup.getId()),
+        List.of("T1"));
+    grade.setId("123");
+
+    assertEquals(studentGroup.getGrades(), List.of(grade));
+  }
+
+
+  @Test
+  void testAddStudentGroupToGrade() {
+    StudentGroup studentGroup =
+        new StudentGroup("5-Ethik", List.of("S1", "S2"), List.of(), List.of());
+    studentGroup.setId("g123");
+
+    room1 = new Room("534");
+    room2 = new Room("574");
+
+    Subject subject = new Subject("789");
+
+    Teacher teacher1 = new Teacher("Te1");
+    Teacher teacher2 = new Teacher("Te2");
+
+    Lesson lesson1 = createLesson(teacher1, room1, studentGroup, "2024", subject);
+    Lesson lesson2 = createLesson(teacher2, room1, studentGroup, "2022", subject);
+    Lesson lesson3 = createLesson(teacher1, room2, studentGroup, "2024", subject);
+    studentGroup.setLessons(List.of(lesson1, lesson2, lesson3));
+
+    Grade grade = new Grade("5", List.of(studentGroup.getId()),
+        List.of("T1"));
+    grade.setId("123");
+//    System.out.println("Student Group: " + studentGroup.toString());
+//    System.out.println("Student Group in grade: " + grade.getStudentGroups().getFirst().toString());
+
+    assertAll("Testing whether the grade constains the necessary information",
+        () -> assertEquals(grade.getStudentGroups(), List.of(studentGroup)),
+        () -> assertNotEquals(grade.getStudentGroups().getFirst().getLessons(), null),
+        () -> assertEquals(grade.getStudentGroups().getFirst().getLessons().size(),
+            studentGroup.getLessons().size())
+    );
+
   }
 
   @Test
