@@ -9,26 +9,24 @@ import de.uftos.dto.ucdl.ConstraintDefinitionDto;
 import de.uftos.dto.ucdl.ast.AbstractSyntaxTreeDto;
 import de.uftos.repositories.ucdl.parser.javacc.ParseException;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class UcdlParser {
   private static final YAMLMapper MAPPER = new YAMLMapper();
 
   public static HashMap<String, ConstraintDefinitionDto> getDefinitions(String input)
-      throws JsonProcessingException {
+      throws JsonProcessingException, ParseException {
     HashMap<String, ConstraintDefinitionDto> constraints = new HashMap<>();
 
     JsonNode jsonNode = MAPPER.readTree(input);
 
-    //todo: fix parse exception (forwarding)
-    jsonNode.fields().forEachRemaining((entry) -> {
-      try {
-        constraints.put(entry.getKey(),
-            parseConstraintDefinition(entry.getKey(), entry.getValue()));
-      } catch (ParseException e) {
-        throw new RuntimeException("Exception in constraint \": " + entry.getKey() + "\"!\n" + e);
-      }
-    });
-
+    Iterator<Map.Entry<String, JsonNode>> iterator = jsonNode.fields();
+    while (iterator.hasNext()) {
+      Map.Entry<String, JsonNode> entry = iterator.next();
+      constraints.put(entry.getKey(),
+          parseConstraintDefinition(entry.getKey(), entry.getValue()));
+    }
     return constraints;
   }
 

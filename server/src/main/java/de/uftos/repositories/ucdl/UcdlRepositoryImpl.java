@@ -4,11 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import de.uftos.dto.ucdl.ConstraintDefinitionDto;
 import de.uftos.dto.ucdl.ParsingResponse;
 import de.uftos.repositories.ucdl.parser.UcdlParser;
+import de.uftos.repositories.ucdl.parser.javacc.ParseException;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.HashMap;
 import org.springframework.stereotype.Repository;
 
@@ -17,9 +17,8 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public class UcdlRepositoryImpl implements UcdlRepository {
+  private final File ucdlFile = new File("/app/ucdl/ucdl.yml");
   private HashMap<String, ConstraintDefinitionDto> currentDefinitions = null;
-  private File ucdlFile = new File("/app/ucdl/ucdl.yml");
-
 
   @Override
   public String getUcdl() {
@@ -73,7 +72,8 @@ public class UcdlRepositoryImpl implements UcdlRepository {
     return this.currentDefinitions;
   }
 
-  private void setCurrentDefinitions() throws ParseException, JsonProcessingException {
+  private void setCurrentDefinitions() throws JsonProcessingException,
+      de.uftos.repositories.ucdl.parser.javacc.ParseException {
     this.currentDefinitions = UcdlParser.getDefinitions(this.getUcdl());
   }
 }
