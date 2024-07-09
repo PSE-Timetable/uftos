@@ -9,6 +9,6 @@ public record ElementDto(UcdlToken token, AbstractSyntaxTreeDto name,
     implements AbstractSyntaxTreeDto {
   @Override
   public UcdlToken getToken() {
-    return null;
+    return token;
   }
 }

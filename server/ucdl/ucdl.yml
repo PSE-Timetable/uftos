@@ -1,3 +1,15 @@
+underTheWeek:
+  description: "Subject {subject} is taught under the week only"
+  default_type: SOFT_PENALIZE
+  parameter:
+    subject: Subject
+  definition: >-
+    for (timeslot : subject.lessons.timeslot[this.slot <= 3]) {
+      if (!timeslot.day in [1,2,3,4,5]) {
+        return false
+      }
+    }
+    return true
 studentTeacherTag:
   description: "Student {student} requires Tag {tag} from their Teachers"
   default_type: SOFT_PENALIZE

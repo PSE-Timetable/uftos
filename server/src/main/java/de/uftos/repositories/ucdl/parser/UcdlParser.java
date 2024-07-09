@@ -24,8 +24,13 @@ public class UcdlParser {
     Iterator<Map.Entry<String, JsonNode>> iterator = jsonNode.fields();
     while (iterator.hasNext()) {
       Map.Entry<String, JsonNode> entry = iterator.next();
-      constraints.put(entry.getKey(),
-          parseConstraintDefinition(entry.getKey(), entry.getValue()));
+      try {
+        constraints.put(entry.getKey(),
+            parseConstraintDefinition(entry.getKey(), entry.getValue()));
+      } catch (ParseException e) {
+        throw new ParseException(
+            "Error in constraint definition \"" + entry.getKey() + "\":" + e.getMessage());
+      }
     }
     return constraints;
   }

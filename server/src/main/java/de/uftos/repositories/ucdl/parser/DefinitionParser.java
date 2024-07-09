@@ -17,17 +17,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+//TODO: !!!REFACTOR!!!
+
 public class DefinitionParser {
   public static AbstractSyntaxTreeDto parseDefinition(String definition,
                                                       HashMap<String, ResourceType> parameters)
       throws ParseException {
+    parameters.put("this", ResourceType.TIMETABLE);
     SimpleNode root = SyntaxChecker.parseString(definition);
     return buildAst(root, parameters);
   }
 
   private static AbstractSyntaxTreeDto buildAst(Node root, HashMap<String, ResourceType> parameters)
       throws ParseException {
-    System.out.println(root + ":" + root.jjtGetNumChildren());
     String s = root.toString();
     switch (s) {
       case "START", "BOOL", "DEFINITION", "CONTROLSEQUENCE" -> {
@@ -302,7 +304,9 @@ public class DefinitionParser {
           if (token == UcdlToken.GREATER || token == UcdlToken.SMALLER ||
               token == UcdlToken.GREATER_EQUALS || token == UcdlToken.SMALLER_EQUALS) {
             for (AbstractSyntaxTreeDto ast : params) {
-              if (ast.getToken() != UcdlToken.NUMBER && ast.getToken() != UcdlToken.SIZE) {
+              if (ast.getToken() != UcdlToken.NUMBER && ast.getToken() != UcdlToken.SIZE &&
+                  !(ast.getToken() == UcdlToken.ELEMENT &&
+                      ((ElementDto) ast).type() == ResourceType.NUMBER)) {
                 throw new ParseException(
                     "Illegal comparison argument! Only numbers can be compared using \"<\",\">\",\"<=\",\">=\"!");
               }
@@ -328,12 +332,7 @@ public class DefinitionParser {
 
         ValueDto<String> elementName = (ValueDto<String>) buildAst(root.jjtGetChild(0), parameters);
 
-        ResourceType elementType;
-        if (elementName.value().equals("this")) {
-          elementType = ResourceType.TIMETABLE;
-        } else {
-          elementType = parameters.get(elementName.value());
-        }
+        ResourceType elementType = parameters.get(elementName.value());
 
         List<AbstractSyntaxTreeDto> attributes = new ArrayList<>();
 
@@ -345,12 +344,11 @@ public class DefinitionParser {
           attributes.add(new ValueDto<String>(UcdlToken.ATTRIBUTE, attribute));
           attributeList = attributeList.jjtGetChild(0);
         }
-
         return new ElementDto(UcdlToken.ELEMENT, elementName, attributes, elementType);
       }
       case "ELEMENTNAME" -> {
         String image = ((SimpleNode) root).jjtGetFirstToken().image;
-        if (!parameters.containsKey(image) && !image.equals("this")) {
+        if (!parameters.containsKey(image)) {
           throw new ParseException("Parameter/Variable \"" + image + "\" does not exist!");
         }
         return new ValueDto<>(UcdlToken.VALUE_REFERENCE, image);
@@ -369,29 +367,255 @@ public class DefinitionParser {
         }
       }
       case "SET" -> {
-        return new SetDto(UcdlToken.RESOURCE_SET, ResourceType.TEACHER);
+        AbstractSyntaxTreeDto setName = buildAst(root.jjtGetChild(0).jjtGetChild(0), parameters);
+
+        ResourceType setType;
+
+        if (setName.getToken() == UcdlToken.NUMBER_SET) {
+          setType = ResourceType.NUMBER;
+        } else {
+          setType = ((ElementDto) setName).type();
+        }
+
+        List<AbstractSyntaxTreeDto> modifiers = new ArrayList<>();
+
+        Node modifierList = root.jjtGetChild(1);
+        while (modifierList.jjtGetNumChildren() > 0) {
+          if (modifierList.jjtGetNumChildren() == 2) {
+            SimpleNode flatmap = (SimpleNode) modifierList.jjtGetChild(0);
+            String attribute = flatmap.jjtGetFirstToken().image;
+            setType = getNextResourceType(setType, attribute);
+            modifiers.add(new ValueDto<>(UcdlToken.ATTRIBUTE, attribute));
+            modifierList = modifierList.jjtGetChild(1);
+
+          } else if (modifierList.jjtGetNumChildren() == 3) {
+            ResourceType thisType = parameters.get("this");
+            parameters.replace("this", setType);
+
+            List<AbstractSyntaxTreeDto> filters = new ArrayList<>();
+            filters.add(buildAst(modifierList.jjtGetChild(0), parameters));
+
+            Node filterList = modifierList.jjtGetChild(1);
+            while (filterList.jjtGetNumChildren() > 0) {
+              filters.add(buildAst(filterList.jjtGetChild(0), parameters));
+              filterList = filterList.jjtGetChild(1);
+            }
+
+            for (AbstractSyntaxTreeDto filter : filters) {
+              if ((filter.getToken() == UcdlToken.NUMBER_SET && setType != ResourceType.NUMBER)
+                  || (filter.getToken() == UcdlToken.RESOURCE_SET &&
+                  ((SetDto) filter).type() != setType)) {
+                throw new ParseException("Sets can only be filtered using sets of the same type!");
+              }
+            }
+
+            modifiers.add(new OperatorDto(UcdlToken.FILTER, filters));
+            modifierList = modifierList.jjtGetChild(2);
+            parameters.replace("this", thisType);
+          }
+        }
+
+        return new SetDto(UcdlToken.RESOURCE_SET, setType, setName, modifiers);
       }
       case "SETNAME" -> {
-        return null;
+        throw new IllegalStateException();
       }
       case "SETMODIFICATION" -> {
-        return null;
+        throw new IllegalStateException();
       }
       case "NUMBERSET" -> {
-        return null;
+        List<Integer> values = new ArrayList<>();
+
+        values.add(Integer.parseInt(((SimpleNode) root).jjtGetFirstToken().next.image));
+
+        SimpleNode numberList = (SimpleNode) root.jjtGetChild(0);
+        while (numberList.jjtGetNumChildren() > 0) {
+          values.add(Integer.parseInt(numberList.jjtGetFirstToken().next.image));
+          numberList = (SimpleNode) numberList.jjtGetChild(0);
+        }
+        return new ValueDto<Integer[]>(UcdlToken.NUMBER_SET, values.toArray(new Integer[0]));
       }
       case "NUMBERLIST" -> {
-        return null;
+        throw new IllegalStateException();
       }
       case "ATTRIBUTE" -> {
-        return null;
+        throw new IllegalStateException();
       }
       case "VALUEREFERENCE" -> {
         return new ValueDto<>(UcdlToken.VALUE_REFERENCE,
             ((SimpleNode) root).jjtGetFirstToken().image);
       }
       case "FILTER" -> {
-        return null;
+        switch (root.jjtGetChild(0).toString()) {
+          case "BOOLVALUE":
+          case "FORALL":
+          case "EXISTS":
+          case "ISEMPTY":
+            return buildAst(root.jjtGetChild(0), parameters);
+          case "NUMBERSET":
+            AbstractSyntaxTreeDto numberSet = buildAst(root.jjtGetChild(0), parameters);
+
+            ResourceType thisType = parameters.get("this");
+            parameters.replace("this", ResourceType.NUMBER);
+
+            List<AbstractSyntaxTreeDto> modifiers = new ArrayList<>();
+
+            Node modifierList = root.jjtGetChild(1);
+            while (modifierList.jjtGetNumChildren() > 0) {
+              if (modifierList.jjtGetNumChildren() == 2) { //-> Flatmap
+                throw new ParseException("Numbers don't have any attributes!");
+              } else if (modifierList.jjtGetNumChildren() == 3) {
+                List<AbstractSyntaxTreeDto> filters = new ArrayList<>();
+                filters.add(buildAst(modifierList.jjtGetChild(0), parameters));
+
+                Node filterList = modifierList.jjtGetChild(1);
+                while (filterList.jjtGetNumChildren() > 0) {
+                  filters.add(buildAst(filterList.jjtGetChild(0), parameters));
+                  filterList = filterList.jjtGetChild(1);
+                }
+                for (AbstractSyntaxTreeDto filter : filters) {
+                  if (filter.getToken() == UcdlToken.RESOURCE_SET &&
+                      ((SetDto) filter).type() != ResourceType.NUMBER) {
+                    throw new ParseException(
+                        "ets can only be filtered using sets of the same type!");
+                  }
+                }
+                modifiers.add(new OperatorDto(UcdlToken.FILTER, filters));
+              }
+            }
+            parameters.replace("this", thisType);
+            return new SetDto(UcdlToken.RESOURCE_SET, ResourceType.NUMBER, numberSet, modifiers);
+          case "ELEMENT":
+            switch (root.jjtGetChild(1).toString()) {
+              case "SETMODIFICATION":
+                ElementDto setName = (ElementDto) buildAst(root.jjtGetChild(0), parameters);
+
+                ResourceType setType = setName.type();
+
+                modifiers = new ArrayList<>();
+
+                modifierList = root.jjtGetChild(1);
+                while (modifierList.jjtGetNumChildren() > 0) {
+                  if (modifierList.jjtGetNumChildren() == 2) {
+                    SimpleNode flatmap = (SimpleNode) modifierList.jjtGetChild(0);
+                    String attribute = flatmap.jjtGetFirstToken().image;
+                    setType = getNextResourceType(setType, attribute);
+                    modifiers.add(new ValueDto<>(UcdlToken.ATTRIBUTE, attribute));
+                    modifierList = modifierList.jjtGetChild(1);
+
+                  } else if (modifierList.jjtGetNumChildren() == 3) {
+                    thisType = parameters.get("this");
+                    parameters.replace("this", setType);
+
+                    List<AbstractSyntaxTreeDto> filters = new ArrayList<>();
+                    filters.add(buildAst(modifierList.jjtGetChild(0), parameters));
+
+                    Node filterList = modifierList.jjtGetChild(1);
+                    while (filterList.jjtGetNumChildren() > 0) {
+                      filters.add(buildAst(filterList.jjtGetChild(0), parameters));
+                      filterList = filterList.jjtGetChild(1);
+                    }
+
+                    for (AbstractSyntaxTreeDto filter : filters) {
+                      if ((filter.getToken() == UcdlToken.NUMBER_SET &&
+                          setType != ResourceType.NUMBER)
+                          || (filter.getToken() == UcdlToken.RESOURCE_SET &&
+                          ((SetDto) filter).type() != setType)) {
+                        throw new ParseException(
+                            "Sets can only be filtered using sets of the same type!");
+                      }
+                    }
+
+                    modifiers.add(new OperatorDto(UcdlToken.FILTER, filters));
+                    modifierList = modifierList.jjtGetChild(2);
+                    parameters.replace("this", thisType);
+                  }
+                }
+
+                return new SetDto(UcdlToken.RESOURCE_SET, setType, setName, modifiers);
+
+              case "ELEMENTINSET":
+                ElementDto element = (ElementDto) buildAst(root.jjtGetChild(0), parameters);
+                SetDto set = (SetDto) buildAst(root.jjtGetChild(1).jjtGetChild(0), parameters);
+
+                if (element.type() != set.type()) {
+                  throw new ParseException("Elements can only be in Sets of the same type!");
+                }
+
+                List<AbstractSyntaxTreeDto> params = new ArrayList<>();
+                params.add(element);
+                params.add(set);
+
+                AbstractSyntaxTreeDto elementInSet = new OperatorDto(UcdlToken.IN, params);
+
+                if (root.jjtGetNumChildren() == 2) {
+                  return elementInSet;
+                }
+                params = new ArrayList<>();
+                params.add(elementInSet);
+                params.add(buildAst(root.jjtGetChild(2).jjtGetChild(0), parameters));
+                switch (((SimpleNode) root.jjtGetChild(2)).jjtGetFirstToken().image) {
+                  case "implies", "->":
+                    return new OperatorDto(UcdlToken.IMPLIES, params);
+                  case "or", "||":
+                    return new OperatorDto(UcdlToken.OR, params);
+                  case "and", "&&":
+                    return new OperatorDto(UcdlToken.AND, params);
+                  default:
+                    throw new IllegalStateException();
+                }
+              case "EQUATION":
+                params = new ArrayList<>();
+                Node firstElement = root.jjtGetChild(0);
+                Node secondElement = root.jjtGetChild(1).jjtGetChild(1);
+                String comparator =
+                    ((SimpleNode) root.jjtGetChild(1).jjtGetChild(0)).jjtGetFirstToken().image;
+
+                params.add(buildAst(firstElement, parameters));
+                params.add(buildAst(secondElement, parameters));
+                UcdlToken token;
+                switch (comparator) {
+                  case ">":
+                    token = UcdlToken.GREATER;
+                    break;
+                  case "<":
+                    token = UcdlToken.SMALLER;
+                    break;
+                  case ">=":
+                    token = UcdlToken.GREATER_EQUALS;
+                    break;
+                  case "<=":
+                    token = UcdlToken.SMALLER_EQUALS;
+                    break;
+                  case "=", "==":
+                    token = UcdlToken.EQUALS;
+                    break;
+                  case "!=":
+                    token = UcdlToken.NOT_EQUALS;
+                    break;
+                  default:
+                    throw new IllegalStateException();
+                }
+                if (token == UcdlToken.GREATER || token == UcdlToken.SMALLER ||
+                    token == UcdlToken.GREATER_EQUALS || token == UcdlToken.SMALLER_EQUALS) {
+                  for (AbstractSyntaxTreeDto ast : params) {
+
+                    if (ast.getToken() != UcdlToken.NUMBER && ast.getToken() != UcdlToken.SIZE &&
+                        !(ast.getToken() == UcdlToken.ELEMENT &&
+                            ((ElementDto) ast).type() == ResourceType.NUMBER)) {
+                      throw new ParseException(
+                          "Illegal comparison argument! Only numbers can be compared using \"<\",\">\",\"<=\",\">=\"!");
+                    }
+                  }
+                }
+                return new OperatorDto(token, params);
+            }
+          default:
+            throw new IllegalStateException();
+
+        }
+        //void FILTER(): {} { NUMBERSET() SETMODIFICATION() | BOOLVALUE() | FORALL() | EXISTS() | ISEMPTY() |
+        // ELEMENT() (( ELEMENTINSET() | EQUATION() ) ( (<IMPLIES> OR()) | <OR> OR() | <AND> AND() | {} ) | SETMODIFICATION() )}
       }
       case "FILTERLIST" -> {
         throw new IllegalStateException();
@@ -404,7 +628,6 @@ public class DefinitionParser {
 
   private static ResourceType getNextResourceType(ResourceType currentType, String attribute)
       throws ParseException {
-    System.out.println(currentType + ";" + attribute);
     switch (attribute) {
       case "index":
         if (currentType != ResourceType.LESSON) {
