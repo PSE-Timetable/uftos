@@ -3,6 +3,43 @@ import { cubicOut } from 'svelte/easing';
 import type { TransitionConfig } from 'svelte/transition';
 import { twMerge } from 'tailwind-merge';
 
+export const WorkingHours = [
+  '8:00',
+  '8:30',
+  '9:00',
+  '9:30',
+  '10:00',
+  '10:30',
+  '11:00',
+  '11:30',
+  '12:00',
+  '12:30',
+  '13:00',
+  '13:30',
+  '14:00',
+  '14:30',
+  '15:00',
+  '15:30',
+  '16:00',
+  '16:30',
+  '17:00',
+] as const;
+
+export enum WeekDay {
+  MONDAY = 'Montag',
+  TUESDAY = 'Dienstag',
+  WEDNESDAY = 'Mittwoch',
+  THURSDAY = 'Donnerstag',
+  FRIDAY = 'Freitag',
+  SATURDAY = 'Samstag',
+  SUNDAY = 'Sonntag',
+}
+
+export interface TimeInterval {
+  start: (typeof WorkingHours)[number];
+  end: (typeof WorkingHours)[number];
+}
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
