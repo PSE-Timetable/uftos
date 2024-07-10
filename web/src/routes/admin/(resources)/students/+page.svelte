@@ -1,22 +1,61 @@
 <script lang="ts">
   import { Button } from '$lib/elements/ui/button';
   import DataTable from '$lib/elements/ui/dataTable/data-table.svelte';
-  import { createStudent, type Student, type StudentRequestDto } from '$lib/sdk/fetch-client';
+  import {
+    createStudent,
+    getStudents,
+    type Pageable,
+    type PageStudent,
+    type Student,
+    type StudentRequestDto,
+  } from '$lib/sdk/fetch-client';
+  import { error } from '@sveltejs/kit';
+  import { onMount } from 'svelte';
   import { writable, type Writable } from 'svelte/store';
+
   let columnNames = ['Vorname', 'Nachname', 'Tags'];
   let keys = ['id', 'firstName', 'lastName', 'tags'];
-  export let data;
   let tableData: Writable<Student[] | undefined> = writable([]);
+  let totalElements: Writable<number> = writable(0);
+  let mmNumber = 0;
 
-  $: $tableData = data.students;
   const create = async () => {
-    let student: StudentRequestDto = { firstName: 'Max', lastName: 'Mustermann', tagIds: [] };
-    createStudent(student);
+    let student: StudentRequestDto = { firstName: 'Max' + mmNumber, lastName: 'Mustermann', tagIds: [] };
+    await createStudent(student);
+    mmNumber++;
   };
+
+  onMount(async () => await loadPage(0, '', ''));
+
+  async function loadPage(index: number, sortString: string, filter: string) {
+    let pageable: Pageable;
+
+    if (sortString) {
+      pageable = { page: index, size: 10, sort: [sortString] };
+    } else pageable = { page: index, size: 10 };
+    try {
+      const result: PageStudent = await getStudents(pageable, {
+        firstName: filter,
+        lastName: filter,
+      });
+      totalElements.set(result.totalElements as number);
+      tableData.set(result.content);
+    } catch {
+      error(404, { message: 'Could not fetch page' });
+    }
+  }
 </script>
 
-<div class="p-10 bg-white w-full">
-  <DataTable {tableData} {columnNames} {keys} />
+<div class="p-10 w-full">
+  <DataTable
+    {tableData}
+    {columnNames}
+    {keys}
+    {totalElements}
+    on:pageLoad={(event) => {
+      loadPage(event.detail.pageIndex, event.detail.sort, event.detail.filter);
+    }}
+  />
 </div>
 
 <Button on:click={create}>Add</Button>

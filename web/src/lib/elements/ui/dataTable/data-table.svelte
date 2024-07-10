@@ -8,14 +8,16 @@
     addTableFilter,
     addHiddenColumns,
     addSelectedRows,
+    type SortKey,
   } from 'svelte-headless-table/plugins';
   import { Button } from '$lib/elements/ui/button';
   import ChevronDown from 'lucide-svelte/icons/chevron-down';
   import * as DropdownMenu from '$lib/elements/ui/dropdown-menu';
   import DataTableCheckbox from './data-table-checkbox.svelte';
-  import DataTableHeaderCheckbox from './data-table-header-checkbox.svelte';
   import { ArrowDown, ArrowUp } from 'lucide-svelte';
   import Input from '$lib/elements/ui/input/input.svelte';
+  import { type Writable } from 'svelte/store';
+  import { createEventDispatcher } from 'svelte';
 
   interface DataItem {
     id: string;
@@ -26,13 +28,14 @@
   export let tableData;
   export let columnNames;
   export let keys;
+  export let totalElements: Writable<number>;
+
+  const dispatch = createEventDispatcher();
 
   const table = createTable(tableData, {
-    page: addPagination(),
-    sort: addSortBy(),
-    filter: addTableFilter({
-      fn: ({ filterValue, value }) => value.toLowerCase().includes(filterValue.toLowerCase()),
-    }),
+    page: addPagination({ serverSide: true, serverItemCount: totalElements, initialPageSize: 10 }), //TODO: change page size, 10 only for testing
+    sort: addSortBy({ serverSide: true }),
+    filter: addTableFilter({ serverSide: true }),
     hide: addHiddenColumns(),
     select: addSelectedRows(),
   });
@@ -46,8 +49,9 @@
       id: 'id',
       header: (_, { pluginStates }) => {
         const { allPageRowsSelected } = pluginStates.select;
-        return createRender(DataTableHeaderCheckbox, {
+        return createRender(DataTableCheckbox, {
           checked: allPageRowsSelected,
+          white: true,
         });
       },
       cell: ({ row }, { pluginStates }) => {
@@ -56,6 +60,7 @@
 
         return createRender(DataTableCheckbox, {
           checked: isSelected,
+          white: false,
         });
       },
       plugins: {
@@ -73,6 +78,7 @@
             return item[keys[i + 1]];
           },
           header: columnName,
+          id: keys[i + 1],
         }),
       ]),
     );
@@ -104,6 +110,7 @@
   const { filterValue } = pluginStates.filter;
   const { hiddenColumnIds } = pluginStates.hide;
   const { selectedDataIds } = pluginStates.select;
+  const { sortKeys } = pluginStates.sort;
 
   const ids = flatColumns.map((col) => col.id);
   let hideForId = Object.fromEntries(ids.map((id) => [id, true]));
@@ -112,12 +119,35 @@
     .filter(([, hide]) => !hide)
     .map(([id]) => id);
 
-  const hidableCols = columnNames;
+  const hidableCols = keys.slice(1);
+
+  function getData() {
+    let sortKey: SortKey = $sortKeys[0];
+    let sortString;
+    if (sortKey) {
+      sortString = sortKey.id + ',' + sortKey.order;
+    } else sortString = '';
+    dispatch('pageLoad', {
+      pageIndex: $pageIndex,
+      sort: sortString,
+      filter: $filterValue,
+    });
+  }
+
+  $: {
+    $filterValue;
+    getData();
+  }
 </script>
 
-<div class = "border-foreground">
+<div>
   <div class="flex items-center py-4">
-    <Input bind:value={$filterValue} class="max-w-sm rounded-none border-0 border-b-4 border-foreground focus-visible:ring-0 focus-visible:border-b-4" placeholder="Suche..." type="text" />
+    <Input
+      bind:value={$filterValue}
+      class="max-w-sm rounded-none border-0 border-b-4 border-foreground focus-visible:ring-0 focus-visible:border-b-4"
+      placeholder="Suche..."
+      type="text"
+    />
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild let:builder>
         <Button builders={[builder]} class="ml-auto" variant="secondary">
@@ -146,11 +176,18 @@
                 <Subscribe attrs={cell.attrs()} let:attrs props={cell.props()} let:props>
                   <Table.Head {...attrs} class="[&:has([role=checkbox])]:pl-4">
                     {#if cell.id !== 'actions' && cell.id !== 'id'}
-                      <Button variant="ghost" on:click={props.sort.toggle} class="text-white">
+                      <Button
+                        variant="ghost"
+                        on:click={(event) => {
+                          props.sort.toggle(event);
+                          getData();
+                        }}
+                        class="text-white"
+                      >
                         <Render of={cell.render()} />
                         <div class="flex ml-2">
-                          <ArrowUp class="h-4 w-4 {props.sort.order === 'desc' ? 'text-accent' : ''}" />
-                          <ArrowDown class="ml-[-4px] h-4 w-4 {props.sort.order === 'asc' ? 'text-accent' : ''}" />
+                          <ArrowUp class="h-4 w-4 {props.sort.order === 'asc' ? 'text-accent' : ''}" />
+                          <ArrowDown class="ml-[-4px] h-4 w-4 {props.sort.order === 'desc' ? 'text-accent' : ''}" />
                         </div>
                       </Button>
                     {:else}
@@ -185,10 +222,24 @@
       {Object.keys($selectedDataIds).length} von{' '}
       {$rows.length} Zeile(n) ausgewählt.
     </div>
-    <Button disabled={!$hasPreviousPage} on:click={() => ($pageIndex = $pageIndex - 1)} size="sm" variant="secondary"
+    <Button
+      disabled={!$hasPreviousPage}
+      on:click={() => {
+        $pageIndex = $pageIndex - 1;
+        getData();
+      }}
+      size="sm"
+      variant="secondary"
       >Zurück
     </Button>
-    <Button disabled={!$hasNextPage} on:click={() => ($pageIndex = $pageIndex + 1)} size="sm" variant="secondary"
+    <Button
+      disabled={!$hasNextPage}
+      on:click={() => {
+        $pageIndex = $pageIndex + 1;
+        getData();
+      }}
+      size="sm"
+      variant="secondary"
       >Weiter
     </Button>
   </div>

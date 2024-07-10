@@ -1,6 +1,6 @@
 <script lang="ts">
   import DataTable from '$lib/elements/ui/dataTable/data-table.svelte';
-    import { writable } from 'svelte/store';
+  import { writable } from 'svelte/store';
   let columnNames = ['Name', 'Gebäude', 'Kapazität', 'test'];
   let keys = ['id', 'amount', 'status', 'email'];
 
@@ -23,5 +23,5 @@
 
 <!--not yet formatted-->
 <div class="mx-auto p-10 w-full">
-  <DataTable tableData={writable(data)} {columnNames} {keys}/>
+  <DataTable tableData={writable(data)} {columnNames} {keys} />
 </div>
