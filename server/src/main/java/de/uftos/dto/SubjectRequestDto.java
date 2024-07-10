@@ -11,7 +11,7 @@ import java.util.List;
  * @param name   the name of the subject.
  * @param tagIds the tags associated with the subject.
  */
-public record SubjectRequestDto(@NotEmpty String name, @NotNull List<String> tagIds) {
+public record SubjectRequestDto(@NotEmpty String name, String color, @NotNull List<String> tagIds) {
 
   /**
    * Maps the information from the data transfer object to a new subject entity.
@@ -19,6 +19,6 @@ public record SubjectRequestDto(@NotEmpty String name, @NotNull List<String> tag
    * @return the new subject entity.
    */
   public Subject map() {
-    return new Subject(this.name, this.tagIds);
+    return new Subject(this.name, this.color, this.tagIds);
   }
 }
