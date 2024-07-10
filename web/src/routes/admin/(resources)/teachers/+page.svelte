@@ -6,9 +6,9 @@
 123
 <div class="h-[200px]"></div>
 <div class="flex flex-col gap-2">
-  <WorkingHours weekDay={WeekDay.monday} />
-  <WorkingHours weekDay={WeekDay.tuesday} />
-  <WorkingHours weekDay={WeekDay.wednesday} />
-  <WorkingHours weekDay={WeekDay.thursday} />
-  <WorkingHours weekDay={WeekDay.friday} />
+  <WorkingHours weekDay={WeekDay.MONDAY} />
+  <WorkingHours weekDay={WeekDay.TUESDAY} />
+  <WorkingHours weekDay={WeekDay.WEDNESDAY} />
+  <WorkingHours weekDay={WeekDay.THURSDAY} />
+  <WorkingHours weekDay={WeekDay.FRIDAY} />
 </div>
