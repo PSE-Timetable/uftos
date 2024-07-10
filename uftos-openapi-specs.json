@@ -3292,6 +3292,9 @@
         "required" : [ "id", "name", "tags" ],
         "type" : "object",
         "properties" : {
+          "color" : {
+            "type" : "string"
+          },
           "id" : {
             "type" : "string"
           },
@@ -3310,6 +3313,9 @@
         "required" : [ "name", "tagIds" ],
         "type" : "object",
         "properties" : {
+          "color" : {
+            "type" : "string"
+          },
           "name" : {
             "type" : "string"
           },
