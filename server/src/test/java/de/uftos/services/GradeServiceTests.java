@@ -1,7 +1,19 @@
 package de.uftos.services;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
+
 import de.uftos.dto.LessonResponseDto;
-import de.uftos.entities.*;
+import de.uftos.entities.Grade;
+import de.uftos.entities.Lesson;
+import de.uftos.entities.Room;
+import de.uftos.entities.Server;
+import de.uftos.entities.StudentGroup;
+import de.uftos.entities.Subject;
+import de.uftos.entities.Teacher;
 import de.uftos.repositories.database.GradeRepository;
 import de.uftos.repositories.database.ServerRepository;
 import java.util.List;
@@ -15,12 +27,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -74,7 +80,7 @@ public class GradeServiceTests {
 
     StudentGroup studentGroup5 =
         new StudentGroup("7b-Religion", List.of("S2", "S3"), List.of(), List.of("T1", "T2"));
-    studentGroup4.setId("g678");
+    studentGroup5.setId("g678");
 
 
     room1 = new Room("534");
@@ -92,7 +98,6 @@ public class GradeServiceTests {
     Lesson lesson3 = createLesson(teacher1, room2, studentGroup1, "2024", subject);
     lesson3.setId("l3");
     Lesson lesson4 = createLesson(teacher1, room2, studentGroup2, "2022", subject);
-
     lesson4.setId("l4");
     Lesson lesson5 = createLesson(teacher2, room2, studentGroup2, "2024", subject);
     lesson5.setId("l5");

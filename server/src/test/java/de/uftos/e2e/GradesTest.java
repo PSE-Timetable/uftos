@@ -1,8 +1,5 @@
 package de.uftos.e2e;
 
-import static de.uftos.utils.JsonGenerator.generatePageJson;
-import static de.uftos.utils.JsonGenerator.generateStudentJson;
-import static de.uftos.utils.JsonGenerator.generateTagJson;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
@@ -11,24 +8,25 @@ import io.restassured.http.ContentType;
 import java.util.Collections;
 import java.util.List;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-class StudentsTest {
+public class GradesTest {
+  private static final String FIRST_GRADE_NAME = "5";
+  private static final String SECOND_GRADE_NAME = "7";
+  private static final String TAG_NAME = "Nachmittagsunterricht";
+  private static final String STUDENT_GROUP_NAME = "7-Ethik";
 
-  private static final String FIRST_STUDENT_FIRST_NAME = "Karen";
-  private static final String FIRST_STUDENT_LAST_NAME = "Musterman";
-  private static final String SECOND_STUDENT_FIRST_NAME = "Jason";
-  private static final String SECOND_STUDENT_LAST_NAME = "Musterman";
-  private static final String TAG_NAME = "Sehbehinderung";
-
-  static String firstStudent;
-  static String secondStudent;
+  static String firstGrade;
+  static String secondGrade;
   static String tagId;
+  static String studentGroupId;
+
 
   @BeforeAll
-  static void createTestStudents() throws JSONException {
+  static void createTestGrades() throws JSONException {
     tagId = given().contentType(ContentType.JSON)
         .body(generateTagJson(TAG_NAME))
         .when()
@@ -41,46 +39,46 @@ class StudentsTest {
         .extract()
         .body().jsonPath().getString("id");
 
-    secondStudent = given().contentType(ContentType.JSON)
-        .body(generateStudentJson(SECOND_STUDENT_FIRST_NAME, SECOND_STUDENT_LAST_NAME,
-            List.of(tagId)))
+    firstGrade = given().contentType(ContentType.JSON)
+        .body(generateGradeJson(FIRST_GRADE_NAME, Collections.emptyList(),
+            Collections.emptyList()))
         .when()
-        .post("/students")
+        .post("/grades")
         .then()
         .statusCode(200)
         .body("id", notNullValue())
-        .body("firstName", equalTo(SECOND_STUDENT_FIRST_NAME))
-        .body("lastName", equalTo(SECOND_STUDENT_LAST_NAME))
+        .body("name", equalTo(FIRST_GRADE_NAME))
         .log().ifValidationFails()
         .extract()
         .body().jsonPath().getString("id");
 
-    firstStudent = given().contentType(ContentType.JSON)
-        .body(generateStudentJson(FIRST_STUDENT_FIRST_NAME, FIRST_STUDENT_LAST_NAME,
-            Collections.emptyList()))
+    secondGrade = given().contentType(ContentType.JSON)
+        .body(generateGradeJson(SECOND_GRADE_NAME, List.of(studentGroupId),
+            List.of(tagId)))
         .when()
-        .post("/students")
+        .post("/grades")
         .then()
         .statusCode(200)
         .body("id", notNullValue())
-        .body("firstName", equalTo(FIRST_STUDENT_FIRST_NAME))
-        .body("lastName", equalTo(FIRST_STUDENT_LAST_NAME))
+        .body("name", equalTo(SECOND_GRADE_NAME))
         .log().ifValidationFails()
         .extract()
         .body().jsonPath().getString("id");
+
+
   }
 
   @AfterAll
-  static void deleteCreatedStudents() {
+  static void deleteCreatedGrades() {
     given().contentType(ContentType.JSON)
         .when()
-        .delete("/students/{id}", firstStudent)
+        .delete("/grades/{id}", firstGrade)
         .then()
         .statusCode(200);
 
     given().contentType(ContentType.JSON)
         .when()
-        .delete("/students/{id}", secondStudent)
+        .delete("/grades/{id}", secondGrade)
         .then()
         .statusCode(200);
 
@@ -91,12 +89,40 @@ class StudentsTest {
         .statusCode(200);
   }
 
+
+  private static String generateGradeJson(String name, List<String> studentGroups,
+                                          List<String> tags)
+      throws JSONException {
+    return new JSONObject()
+        .put("name", name)
+        .put("studentGroups", studentGroups)
+        .put("tags", tags)
+        .toString();
+  }
+
+  private static String generateTagJson(String name)
+      throws JSONException {
+    return new JSONObject()
+        .put("tagName", name)
+        .toString();
+  }
+
+  private static String generatePageJson(int page, int size, List<String> sort)
+      throws JSONException {
+    return new JSONObject()
+        .put("page", page)
+        .put("size", size)
+        .put("sort", sort)
+        .toString();
+  }
+
+
   @Test
-  void getAllStudents() throws JSONException {
+  void getAllGrades() throws JSONException {
     given().contentType(ContentType.JSON)
         .body(generatePageJson(0, 10, Collections.emptyList()))
         .when()
-        .get("/students")
+        .get("/grades")
         .then()
         .statusCode(200)
         .body("totalElements", equalTo(2))
@@ -104,31 +130,32 @@ class StudentsTest {
   }
 
   @Test
-  void getStudentsWithTag() throws JSONException {
+  void getGradesWithTag() throws JSONException {
     given().contentType(ContentType.JSON)
         .body(generatePageJson(0, 10, Collections.emptyList()))
         .param("tags", List.of(tagId))
         .when()
-        .get("/students")
+        .get("/grades")
         .then()
         .statusCode(200)
         .body("totalElements", equalTo(1))
-        .body("content[0].id", equalTo(secondStudent))
+        .body("content[0].id", equalTo(secondGrade))
         .log().ifValidationFails();
   }
 
   @Test
-  void getStudentsWithName() throws JSONException {
+  void getGradesWithName() throws JSONException {
     given().contentType(ContentType.JSON)
         .body(generatePageJson(0, 10, Collections.emptyList()))
-        .param("firstName", FIRST_STUDENT_FIRST_NAME)
+        .param("name", FIRST_GRADE_NAME)
         .when()
-        .get("/students")
+        .get("/grades")
         .then()
         .statusCode(200)
         .body("totalElements", equalTo(1))
-        .body("content[0].id", equalTo(firstStudent))
+        .body("content[0].id", equalTo(firstGrade))
         .log().ifValidationFails();
 
   }
+
 }
