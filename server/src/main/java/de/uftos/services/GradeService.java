@@ -88,17 +88,16 @@ public class GradeService {
 
     Stream<StudentGroup> studentGroupStream =
         Stream.of(grade.getStudentGroups()).flatMap(Collection::stream);
-    // Different student groups can have the same lessons, Set used to prevent duplicates
-    // getLessons returns null if there is no lesson, these nulls need to be filtered out
-    Set<Lesson> lessons = studentGroupStream.map(StudentGroup::getLessons).filter(Objects::nonNull)
-        .flatMap(Collection::stream).collect(Collectors.toSet());
+    // A lesson cannot have multiple student groups attending it => no duplicates
+    // getLessons returns null if there is no lesson
+    List<Lesson> lessons = studentGroupStream.map(StudentGroup::getLessons).filter(Objects::nonNull)
+        .flatMap(Collection::stream).collect(Collectors.toList());
 
 
     lessons.removeIf(lesson -> !lesson.getYear().equals(
         serverRepository.findAll().getFirst().getCurrentYear()));
 
-
-    return LessonResponseDto.createResponseDtoFromLessons(lessons.stream().toList());
+    return LessonResponseDto.createResponseDtoFromLessons(lessons);
   }
 
   /**
