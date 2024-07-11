@@ -62,24 +62,9 @@ public class DefinitionParser {
         params.add(buildAst(root.jjtGetChild(1), parameters)); //return
 
         //semantic check for legal return values
-        boolean and = true;
-        boolean or = false;
-        for (AbstractSyntaxTreeDto ast : params) {
-          if (ast.getToken() == UcdlToken.FOR || ast.getToken() == UcdlToken.IF) {
-            ControlSequenceDto cs = (ControlSequenceDto) ast;
-            and = and && cs.returnValue();
-            or = or || cs.returnValue();
-          }
-        }
-        if (and != or) {
-          throw new ParseException(
-              "All control sequences in the body of a control sequence need to return the same "
-                  + "boolean value!");
-        }
+        getReturnValue(params); //returned value is irrelevant, only error checking
+
         return new OperatorDto(UcdlToken.CODEBLOCK, params);
-      }
-      case "CONTROLSEQUENCELIST" -> {
-        throw new IllegalStateException();
       }
       case "RETURN" -> {
         SimpleNode boolVal = (SimpleNode) root.jjtGetChild(0);
@@ -117,21 +102,8 @@ public class DefinitionParser {
         parameters.remove(varName.value()); //removing the new variable
 
         //semantic check for legal return values
-        boolean and = true;
-        boolean or = false;
-        for (AbstractSyntaxTreeDto ast : body) {
-          if (ast.getToken() == UcdlToken.FOR || ast.getToken() == UcdlToken.IF) {
-            ControlSequenceDto cs = (ControlSequenceDto) ast;
-            and = and && cs.returnValue();
-            or = or || cs.returnValue();
-          }
-        }
-        if (and != or) {
-          throw new ParseException(
-              "All control sequences in the body of a control sequence need to return"
-                  + " the same boolean value!");
-        }
-        return new ControlSequenceDto(UcdlToken.FOR, variable, body, and);
+        boolean returnValue = getReturnValue(body);
+        return new ControlSequenceDto(UcdlToken.FOR, variable, body, returnValue);
       }
       case "IF" -> {
         boolean returnValue = false;
@@ -158,30 +130,13 @@ public class DefinitionParser {
               controlSequenceList = controlSequenceList.jjtGetChild(1);
 
               //semantic check for legal return values
-              boolean and = true;
-              boolean or = false;
-              for (AbstractSyntaxTreeDto ast : body) {
-                if (ast.getToken() == UcdlToken.FOR || ast.getToken() == UcdlToken.IF) {
-                  ControlSequenceDto cs = (ControlSequenceDto) ast;
-                  and = and && cs.returnValue();
-                  or = or || cs.returnValue();
-                }
-              }
-              if (and != or) {
-                throw new ParseException(
-                    "All control sequences in the body of a control sequence need to return"
-                        + " the same boolean value!");
-              }
-              returnValue = and;
+              returnValue = getReturnValue(body);
             }
             break;
           default:
             throw new IllegalStateException();
         }
         return new ControlSequenceDto(UcdlToken.IF, bool, body, returnValue);
-      }
-      case "CONTROLSEQUENCERETURN" -> {
-        throw new IllegalStateException();
       }
       case "FORALL" -> {
         List<AbstractSyntaxTreeDto> variableDefinition = new ArrayList<>();
@@ -231,9 +186,6 @@ public class DefinitionParser {
         }
         return firstArgument;
       }
-      case "OPTIONALIMPLIES" -> {
-        throw new IllegalStateException();
-      }
       case "OR" -> {
         AbstractSyntaxTreeDto firstArgument = buildAst(root.jjtGetChild(0), parameters);
         if (root.jjtGetChild(1).jjtGetNumChildren() > 0) {
@@ -246,9 +198,6 @@ public class DefinitionParser {
         }
         return firstArgument;
       }
-      case "OPTIONALOR" -> {
-        throw new IllegalStateException();
-      }
       case "AND" -> {
         AbstractSyntaxTreeDto firstArgument = buildAst(root.jjtGetChild(0), parameters);
         if (root.jjtGetChild(1).jjtGetNumChildren() > 0) {
@@ -260,9 +209,6 @@ public class DefinitionParser {
           return new OperatorDto(UcdlToken.AND, params);
         }
         return firstArgument;
-      }
-      case "OPTIONALAND" -> {
-        throw new IllegalStateException();
       }
       case "NOT" -> {
         if (((SimpleNode) root).jjtGetFirstToken().image.equals("NOT")) {
@@ -298,15 +244,6 @@ public class DefinitionParser {
         }
         throw new IllegalStateException();
       }
-      case "ELEMENTINSET" -> {
-        throw new IllegalStateException();
-      }
-      case "EQUATION" -> {
-        throw new IllegalStateException();
-      }
-      case "ELEMENTEQUATION" -> {
-        throw new IllegalStateException();
-      }
       case "ELEMENT" -> {
         if (root.jjtGetChild(0).toString().equals("NUMBERELEMENT")) {
           return buildAst(root.jjtGetChild(0), parameters);
@@ -323,7 +260,7 @@ public class DefinitionParser {
           String attribute = ((SimpleNode) attributeList).jjtGetLastToken().image;
           elementType = getNextResourceType(elementType, attribute);
           //^ also performs semantic check whether the attribute is applicable to the given type
-          attributes.add(new ValueDto<String>(UcdlToken.ATTRIBUTE, attribute));
+          attributes.add(new ValueDto<>(UcdlToken.ATTRIBUTE, attribute));
           attributeList = attributeList.jjtGetChild(0);
         }
         return new ElementDto(UcdlToken.ELEMENT, elementName, attributes, elementType);
@@ -334,9 +271,6 @@ public class DefinitionParser {
           throw new ParseException("Parameter/Variable \"" + image + "\" does not exist!");
         }
         return new ValueDto<>(UcdlToken.VALUE_REFERENCE, image);
-      }
-      case "ELEMENTATTRIBUTELIST" -> {
-        throw new IllegalStateException();
       }
       case "NUMBERELEMENT" -> {
         if (((SimpleNode) root).jjtGetFirstToken().image.equals("SIZE")) {
@@ -399,12 +333,6 @@ public class DefinitionParser {
 
         return new SetDto(UcdlToken.RESOURCE_SET, setType, setName, modifiers);
       }
-      case "SETNAME" -> {
-        throw new IllegalStateException();
-      }
-      case "SETMODIFICATION" -> {
-        throw new IllegalStateException();
-      }
       case "NUMBERSET" -> {
         List<Integer> values = new ArrayList<>();
 
@@ -415,13 +343,7 @@ public class DefinitionParser {
           values.add(Integer.parseInt(numberList.jjtGetFirstToken().next.image));
           numberList = (SimpleNode) numberList.jjtGetChild(0);
         }
-        return new ValueDto<Integer[]>(UcdlToken.NUMBER_SET, values.toArray(new Integer[0]));
-      }
-      case "NUMBERLIST" -> {
-        throw new IllegalStateException();
-      }
-      case "ATTRIBUTE" -> {
-        throw new IllegalStateException();
+        return new ValueDto<>(UcdlToken.NUMBER_SET, values.toArray(new Integer[0]));
       }
       case "VALUEREFERENCE" -> {
         return new ValueDto<>(UcdlToken.VALUE_REFERENCE,
@@ -561,13 +483,32 @@ public class DefinitionParser {
 
         }
       }
-      case "FILTERLIST" -> {
-        throw new IllegalStateException();
-      }
-      default -> {
-        throw new IllegalStateException();
+      //includes cases: "CONTROLSEQUENCELIST", "CONTROLSEQUENCERETURN",
+      // "OPTIONALIMPLIES", "OPTIONALOR", "OPTIONALAND",
+      // "ELEMENTINSET", "EQUATION", "ELEMENTEQUATION", "ELEMENTATTRIBUTELIST",
+      // "SETNAME", "SETMODIFICATION", "NUMBERLIST", "ATTRIBUTE", "FILTERLIST"
+      default -> throw new IllegalStateException();
+    }
+  }
+
+  //checks that all returnValues are the same and returns the value
+  // (throws an exception if true and false are returnValues inside the body)
+  private static boolean getReturnValue(List<AbstractSyntaxTreeDto> body) throws ParseException {
+    boolean and = true;
+    boolean or = false;
+    for (AbstractSyntaxTreeDto ast : body) {
+      if (ast.getToken() == UcdlToken.FOR || ast.getToken() == UcdlToken.IF) {
+        ControlSequenceDto cs = (ControlSequenceDto) ast;
+        and = and && cs.returnValue();
+        or = or || cs.returnValue();
       }
     }
+    if (and != or) {
+      throw new ParseException(
+          "All control sequences in the body of a control sequence need to return"
+              + " the same boolean value!");
+    }
+    return and;
   }
 
   private static UcdlToken getComparatorToken(String comparator, List<AbstractSyntaxTreeDto> params)
