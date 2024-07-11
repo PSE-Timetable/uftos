@@ -27,9 +27,7 @@
   onMount(async () => await loadPage(0, '', ''));
 
   async function loadPage(index: number, sortString: string, filter: string) {
-    let pageable: Pageable;
-
-    sortString ? (pageable = { page: index, size: 10, sort: [sortString] }) : (pageable = { page: index, size: 10 });
+    let pageable: Pageable = { page: index, size: 10, sort: [sortString] };
     try {
       const result: PageStudent = await getStudents(pageable, {
         firstName: filter,

@@ -1,27 +1,39 @@
 <script lang="ts">
-  import DataTable from '$lib/elements/ui/dataTable/data-table.svelte';
-  import { writable } from 'svelte/store';
-  let columnNames = ['Name', 'Gebäude', 'Kapazität', 'test'];
-  let keys = ['id', 'amount', 'status', 'email'];
+  import DataTable, { type DataItem } from '$lib/elements/ui/dataTable/data-table.svelte';
+  import { getRooms, type Pageable, type PageRoom } from '$lib/sdk/fetch-client';
+  import { error } from '@sveltejs/kit';
+  import { onMount } from 'svelte';
+  import { writable, type Writable } from 'svelte/store';
 
-  //demo data from shadcn
-  const data = [
-    {
-      id: '728ed52f',
-      amount: 100,
-      status: 'pending',
-      email: 'm@example.com',
-    },
-    {
-      id: '489e1d42',
-      amount: 125,
-      status: 'processing',
-      email: ['test1', 'test2'],
-    },
-  ];
+  let columnNames = ['Name', 'Gebäude', 'Kapazität', 'Tags'];
+  let keys = ['id', 'Name', 'buildingName', 'capacity', 'tags'];
+  let tableData: Writable<DataItem[]> = writable([]);
+  let totalElements: Writable<number> = writable(0);
+
+  onMount(async () => await loadPage(0, '', ''));
+
+  async function loadPage(index: number, sortString: string, filter: string) {
+    let pageable: Pageable = { page: index, size: 10, sort: [sortString] };
+    let result: PageRoom;
+    try {
+      /^\d+$/.test(filter)
+        ? (result = await getRooms(pageable, {
+            name: filter,
+            buildingName: filter,
+            capacity: filter as unknown as number,
+          }))
+        : (result = await getRooms(pageable, {
+            name: filter,
+            buildingName: filter,
+          }));
+      totalElements.set(result.totalElements as number);
+      tableData.set(result.content as unknown as DataItem[]);
+    } catch {
+      error(404, { message: 'Could not fetch page' });
+    }
+  }
 </script>
 
-<!--not yet formatted-->
 <div class="mx-auto p-10 w-full">
-  <DataTable tableData={writable(data)} {columnNames} {keys} totalElements={writable(2)} />
+  <DataTable {tableData} {columnNames} {keys} {totalElements} {loadPage} />
 </div>
