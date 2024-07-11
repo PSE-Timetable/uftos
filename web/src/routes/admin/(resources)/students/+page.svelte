@@ -1,13 +1,12 @@
 <script lang="ts">
   import { Button } from '$lib/elements/ui/button';
-  import DataTable from '$lib/elements/ui/dataTable/data-table.svelte';
+  import DataTable, { type DataItem } from '$lib/elements/ui/dataTable/data-table.svelte';
   import {
     createStudent,
     getStudents,
     type Pageable,
     type PageStudent,
     type StudentRequestDto,
-    type Tag,
   } from '$lib/sdk/fetch-client';
   import { error } from '@sveltejs/kit';
   import { onMount } from 'svelte';
@@ -18,12 +17,6 @@
   let tableData: Writable<DataItem[]> = writable([]);
   let totalElements: Writable<number> = writable(0);
   let mmNumber = 0;
-
-  interface DataItem {
-    id: string;
-
-    [key: string]: string | string[] | number | Tag;
-  }
 
   const create = async () => {
     let student: StudentRequestDto = { firstName: 'Max' + mmNumber, lastName: 'Mustermann', tagIds: [] };
@@ -51,19 +44,7 @@
 </script>
 
 <div class="p-10 w-full">
-  <DataTable
-    {tableData}
-    {columnNames}
-    {keys}
-    {totalElements}
-    on:pageLoad={async (event) => {
-      try {
-        await loadPage(event.detail.pageIndex, event.detail.sort, event.detail.filter);
-      } catch {
-        error(404, { message: 'Could not fetch page' });
-      }
-    }}
-  />
+  <DataTable {tableData} {columnNames} {keys} {totalElements} {loadPage} />
 </div>
 
 <Button on:click={create}>Add</Button>

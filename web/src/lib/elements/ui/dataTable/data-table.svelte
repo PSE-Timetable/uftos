@@ -1,3 +1,11 @@
+<script context="module" lang="ts">
+  export type DataItem = {
+    id: string;
+
+    [key: string]: string | string[] | number | Tag;
+  };
+</script>
+
 <script lang="ts">
   import { createTable, Render, Subscribe, createRender } from 'svelte-headless-table';
   import * as Table from '$lib/elements/ui/table';
@@ -17,23 +25,13 @@
   import { ArrowDown, ArrowUp } from 'lucide-svelte';
   import Input from '$lib/elements/ui/input/input.svelte';
   import { type Writable } from 'svelte/store';
-  import { createEventDispatcher } from 'svelte';
   import type { Tag } from '$lib/sdk/fetch-client';
-
-  interface DataItem {
-    id: string;
-
-    [key: string]: string | string[] | number | Tag;
-  }
 
   export let tableData: Writable<DataItem[]>;
   export let columnNames;
   export let keys;
   export let totalElements: Writable<number>;
-
-  let tags: String[] = [];
-
-  const dispatch = createEventDispatcher();
+  export let loadPage: (index: number, toSort: string, filter: string) => void;
 
   const table = createTable(tableData, {
     page: addPagination({ serverSide: true, serverItemCount: totalElements, initialPageSize: 10 }), //TODO: change page size, 10 only for testing
@@ -130,11 +128,7 @@
     if (sortKey) {
       sortString = sortKey.id + ',' + sortKey.order;
     } else sortString = '';
-    dispatch('pageLoad', {
-      pageIndex: $pageIndex,
-      sort: sortString,
-      filter: $filterValue,
-    });
+    loadPage($pageIndex, sortString, $filterValue);
   }
 
   $: {
