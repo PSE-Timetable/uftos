@@ -12,9 +12,21 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+/**
+ * This class parses ucdl-code and returns the encoded constraint definitions.
+ */
 public class UcdlParser {
   private static final YAMLMapper MAPPER = new YAMLMapper();
 
+  /**
+   * Parses the input ucdl-String and returns the ConstraintDefinitions resembling the given code.
+   *
+   * @param input the given ucdl String
+   * @return a Hashmap of all given ConstraintDefinitions (addressable using the constraint name).
+   * @throws JsonProcessingException if the yml structure of the input String isn't correct.
+   * @throws ParseException          if the ucdl code in the "definition"-fields
+   *                                 of the constraints isn't correct.
+   */
   public static HashMap<String, ConstraintDefinitionDto> getDefinitions(String input)
       throws JsonProcessingException, ParseException {
     HashMap<String, ConstraintDefinitionDto> constraints = new HashMap<>();
@@ -35,6 +47,7 @@ public class UcdlParser {
     return constraints;
   }
 
+  //parses one full definition
   private static ConstraintDefinitionDto parseConstraintDefinition(String name,
                                                                    JsonNode constraintDefinition)
       throws ParseException {
@@ -60,7 +73,8 @@ public class UcdlParser {
       case "SOFT_PENALIZE" -> RewardPenalize.SOFT_PENALIZE;
       case null -> RewardPenalize.SOFT_PENALIZE;
       default -> throw new ParseException(
-          "Invalid default_type. \"HARD_REWARD\", \"SOFT_REWARD\", \"HARD_PENALIZE\", \"SOFT_PENALIZE\", or empty field expected!");
+          "Invalid default_type. \"HARD_REWARD\", \"SOFT_REWARD\", \"HARD_PENALIZE\","
+              + " \"SOFT_PENALIZE\", or empty field expected!");
     };
 
     HashMap<String, ResourceType> parameters = new HashMap<>();
@@ -96,8 +110,9 @@ public class UcdlParser {
       case "Grade" -> ResourceType.GRADE;
       case "Lesson" -> ResourceType.LESSON;
       case "Timeslot" -> ResourceType.TIMESLOT;
-      default -> throw new ParseException("Illegal resource type \"" + resourceType +
-          "! Expected one of \"Student\", \"Student-Group\", \"Teacher\", \"Room\", \"Tag\", \"Subject\", \"Grade\", \"Timeslot\", \"Lesson\"!");
+      default -> throw new ParseException("Illegal resource type \"" + resourceType
+          + "! Expected one of \"Student\", \"Student-Group\", \"Teacher\", \"Room\", \"Tag\","
+          + " \"Subject\", \"Grade\", \"Timeslot\", \"Lesson\"!");
     };
   }
 
