@@ -380,19 +380,6 @@ export type TeacherRequestDto = {
     subjectIds: string[];
     tagIds: string[];
 };
-export type PageTimeslot = {
-    content?: Timeslot[];
-    empty?: boolean;
-    first?: boolean;
-    last?: boolean;
-    "number"?: number;
-    numberOfElements?: number;
-    pageable?: PageableObject;
-    size?: number;
-    sort?: SortObject[];
-    totalElements?: number;
-    totalPages?: number;
-};
 export type TimeslotRequestDto = {
     day: Day;
     slot: number;
@@ -1012,13 +999,11 @@ export function getTeacherLessons(id: string, opts?: Oazapfts.RequestOpts) {
         ...opts
     }));
 }
-export function getTimeslots(pageable: Pageable, opts?: Oazapfts.RequestOpts) {
+export function getTimeslots(opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
-        data: PageTimeslot;
-    }>(`/timeslots${QS.query(QS.explode({
-        pageable
-    }))}`, {
+        data: Timeslot[];
+    }>("/timeslots", {
         ...opts
     }));
 }

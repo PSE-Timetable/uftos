@@ -1,5 +1,5 @@
 <script lang="ts">
-  import WorkingHours from '$lib/components/ui/working-hours/working-hours-day-container.svelte';
+  import WorkingHours from '$lib/components/working-hours/working-hours-day-container.svelte';
   import { WeekDay } from '$lib/utils';
 </script>
 
