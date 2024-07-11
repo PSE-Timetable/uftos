@@ -23,5 +23,5 @@
 
 <!--not yet formatted-->
 <div class="mx-auto p-10 w-full">
-  <DataTable tableData={writable(data)} {columnNames} {keys} totalElements={writable(2)}/>
+  <DataTable tableData={writable(data)} {columnNames} {keys} totalElements={writable(2)} />
 </div>

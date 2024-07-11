@@ -26,7 +26,7 @@
     [key: string]: string | string[] | number | Tag;
   }
 
-  export let tableData:Writable<DataItem[]>;
+  export let tableData: Writable<DataItem[]>;
   export let columnNames;
   export let keys;
   export let totalElements: Writable<number>;
@@ -77,7 +77,7 @@
     columns = columns.concat(
       table.createColumns([
         table.column({
-          accessor: (item:DataItem) => {
+          accessor: (item: DataItem) => {
             return item[keys[i + 1]];
           },
           header: columnName,

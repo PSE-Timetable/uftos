@@ -36,11 +36,7 @@
   async function loadPage(index: number, sortString: string, filter: string) {
     let pageable: Pageable;
 
-    if (sortString) {
-      pageable = { page: index, size: 10, sort: [sortString] };
-    } else {
-      pageable = { page: index, size: 10 };
-    }
+    sortString ? (pageable = { page: index, size: 10, sort: [sortString] }) : (pageable = { page: index, size: 10 });
     try {
       const result: PageStudent = await getStudents(pageable, {
         firstName: filter,
@@ -60,9 +56,9 @@
     {columnNames}
     {keys}
     {totalElements}
-    on:pageLoad={(event) => {
+    on:pageLoad={async (event) => {
       try {
-        loadPage(event.detail.pageIndex, event.detail.sort, event.detail.filter);
+        await loadPage(event.detail.pageIndex, event.detail.sort, event.detail.filter);
       } catch {
         error(404, { message: 'Could not fetch page' });
       }
