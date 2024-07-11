@@ -916,9 +916,9 @@
         "tags" : [ "server-controller" ]
       }
     },
-    "/server/timeslot-length" : {
+    "/server/timetable-metadata" : {
       "get" : {
-        "operationId" : "getTimeslotLength",
+        "operationId" : "getTimetableMetadata",
         "responses" : {
           "200" : {
             "content" : {
@@ -934,7 +934,7 @@
         "tags" : [ "server-controller" ]
       },
       "put" : {
-        "operationId" : "setTimeslotLength",
+        "operationId" : "setTimetableMetadata",
         "parameters" : [ {
           "in" : "query",
           "name" : "timetableMetadata",

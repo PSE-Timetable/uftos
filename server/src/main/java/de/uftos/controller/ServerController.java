@@ -45,8 +45,8 @@ public class ServerController {
    *
    * @return the timeslot length
    */
-  @GetMapping("/timeslot-length")
-  public TimetableMetadata getTimeslotLength() {
+  @GetMapping("/timetable-metadata")
+  public TimetableMetadata getTimetableMetadata() {
     return this.serverService.getTimetableMetadata();
   }
 
@@ -56,8 +56,8 @@ public class ServerController {
    *
    * @param timetableMetadata the new timetable metadata
    */
-  @PutMapping("/timeslot-length")
-  public void setTimeslotLength(TimetableMetadata timetableMetadata) {
+  @PutMapping("/timetable-metadata")
+  public void setTimetableMetadata(TimetableMetadata timetableMetadata) {
     this.serverService.setTimetableMetadata(timetableMetadata);
   }
 }
