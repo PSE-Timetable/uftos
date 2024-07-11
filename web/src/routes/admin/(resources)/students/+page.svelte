@@ -6,8 +6,8 @@
     getStudents,
     type Pageable,
     type PageStudent,
-    type Student,
     type StudentRequestDto,
+    type Tag,
   } from '$lib/sdk/fetch-client';
   import { error } from '@sveltejs/kit';
   import { onMount } from 'svelte';
@@ -15,9 +15,15 @@
 
   let columnNames = ['Vorname', 'Nachname', 'Tags'];
   let keys = ['id', 'firstName', 'lastName', 'tags'];
-  let tableData: Writable<Student[] | undefined> = writable([]);
+  let tableData: Writable<DataItem[]> = writable([]);
   let totalElements: Writable<number> = writable(0);
   let mmNumber = 0;
+
+  interface DataItem {
+    id: string;
+
+    [key: string]: string | string[] | number | Tag;
+  }
 
   const create = async () => {
     let student: StudentRequestDto = { firstName: 'Max' + mmNumber, lastName: 'Mustermann', tagIds: [] };
@@ -32,14 +38,16 @@
 
     if (sortString) {
       pageable = { page: index, size: 10, sort: [sortString] };
-    } else pageable = { page: index, size: 10 };
+    } else {
+      pageable = { page: index, size: 10 };
+    }
     try {
       const result: PageStudent = await getStudents(pageable, {
         firstName: filter,
         lastName: filter,
       });
       totalElements.set(result.totalElements as number);
-      tableData.set(result.content);
+      tableData.set(result.content as unknown as DataItem[]);
     } catch {
       error(404, { message: 'Could not fetch page' });
     }
@@ -53,7 +61,11 @@
     {keys}
     {totalElements}
     on:pageLoad={(event) => {
-      loadPage(event.detail.pageIndex, event.detail.sort, event.detail.filter);
+      try {
+        loadPage(event.detail.pageIndex, event.detail.sort, event.detail.filter);
+      } catch {
+        error(404, { message: 'Could not fetch page' });
+      }
     }}
   />
 </div>

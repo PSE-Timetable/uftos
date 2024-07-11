@@ -18,17 +18,20 @@
   import Input from '$lib/elements/ui/input/input.svelte';
   import { type Writable } from 'svelte/store';
   import { createEventDispatcher } from 'svelte';
+  import type { Tag } from '$lib/sdk/fetch-client';
 
   interface DataItem {
     id: string;
 
-    [key: string]: string | string[] | number;
+    [key: string]: string | string[] | number | Tag;
   }
 
-  export let tableData;
+  export let tableData:Writable<DataItem[]>;
   export let columnNames;
   export let keys;
   export let totalElements: Writable<number>;
+
+  let tags: String[] = [];
 
   const dispatch = createEventDispatcher();
 
@@ -74,7 +77,7 @@
     columns = columns.concat(
       table.createColumns([
         table.column({
-          accessor: (item) => {
+          accessor: (item:DataItem) => {
             return item[keys[i + 1]];
           },
           header: columnName,
