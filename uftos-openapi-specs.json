@@ -924,8 +924,7 @@
             "content" : {
               "*/*" : {
                 "schema" : {
-                  "type" : "integer",
-                  "format" : "int32"
+                  "$ref" : "#/components/schemas/TimetableMetadata"
                 }
               }
             },
@@ -938,11 +937,10 @@
         "operationId" : "setTimeslotLength",
         "parameters" : [ {
           "in" : "query",
-          "name" : "length",
+          "name" : "timetableMetadata",
           "required" : true,
           "schema" : {
-            "type" : "integer",
-            "format" : "int32"
+            "$ref" : "#/components/schemas/TimetableMetadata"
           }
         } ],
         "responses" : {
@@ -2042,6 +2040,23 @@
   },
   "components" : {
     "schemas" : {
+      "Break" : {
+        "required" : [ "afterSlot", "length" ],
+        "type" : "object",
+        "properties" : {
+          "afterSlot" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "length" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "long" : {
+            "type" : "boolean"
+          }
+        }
+      },
       "BulkLesson" : {
         "required" : [ "gradeIds", "id", "roomId", "subjectId", "teacherId", "timeslot" ],
         "type" : "object",
@@ -3457,6 +3472,25 @@
           },
           "name" : {
             "type" : "string"
+          }
+        }
+      },
+      "TimetableMetadata" : {
+        "required" : [ "breaks", "startTime", "timeslotLength" ],
+        "type" : "object",
+        "properties" : {
+          "breaks" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Break"
+            }
+          },
+          "startTime" : {
+            "type" : "string"
+          },
+          "timeslotLength" : {
+            "type" : "integer",
+            "format" : "int32"
           }
         }
       },
