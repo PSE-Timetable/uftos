@@ -716,16 +716,16 @@ export function getServerStats(opts?: Oazapfts.RequestOpts) {
         ...opts
     }));
 }
-export function getTimeslotLength(opts?: Oazapfts.RequestOpts) {
+export function getTimetableMetadata(opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
         data: TimetableMetadata;
-    }>("/server/timeslot-length", {
+    }>("/server/timetable-metadata", {
         ...opts
     }));
 }
-export function setTimeslotLength(timetableMetadata: TimetableMetadata, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.ok(oazapfts.fetchText(`/server/timeslot-length${QS.query(QS.explode({
+export function setTimetableMetadata(timetableMetadata: TimetableMetadata, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.ok(oazapfts.fetchText(`/server/timetable-metadata${QS.query(QS.explode({
         timetableMetadata
     }))}`, {
         ...opts,
