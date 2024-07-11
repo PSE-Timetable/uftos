@@ -2,7 +2,6 @@ package de.uftos;
 
 import de.uftos.entities.Server;
 import de.uftos.repositories.database.ServerRepository;
-import de.uftos.repositories.ucdl.UcdlRepositoryImpl;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
@@ -21,8 +20,6 @@ public class UftosApplication {
    */
   public static void main(String[] args) {
     SpringApplication.run(UftosApplication.class, args);
-    UcdlRepositoryImpl repo = new UcdlRepositoryImpl();
-    System.out.println(repo.parseFile());
   }
 
   @Bean
