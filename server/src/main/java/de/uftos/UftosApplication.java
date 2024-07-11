@@ -3,7 +3,6 @@ package de.uftos;
 import de.uftos.entities.Server;
 import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.ucdl.UcdlRepositoryImpl;
-import de.uftos.repositories.ucdl.parser.UcdlParser;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;

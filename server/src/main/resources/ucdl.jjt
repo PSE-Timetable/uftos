@@ -1,16 +1,17 @@
 PARSER_BEGIN(SyntaxChecker)
+package de.uftos.repositories.ucdl.parser.javacc;
+
+import java.io.Reader;
+import java.io.StringReader;
 
 public class SyntaxChecker {
-  static final public SimpleNode parseString(String string) {
+  static final public SimpleNode parseString(String string) throws ParseException {
     Reader reader = new StringReader(string);
     SyntaxChecker t = new SyntaxChecker(reader);
-    try {
-      return t.START();
-    } catch (ParseException e) {
-      throw new RuntimeException(e);
-    }
+    return t.START();
   }
 }
+
 
 PARSER_END(SyntaxChecker)
 

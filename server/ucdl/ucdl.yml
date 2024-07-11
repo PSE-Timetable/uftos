@@ -44,7 +44,7 @@ avoidRoomCollision:
   parameter:
   definition: >-
     forall(room : this.rooms) {
-      forall(lesson1 : room.lessons) {
+      exists(lesson1 : room.lessons) {
         forall(lesson2 : room.lessons) {
           lesson1 != lesson2 implies lesson1.timeslot != lesson2.timeslot
         }
@@ -71,13 +71,26 @@ test:
     if (timeslot in teacher.lessons.timeslot) {
       return true
     }
-    if (timeslot in teacher.lessons.timeslot) {
-      return true
+    if (timeslot in teacher.lessons.timeslot[this.day == 6]) {
+      if (timeslot == timeslot) {
+        return true
+      }
+      if (teacher == teacher) {
+        return true
+      }
+    }
+    if (teacher in timeslot.lessons[this.timeslot.slot < 3].teacher) {
+      for (t1 of teacher.lessons[this.index >= 2].timeslot) {
+        if (t1 != timeslot) {
+          return true
+        }
+      }
     }
     if (timeslot in teacher.lessons.timeslot) {
-      return true
-    }
-    if (timeslot in teacher.lessons.timeslot) {
-      return true
+      for (lesson : teacher.lessons) {
+        if (lesson.timeslot.day = timeslot.day) {
+          return true
+        }
+      }
     }
     return false

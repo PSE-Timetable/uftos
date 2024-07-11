@@ -62,8 +62,8 @@ public class DefinitionParser {
         params.add(buildAst(root.jjtGetChild(1), parameters)); //return
 
         //semantic check for legal return values
-        getReturnValue(params); //returned value is irrelevant, only error checking
-
+        boolean returnValue =
+            getReturnValue(params); //returned value is irrelevant, only error checking
         return new OperatorDto(UcdlToken.CODEBLOCK, params);
       }
       case "RETURN" -> {
@@ -128,10 +128,9 @@ public class DefinitionParser {
             while (controlSequenceList.jjtGetNumChildren() == 2) {
               body.add(buildAst(controlSequenceList.jjtGetChild(0), parameters));
               controlSequenceList = controlSequenceList.jjtGetChild(1);
-
-              //semantic check for legal return values
-              returnValue = getReturnValue(body);
             }
+            //semantic check for legal return values
+            returnValue = getReturnValue(body);
             break;
           default:
             throw new IllegalStateException();
@@ -257,7 +256,7 @@ public class DefinitionParser {
 
         Node attributeList = root.jjtGetChild(1);
         while (attributeList.jjtGetNumChildren() > 0) {
-          String attribute = ((SimpleNode) attributeList).jjtGetLastToken().image;
+          String attribute = ((SimpleNode) attributeList).jjtGetFirstToken().next.image;
           elementType = getNextResourceType(elementType, attribute);
           //^ also performs semantic check whether the attribute is applicable to the given type
           attributes.add(new ValueDto<>(UcdlToken.ATTRIBUTE, attribute));
