@@ -1,7 +1,7 @@
 <script lang="ts">
   import Ellipsis from 'lucide-svelte/icons/ellipsis';
   import * as DropdownMenu from '$lib/elements/ui/dropdown-menu';
-  import * as Button from '$lib/elements/ui/button';
+  import { Button } from '$lib/elements/ui/button';
 
   export let id: string;
 </script>
