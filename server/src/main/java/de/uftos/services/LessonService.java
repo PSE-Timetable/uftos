@@ -4,8 +4,11 @@ import de.uftos.dto.LessonRequestDto;
 import de.uftos.dto.LessonResponseDto;
 import de.uftos.entities.Lesson;
 import de.uftos.repositories.database.LessonRepository;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -35,8 +38,13 @@ public class LessonService {
    * @return the page of entries fitting the parameters.
    */
   public Page<LessonResponseDto> get(Pageable pageable) {
-    // TODO
-    return null;
+    List<Lesson> lessons = this.repository.findAll(pageable).stream().toList();
+    LessonResponseDto dto = LessonResponseDto.createResponseDtoFromLessons(lessons);
+
+    //TODO filter out the lessons from another year?
+    //TODO use page or just send the response Dto itself?
+
+    return new PageImpl<>(List.of(dto), PageRequest.of(0, 1), 1);
   }
 
   /**
