@@ -1,14 +1,25 @@
-import { getStudent } from '$lib/sdk/fetch-client';
+import { getStudent, type Student } from '$lib/sdk/fetch-client';
 import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
 
 export const load = (async ({ params }) => {
+  if (params.id == 'new') {
+    const student: Student = { id: 'new', firstName: '', lastName: '', tags: [] };
+    return {
+      student,
+      create: true,
+      meta: {
+        title: 'Schüler — Hinzufügen',
+      },
+    };
+  }
   try {
     const student = await getStudent(params.id);
     return {
       student,
+      create: false,
       meta: {
-        title: `Student — ${student.firstName} ${student.lastName}`,
+        title: `Schüler — ${student.firstName} ${student.lastName}`,
       },
     };
   } catch {
