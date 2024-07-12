@@ -39,12 +39,10 @@ public class LessonService {
    */
   public Page<LessonResponseDto> get(Pageable pageable) {
     List<Lesson> lessons = this.repository.findAll(pageable).stream().toList();
-    LessonResponseDto dto = LessonResponseDto.createResponseDtoFromLessons(lessons);
-
     //TODO filter out the lessons from another year?
     //TODO use page or just send the response Dto itself?
 
-    return new PageImpl<>(List.of(dto), PageRequest.of(0, 1), 1);
+    return new PageImpl<>(List.of(LessonResponseDto.createResponseDtoFromLessons(lessons)));
   }
 
   /**
