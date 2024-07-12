@@ -1,16 +1,26 @@
 package de.uftos.demoDataSource;
 
-import de.uftos.entities.*;
-
+import de.uftos.dto.solver.GradeProblemDto;
+import de.uftos.dto.solver.LessonProblemDto;
+import de.uftos.dto.solver.RoomProblemDto;
+import de.uftos.dto.solver.StudentGroupProblemDto;
+import de.uftos.dto.solver.StudentProblemDto;
+import de.uftos.dto.solver.SubjectProblemDto;
+import de.uftos.dto.solver.TagProblemDto;
+import de.uftos.dto.solver.TeacherProblemDto;
+import de.uftos.dto.solver.TimeslotProblemDto;
+import de.uftos.dto.solver.TimetableProblemDto;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class DemoDataSource {
-
-    public static List<PredefinedConstraintInstance> getPredefinedConstraintInstances(Timetable timetable, HashMap<PredefinedConstraints, PredefinedConstraint> constraints) {
-        List<PredefinedConstraintInstance> instances = new ArrayList<>();
-
+  //todo: fix resource generation
+  public static List<PredefinedConstraintInstance> getPredefinedConstraintInstances(
+      TimetableProblemDto timetable,
+      HashMap<PredefinedConstraints, PredefinedConstraint> constraints) {
+    List<PredefinedConstraintInstance> instances = new ArrayList<>();
+        /*
         if (constraints.containsKey(PredefinedConstraints.STUDENT_CONFLICT)) {
             System.out.println("Students: " + timetable.students().size());
             for (Student s : timetable.students()) {
@@ -44,94 +54,96 @@ public class DemoDataSource {
             }
         }
 
+         */
+    return instances;
+  }
 
-        return instances;
+  public static HashMap<PredefinedConstraints, PredefinedConstraint> getPredefinedConstraintDefinitions() {
+    HashMap<PredefinedConstraints, PredefinedConstraint> constraints = new HashMap<>();
+    constraints.put(PredefinedConstraints.ROOM_CONFLICT, new RoomConflict());
+    constraints.put(PredefinedConstraints.STUDENT_CONFLICT, new StudentConflict());
+    constraints.put(PredefinedConstraints.TEACHER_CONFLICT, new TeacherConflict());
+    constraints.put(PredefinedConstraints.LESSON_VALIDATION, new LessonValidation());
+    return constraints;
+  }
+
+  private static List<GradeProblemDto> getGrades(int size) {
+    List<GradeProblemDto> grades = new ArrayList<>();
+
+    for (int i = 0; i < size; i++) {
+      //grades.add(new Grade(i, new ArrayList<>(), new ArrayList<>()));
     }
 
-    public static HashMap<PredefinedConstraints, PredefinedConstraint> getPredefinedConstraintDefinitions() {
-        HashMap<PredefinedConstraints, PredefinedConstraint> constraints = new HashMap<>();
-        constraints.put(PredefinedConstraints.ROOM_CONFLICT, new RoomConflict());
-        constraints.put(PredefinedConstraints.STUDENT_CONFLICT, new StudentConflict());
-        constraints.put(PredefinedConstraints.TEACHER_CONFLICT, new TeacherConflict());
-        constraints.put(PredefinedConstraints.LESSON_VALIDATION, new LessonValidation());
-        return constraints;
+    return grades;
+  }
+
+  private static List<RoomProblemDto> getRooms(int size) {
+    List<RoomProblemDto> rooms = new ArrayList<>();
+
+    for (int i = 0; i < size; i++) {
+      //rooms.add(new Room(i, new ArrayList<>(), new ArrayList<>()));
     }
 
-    private static List<Grade> getGrades(int size) {
-        List<Grade> grades = new ArrayList<>();
+    return rooms;
+  }
 
-        for (int i = 0; i < size; i++) {
-            grades.add(new Grade(i, new ArrayList<>(), new ArrayList<>()));
-        }
+  private static List<StudentGroupProblemDto> getStudentGroups(int size, int grades) {
+    List<StudentGroupProblemDto> studentGroups = new ArrayList<>();
 
-        return grades;
+    for (int i = 0; i < size; i++) {
+      //studentGroups.add(new StudentGroup(i, (int)(Math.random() * grades), new ArrayList<>(), new ArrayList<>(), new ArrayList<>()));
     }
 
-    private static List<Room> getRooms(int size) {
-        List<Room> rooms = new ArrayList<>();
+    return studentGroups;
+  }
 
-        for (int i = 0; i < size; i++) {
-            rooms.add(new Room(i, new ArrayList<>(), new ArrayList<>()));
-        }
+  private static List<StudentProblemDto> getStudents(int size) {
+    List<StudentProblemDto> students = new ArrayList<>();
 
-        return rooms;
+    for (int i = 0; i < size; i++) {
+      //students.add(new Student(i, new ArrayList<>(), new ArrayList<>()));
     }
 
-    private static List<StudentGroup> getStudentGroups(int size, int grades) {
-        List<StudentGroup> studentGroups = new ArrayList<>();
+    return students;
+  }
 
-        for (int i = 0; i < size; i++) {
-            studentGroups.add(new StudentGroup(i, (int)(Math.random() * grades), new ArrayList<>(), new ArrayList<>(), new ArrayList<>()));
-        }
+  private static List<SubjectProblemDto> getSubjects(int size) {
+    List<SubjectProblemDto> subjects = new ArrayList<>();
 
-        return studentGroups;
+    for (int i = 0; i < size; i++) {
+      //subjects.add(new Subject(i, new ArrayList<>(), new ArrayList<>(), new ArrayList<>()));
     }
 
-    private static List<Student> getStudents(int size) {
-        List<Student> students = new ArrayList<>();
+    return subjects;
+  }
 
-        for (int i = 0; i < size; i++) {
-            students.add(new Student(i, new ArrayList<>(), new ArrayList<>()));
-        }
+  private static List<TeacherProblemDto> getTeachers(int size) {
+    List<TeacherProblemDto> teachers = new ArrayList<>();
 
-        return students;
+    for (int i = 0; i < size; i++) {
+      //teachers.add(new Teacher(i, new ArrayList<>(), new ArrayList<>(), new ArrayList<>()));
     }
 
-    private static List<Subject> getSubjects(int size) {
-        List<Subject> subjects = new ArrayList<>();
+    return teachers;
+  }
 
-        for (int i = 0; i < size; i++) {
-            subjects.add(new Subject(i, new ArrayList<>(), new ArrayList<>(), new ArrayList<>()));
-        }
+  private static List<TimeslotProblemDto> getTimeslots(int size) {
+    List<TimeslotProblemDto> timeslots = new ArrayList<>();
+    int id = 0;
 
-        return subjects;
+    for (int day = 0; day < 7; day++) {
+      for (int slot = 0; slot < size; slot++) {
+        //timeslots.add(new Timeslot(id++, day, slot, new ArrayList<>(), new ArrayList<>()));
+      }
     }
 
-    private static List<Teacher> getTeachers(int size) {
-        List<Teacher> teachers = new ArrayList<>();
+    return timeslots;
+  }
 
-        for (int i = 0; i < size; i++) {
-            teachers.add(new Teacher(i, new ArrayList<>(), new ArrayList<>(), new ArrayList<>()));
-        }
-
-        return teachers;
-    }
-
-    private static List<Timeslot> getTimeslots(int size) {
-        List<Timeslot> timeslots = new ArrayList<>();
-        int id = 0;
-
-        for (int day = 0; day < 7; day++) {
-            for (int slot = 0; slot < size; slot++) {
-                timeslots.add(new Timeslot(id++, day, slot, new ArrayList<>(), new ArrayList<>()));
-            }
-        }
-
-        return timeslots;
-    }
-
-    private static List<Lesson> getLessons(int[][] curriculum, List<StudentGroup> studentGroups) {
-        List<Lesson> lessons = new ArrayList<>();
+  private static List<LessonProblemDto> getLessons(int[][] curriculum,
+                                                   List<StudentGroupProblemDto> studentGroups) {
+    List<LessonProblemDto> lessons = new ArrayList<>();
+        /*
         int id = 0;
         for (StudentGroup sg : studentGroups) {
             int[] subjects = curriculum[sg.gradeId()];
@@ -142,40 +154,48 @@ public class DemoDataSource {
             }
         }
 
-        return lessons;
+         */
+    return lessons;
+  }
+
+  private static List<TagProblemDto> getTags(int size) {
+    List<TagProblemDto> tags = new ArrayList<>();
+
+    for (int i = 0; i < size; i++) {
+      //tags.add(new Tag(i, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>()));
     }
 
-    private static List<Tag> getTags(int size) {
-        List<Tag> tags = new ArrayList<>();
+    return tags;
+  }
 
-        for (int i = 0; i < size; i++) {
-            tags.add(new Tag(i, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>()));
-        }
+  public static TimetableProblemDto getDemoTimetable() {
+    return getDemoTimetable(5, 10, 15, 2, 2, 18, 10, 2);
+  }
 
-        return tags;
-    }
-
-    public static Timetable getDemoTimetable() {
-        return getDemoTimetable(5,10,15,2,2,18,10,2);
-    }
-    public static Timetable getDemoTimetable(int grades, int rooms, int studentGroups, int students, int subjects, int teachers, int timeslotsPerDay, int tags) {
-        List<Grade> gradeList = getGrades(grades);
-        List<Room> roomList = getRooms(rooms);
-        List<StudentGroup> studentGroupList = getStudentGroups(studentGroups, grades);
+  public static TimetableProblemDto getDemoTimetable(int grades, int rooms, int studentGroups,
+                                                     int students,
+                                                     int subjects, int teachers,
+                                                     int timeslotsPerDay,
+                                                     int tags) {
+    List<GradeProblemDto> gradeList = getGrades(grades);
+    List<RoomProblemDto> roomList = getRooms(rooms);
+    List<StudentGroupProblemDto> studentGroupList = getStudentGroups(studentGroups, grades);
+        /*
         for (StudentGroup sg : studentGroupList) {
             gradeList.get(sg.gradeId()).studentGroupIdList().add(sg.id());
         }
-
-        List<Student> studentList = getStudents(students);
+        */
+    List<StudentProblemDto> studentList = getStudents(students);
+        /*
         for (Student s : studentList) {
             int studentGroup = (int) (Math.random() * studentGroups);
             s.studentGroupIdList().add(studentGroup);
             studentGroupList.get(studentGroup).studentIdList().add(s.id());
         }
-
-        List<Subject> subjectList = getSubjects(subjects);
-        List<Teacher> teacherList = getTeachers(teachers);
-
+        */
+    List<SubjectProblemDto> subjectList = getSubjects(subjects);
+    List<TeacherProblemDto> teacherList = getTeachers(teachers);
+        /*
         for (Teacher t : teacherList) {
             for (int i = 0; i < 3 && i < subjects; i++) {
                 int subject = 0;
@@ -186,17 +206,17 @@ public class DemoDataSource {
                 subjectList.get(subject).teacherIdList().add(t.id());
             }
         }
+        */
+    List<TimeslotProblemDto> timeslotList = getTimeslots(timeslotsPerDay);
 
-        List<Timeslot> timeslotList = getTimeslots(timeslotsPerDay);
-
-        int[][] curriculum = new int[grades][subjects];
-        for (int grade = 0; grade < grades; grade++) {
-            for (int subject = 0; subject < subjects; subject++) {
-                curriculum[grade][subject] = (int)(Math.random() * 4);
-            }
-        }
-        List<Lesson> lessonList = getLessons(curriculum, studentGroupList);
-
+    int[][] curriculum = new int[grades][subjects];
+    for (int grade = 0; grade < grades; grade++) {
+      for (int subject = 0; subject < subjects; subject++) {
+        curriculum[grade][subject] = (int) (Math.random() * 4);
+      }
+    }
+    List<LessonProblemDto> lessonList = getLessons(curriculum, studentGroupList);
+        /*
         for (Lesson l : lessonList) {
             if (l.studentGroupId() >= 0) {
                 studentGroupList.get(l.studentGroupId()).lessonIdList().add(l.id());
@@ -214,9 +234,11 @@ public class DemoDataSource {
                 roomList.get(l.roomId()).lessonIdList().add(l.id());
             }
         }
+        */
+    List<TagProblemDto> tagList = getTags(tags);
 
-        List<Tag> tagList = getTags(tags);
+    return new TimetableProblemDto(gradeList, lessonList, roomList, studentGroupList, studentList,
+        subjectList, tagList, teacherList, timeslotList);
 
-        return new Timetable(gradeList, roomList, studentGroupList, studentList, subjectList, teacherList, timeslotList, lessonList, tagList);
-    }
+  }
 }
