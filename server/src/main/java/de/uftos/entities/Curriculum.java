@@ -6,8 +6,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
+import jakarta.validation.constraints.NotEmpty;
 import java.util.List;
 import java.util.Objects;
 import lombok.Data;
@@ -25,7 +26,11 @@ public class Curriculum {
   @GeneratedValue(strategy = GenerationType.UUID)
   private String id;
 
-  @OneToOne
+  @NotEmpty
+  private String name;
+
+  //multiple curricula for different years can exist for the same grade
+  @ManyToOne
   private Grade grade;
 
   @OneToMany(cascade = CascadeType.REMOVE)
@@ -37,7 +42,7 @@ public class Curriculum {
    * @param gradeId       the grade id to which the curriculum applies to.
    * @param lessonsCounts the lesson counts which apply to the given grade.
    */
-  public Curriculum(String gradeId, List<LessonsCountRequestDto> lessonsCounts) {
+  public Curriculum(String gradeId, String name, List<LessonsCountRequestDto> lessonsCounts) {
     this.grade = new Grade(gradeId);
     this.lessonsCounts = lessonsCounts.stream().map(LessonsCountRequestDto::map).toList();
   }

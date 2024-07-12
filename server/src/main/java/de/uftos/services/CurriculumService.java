@@ -3,9 +3,14 @@ package de.uftos.services;
 
 import de.uftos.dto.CurriculumRequestDto;
 import de.uftos.dto.CurriculumResponseDto;
+import de.uftos.entities.Curriculum;
+import de.uftos.entities.Teacher;
 import de.uftos.repositories.database.CurriculumRepository;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -35,7 +40,11 @@ public class CurriculumService {
    * @return the page of the entries fitting the parameters.
    */
   public Page<CurriculumResponseDto> get(Pageable pageable) {
-    return null;
+    //TODO filter for grades?
+    List<CurriculumResponseDto> curricula = this.repository.findAll(pageable).stream()
+        .map(CurriculumResponseDto::createResponseDtoFromCurriculum).toList();
+
+    return new PageImpl<>(curricula);
   }
 
   /**
@@ -46,7 +55,9 @@ public class CurriculumService {
    * @throws ResponseStatusException is thrown if the ID doesn't have a corresponding curriculum.
    */
   public CurriculumResponseDto getById(String id) {
-    return null;
+    Curriculum curriculum = this.repository.findById(id)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+    return CurriculumResponseDto.createResponseDtoFromCurriculum(curriculum);
   }
 
   /**
@@ -58,7 +69,8 @@ public class CurriculumService {
    *                                 is already present in the database.
    */
   public CurriculumResponseDto create(CurriculumRequestDto curriculum) {
-    return null;
+    return CurriculumResponseDto.createResponseDtoFromCurriculum(
+        this.repository.save(curriculum.map()));
   }
 
   /**
@@ -69,7 +81,9 @@ public class CurriculumService {
    * @return the updated grade.
    */
   public CurriculumResponseDto update(String id, CurriculumRequestDto curriculumRequest) {
-    return null;
+    Curriculum curriculum = curriculumRequest.map();
+    curriculum.setId(id);
+    return CurriculumResponseDto.createResponseDtoFromCurriculum(this.repository.save(curriculum));
   }
 
   /**

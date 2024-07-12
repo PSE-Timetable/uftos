@@ -11,15 +11,17 @@ import java.util.List;
  * @param gradeId       the grade id the curriculum belongs to.
  * @param lessonsCounts a list of objects representing how often a lesson should be scheduled.
  */
-public record CurriculumRequestDto(@NotEmpty String gradeId,
+public record CurriculumRequestDto(@NotEmpty String gradeId, @NotEmpty String name,
                                    @NotNull List<LessonsCountRequestDto> lessonsCounts) {
+
+
   /**
    * Maps the information from the data transfer object to a new curriculum entity.
    *
    * @return the new curriculum entity.
    */
   public Curriculum map() {
-    return new Curriculum(this.gradeId, this.lessonsCounts);
+    return new Curriculum(this.gradeId, this.name, this.lessonsCounts);
   }
 
 }
