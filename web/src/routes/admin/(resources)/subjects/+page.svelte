@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { DataItem } from '$lib/elements/ui/dataTable/data-table.svelte';
   import DataTable from '$lib/elements/ui/dataTable/data-table.svelte';
-  import { getSubjects, type Pageable, type PageSubject } from '$lib/sdk/fetch-client';
+  import { deleteSubject, getSubjects, type Pageable, type PageSubject } from '$lib/sdk/fetch-client';
   import { error } from '@sveltejs/kit';
   import { onMount } from 'svelte';
   import { writable, type Writable } from 'svelte/store';
@@ -25,8 +25,18 @@
       error(404, { message: 'Could not fetch page' });
     }
   }
+
+  async function deleteEntry(id: string) {
+    try {
+      await deleteSubject(id);
+    } catch {
+      error(404, { message: `subject with id ${id} could not be found` });
+    }
+  }
 </script>
 
 <div class="p-10 w-full">
-  <DataTable {tableData} {columnNames} {keys} {totalElements} {loadPage} />
+  {#if $tableData}
+    <DataTable {tableData} {columnNames} {keys} {totalElements} {loadPage} {deleteEntry} />
+  {/if}
 </div>

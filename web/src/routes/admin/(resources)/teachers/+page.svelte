@@ -1,6 +1,6 @@
 <script lang="ts">
   import DataTable, { type DataItem } from '$lib/elements/ui/dataTable/data-table.svelte';
-  import { getTeachers, type Pageable, type PageTeacher } from '$lib/sdk/fetch-client';
+  import { deleteTeacher, getTeachers, type Pageable, type PageTeacher } from '$lib/sdk/fetch-client';
   import { error } from '@sveltejs/kit';
   import { onMount } from 'svelte';
   import { writable, type Writable } from 'svelte/store';
@@ -26,8 +26,18 @@
       error(404, { message: 'Could not fetch page' });
     }
   }
+
+  async function deleteEntry(id: string) {
+    try {
+      await deleteTeacher(id);
+    } catch {
+      error(404, { message: `teacher with id ${id} could not be found` });
+    }
+  }
 </script>
 
 <div class="p-10 w-full">
-  <DataTable {tableData} {columnNames} {keys} {totalElements} {loadPage} />
+  {#if $tableData}
+    <DataTable {tableData} {columnNames} {keys} {totalElements} {loadPage} {deleteEntry} />
+  {/if}
 </div>

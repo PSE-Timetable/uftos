@@ -7,7 +7,14 @@
 </script>
 
 <script lang="ts">
-  import { createTable, Render, Subscribe, createRender } from 'svelte-headless-table';
+  import {
+    createTable,
+    Render,
+    Subscribe,
+    createRender,
+    type CreateViewModelOptions,
+    BodyRow,
+  } from 'svelte-headless-table';
   import * as Table from '$lib/elements/ui/table';
   import DataTableActions from './data-table-actions.svelte';
   import {
@@ -31,7 +38,8 @@
   export let columnNames;
   export let keys;
   export let totalElements: Writable<number>;
-  export let loadPage: (index: number, toSort: string, filter: string) => void;
+  export let loadPage: (index: number, toSort: string, filter: string) => Promise<void>;
+  export let deleteEntry: (id: string) => Promise<void>;
 
   const table = createTable(tableData, {
     page: addPagination({ serverSide: true, serverItemCount: totalElements, initialPageSize: 10 }), //TODO: change page size, 10 only for testing
@@ -94,7 +102,7 @@
         header: '',
         id: 'actions',
         cell: ({ value }) => {
-          return createRender(DataTableActions, { id: value.toString() });
+          return createRender(DataTableActions, { id: value.toString(), deleteEntry, getData });
         },
         plugins: {
           sort: {
@@ -105,12 +113,21 @@
     ]),
   );
 
-  const { headerRows, pageRows, tableAttrs, tableBodyAttrs, pluginStates, flatColumns, rows } =
-    table.createViewModel(columns);
+  let tableOptions = {
+    rowDataId: (item: { [x: string]: any }, index: number) => {
+      if (item) {
+        return item['id'];
+      } else return index;
+    },
+  };
+  const { headerRows, pageRows, tableAttrs, tableBodyAttrs, pluginStates, flatColumns, rows } = table.createViewModel(
+    columns,
+    tableOptions,
+  );
   const { hasNextPage, hasPreviousPage, pageIndex } = pluginStates.page;
   const { filterValue } = pluginStates.filter;
   const { hiddenColumnIds } = pluginStates.hide;
-  const { selectedDataIds } = pluginStates.select;
+  const { selectedDataIds, allPageRowsSelected } = pluginStates.select;
   const { sortKeys } = pluginStates.sort;
 
   const ids = flatColumns.map((col) => col.id);
@@ -131,12 +148,25 @@
     loadPage($pageIndex, sortString, $filterValue);
   }
 
-  $: {
-    $filterValue;
+  async function onDeleteKey(e: KeyboardEvent) {
+    if (e.code !== 'Delete') {
+      return;
+    }
+    console.log($selectedDataIds);
+    let promises: Promise<void>[] = [];
+    for (let i = 0; i < Object.keys($selectedDataIds).length; i++) {
+      let rowToDelete = Object.keys($selectedDataIds)[i];
+      promises.push(deleteEntry(rowToDelete));
+    }
+    await Promise.all(promises);
+    $allPageRowsSelected = false;
     getData();
   }
+
+  $: $filterValue, getData();
 </script>
 
+<svelte:window on:keydown={onDeleteKey} />
 <div>
   <div class="flex items-center py-4">
     <Input
