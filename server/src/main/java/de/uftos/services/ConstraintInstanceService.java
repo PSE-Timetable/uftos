@@ -97,7 +97,7 @@ public class ConstraintInstanceService {
       String value = request.arguments().get(parameter.getParameterName());
       if (value == null || value.isEmpty()) {
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-            "Parameter %s with could not be found".formatted(parameter.getParameterName()));
+            "Parameter %s could not be found".formatted(parameter.getParameterName()));
       }
 
       boolean exists = this.getResourceTypeMapping(value).get(parameter.getParameterType());
