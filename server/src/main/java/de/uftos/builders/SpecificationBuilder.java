@@ -3,6 +3,7 @@ package de.uftos.builders;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Predicate;
+import java.util.Arrays;
 import java.util.Optional;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -67,7 +68,7 @@ public class SpecificationBuilder<T> {
     }
     specification = specification.and(
         (root, query, cb) -> root.join(relationName).get(attributeName)
-            .in((Object[]) attributeValue.get())
+            .in(Arrays.stream(attributeValue.get()).toList())
     );
     return this;
   }
@@ -84,7 +85,7 @@ public class SpecificationBuilder<T> {
       return this;
     }
     specification = specification.and(
-        (root, query, cb) -> equalsIgnoreCase(cb, root.join(relationName).get(attributeName),
+        (root, query, cb) -> likeIgnoreCase(cb, root.join(relationName).get(attributeName),
             attributeValue.get())
     );
     return this;
@@ -101,7 +102,7 @@ public class SpecificationBuilder<T> {
     return this;
   }
 
-  private Predicate equalsIgnoreCase(CriteriaBuilder cb, Expression<String> value, String pattern) {
+  private Predicate likeIgnoreCase(CriteriaBuilder cb, Expression<String> value, String pattern) {
     return cb.like(cb.lower(value), "%" + pattern.toLowerCase() + "%");
   }
 }
