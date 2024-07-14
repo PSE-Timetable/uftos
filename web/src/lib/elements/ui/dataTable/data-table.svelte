@@ -132,13 +132,13 @@
 
   const hidableCols = keys.slice(1);
 
-  function getData() {
+  async function getData() {
     let sortKey: SortKey = $sortKeys[0];
     let sortString;
     if (sortKey) {
       sortString = sortKey.id + ',' + sortKey.order;
     } else sortString = '';
-    loadPage($pageIndex, sortString, $filterValue);
+    await loadPage($pageIndex, sortString, $filterValue);
   }
 
   async function onDeleteKey(e: KeyboardEvent) {
@@ -244,9 +244,9 @@
     </div>
     <Button
       disabled={!$hasPreviousPage}
-      on:click={() => {
+      on:click={async () => {
         $pageIndex = $pageIndex - 1;
-        getData();
+        await getData();
       }}
       size="sm"
       variant="secondary"
@@ -254,9 +254,9 @@
     </Button>
     <Button
       disabled={!$hasNextPage}
-      on:click={() => {
+      on:click={async () => {
         $pageIndex = $pageIndex + 1;
-        getData();
+        await getData();
       }}
       size="sm"
       variant="secondary"

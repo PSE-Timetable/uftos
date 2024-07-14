@@ -1,13 +1,10 @@
 <script lang="ts">
-  import { Button } from '$lib/elements/ui/button';
   import DataTable, { type DataItem } from '$lib/elements/ui/dataTable/data-table.svelte';
   import {
-    createStudent,
     deleteStudent,
     getStudents,
     type Pageable,
     type PageStudent,
-    type StudentRequestDto,
   } from '$lib/sdk/fetch-client';
   import { error } from '@sveltejs/kit';
   import { onMount } from 'svelte';
@@ -17,13 +14,6 @@
   let keys = ['id', 'firstName', 'lastName', 'tags'];
   let tableData: Writable<DataItem[]> = writable();
   let totalElements: Writable<number> = writable(0);
-  let mmNumber = 0;
-
-  const create = async () => {
-    let student: StudentRequestDto = { firstName: 'Max' + mmNumber, lastName: 'Mustermann', tagIds: [] };
-    await createStudent(student);
-    mmNumber++;
-  };
 
   onMount(async () => loadPage(0, '', ''));
 
@@ -55,5 +45,3 @@
     <DataTable {tableData} {columnNames} {keys} {totalElements} {loadPage} {deleteEntry} />
   {/if}
 </div>
-
-<Button on:click={create}>Add</Button>

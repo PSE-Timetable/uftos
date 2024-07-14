@@ -7,7 +7,7 @@
 
   export let id: string;
   export let deleteEntry: (id: string) => Promise<void>;
-  export let getData: () => void;
+  export let getData: () => Promise<void>;
 </script>
 
 <DropdownMenu.Root>
@@ -27,7 +27,7 @@
     <DropdownMenu.Item
       on:click={async () => {
         await deleteEntry(id);
-        getData();
+        await getData();
       }}
       class="text-red-600">Löschen</DropdownMenu.Item
     >
