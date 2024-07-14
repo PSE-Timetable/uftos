@@ -24,7 +24,7 @@
     try {
       await createStudent(studentRequestDto);
     } catch {
-      error(404, { message: 'Could not create student' });
+      error(400, { message: 'Could not create student' });
     }
   }
 
@@ -37,7 +37,7 @@
     try {
       await updateStudent(student.id, studentRequestDto);
     } catch {
-      error(404, { message: 'Could not update student' });
+      error(400, { message: 'Could not update student' });
     }
   }
 
@@ -73,11 +73,7 @@
     <div class="max-w-sm mt-5"></div>
     <Button
       on:click={async () => {
-        try {
-          data.create ? await create() : await update();
-        } catch {
-          error(404, { message: 'Could not update student' });
-        }
+        data.create ? await create() : await update();
       }}
       class="max-w-52 px-10 mt-5 bg-accent text-white"
       variant="secondary">Speichern</Button
