@@ -78,6 +78,7 @@ public class UcdlParser {
     };
 
     HashMap<String, ResourceType> parameters = new HashMap<>();
+    //todo: fix lambda and exception-forwarding
     constraintDefinition.get("parameter").fields().forEachRemaining((entry) -> {
       if (entry != null) {
         try {
@@ -88,15 +89,10 @@ public class UcdlParser {
       }
     });
     AbstractSyntaxTreeDto definition =
-        parseDefinition(constraintDefinition.get("definition").textValue(), parameters);
+        DefinitionParser.parseDefinition(constraintDefinition.get("definition").textValue(),
+            parameters);
 
     return new ConstraintDefinitionDto(name, description, defaultType, parameters, definition);
-  }
-
-  private static AbstractSyntaxTreeDto parseDefinition(String definition,
-                                                       HashMap<String, ResourceType> parameters)
-      throws de.uftos.repositories.ucdl.parser.javacc.ParseException {
-    return DefinitionParser.parseDefinition(definition, parameters);
   }
 
   private static ResourceType getResourceType(String resourceType) throws ParseException {

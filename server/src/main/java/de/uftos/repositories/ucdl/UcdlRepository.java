@@ -16,14 +16,14 @@ public interface UcdlRepository {
    *
    * @return the UCDL-code contained in the UCDL-file.
    */
-  String getUcdl();
+  String getUcdl() throws IOException;
 
   /**
    * Sets the content of the UCDL-file.
    *
    * @param ucdl the new content of the UCDL-file
    */
-  void setUcdl(String ucdl);
+  void setUcdl(String ucdl) throws IOException;
 
   /**
    * Attempts to parse the UCDL-file and returns whether parsing was successful or not.

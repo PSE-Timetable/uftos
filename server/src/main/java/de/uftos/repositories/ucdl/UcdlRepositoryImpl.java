@@ -1,6 +1,5 @@
 package de.uftos.repositories.ucdl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import de.uftos.dto.ucdl.ConstraintDefinitionDto;
 import de.uftos.dto.ucdl.ParsingResponse;
 import de.uftos.repositories.ucdl.parser.UcdlParser;
@@ -21,32 +20,24 @@ public class UcdlRepositoryImpl implements UcdlRepository {
   private HashMap<String, ConstraintDefinitionDto> currentDefinitions = null;
 
   @Override
-  public String getUcdl() {
-    try {
-      ucdlFile.createNewFile();
-      FileReader reader = new FileReader(ucdlFile);
-      int readInformation = reader.read();
-      StringBuilder sb = new StringBuilder();
-      while (readInformation >= 0) {
-        sb.append((char) readInformation);
-        readInformation = reader.read();
-      }
-      return sb.toString();
-    } catch (IOException e) {
-      throw new RuntimeException(e);
+  public String getUcdl() throws IOException {
+    this.ucdlFile.createNewFile();
+    FileReader reader = new FileReader(this.ucdlFile);
+    int readInformation = reader.read();
+    StringBuilder sb = new StringBuilder();
+    while (readInformation >= 0) {
+      sb.append((char) readInformation);
+      readInformation = reader.read();
     }
+    return sb.toString();
   }
 
   @Override
-  public void setUcdl(String ucdl) {
+  public void setUcdl(String ucdl) throws IOException {
     this.currentDefinitions = null;
-    try {
-      FileWriter writer = new FileWriter(ucdlFile);
-      writer.write(ucdl);
-      writer.close();
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+    FileWriter writer = new FileWriter(ucdlFile);
+    writer.write(ucdl);
+    writer.close();
 
   }
 
@@ -62,17 +53,13 @@ public class UcdlRepositoryImpl implements UcdlRepository {
 
   @Override
   public HashMap<String, ConstraintDefinitionDto> getConstraints() {
-    if (currentDefinitions == null) {
-      try {
-        this.setCurrentDefinitions();
-      } catch (ParseException | IOException e) {
-        return null;
-      }
+    if (this.currentDefinitions == null && !this.parseFile().success()) {
+      return null;
     }
     return this.currentDefinitions;
   }
 
-  private void setCurrentDefinitions() throws JsonProcessingException,
+  private void setCurrentDefinitions() throws IOException,
       de.uftos.repositories.ucdl.parser.javacc.ParseException {
     this.currentDefinitions = UcdlParser.getDefinitions(this.getUcdl());
   }
