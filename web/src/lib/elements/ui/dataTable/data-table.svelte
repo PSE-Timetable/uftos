@@ -7,14 +7,7 @@
 </script>
 
 <script lang="ts">
-  import {
-    createTable,
-    Render,
-    Subscribe,
-    createRender,
-    type CreateViewModelOptions,
-    BodyRow,
-  } from 'svelte-headless-table';
+  import { createTable, Render, Subscribe, createRender } from 'svelte-headless-table';
   import * as Table from '$lib/elements/ui/table';
   import DataTableActions from './data-table-actions.svelte';
   import {
@@ -30,7 +23,7 @@
   import * as DropdownMenu from '$lib/elements/ui/dropdown-menu';
   import DataTableCheckbox from './data-table-checkbox.svelte';
   import { ArrowDown, ArrowUp } from 'lucide-svelte';
-  import Input from '$lib/elements/ui/input/input.svelte';
+  import { Input } from '$lib/elements/ui/input';
   import { type Writable } from 'svelte/store';
   import type { Tag } from '$lib/sdk/fetch-client';
 

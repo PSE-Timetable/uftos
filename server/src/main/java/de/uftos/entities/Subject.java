@@ -33,6 +33,8 @@ public class Subject {
   @NotEmpty
   private String name;
 
+  private String color;
+
   @JsonIgnore
   @ManyToMany(mappedBy = "subjects")
   private List<Teacher> teachers;
@@ -67,10 +69,12 @@ public class Subject {
    * Used if the ID isn't known.
    *
    * @param name   the name of the subject.
+   * @param color  the color of the subject.
    * @param tagIds the IDs of the tags associated with the subject.
    */
-  public Subject(String name, List<String> tagIds) {
+  public Subject(String name, String color, List<String> tagIds) {
     this.name = name;
+    this.color = color;
     this.tags = tagIds.stream().map(Tag::new).toList();
   }
 
