@@ -11,9 +11,7 @@
 <Select.Root
   multiple
   selected={selectedTags}
-  onSelectedChange={(s) => {
-    s ? (selectedTagIds = s.map((tag) => tag.value)) : (selectedTagIds = []);
-  }}
+  onSelectedChange={(s) => (selectedTagIds = s?.map((tag) => tag.value) || [])}
 >
   {#each selectedTags as tag}
     <input name={tag.label} hidden value={tag} />
