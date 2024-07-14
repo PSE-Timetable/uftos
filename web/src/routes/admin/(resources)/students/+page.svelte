@@ -1,14 +1,6 @@
 <script lang="ts">
-  import { Button } from '$lib/elements/ui/button';
   import DataTable, { type DataItem } from '$lib/elements/ui/dataTable/data-table.svelte';
-  import {
-    createStudent,
-    deleteStudent,
-    getStudents,
-    type Pageable,
-    type PageStudent,
-    type StudentRequestDto,
-  } from '$lib/sdk/fetch-client';
+  import { deleteStudent, getStudents, type Pageable, type PageStudent } from '$lib/sdk/fetch-client';
   import { error } from '@sveltejs/kit';
   import { onMount } from 'svelte';
   import { writable, type Writable } from 'svelte/store';
