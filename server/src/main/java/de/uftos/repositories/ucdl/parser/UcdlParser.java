@@ -78,16 +78,15 @@ public class UcdlParser {
     };
 
     HashMap<String, ResourceType> parameters = new HashMap<>();
-    //todo: fix lambda and exception-forwarding
-    constraintDefinition.get("parameter").fields().forEachRemaining((entry) -> {
+
+    Iterator<Map.Entry<String, JsonNode>> iterator = constraintDefinition.get("parameter").fields();
+    while (iterator.hasNext()) {
+      Map.Entry<String, JsonNode> entry = iterator.next();
       if (entry != null) {
-        try {
-          parameters.put(entry.getKey(), getResourceType(entry.getValue().textValue()));
-        } catch (ParseException e) {
-          throw new RuntimeException(e);
-        }
+        parameters.put(entry.getKey(), getResourceType(entry.getValue().textValue()));
       }
-    });
+    }
+
     AbstractSyntaxTreeDto definition =
         DefinitionParser.parseDefinition(constraintDefinition.get("definition").textValue(),
             parameters);
