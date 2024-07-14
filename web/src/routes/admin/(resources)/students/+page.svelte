@@ -1,6 +1,14 @@
 <script lang="ts">
+  import { Button } from '$lib/elements/ui/button';
   import DataTable, { type DataItem } from '$lib/elements/ui/dataTable/data-table.svelte';
-  import { deleteStudent, getStudents, type Pageable, type PageStudent } from '$lib/sdk/fetch-client';
+  import {
+    createStudent,
+    deleteStudent,
+    getStudents,
+    type Pageable,
+    type PageStudent,
+    type StudentRequestDto,
+  } from '$lib/sdk/fetch-client';
   import { error } from '@sveltejs/kit';
   import { onMount } from 'svelte';
   import { writable, type Writable } from 'svelte/store';
@@ -19,8 +27,18 @@
         firstName: filter,
         lastName: filter,
       });
-      totalElements.set(result.totalElements as number);
-      tableData.set(result.content as unknown as DataItem[]);
+      totalElements.set(Number(result.totalElements));
+      let dataItems: DataItem[] = result.content
+        ? result.content.map(
+            (student): DataItem => ({
+              id: student.id,
+              firstName: student.firstName,
+              lastName: student.lastName,
+              tags: student.tags.map((tag) => tag.name),
+            }),
+          )
+        : [];
+      tableData.set(dataItems);
     } catch {
       error(404, { message: 'Could not fetch page' });
     }
@@ -30,7 +48,7 @@
     try {
       await deleteStudent(id);
     } catch {
-      error(400, { message: `student with id ${id} could not be found` });
+      error(400, { message: `could not delete student with id ${id}` });
     }
   }
 </script>

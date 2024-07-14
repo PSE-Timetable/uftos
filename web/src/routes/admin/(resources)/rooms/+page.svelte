@@ -16,18 +16,24 @@
     let pageable: Pageable = { page: index, size: 10, sort: [sortString] };
     let result: PageRoom;
     try {
-      /^\d+$/.test(filter)
-        ? (result = await getRooms(pageable, {
-            name: filter,
-            buildingName: filter,
-            capacity: filter as unknown as number,
-          }))
-        : (result = await getRooms(pageable, {
-            name: filter,
-            buildingName: filter,
-          }));
-      totalElements.set(result.totalElements as number);
-      tableData.set(result.content as unknown as DataItem[]);
+      result = await getRooms(pageable, {
+        name: filter,
+        buildingName: filter,
+        capacity: /^\d+$/.test(filter) ? (filter as unknown as number) : undefined,
+      });
+      totalElements.set(Number(result.totalElements));
+      let dataItems: DataItem[] = result.content
+        ? result.content.map(
+            (room): DataItem => ({
+              id: room.id,
+              name: room.name,
+              buildingName: room.buildingName,
+              capacity: room.capacity,
+              tags: room.tags.map((tag) => tag.name),
+            }),
+          )
+        : [];
+      tableData.set(dataItems);
     } catch {
       error(404, { message: 'Could not fetch page' });
     }
@@ -37,7 +43,7 @@
     try {
       await deleteRoom(id);
     } catch {
-      error(400, { message: `room with id ${id} could not be found` });
+      error(400, { message: `could not delete room with id ${id}` });
     }
   }
 </script>

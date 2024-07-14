@@ -20,8 +20,19 @@
         lastName: filter,
         acronym: filter,
       });
-      totalElements.set(result.totalElements as number);
-      tableData.set(result.content as unknown as DataItem[]);
+      totalElements.set(Number(result.totalElements));
+      let dataItems: DataItem[] = result.content
+        ? result.content.map(
+            (teacher): DataItem => ({
+              id: teacher.id,
+              firstName: teacher.firstName,
+              lastName: teacher.lastName,
+              acronym: teacher.acronym,
+              tags: teacher.tags.map((tag) => tag.name),
+            }),
+          )
+        : [];
+      tableData.set(dataItems);
     } catch {
       error(404, { message: 'Could not fetch page' });
     }
@@ -31,7 +42,7 @@
     try {
       await deleteTeacher(id);
     } catch {
-      error(400, { message: `teacher with id ${id} could not be found` });
+      error(400, { message: `could not delete teacher with id ${id}` });
     }
   }
 </script>

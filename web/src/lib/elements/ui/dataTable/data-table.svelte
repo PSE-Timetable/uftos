@@ -2,7 +2,7 @@
   export type DataItem = {
     id: string;
 
-    [key: string]: string | string[] | number | Tag;
+    [key: string]: string | string[] | number;
   };
 </script>
 
@@ -25,7 +25,6 @@
   import { ArrowDown, ArrowUp } from 'lucide-svelte';
   import { Input } from '$lib/elements/ui/input';
   import { type Writable } from 'svelte/store';
-  import type { Tag } from '$lib/sdk/fetch-client';
 
   export let tableData: Writable<DataItem[]>;
   export let columnNames;
@@ -108,9 +107,7 @@
 
   let tableOptions = {
     rowDataId: (item: { [x: string]: any }, index: number) => {
-      if (item) {
-        return item['id'];
-      } else return index;
+      return item ? item['id'] : index;
     },
   };
   const { headerRows, pageRows, tableAttrs, tableBodyAttrs, pluginStates, flatColumns, rows } = table.createViewModel(
@@ -130,14 +127,14 @@
     .filter(([, hide]) => !hide)
     .map(([id]) => id);
 
+  $: $pageIndex, getData();
+
   const hidableCols = keys.slice(1);
 
   async function getData() {
     let sortKey: SortKey = $sortKeys[0];
     let sortString;
-    if (sortKey) {
-      sortString = sortKey.id + ',' + sortKey.order;
-    } else sortString = '';
+    sortString = sortKey ? `${sortKey.id},${sortKey.order}` : '';
     await loadPage($pageIndex, sortString, $filterValue);
   }
 
@@ -145,12 +142,10 @@
     if (e.code !== 'Delete') {
       return;
     }
-    console.log($selectedDataIds);
     let promises: Promise<void>[] = [];
-    for (let i = 0; i < Object.keys($selectedDataIds).length; i++) {
-      let rowToDelete = Object.keys($selectedDataIds)[i];
-      promises.push(deleteEntry(rowToDelete));
-    }
+    Object.keys($selectedDataIds).forEach((row) => {
+      promises.push(deleteEntry(row));
+    });
     await Promise.all(promises);
     $allPageRowsSelected = false;
     getData();
@@ -171,7 +166,7 @@
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild let:builder>
         <Button builders={[builder]} class="ml-auto" variant="secondary">
-          Filter
+          Spalten
           <ChevronDown class="ml-2 h-4 w-4" />
         </Button>
       </DropdownMenu.Trigger>
@@ -244,9 +239,8 @@
     </div>
     <Button
       disabled={!$hasPreviousPage}
-      on:click={async () => {
-        $pageIndex = $pageIndex - 1;
-        await getData();
+      on:click={() => {
+        $pageIndex--;
       }}
       size="sm"
       variant="secondary"
@@ -254,9 +248,8 @@
     </Button>
     <Button
       disabled={!$hasNextPage}
-      on:click={async () => {
-        $pageIndex = $pageIndex + 1;
-        await getData();
+      on:click={() => {
+        $pageIndex++;
       }}
       size="sm"
       variant="secondary"

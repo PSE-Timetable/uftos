@@ -19,8 +19,17 @@
       const result: PageSubject = await getSubjects(pageable, {
         name: filter,
       });
-      totalElements.set(result.totalElements as number);
-      tableData.set(result.content as unknown as DataItem[]);
+      totalElements.set(Number(result.totalElements));
+      let dataItems: DataItem[] = result.content
+        ? result.content.map(
+            (subject): DataItem => ({
+              id: subject.id,
+              name: subject.name,
+              tags: subject.tags.map((tag) => tag.name),
+            }),
+          )
+        : [];
+      tableData.set(dataItems);
     } catch {
       error(404, { message: 'Could not fetch page' });
     }
@@ -30,7 +39,7 @@
     try {
       await deleteSubject(id);
     } catch {
-      error(400, { message: `subject with id ${id} could not be found` });
+      error(400, { message: `could not delete subject with id ${id}` });
     }
   }
 </script>

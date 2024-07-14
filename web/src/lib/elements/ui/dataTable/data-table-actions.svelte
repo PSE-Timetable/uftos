@@ -22,7 +22,7 @@
       <DropdownMenu.Label>Aktionen</DropdownMenu.Label>
       <DropdownMenu.Item on:click={() => navigator.clipboard.writeText(id)}>ID kopieren</DropdownMenu.Item>
     </DropdownMenu.Group>
-    <DropdownMenu.Item on:click={() => goto($page.url + '/' + id)}>Editieren</DropdownMenu.Item>
+    <DropdownMenu.Item on:click={() => goto(`${$page.url}/${id}`)}>Editieren</DropdownMenu.Item>
     <DropdownMenu.Separator />
     <DropdownMenu.Item
       on:click={async () => {

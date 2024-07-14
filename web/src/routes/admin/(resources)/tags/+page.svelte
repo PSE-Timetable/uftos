@@ -18,8 +18,16 @@
       const result: PageTag = await getTags(pageable, {
         name: filter,
       });
-      totalElements.set(result.totalElements as number);
-      tableData.set(result.content as unknown as DataItem[]);
+      totalElements.set(Number(result.totalElements));
+      let dataItems: DataItem[] = result.content
+        ? result.content.map(
+            (tag): DataItem => ({
+              id: tag.id,
+              name: tag.name,
+            }),
+          )
+        : [];
+      tableData.set(dataItems);
     } catch {
       error(404, { message: 'Could not fetch page' });
     }
@@ -29,7 +37,7 @@
     try {
       await deleteTag(id);
     } catch {
-      error(400, { message: `tag with id ${id} could not be found` });
+      error(400, { message: `could not delete tag with id ${id}` });
     }
   }
 </script>
