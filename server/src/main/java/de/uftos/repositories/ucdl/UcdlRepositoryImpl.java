@@ -19,10 +19,11 @@ public class UcdlRepositoryImpl implements UcdlRepository {
   private final File ucdlFile = new File("/app/ucdl/ucdl.yml");
   private HashMap<String, ConstraintDefinitionDto> currentDefinitions = null;
 
+  //todo: use java.nio
   @Override
   public String getUcdl() throws IOException {
-    ucdlFile.createNewFile();
-    FileReader reader = new FileReader(ucdlFile);
+    this.ucdlFile.createNewFile();
+    FileReader reader = new FileReader(this.ucdlFile);
     int readInformation = reader.read();
     StringBuilder sb = new StringBuilder();
     while (readInformation >= 0) {
@@ -53,17 +54,14 @@ public class UcdlRepositoryImpl implements UcdlRepository {
 
   @Override
   public HashMap<String, ConstraintDefinitionDto> getConstraints() {
-    if (currentDefinitions == null) {
-      try {
-        this.setCurrentDefinitions();
-      } catch (ParseException | IOException e) {
-        return null;
-      }
+    if (this.currentDefinitions == null && !this.parseFile().success()) {
+      return null;
     }
     return this.currentDefinitions;
   }
 
-  private void setCurrentDefinitions() throws IOException, ParseException {
+  private void setCurrentDefinitions() throws IOException,
+      de.uftos.repositories.ucdl.parser.javacc.ParseException {
     this.currentDefinitions = UcdlParser.getDefinitions(this.getUcdl());
   }
 }

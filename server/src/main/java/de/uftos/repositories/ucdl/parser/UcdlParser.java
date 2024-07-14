@@ -10,7 +10,6 @@ import de.uftos.dto.ucdl.ast.AbstractSyntaxTreeDto;
 import de.uftos.repositories.ucdl.parser.javacc.ParseException;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -78,26 +77,21 @@ public class UcdlParser {
               + " \"SOFT_PENALIZE\", or empty field expected!");
     };
 
-    LinkedHashMap<String, ResourceType> parameters = new LinkedHashMap<>();
-    constraintDefinition.get("parameter").fields().forEachRemaining((entry) -> {
+    HashMap<String, ResourceType> parameters = new HashMap<>();
+
+    Iterator<Map.Entry<String, JsonNode>> iterator = constraintDefinition.get("parameter").fields();
+    while (iterator.hasNext()) {
+      Map.Entry<String, JsonNode> entry = iterator.next();
       if (entry != null) {
-        try {
-          parameters.put(entry.getKey(), getResourceType(entry.getValue().textValue()));
-        } catch (ParseException e) {
-          throw new RuntimeException(e);
-        }
+        parameters.put(entry.getKey(), getResourceType(entry.getValue().textValue()));
       }
-    });
+    }
+
     AbstractSyntaxTreeDto definition =
-        parseDefinition(constraintDefinition.get("definition").textValue(), parameters);
+        DefinitionParser.parseDefinition(constraintDefinition.get("definition").textValue(),
+            parameters);
 
     return new ConstraintDefinitionDto(name, description, defaultType, parameters, definition);
-  }
-
-  private static AbstractSyntaxTreeDto parseDefinition(String definition,
-                                                       LinkedHashMap<String, ResourceType> parameters)
-      throws ParseException {
-    return DefinitionParser.parseDefinition(definition, parameters);
   }
 
   private static ResourceType getResourceType(String resourceType) throws ParseException {
