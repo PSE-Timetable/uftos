@@ -24,13 +24,20 @@
   import DataTableCheckbox from './data-table-checkbox.svelte';
   import { ArrowDown, ArrowUp } from 'lucide-svelte';
   import { Input } from '$lib/elements/ui/input';
-  import { type Writable } from 'svelte/store';
+  import { writable, type Writable } from 'svelte/store';
 
-  export let tableData: Writable<DataItem[]>;
+  let tableData: Writable<DataItem[]> = writable([]);
   export let columnNames;
   export let keys;
-  export let totalElements: Writable<number>;
-  export let loadPage: (index: number, toSort: string, filter: string) => Promise<void>;
+  export let totalElements: Writable<number> = writable(0);
+  export let loadPage: (
+    index: number,
+    toSort: string,
+    filter: string,
+  ) => Promise<{
+    data: DataItem[];
+    totalElements: number;
+  }>;
   export let deleteEntry: (id: string) => Promise<void>;
 
   const table = createTable(tableData, {
@@ -135,7 +142,9 @@
     let sortKey: SortKey = $sortKeys[0];
     let sortString;
     sortString = sortKey ? `${sortKey.id},${sortKey.order}` : '';
-    await loadPage($pageIndex, sortString, $filterValue);
+    let result = await loadPage($pageIndex, sortString, $filterValue);
+    tableData.set(result.data);
+    totalElements.set(result.totalElements);
   }
 
   async function onDeleteKey(e: KeyboardEvent) {

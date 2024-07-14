@@ -3,14 +3,12 @@
   import { deleteRoom, getRooms, type Pageable, type PageRoom } from '$lib/sdk/fetch-client';
   import { error } from '@sveltejs/kit';
   import { onMount } from 'svelte';
-  import { writable, type Writable } from 'svelte/store';
 
   let columnNames = ['Name', 'Gebäude', 'Kapazität', 'Tags'];
   let keys = ['id', 'Name', 'buildingName', 'capacity', 'tags'];
-  let tableData: Writable<DataItem[]> = writable([]);
-  let totalElements: Writable<number> = writable(0);
+  let pageLoaded: boolean = false;
 
-  onMount(async () => await loadPage(0, '', ''));
+  onMount(() => (pageLoaded = true));
 
   async function loadPage(index: number, sortString: string, filter: string) {
     let pageable: Pageable = { page: index, size: 10, sort: [sortString] };
@@ -21,7 +19,6 @@
         buildingName: filter,
         capacity: /^\d+$/.test(filter) ? (filter as unknown as number) : undefined,
       });
-      totalElements.set(Number(result.totalElements));
       let dataItems: DataItem[] = result.content
         ? result.content.map(
             (room): DataItem => ({
@@ -33,7 +30,10 @@
             }),
           )
         : [];
-      tableData.set(dataItems);
+      return {
+        data: dataItems,
+        totalElements: Number(result.totalElements),
+      };
     } catch {
       error(404, { message: 'Could not fetch page' });
     }
@@ -49,7 +49,7 @@
 </script>
 
 <div class="mx-auto p-10 w-full">
-  {#if $tableData}
-    <DataTable {tableData} {columnNames} {keys} {totalElements} {loadPage} {deleteEntry} />
+  {#if pageLoaded}
+    <DataTable {columnNames} {keys} {loadPage} {deleteEntry} />
   {/if}
 </div>

@@ -3,23 +3,21 @@
   import { deleteStudent, getStudents, type Pageable, type PageStudent } from '$lib/sdk/fetch-client';
   import { error } from '@sveltejs/kit';
   import { onMount } from 'svelte';
-  import { writable, type Writable } from 'svelte/store';
 
   let columnNames = ['Vorname', 'Nachname', 'Tags'];
   let keys = ['id', 'firstName', 'lastName', 'tags'];
-  let tableData: Writable<DataItem[]> = writable();
-  let totalElements: Writable<number> = writable(0);
+  let pageLoaded: boolean = false;
 
-  onMount(async () => loadPage(0, '', ''));
+  onMount(() => (pageLoaded = true));
 
   async function loadPage(index: number, sortString: string, filter: string) {
     let pageable: Pageable = { page: index, size: 10, sort: [sortString] };
+    console.log('test');
     try {
       const result: PageStudent = await getStudents(pageable, {
         firstName: filter,
         lastName: filter,
       });
-      totalElements.set(Number(result.totalElements));
       let dataItems: DataItem[] = result.content
         ? result.content.map(
             (student): DataItem => ({
@@ -30,7 +28,10 @@
             }),
           )
         : [];
-      tableData.set(dataItems);
+      return {
+        data: dataItems,
+        totalElements: Number(result.totalElements),
+      };
     } catch {
       error(404, { message: 'Could not fetch page' });
     }
@@ -46,7 +47,8 @@
 </script>
 
 <div class="p-10 w-full">
-  {#if $tableData}
-    <DataTable {tableData} {columnNames} {keys} {totalElements} {loadPage} {deleteEntry} />
+  <!--Avoids warning that fetch calls should be in onMount or load function, there must be a better solution-->
+  {#if pageLoaded}
+    <DataTable {columnNames} {keys} {loadPage} {deleteEntry} />
   {/if}
 </div>
