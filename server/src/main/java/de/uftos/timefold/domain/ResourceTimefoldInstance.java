@@ -1,7 +1,7 @@
 package de.uftos.timefold.domain;
 
-import de.uftos.entities.ResourceType;
+import de.uftos.dto.ResourceType;
 
 public interface ResourceTimefoldInstance {
-    ResourceType getResourceType();
+  ResourceType getResourceType();
 }

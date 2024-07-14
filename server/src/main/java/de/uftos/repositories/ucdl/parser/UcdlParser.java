@@ -10,6 +10,7 @@ import de.uftos.dto.ucdl.ast.AbstractSyntaxTreeDto;
 import de.uftos.repositories.ucdl.parser.javacc.ParseException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -77,7 +78,7 @@ public class UcdlParser {
               + " \"SOFT_PENALIZE\", or empty field expected!");
     };
 
-    HashMap<String, ResourceType> parameters = new HashMap<>();
+    LinkedHashMap<String, ResourceType> parameters = new LinkedHashMap<>();
     constraintDefinition.get("parameter").fields().forEachRemaining((entry) -> {
       if (entry != null) {
         try {
@@ -94,8 +95,8 @@ public class UcdlParser {
   }
 
   private static AbstractSyntaxTreeDto parseDefinition(String definition,
-                                                       HashMap<String, ResourceType> parameters)
-      throws de.uftos.repositories.ucdl.parser.javacc.ParseException {
+                                                       LinkedHashMap<String, ResourceType> parameters)
+      throws ParseException {
     return DefinitionParser.parseDefinition(definition, parameters);
   }
 

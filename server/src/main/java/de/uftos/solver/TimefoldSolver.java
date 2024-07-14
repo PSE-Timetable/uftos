@@ -25,7 +25,6 @@ import de.uftos.entities.Teacher;
 import de.uftos.entities.Timeslot;
 import de.uftos.entities.Timetable;
 import de.uftos.repositories.solver.SolverRepository;
-import de.uftos.timefold.constraints.ConstraintInstanceAggregate;
 import de.uftos.timefold.domain.GradeTimefoldInstance;
 import de.uftos.timefold.domain.LessonTimefoldInstance;
 import de.uftos.timefold.domain.ResourceTimefoldInstance;
@@ -98,12 +97,9 @@ public class TimefoldSolver implements SolverRepository {
             }
           }
         }
-        solution.getConstrains().add(
-            new de.uftos.timefold.constraints.PredefinedConstraintInstance(i.name(), parameters));
+        //solution.getConstrains().add(
+        //  new de.uftos.timefold.constraints.PredefinedConstraintInstance(i.name(), parameters));
       }
-
-      ConstraintInstanceAggregate.addAllInstances(solution.getConstrains());
-
 
       SolverConfig solverConfig = new SolverConfig()
           .withTerminationConfig(new TerminationConfig()

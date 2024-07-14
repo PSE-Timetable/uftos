@@ -3,7 +3,7 @@ package de.uftos.dto.ucdl;
 import de.uftos.dto.ResourceType;
 import de.uftos.dto.solver.RewardPenalize;
 import de.uftos.dto.ucdl.ast.AbstractSyntaxTreeDto;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 /**
  * A parsed constraint.
@@ -16,7 +16,7 @@ public record ConstraintDefinitionDto(
     String name,
     String description,
     RewardPenalize defaultType,
-    HashMap<String, ResourceType> parameters,
+    LinkedHashMap<String, ResourceType> parameters, //todo: replace with LinkedHashMap
     AbstractSyntaxTreeDto root
 ) {
 }
