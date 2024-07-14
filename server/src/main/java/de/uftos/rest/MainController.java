@@ -1,10 +1,10 @@
 package de.uftos.rest;
 
 import de.uftos.demoDataSource.DemoDataSource;
-import de.uftos.dto.parser.ConstraintDefinitionDto;
 import de.uftos.dto.solver.ConstraintInstanceDto;
 import de.uftos.dto.solver.TimetableProblemDto;
 import de.uftos.dto.solver.TimetableSolutionDto;
+import de.uftos.dto.ucdl.ConstraintDefinitionDto;
 import de.uftos.entities.Timetable;
 import de.uftos.solver.TimefoldSolver;
 import java.util.HashMap;

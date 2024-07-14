@@ -6,15 +6,13 @@ import ai.timefold.solver.core.config.score.director.ScoreDirectorFactoryConfig;
 import ai.timefold.solver.core.config.solver.SolverConfig;
 import ai.timefold.solver.core.config.solver.termination.TerminationConfig;
 import ai.timefold.solver.core.impl.solver.DefaultSolverFactory;
-import de.uftos.dataTransferObjects.ConstraintDefinition;
-import de.uftos.dataTransferObjects.ConstraintInstance;
 import de.uftos.demoDataSource.PredefinedConstraint;
 import de.uftos.demoDataSource.PredefinedConstraintInstance;
 import de.uftos.demoDataSource.PredefinedConstraints;
-import de.uftos.dto.parser.ConstraintDefinitionDto;
 import de.uftos.dto.solver.ConstraintInstanceDto;
 import de.uftos.dto.solver.TimetableProblemDto;
 import de.uftos.dto.solver.TimetableSolutionDto;
+import de.uftos.dto.ucdl.ConstraintDefinitionDto;
 import de.uftos.entities.Grade;
 import de.uftos.entities.Lesson;
 import de.uftos.entities.Resource;
@@ -134,8 +132,8 @@ public class TimefoldSolver implements SolverRepository {
   }
 
   public Future<Timetable> solve(Timetable timetable,
-                                 HashMap<String, ConstraintDefinition> definitions,
-                                 List<ConstraintInstance> instances) {
+                                 HashMap<String, ConstraintDefinitionDto> definitions,
+                                 List<ConstraintInstanceDto> instances) {
 
     Callable<Timetable> solveTimetable = () -> {
       TimetableSolutionTimefoldInstance solution =
