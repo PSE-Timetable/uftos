@@ -1,6 +1,5 @@
 package de.uftos.services;
 
-import de.uftos.builders.SpecificationBuilder;
 import de.uftos.dto.ConstraintInstanceRequestDto;
 import de.uftos.dto.ResourceType;
 import de.uftos.entities.ConstraintArgument;
@@ -18,6 +17,7 @@ import de.uftos.repositories.database.SubjectRepository;
 import de.uftos.repositories.database.TagRepository;
 import de.uftos.repositories.database.TeacherRepository;
 import de.uftos.repositories.database.TimeslotRepository;
+import de.uftos.utils.SpecificationBuilder;
 import java.util.AbstractMap;
 import java.util.List;
 import java.util.Map;
