@@ -10,6 +10,7 @@ import de.uftos.dto.ucdl.ast.AbstractSyntaxTreeDto;
 import de.uftos.repositories.ucdl.parser.javacc.ParseException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -77,7 +78,7 @@ public class UcdlParser {
               + " \"SOFT_PENALIZE\", or empty field expected!");
     };
 
-    HashMap<String, ResourceType> parameters = new HashMap<>();
+    LinkedHashMap<String, ResourceType> parameters = new LinkedHashMap<>();
 
     Iterator<Map.Entry<String, JsonNode>> iterator = constraintDefinition.get("parameter").fields();
     while (iterator.hasNext()) {
