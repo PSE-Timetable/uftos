@@ -1,9 +1,9 @@
 package de.uftos.services;
 
-import de.uftos.builders.SpecificationBuilder;
 import de.uftos.dto.SubjectRequestDto;
 import de.uftos.entities.Subject;
 import de.uftos.repositories.database.SubjectRepository;
+import de.uftos.utils.SpecificationBuilder;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
