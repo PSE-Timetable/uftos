@@ -1,16 +1,18 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
     import ConstraintSignatureComp from '$lib/components/ui/constraintSignature/constraint-signature.svelte';
     import {
         type ConstraintParameter,
         type ConstraintSignature,
-        DefaultType, type Grade,
+        DefaultType, type Grade, type GradeResponseDto,
         ParameterType,
+        getTeachers,
         type Subject,
         type Tag,
         type Teacher
     } from "$lib/sdk/fetch-client";
 
-    const constraintParameters: ConstraintParameter[] = [
+const constraintParameters: ConstraintParameter[] = [
         {
             id: '123',
             parameterName: 'Klasse X',
@@ -53,34 +55,33 @@
         }
     ];
 
-    const grades: Grade[] = [
+    const grades: GradeResponseDto[] = [
         {
             id: '123',
-            name: '5.'
+            name: '5.',
+            studentIds: [],
+            studentGroupIds: [],
+            tags: []
         },
         {
             id: '456',
-            name: '6.'
-        }
-    ]
-
-    const teachers: Teacher[] = [
-        {
-            acronym: 'JS',
-            firstName: 'John',
-            id: '1',
-            lastName: 'Smith',
-            tags: [ tag ],
-            subjects: [ subjects[0] ]
-        },
-        {
-            acronym: 'AM',
-            firstName: 'Avocado',
-            id: '2',
-            lastName: 'Mister',
-            tags: [ tag ],
-            subjects: [ subjects[1] ]
+            name: '6.',
+            studentIds: [],
+            studentGroupIds: [],
+            tags: []
         }
     ];
+
+  let teachers: Teacher[] = [];
+
+  onMount(async () => {
+    try {
+      const response = await getTeachers({ page: 0, size: 2 });
+      teachers = response.content || [];
+      teachers = teachers;
+    } catch (error) {
+      console.error('Error fetching teachers:', error);
+    }
+  });
 </script>
-<ConstraintSignatureComp teachers={teachers} grades={grades} subjects={subjects} constraintSignature={constraintSignature}/>
+<ConstraintSignatureComp {teachers} {grades} {subjects} {constraintSignature} />
