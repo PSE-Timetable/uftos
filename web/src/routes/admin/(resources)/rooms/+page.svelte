@@ -37,7 +37,7 @@
     try {
       await deleteRoom(id);
     } catch {
-      error(404, { message: `room with id ${id} could not be found` });
+      error(400, { message: `room with id ${id} could not be found` });
     }
   }
 </script>

@@ -29,7 +29,7 @@
     try {
       await deleteTag(id);
     } catch {
-      error(404, { message: `tag with id ${id} could not be found` });
+      error(400, { message: `tag with id ${id} could not be found` });
     }
   }
 </script>

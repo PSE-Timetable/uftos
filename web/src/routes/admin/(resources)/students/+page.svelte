@@ -1,11 +1,6 @@
 <script lang="ts">
   import DataTable, { type DataItem } from '$lib/elements/ui/dataTable/data-table.svelte';
-  import {
-    deleteStudent,
-    getStudents,
-    type Pageable,
-    type PageStudent,
-  } from '$lib/sdk/fetch-client';
+  import { deleteStudent, getStudents, type Pageable, type PageStudent } from '$lib/sdk/fetch-client';
   import { error } from '@sveltejs/kit';
   import { onMount } from 'svelte';
   import { writable, type Writable } from 'svelte/store';
@@ -35,7 +30,7 @@
     try {
       await deleteStudent(id);
     } catch {
-      error(404, { message: `student with id ${id} could not be found` });
+      error(400, { message: `student with id ${id} could not be found` });
     }
   }
 </script>

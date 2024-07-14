@@ -31,7 +31,7 @@
     try {
       await deleteTeacher(id);
     } catch {
-      error(404, { message: `teacher with id ${id} could not be found` });
+      error(400, { message: `teacher with id ${id} could not be found` });
     }
   }
 </script>

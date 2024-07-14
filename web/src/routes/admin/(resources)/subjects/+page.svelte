@@ -30,7 +30,7 @@
     try {
       await deleteSubject(id);
     } catch {
-      error(404, { message: `subject with id ${id} could not be found` });
+      error(400, { message: `subject with id ${id} could not be found` });
     }
   }
 </script>
