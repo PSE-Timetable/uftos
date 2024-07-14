@@ -1,21 +1,11 @@
 package de.uftos.solver;
 
-import ai.timefold.solver.core.api.solver.Solver;
-import ai.timefold.solver.core.api.solver.SolverFactory;
-import ai.timefold.solver.core.config.score.director.ScoreDirectorFactoryConfig;
-import ai.timefold.solver.core.config.solver.SolverConfig;
-import ai.timefold.solver.core.config.solver.termination.TerminationConfig;
-import ai.timefold.solver.core.impl.solver.DefaultSolverFactory;
-import de.uftos.demoDataSource.PredefinedConstraint;
-import de.uftos.demoDataSource.PredefinedConstraintInstance;
-import de.uftos.demoDataSource.PredefinedConstraints;
 import de.uftos.dto.solver.ConstraintInstanceDto;
 import de.uftos.dto.solver.TimetableProblemDto;
 import de.uftos.dto.solver.TimetableSolutionDto;
 import de.uftos.dto.ucdl.ConstraintDefinitionDto;
 import de.uftos.entities.Grade;
 import de.uftos.entities.Lesson;
-import de.uftos.entities.Resource;
 import de.uftos.entities.Room;
 import de.uftos.entities.Student;
 import de.uftos.entities.StudentGroup;
@@ -27,7 +17,6 @@ import de.uftos.entities.Timetable;
 import de.uftos.repositories.solver.SolverRepository;
 import de.uftos.timefold.domain.GradeTimefoldInstance;
 import de.uftos.timefold.domain.LessonTimefoldInstance;
-import de.uftos.timefold.domain.ResourceTimefoldInstance;
 import de.uftos.timefold.domain.RoomTimefoldInstance;
 import de.uftos.timefold.domain.StudentGroupTimefoldInstance;
 import de.uftos.timefold.domain.StudentTimefoldInstance;
@@ -36,24 +25,16 @@ import de.uftos.timefold.domain.TagTimefoldInstance;
 import de.uftos.timefold.domain.TeacherTimefoldInstance;
 import de.uftos.timefold.domain.TimeslotTimefoldInstance;
 import de.uftos.timefold.domain.TimetableSolutionTimefoldInstance;
-import de.uftos.timefold.solver.ConstraintProviderTimefoldInstance;
-import de.uftos.timefold.solver.ScoreCalculator;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 //todo: fix timetable translation
 
 public class TimefoldSolver implements SolverRepository {
 
+  /*
   public Future<Timetable> solve(HashMap<PredefinedConstraints, PredefinedConstraint> definitions,
                                  List<PredefinedConstraintInstance> instances,
                                  Timetable timetable) {
@@ -160,6 +141,7 @@ public class TimefoldSolver implements SolverRepository {
 
     return es.submit(solveTimetable);
   }
+   */
 
   TimetableSolutionTimefoldInstance getSolutionInstanceFromTimetableInstance(Timetable timetable) {
     List<GradeTimefoldInstance> grades = new ArrayList<>();
