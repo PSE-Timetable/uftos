@@ -7,6 +7,9 @@ import de.uftos.entities.Subject;
 import de.uftos.entities.Teacher;
 import de.uftos.entities.Timeslot;
 import de.uftos.entities.Timetable;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -22,10 +25,10 @@ import java.util.Set;
  * @param subjects  the subjects of which lessons take place.
  * @param timetable the timetable of which the lessons are a part of.
  */
-public record LessonResponseDto(List<BulkLesson> lessons,
-                                List<Teacher> teachers,
-                                List<GradeResponseDto> grades, List<Room> rooms,
-                                List<Subject> subjects, Timetable timetable) {
+public record LessonResponseDto(@NotNull List<BulkLesson> lessons,
+                                @NotNull List<Teacher> teachers,
+                                @NotNull List<GradeResponseDto> grades, @NotNull List<Room> rooms,
+                                @NotNull List<Subject> subjects, @NotNull Timetable timetable) {
   /**
    * Creates a LessonResponseDto from a list of lessons. Each lesson has to be in the same
    * timetable.
@@ -60,9 +63,11 @@ public record LessonResponseDto(List<BulkLesson> lessons,
         rooms.stream().toList(), subjects.stream().toList(), timetable);
   }
 
-  private record BulkLesson(String id, int index, String teacherId, String roomId,
-                            List<String> gradeIds, Timeslot timeslot,
-                            String subjectId) {
+  private record BulkLesson(@NotEmpty String id, @PositiveOrZero int index,
+                            @NotEmpty String teacherId,
+                            @NotEmpty String roomId,
+                            @NotNull List<String> gradeIds, @NotNull Timeslot timeslot,
+                            @NotEmpty String subjectId) {
     private BulkLesson(Lesson lesson, List<String> gradesId) {
       this(lesson.getId(), lesson.getIndex(), lesson.getTeacher().getId(),
           lesson.getRoom().getId(), gradesId, lesson.getTimeslot(), lesson.getSubject().getId());

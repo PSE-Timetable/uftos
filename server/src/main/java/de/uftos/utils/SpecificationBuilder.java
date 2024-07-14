@@ -1,4 +1,4 @@
-package de.uftos.builders;
+package de.uftos.utils;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Expression;

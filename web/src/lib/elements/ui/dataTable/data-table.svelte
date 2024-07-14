@@ -20,7 +20,7 @@
   interface DataItem {
     id: string;
 
-    [key: string]: string;
+    [key: string]: string | string[] | number;
   }
 
   export let data: DataItem[];
@@ -89,7 +89,7 @@
         header: '',
         id: 'actions',
         cell: ({ value }) => {
-          return createRender(DataTableActions, { id: value });
+          return createRender(DataTableActions, { id: value.toString() });
         },
         plugins: {
           sort: {

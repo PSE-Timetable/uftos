@@ -8,6 +8,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Objects;
 import lombok.Data;
@@ -22,14 +24,18 @@ import lombok.Data;
 public class ConstraintInstance {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
+  @NotEmpty
   private String id;
 
+  @NotNull
   @ManyToOne
   private ConstraintSignature signature;
 
+  @NotNull
   @OneToMany(cascade = CascadeType.ALL)
   private List<ConstraintArgument> arguments;
 
+  @NotNull
   private RewardPenalize type;
 
   @Override

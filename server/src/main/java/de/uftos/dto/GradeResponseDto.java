@@ -4,6 +4,8 @@ import de.uftos.entities.Grade;
 import de.uftos.entities.Student;
 import de.uftos.entities.StudentGroup;
 import de.uftos.entities.Tag;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -17,8 +19,9 @@ import java.util.Set;
  * @param studentIds      the IDs of the students that are a part of the grade.
  * @param tags            the tags associated with the grade.
  */
-public record GradeResponseDto(String id, String name, List<String> studentGroupIds,
-                               List<String> studentIds, List<Tag> tags) {
+public record GradeResponseDto(@NotEmpty String id, @NotEmpty String name,
+                               @NotNull List<String> studentGroupIds,
+                               @NotNull List<String> studentIds, @NotNull List<Tag> tags) {
 
   /**
    * Creates a GradeResponseDto from the provided grade.

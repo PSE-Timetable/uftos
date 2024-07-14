@@ -1,6 +1,9 @@
 package de.uftos.dto;
 
 import de.uftos.entities.LessonsCount;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 
 /**
  * A data transfer object used in the curriculum HTTP requests.
@@ -8,7 +11,8 @@ import de.uftos.entities.LessonsCount;
  * @param subjectId the id of the subject.
  * @param count     the number of timeslots this subject will be hold per week.
  */
-public record LessonsCountRequestDto(String subjectId, int count) {
+public record LessonsCountRequestDto(@NotEmpty String subjectId,
+                                     @PositiveOrZero @NotNull int count) {
   /**
    * Maps the information from the data transfer object to a new lesson count entity.
    *

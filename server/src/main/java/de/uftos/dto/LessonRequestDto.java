@@ -1,6 +1,9 @@
 package de.uftos.dto;
 
 import de.uftos.entities.Lesson;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 
 /**
  * A data transfer object used in the lesson HTTP requests.
@@ -13,8 +16,11 @@ import de.uftos.entities.Lesson;
  * @param subjectId      the id of the subject to be hold in the lesson.
  * @param timetableId    the id of the timetable.
  */
-public record LessonRequestDto(int index, String teacherId, String studentGroupId, String roomId,
-                               String timeslotId, String subjectId, String timetableId) {
+public record LessonRequestDto(@PositiveOrZero @NotNull int index, @NotEmpty String teacherId,
+                               @NotEmpty String studentGroupId,
+                               @NotEmpty String roomId,
+                               @NotEmpty String timeslotId, @NotEmpty String subjectId,
+                               @NotEmpty String timetableId) {
   /**
    * Maps the information from the data transfer object to a new lesson entity.
    *

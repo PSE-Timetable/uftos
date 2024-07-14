@@ -9,6 +9,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Objects;
 import lombok.Data;
@@ -25,19 +27,24 @@ import lombok.NoArgsConstructor;
 public class StudentGroup {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
+  @NotEmpty
   private String id;
 
+  @NotEmpty
   private String name;
 
+  @NotNull
   @ManyToMany
   @JoinTable(name = "students_student_groups",
       joinColumns = @JoinColumn(name = "student_groups_id"),
       inverseJoinColumns = @JoinColumn(name = "students_id"))
   private List<Student> students;
 
+  @NotNull
   @ManyToMany(mappedBy = "studentGroups")
   private List<Grade> grades;
 
+  @NotNull
   @ManyToMany
   @JoinTable(name = "student_groups_tags",
       joinColumns = @JoinColumn(name = "student_groups_id"),

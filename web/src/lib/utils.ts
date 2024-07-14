@@ -3,6 +3,43 @@ import { cubicOut } from 'svelte/easing';
 import type { TransitionConfig } from 'svelte/transition';
 import { twMerge } from 'tailwind-merge';
 
+export const WorkingHours = [
+  '8:00',
+  '8:30',
+  '9:00',
+  '9:30',
+  '10:00',
+  '10:30',
+  '11:00',
+  '11:30',
+  '12:00',
+  '12:30',
+  '13:00',
+  '13:30',
+  '14:00',
+  '14:30',
+  '15:00',
+  '15:30',
+  '16:00',
+  '16:30',
+  '17:00',
+] as const;
+
+export enum WeekDay {
+  MONDAY = 'Montag',
+  TUESDAY = 'Dienstag',
+  WEDNESDAY = 'Mittwoch',
+  THURSDAY = 'Donnerstag',
+  FRIDAY = 'Freitag',
+  SATURDAY = 'Samstag',
+  SUNDAY = 'Sonntag',
+}
+
+export interface TimeInterval {
+  start: (typeof WorkingHours)[number];
+  end: (typeof WorkingHours)[number];
+}
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -16,6 +53,7 @@ type FlyAndScaleParams = {
 
 export const flyAndScale = (
   node: Element,
+  // eslint-disable-next-line unicorn/no-object-as-default-parameter
   params: FlyAndScaleParams = { y: -8, x: 0, start: 0.95, duration: 150 },
 ): TransitionConfig => {
   const style = getComputedStyle(node);
@@ -32,8 +70,11 @@ export const flyAndScale = (
   };
 
   const styleToString = (style: Record<string, number | string | undefined>): string => {
+    // eslint-disable-next-line unicorn/no-array-reduce
     return Object.keys(style).reduce((str, key) => {
-      if (style[key] === undefined) return str;
+      if (style[key] === undefined) {
+        return str;
+      }
       return str + `${key}:${style[key]};`;
     }, '');
   };

@@ -1,12 +1,12 @@
 package de.uftos.services;
 
-import de.uftos.builders.SpecificationBuilder;
 import de.uftos.dto.LessonResponseDto;
 import de.uftos.dto.TeacherRequestDto;
 import de.uftos.entities.Lesson;
 import de.uftos.entities.Teacher;
 import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.TeacherRepository;
+import de.uftos.utils.SpecificationBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

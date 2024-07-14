@@ -1,5 +1,8 @@
 package de.uftos.dto;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
+
 /**
  * A data transfer object used in the server HTTP requests.
  *
@@ -9,6 +12,9 @@ package de.uftos.dto;
  * @param roomCount     the count of all rooms.
  * @param resourceCount the count of all resources.
  */
-public record ServerStatisticsResponseDto(long studentCount, long teacherCount, long classCount,
-                                          long roomCount, long resourceCount) {
+public record ServerStatisticsResponseDto(@PositiveOrZero @NotNull long studentCount,
+                                          @PositiveOrZero @NotNull long teacherCount,
+                                          @PositiveOrZero @NotNull long classCount,
+                                          @PositiveOrZero @NotNull long roomCount,
+                                          @PositiveOrZero @NotNull long resourceCount) {
 }
