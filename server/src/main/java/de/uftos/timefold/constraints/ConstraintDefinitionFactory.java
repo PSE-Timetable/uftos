@@ -7,6 +7,7 @@ import de.uftos.dto.ucdl.UcdlToken;
 import de.uftos.dto.ucdl.ast.AbstractSyntaxTreeDto;
 import de.uftos.dto.ucdl.ast.ControlSequenceDto;
 import de.uftos.dto.ucdl.ast.OperatorDto;
+import de.uftos.dto.ucdl.ast.SetDto;
 import de.uftos.dto.ucdl.ast.ValueDto;
 import de.uftos.timefold.domain.ResourceTimefoldInstance;
 import java.util.ArrayList;
@@ -87,6 +88,16 @@ public class ConstraintDefinitionFactory {
     Function<List<ResourceTimefoldInstance>, List<ResourceTimefoldInstance>> variableDefinition =
         convertOf(root.parenthesesContent(), params);
 
+    OperatorDto of = (OperatorDto) root.parenthesesContent();
+
+    if (of.parameters().size() != 2) {
+      throw new IllegalStateException();
+    }
+
+    ValueDto<String> variableReference = (ValueDto<String>) of.parameters().getFirst();
+    SetDto set = (SetDto) of.parameters().getLast();
+
+    params.put(variableReference.value(), set.type());
 
     List<Function<List<ResourceTimefoldInstance>, Optional<Boolean>>> functions = new ArrayList<>();
 
@@ -99,6 +110,8 @@ public class ConstraintDefinitionFactory {
         throw new IllegalStateException();
       }
     }
+
+    params.remove(variableReference.value());
 
     return (l) -> {
       Optional<Boolean> current = Optional.empty();
