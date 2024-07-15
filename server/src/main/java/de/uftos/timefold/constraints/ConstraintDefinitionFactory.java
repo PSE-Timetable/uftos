@@ -13,6 +13,7 @@ import de.uftos.dto.ucdl.ast.ValueDto;
 import de.uftos.timefold.domain.Number;
 import de.uftos.timefold.domain.ResourceTimefoldInstance;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
@@ -433,11 +434,7 @@ public class ConstraintDefinitionFactory {
 
     AbstractSyntaxTreeDto set = of.parameters().getLast();
 
-    return switch (set.getToken()) {
-      case RESOURCE_SET -> convertResourceSet(set, params);
-      case NUMBER_SET -> convertNumberSet(set, params);
-      default -> throw new IllegalStateException();
-    };
+    return convertSet(set, params);
   }
 
   private static Function<List<ResourceTimefoldInstance>, Boolean> convertFilter(
@@ -457,7 +454,11 @@ public class ConstraintDefinitionFactory {
 
   private static Function<List<ResourceTimefoldInstance>, List<ResourceTimefoldInstance>> convertSet(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
-    return null;
+    return switch (ast.getToken()) {
+      case RESOURCE_SET -> convertResourceSet(ast, params);
+      case NUMBER_SET -> convertNumberSet(ast, params);
+      default -> throw new IllegalStateException();
+    };
   }
 
   private static Function<List<ResourceTimefoldInstance>, List<ResourceTimefoldInstance>> convertResourceSet(
@@ -480,14 +481,37 @@ public class ConstraintDefinitionFactory {
     return null;
   }
 
-  private static Function<List<ResourceTimefoldInstance>, Boolean> convertNumber(
+  private static Function<List<ResourceTimefoldInstance>, Number> convertNumber(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
-    return null;
+    if (ast.getToken() != UcdlToken.NUMBER) {
+      throw new IllegalStateException();
+    }
+    ValueDto<Integer> value = (ValueDto<Integer>) ast;
+    return (l) -> new Number(value.value());
   }
 
   private static Function<List<ResourceTimefoldInstance>, ResourceTimefoldInstance> convertValueReference(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
-    return null;
+    if (ast.getToken() != UcdlToken.VALUE_REFERENCE) {
+      throw new IllegalStateException();
+    }
+    ValueDto<String> reference = (ValueDto<String>) ast;
+    Iterator<String> iterator = params.sequencedKeySet().iterator();
+    int index = 0;
+    while (iterator.hasNext()) {
+      if (iterator.next().equals(reference.value())) {
+        break;
+      }
+      index++;
+    }
+    int finalIndex = index;
+    return (l) -> {
+      ResourceTimefoldInstance resource = l.get(finalIndex);
+      if (resource.getResourceType() != params.get(reference.value())) {
+        throw new IllegalArgumentException();
+      }
+      return l.get(finalIndex);
+    };
   }
 
   /*
