@@ -387,32 +387,138 @@ public class ConstraintDefinitionFactory {
 
   private static Function<List<ResourceTimefoldInstance>, Boolean> convertEquals(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
-    return null;
+    if (ast.getToken() != UcdlToken.EQUALS) {
+      throw new IllegalStateException();
+    }
+    OperatorDto equation = (OperatorDto) ast;
+    if (equation.parameters().size() != 2) {
+      throw new IllegalStateException();
+    }
+    Function<List<ResourceTimefoldInstance>, ResourceTimefoldInstance> firstElement =
+        convertElement(equation.parameters().getFirst(), params);
+    Function<List<ResourceTimefoldInstance>, ResourceTimefoldInstance> secondElement =
+        convertElement(equation.parameters().getLast(), params);
+    return (l) -> firstElement.apply(l).equals(secondElement.apply(l));
   }
 
   private static Function<List<ResourceTimefoldInstance>, Boolean> convertNotEquals(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
-    return null;
+    if (ast.getToken() != UcdlToken.NOT_EQUALS) {
+      throw new IllegalStateException();
+    }
+    OperatorDto equation = (OperatorDto) ast;
+    if (equation.parameters().size() != 2) {
+      throw new IllegalStateException();
+    }
+    Function<List<ResourceTimefoldInstance>, ResourceTimefoldInstance> firstElement =
+        convertElement(equation.parameters().getFirst(), params);
+    Function<List<ResourceTimefoldInstance>, ResourceTimefoldInstance> secondElement =
+        convertElement(equation.parameters().getLast(), params);
+    return (l) -> !firstElement.apply(l).equals(secondElement.apply(l));
   }
 
   private static Function<List<ResourceTimefoldInstance>, Boolean> convertSmallerEquals(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
-    return null;
+    if (ast.getToken() != UcdlToken.SMALLER_EQUALS) {
+      throw new IllegalStateException();
+    }
+    OperatorDto equation = (OperatorDto) ast;
+    if (equation.parameters().size() != 2) {
+      throw new IllegalStateException();
+    }
+    Function<List<ResourceTimefoldInstance>, ResourceTimefoldInstance> firstElement =
+        convertElement(equation.parameters().getFirst(), params);
+    Function<List<ResourceTimefoldInstance>, ResourceTimefoldInstance> secondElement =
+        convertElement(equation.parameters().getLast(), params);
+    return (l) -> {
+      ResourceTimefoldInstance first = firstElement.apply(l);
+      ResourceTimefoldInstance second = secondElement.apply(l);
+
+      if (first.getResourceType() != ResourceType.NUMBER ||
+          second.getResourceType() != ResourceType.NUMBER) {
+        throw new IllegalArgumentException();
+      }
+
+      return ((Number) first).getValue() <= ((Number) second).getValue();
+    };
   }
 
   private static Function<List<ResourceTimefoldInstance>, Boolean> convertSmaller(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
-    return null;
+    if (ast.getToken() != UcdlToken.SMALLER) {
+      throw new IllegalStateException();
+    }
+    OperatorDto equation = (OperatorDto) ast;
+    if (equation.parameters().size() != 2) {
+      throw new IllegalStateException();
+    }
+    Function<List<ResourceTimefoldInstance>, ResourceTimefoldInstance> firstElement =
+        convertElement(equation.parameters().getFirst(), params);
+    Function<List<ResourceTimefoldInstance>, ResourceTimefoldInstance> secondElement =
+        convertElement(equation.parameters().getLast(), params);
+    return (l) -> {
+      ResourceTimefoldInstance first = firstElement.apply(l);
+      ResourceTimefoldInstance second = secondElement.apply(l);
+
+      if (first.getResourceType() != ResourceType.NUMBER ||
+          second.getResourceType() != ResourceType.NUMBER) {
+        throw new IllegalArgumentException();
+      }
+
+      return ((Number) first).getValue() < ((Number) second).getValue();
+    };
   }
 
   private static Function<List<ResourceTimefoldInstance>, Boolean> convertGreaterEquals(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
-    return null;
+    if (ast.getToken() != UcdlToken.GREATER_EQUALS) {
+      throw new IllegalStateException();
+    }
+    OperatorDto equation = (OperatorDto) ast;
+    if (equation.parameters().size() != 2) {
+      throw new IllegalStateException();
+    }
+    Function<List<ResourceTimefoldInstance>, ResourceTimefoldInstance> firstElement =
+        convertElement(equation.parameters().getFirst(), params);
+    Function<List<ResourceTimefoldInstance>, ResourceTimefoldInstance> secondElement =
+        convertElement(equation.parameters().getLast(), params);
+    return (l) -> {
+      ResourceTimefoldInstance first = firstElement.apply(l);
+      ResourceTimefoldInstance second = secondElement.apply(l);
+
+      if (first.getResourceType() != ResourceType.NUMBER ||
+          second.getResourceType() != ResourceType.NUMBER) {
+        throw new IllegalArgumentException();
+      }
+
+      return ((Number) first).getValue() >= ((Number) second).getValue();
+    };
   }
 
   private static Function<List<ResourceTimefoldInstance>, Boolean> convertGreater(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
-    return null;
+    if (ast.getToken() != UcdlToken.GREATER) {
+      throw new IllegalStateException();
+    }
+    OperatorDto equation = (OperatorDto) ast;
+    if (equation.parameters().size() != 2) {
+      throw new IllegalStateException();
+    }
+    Function<List<ResourceTimefoldInstance>, ResourceTimefoldInstance> firstElement =
+        convertElement(equation.parameters().getFirst(), params);
+    Function<List<ResourceTimefoldInstance>, ResourceTimefoldInstance> secondElement =
+        convertElement(equation.parameters().getLast(), params);
+    return (l) -> {
+      ResourceTimefoldInstance first = firstElement.apply(l);
+      ResourceTimefoldInstance second = secondElement.apply(l);
+
+      if (first.getResourceType() != ResourceType.NUMBER ||
+          second.getResourceType() != ResourceType.NUMBER) {
+        throw new IllegalArgumentException();
+      }
+
+      return ((Number) first).getValue() > ((Number) second).getValue();
+    };
   }
 
   private static Function<List<ResourceTimefoldInstance>, Boolean> convertIn(
