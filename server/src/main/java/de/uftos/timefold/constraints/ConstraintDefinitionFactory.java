@@ -523,7 +523,18 @@ public class ConstraintDefinitionFactory {
 
   private static Function<List<ResourceTimefoldInstance>, Boolean> convertIn(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
-    return null;
+    if (ast.getToken() != UcdlToken.IN) {
+      throw new IllegalStateException();
+    }
+    OperatorDto in = (OperatorDto) ast;
+    if (in.parameters().size() != 2) {
+      throw new IllegalStateException();
+    }
+    Function<List<ResourceTimefoldInstance>, ResourceTimefoldInstance> element =
+        convertElement(in.parameters().getFirst(), params);
+    Function<List<ResourceTimefoldInstance>, List<ResourceTimefoldInstance>> set =
+        convertSet(in.parameters().getLast(), params);
+    return (l) -> set.apply(l).contains(element.apply(l));
   }
 
   private static Function<List<ResourceTimefoldInstance>, List<ResourceTimefoldInstance>> convertOf(
@@ -640,39 +651,39 @@ public class ConstraintDefinitionFactory {
 
   /*
   //control sequences
-  CODEBLOCK, //-> operatordto
-  FOR, //-> controlsequencedto
-  IF, //-> controlsequencedto
-  RETURN, //-> valuedto
+  CODEBLOCK, //-> operatordto       x
+  FOR, //-> controlsequencedto      x
+  IF, //-> controlsequencedto       x
+  RETURN, //-> valuedto             x
 
   //bool
-  AND, //-> operatordto
-  OR, //-> operatordto
-  NOT, //-> operatordto
-  IMPLIES, //-> operatordto
-  FOR_ALL, //-> quantifierdto
-  EXISTS, //-> quantifierdto
-  BOOL_VALUE, //-> valuedto
+  AND, //-> operatordto             x
+  OR, //-> operatordto              x
+  NOT, //-> operatordto             x
+  IMPLIES, //-> operatordto         x
+  FOR_ALL, //-> quantifierdto       x
+  EXISTS, //-> quantifierdto        x
+  BOOL_VALUE, //-> valuedto         x
 
   //comparisons
-  EQUALS, //-> operatordto
-  NOT_EQUALS, //-> operatordto
-  SMALLER_EQUALS, //-> operatordto
-  GREATER_EQUALS, //-> operatordto
-  SMALLER, //-> operatordto
-  GREATER, //-> operatordto
+  EQUALS, //-> operatordto          x
+  NOT_EQUALS, //-> operatordto      x
+  SMALLER_EQUALS, //-> operatordto  x
+  GREATER_EQUALS, //-> operatordto  x
+  SMALLER, //-> operatordto         x
+  GREATER, //-> operatordto         x
 
   //sets and elements
-  IN, //-> operatordto
-  OF, //-> operatordto
-  FILTER, //-> operatordto
-  IS_EMPTY, //-> operatordto
-  SIZE, //-> operatordto
-  RESOURCE_SET, //-> valuedto
-  NUMBER_SET, //-> valuedto
-  ATTRIBUTE, //-> valuedto
-  ELEMENT, //-> valuedto
-  NUMBER, //-> valuedto
-  VALUE_REFERENCE //-> valuedto
+  IN, //-> operatordto              -
+  OF, //-> operatordto              x
+  FILTER, //-> operatordto          -
+  IS_EMPTY, //-> operatordto        x
+  SIZE, //-> operatordto            x
+  RESOURCE_SET, //-> valuedto       -
+  NUMBER_SET, //-> valuedto         -
+  ATTRIBUTE, //-> valuedto          -
+  ELEMENT, //-> valuedto            -
+  NUMBER, //-> valuedto             x
+  VALUE_REFERENCE //-> valuedto     x
    */
 }
