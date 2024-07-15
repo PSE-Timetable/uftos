@@ -674,7 +674,7 @@ public class ConstraintDefinitionFactory {
   GREATER, //-> operatordto         x
 
   //sets and elements
-  IN, //-> operatordto              -
+  IN, //-> operatordto              x
   OF, //-> operatordto              x
   FILTER, //-> operatordto          -
   IS_EMPTY, //-> operatordto        x
