@@ -4,7 +4,6 @@ import de.uftos.dto.GradeRequestDto;
 import de.uftos.dto.GradeResponseDto;
 import de.uftos.dto.LessonResponseDto;
 import de.uftos.services.GradeService;
-import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -51,7 +50,7 @@ public class GradeController {
 
   /**
    * Maps the HTTP GET request for a set of grades from the database, to the
-   * {@link GradeService#get(Pageable, Optional) get} function of the grade service.
+   * {@link GradeService#get(Pageable, Optional, Optional) get} function of the grade service.
    *
    * @param pageable contains the parameters for the page.
    * @param name     the name filter.
