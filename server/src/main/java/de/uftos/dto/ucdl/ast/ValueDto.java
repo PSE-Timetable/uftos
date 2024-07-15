@@ -15,7 +15,7 @@ public record ValueDto<T>(UcdlToken token, T value) implements AbstractSyntaxTre
   public String toString() {
     return this.token
         + "("
-        + this.value.toString()
+        + this.value
         + ")";
   }
 }
