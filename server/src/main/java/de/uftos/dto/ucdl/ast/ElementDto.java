@@ -14,4 +14,22 @@ public record ElementDto(UcdlToken token, AbstractSyntaxTreeDto name,
   public UcdlToken getToken() {
     return token;
   }
+
+  @Override
+  public String toString() {
+    StringBuilder stringBuilder = new StringBuilder();
+    stringBuilder.append(this.token);
+    stringBuilder.append("(");
+    stringBuilder.append(this.name.toString());
+    stringBuilder.append(") {\n");
+
+    for (AbstractSyntaxTreeDto ast : this.attributes) {
+      stringBuilder.append(ast.toString());
+      stringBuilder.append("\n");
+    }
+
+    stringBuilder.append("}");
+
+    return stringBuilder.toString();
+  }
 }

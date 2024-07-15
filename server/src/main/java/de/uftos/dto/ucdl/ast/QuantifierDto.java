@@ -11,4 +11,15 @@ public record QuantifierDto(UcdlToken token, AbstractSyntaxTreeDto elements,
   public UcdlToken getToken() {
     return token;
   }
+
+  @Override
+  public String toString() {
+
+    return this.token
+        + "("
+        + this.elements.toString()
+        + ") {\n"
+        + this.body.toString()
+        + "}";
+  }
 }

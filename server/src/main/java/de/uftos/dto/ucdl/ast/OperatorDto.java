@@ -12,4 +12,20 @@ public record OperatorDto(UcdlToken token, List<AbstractSyntaxTreeDto> parameter
   public UcdlToken getToken() {
     return token;
   }
+
+  @Override
+  public String toString() {
+    StringBuilder stringBuilder = new StringBuilder();
+    stringBuilder.append(this.token);
+    stringBuilder.append("{\n");
+
+    for (AbstractSyntaxTreeDto ast : this.parameters) {
+      stringBuilder.append(ast.toString());
+      stringBuilder.append("\n");
+    }
+
+    stringBuilder.append("}");
+
+    return stringBuilder.toString();
+  }
 }
