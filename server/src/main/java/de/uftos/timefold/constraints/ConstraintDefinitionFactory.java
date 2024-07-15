@@ -550,12 +550,30 @@ public class ConstraintDefinitionFactory {
 
   private static Function<List<ResourceTimefoldInstance>, Boolean> convertIsEmpty(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
-    return null;
+    if (ast.getToken() != UcdlToken.IS_EMPTY) {
+      throw new IllegalStateException();
+    }
+    OperatorDto isEmpty = (OperatorDto) ast;
+    if (isEmpty.parameters().size() != 1) {
+      throw new IllegalStateException();
+    }
+    Function<List<ResourceTimefoldInstance>, List<ResourceTimefoldInstance>> set =
+        convertSet(isEmpty.parameters().getFirst(), params);
+    return (l) -> set.apply(l).isEmpty();
   }
 
   private static Function<List<ResourceTimefoldInstance>, Number> convertSize(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
-    return null;
+    if (ast.getToken() != UcdlToken.SIZE) {
+      throw new IllegalStateException();
+    }
+    OperatorDto size = (OperatorDto) ast;
+    if (size.parameters().size() != 1) {
+      throw new IllegalStateException();
+    }
+    Function<List<ResourceTimefoldInstance>, List<ResourceTimefoldInstance>> set =
+        convertSet(size.parameters().getFirst(), params);
+    return (l) -> new Number(set.apply(l).size());
   }
 
   private static Function<List<ResourceTimefoldInstance>, List<ResourceTimefoldInstance>> convertSet(
