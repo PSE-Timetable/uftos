@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 import de.uftos.dto.LessonResponseDto;
+import de.uftos.entities.Break;
 import de.uftos.entities.Grade;
 import de.uftos.entities.Lesson;
 import de.uftos.entities.Room;
@@ -14,6 +15,7 @@ import de.uftos.entities.Server;
 import de.uftos.entities.StudentGroup;
 import de.uftos.entities.Subject;
 import de.uftos.entities.Teacher;
+import de.uftos.entities.TimetableMetadata;
 import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.StudentGroupRepository;
 import java.util.Collections;
@@ -85,7 +87,8 @@ public class StudentGroupServiceTests {
 
     studentGroup1.setLessons(List.of(lesson1, lesson2, lesson3));
 
-    Server server = new Server(45, "2024");
+    Break[] breaks = {};
+    Server server = new Server(new TimetableMetadata(45, "8:00", breaks), "2024");
     when(serverRepository.findAll()).thenReturn(List.of(server));
     when(studentGroupRepository.findById("123")).thenReturn(Optional.of(studentGroup1));
     when(studentGroupRepository.findById("456")).thenReturn(Optional.of(studentGroup2));
