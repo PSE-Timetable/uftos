@@ -1,5 +1,8 @@
 package de.uftos.e2e;
 
+import static de.uftos.utils.JsonGenerator.generateGradeJson;
+import static de.uftos.utils.JsonGenerator.generatePageJson;
+import static de.uftos.utils.JsonGenerator.generateTagJson;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
@@ -8,7 +11,6 @@ import io.restassured.http.ContentType;
 import java.util.Collections;
 import java.util.List;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -17,13 +19,10 @@ public class GradesTest {
   private static final String FIRST_GRADE_NAME = "5";
   private static final String SECOND_GRADE_NAME = "7";
   private static final String TAG_NAME = "Nachmittagsunterricht";
-  private static final String STUDENT_GROUP_NAME = "7-Ethik";
 
   static String firstGrade;
   static String secondGrade;
   static String tagId;
-  static String studentGroupId;
-
 
   @BeforeAll
   static void createTestGrades() throws JSONException {
@@ -53,7 +52,7 @@ public class GradesTest {
         .body().jsonPath().getString("id");
 
     secondGrade = given().contentType(ContentType.JSON)
-        .body(generateGradeJson(SECOND_GRADE_NAME, List.of(studentGroupId),
+        .body(generateGradeJson(SECOND_GRADE_NAME, Collections.emptyList(),
             List.of(tagId)))
         .when()
         .post("/grades")
@@ -64,8 +63,6 @@ public class GradesTest {
         .log().ifValidationFails()
         .extract()
         .body().jsonPath().getString("id");
-
-
   }
 
   @AfterAll
@@ -88,34 +85,6 @@ public class GradesTest {
         .then()
         .statusCode(200);
   }
-
-
-  private static String generateGradeJson(String name, List<String> studentGroups,
-                                          List<String> tags)
-      throws JSONException {
-    return new JSONObject()
-        .put("name", name)
-        .put("studentGroups", studentGroups)
-        .put("tags", tags)
-        .toString();
-  }
-
-  private static String generateTagJson(String name)
-      throws JSONException {
-    return new JSONObject()
-        .put("tagName", name)
-        .toString();
-  }
-
-  private static String generatePageJson(int page, int size, List<String> sort)
-      throws JSONException {
-    return new JSONObject()
-        .put("page", page)
-        .put("size", size)
-        .put("sort", sort)
-        .toString();
-  }
-
 
   @Test
   void getAllGrades() throws JSONException {
@@ -155,7 +124,5 @@ public class GradesTest {
         .body("totalElements", equalTo(1))
         .body("content[0].id", equalTo(firstGrade))
         .log().ifValidationFails();
-
   }
-
 }
