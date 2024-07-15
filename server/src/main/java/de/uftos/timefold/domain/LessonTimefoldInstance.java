@@ -30,9 +30,6 @@ public class LessonTimefoldInstance implements ResourceTimefoldInstance {
   @PlanningVariable
   private RoomTimefoldInstance room;
 
-  public LessonTimefoldInstance() {
-  }
-
   public LessonTimefoldInstance(int id, int index, SubjectTimefoldInstance subject,
                                 StudentGroupTimefoldInstance studentGroup) {
     this.id = id;
