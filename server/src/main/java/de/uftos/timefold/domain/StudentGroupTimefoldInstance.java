@@ -17,6 +17,8 @@ public class StudentGroupTimefoldInstance implements ResourceTimefoldInstance {
   private final GradeTimefoldInstance grade;
   private final List<TagTimefoldInstance> providedTagsList = new ArrayList<>();
   private final List<StudentTimefoldInstance> studentList = new ArrayList<>();
+  private final List<StudentTimefoldInstance> lessonList = new ArrayList<>();
+
   public StudentGroupTimefoldInstance(int id, GradeTimefoldInstance grade) {
     this.id = id;
     this.grade = grade;
