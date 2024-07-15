@@ -2,4 +2,4 @@
   export let data;
 </script>
 
-<div>{data.id}</div>
+<div>{JSON.stringify(data.subject)}</div>

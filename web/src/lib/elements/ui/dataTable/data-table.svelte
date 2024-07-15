@@ -13,7 +13,7 @@
   import { Button } from '$lib/elements/ui/button';
   import ArrowUpDown from 'lucide-svelte/icons/arrow-up-down';
   import ChevronDown from 'lucide-svelte/icons/chevron-down';
-  import * as Input from '$lib/elements/ui/input';
+  import { Input } from '$lib/elements/ui/input';
   import * as DropdownMenu from '$lib/elements/ui/dropdown-menu';
   import DataTableCheckbox from './data-table-checkbox.svelte';
 
