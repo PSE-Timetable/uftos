@@ -40,9 +40,11 @@ public class Curriculum {
    * Creates a new curriculum.
    *
    * @param gradeId       the grade id to which the curriculum applies to.
+   * @param name          the name given to the curriculum.
    * @param lessonsCounts the lesson counts which apply to the given grade.
    */
   public Curriculum(String gradeId, String name, List<LessonsCountRequestDto> lessonsCounts) {
+    this.name = name;
     this.grade = new Grade(gradeId);
     this.lessonsCounts = lessonsCounts.stream().map(LessonsCountRequestDto::map).toList();
   }

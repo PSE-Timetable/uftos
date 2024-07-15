@@ -1,15 +1,11 @@
 package de.uftos.dto;
 
 import de.uftos.entities.Curriculum;
-import de.uftos.entities.Grade;
 import de.uftos.entities.LessonsCount;
-import de.uftos.entities.Student;
-import de.uftos.entities.StudentGroup;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+
 
 /**
  * A data transfer object used in the curriculum HTTP requests.
