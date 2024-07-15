@@ -35,7 +35,6 @@ public class DefinitionParser {
   public static AbstractSyntaxTreeDto parseDefinition(String definition,
                                                       HashMap<String, ResourceType> parameters)
       throws ParseException {
-    parameters.put("this", ResourceType.TIMETABLE);
     SimpleNode root = SyntaxChecker.parseString(definition);
     return buildAst(root, parameters);
   }
@@ -606,7 +605,8 @@ public class DefinitionParser {
         yield ResourceType.STUDENT;
       }
       case "teachers" -> {
-        if (currentType != ResourceType.TIMETABLE && currentType != ResourceType.TAG) {
+        if (currentType != ResourceType.TIMETABLE && currentType != ResourceType.TAG
+            && currentType != ResourceType.SUBJECT) {
           throw new ParseException(
               "Attribute \"" + attribute
                   + "\" is only available for \"this\"(outside filters) and tags!");
