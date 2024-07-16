@@ -33,7 +33,7 @@
         totalElements: Number(result.totalElements),
       };
     } catch {
-      error(404, { message: 'Could not fetch page' });
+      error(400, { message: 'Could not fetch page' });
     }
   }
 
@@ -48,7 +48,5 @@
 
 <div class="p-10 w-full">
   <!--Avoids warning that fetch calls should be in onMount or load function, there must be a better solution-->
-  {#if pageLoaded}
-    <DataTable {columnNames} {keys} {loadPage} {deleteEntry} />
-  {/if}
+  <DataTable {columnNames} {keys} {loadPage} {deleteEntry} />
 </div>

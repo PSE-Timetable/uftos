@@ -134,8 +134,6 @@
     .filter(([, hide]) => !hide)
     .map(([id]) => id);
 
-  $: $pageIndex, getData();
-
   const hidableCols = keys.slice(1);
 
   async function getData() {
@@ -157,10 +155,14 @@
     });
     await Promise.all(promises);
     $allPageRowsSelected = false;
-    getData();
+    await getData();
   }
 
-  $: $filterValue, getData();
+  $: async () => {
+    $filterValue;
+    $pageIndex;
+    await getData();
+  };
 </script>
 
 <svelte:window on:keydown={onDeleteKey} />
@@ -179,7 +181,7 @@
           <ChevronDown class="ml-2 h-4 w-4" />
         </Button>
       </DropdownMenu.Trigger>
-      <DropdownMenu.Content>
+      <DropdownMenu.Content class="text-primary">
         {#each flatColumns as col}
           {#if hidableCols.includes(col.id)}
             <DropdownMenu.CheckboxItem bind:checked={hideForId[col.id]}>
