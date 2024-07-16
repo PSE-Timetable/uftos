@@ -2,12 +2,9 @@
   import DataTable, { type DataItem } from '$lib/elements/ui/dataTable/data-table.svelte';
   import { deleteTeacher, getTeachers, type Pageable, type PageTeacher } from '$lib/sdk/fetch-client';
   import { error } from '@sveltejs/kit';
-  import { onMount } from 'svelte';
 
   let columnNames = ['Vorname', 'Nachname', 'Akronym', 'Fächer', 'Tags'];
   let keys = ['id', 'firstName', 'lastName', 'acronym', 'subjects', 'tags'];
-
-  onMount(() => (pageLoaded = true));
 
   async function loadPage(index: number, sortString: string, filter: string) {
     let pageable: Pageable = { page: index, size: 10, sort: [sortString] };
@@ -33,7 +30,7 @@
         totalElements: Number(result.totalElements),
       };
     } catch {
-      error(404, { message: 'Could not fetch page' });
+      error(400, { message: 'Could not fetch page' });
     }
   }
 
