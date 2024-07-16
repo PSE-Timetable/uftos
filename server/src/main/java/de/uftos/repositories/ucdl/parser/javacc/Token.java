@@ -3,7 +3,7 @@
 
 package de.uftos.repositories.ucdl.parser.javacc;
 
-@SuppressWarnings("all")
+@SuppressWarnings({"checkstyle:all", "all"})
 
 
 /**

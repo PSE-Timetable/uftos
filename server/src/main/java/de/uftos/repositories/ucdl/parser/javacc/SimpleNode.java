@@ -3,7 +3,7 @@
 
 package de.uftos.repositories.ucdl.parser.javacc;
 
-@SuppressWarnings("all")
+@SuppressWarnings({"checkstyle:all", "all"})
 
 
 public class SimpleNode implements Node {
@@ -42,7 +42,7 @@ public class SimpleNode implements Node {
     if (children == null) {
       children = new Node[i + 1];
     } else if (i >= children.length) {
-      Node c[] = new Node[i + 1];
+      Node[] c = new Node[i + 1];
       System.arraycopy(children, 0, c, 0, children.length);
       children = c;
     }
@@ -92,7 +92,7 @@ public class SimpleNode implements Node {
   }
 
   public String toString(String prefix) {
-    return prefix + toString();
+    return prefix + this;
   }
 
   /* Override this method if you want to customize how the node dumps

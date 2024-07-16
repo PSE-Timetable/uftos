@@ -2,51 +2,51 @@
 
 package de.uftos.repositories.ucdl.parser.javacc;
 
-@SuppressWarnings("all")
+@SuppressWarnings({"checkstyle:all", "all"})
 
 
 public interface SyntaxCheckerTreeConstants {
-  public int JJTSTART = 0;
-  public int JJTDEFINITION = 1;
-  public int JJTBOOLVALUE = 2;
-  public int JJTCODEBLOCK = 3;
-  public int JJTCONTROLSEQUENCELIST = 4;
-  public int JJTCONTROLSEQUENCE = 5;
-  public int JJTRETURN = 6;
-  public int JJTFOR = 7;
-  public int JJTIF = 8;
-  public int JJTCONTROLSEQUENCERETURN = 9;
-  public int JJTFORALL = 10;
-  public int JJTEXISTS = 11;
-  public int JJTIMPLIES = 12;
-  public int JJTOPTIONALIMPLIES = 13;
-  public int JJTOR = 14;
-  public int JJTOPTIONALOR = 15;
-  public int JJTAND = 16;
-  public int JJTOPTIONALAND = 17;
-  public int JJTNOT = 18;
-  public int JJTISEMPTY = 19;
-  public int JJTBOOL = 20;
-  public int JJTELEMENTINSETOREQUATION = 21;
-  public int JJTELEMENTINSET = 22;
-  public int JJTEQUATION = 23;
-  public int JJTELEMENTEQUATION = 24;
-  public int JJTELEMENT = 25;
-  public int JJTELEMENTNAME = 26;
-  public int JJTELEMENTATTRIBUTELIST = 27;
-  public int JJTNUMBERELEMENT = 28;
-  public int JJTSET = 29;
-  public int JJTSETNAME = 30;
-  public int JJTSETMODIFICATION = 31;
-  public int JJTNUMBERSET = 32;
-  public int JJTNUMBERLIST = 33;
-  public int JJTATTRIBUTE = 34;
-  public int JJTVALUEREFERENCE = 35;
-  public int JJTFILTER = 36;
-  public int JJTFILTERLIST = 37;
+  int JJTSTART = 0;
+  int JJTDEFINITION = 1;
+  int JJTBOOLVALUE = 2;
+  int JJTCODEBLOCK = 3;
+  int JJTCONTROLSEQUENCELIST = 4;
+  int JJTCONTROLSEQUENCE = 5;
+  int JJTRETURN = 6;
+  int JJTFOR = 7;
+  int JJTIF = 8;
+  int JJTCONTROLSEQUENCERETURN = 9;
+  int JJTFORALL = 10;
+  int JJTEXISTS = 11;
+  int JJTIMPLIES = 12;
+  int JJTOPTIONALIMPLIES = 13;
+  int JJTOR = 14;
+  int JJTOPTIONALOR = 15;
+  int JJTAND = 16;
+  int JJTOPTIONALAND = 17;
+  int JJTNOT = 18;
+  int JJTISEMPTY = 19;
+  int JJTBOOL = 20;
+  int JJTELEMENTINSETOREQUATION = 21;
+  int JJTELEMENTINSET = 22;
+  int JJTEQUATION = 23;
+  int JJTELEMENTEQUATION = 24;
+  int JJTELEMENT = 25;
+  int JJTELEMENTNAME = 26;
+  int JJTELEMENTATTRIBUTELIST = 27;
+  int JJTNUMBERELEMENT = 28;
+  int JJTSET = 29;
+  int JJTSETNAME = 30;
+  int JJTSETMODIFICATION = 31;
+  int JJTNUMBERSET = 32;
+  int JJTNUMBERLIST = 33;
+  int JJTATTRIBUTE = 34;
+  int JJTVALUEREFERENCE = 35;
+  int JJTFILTER = 36;
+  int JJTFILTERLIST = 37;
 
 
-  public String[] jjtNodeName = {
+  String[] jjtNodeName = {
       "START",
       "DEFINITION",
       "BOOLVALUE",

@@ -2,7 +2,7 @@
 
 package de.uftos.repositories.ucdl.parser.javacc;
 
-@SuppressWarnings("all")
+@SuppressWarnings({"checksytle:all", "all"})
 
 public class JJTSyntaxCheckerState {
   private java.util.List nodes;
