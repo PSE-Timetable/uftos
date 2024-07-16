@@ -6,13 +6,25 @@ import de.uftos.dto.ucdl.ConstraintDefinitionDto;
 import de.uftos.dto.ucdl.UcdlToken;
 import de.uftos.dto.ucdl.ast.AbstractSyntaxTreeDto;
 import de.uftos.dto.ucdl.ast.ControlSequenceDto;
+import de.uftos.dto.ucdl.ast.ElementDto;
 import de.uftos.dto.ucdl.ast.OperatorDto;
 import de.uftos.dto.ucdl.ast.QuantifierDto;
 import de.uftos.dto.ucdl.ast.SetDto;
 import de.uftos.dto.ucdl.ast.ValueDto;
+import de.uftos.timefold.domain.GradeTimefoldInstance;
+import de.uftos.timefold.domain.LessonTimefoldInstance;
 import de.uftos.timefold.domain.Number;
 import de.uftos.timefold.domain.ResourceTimefoldInstance;
+import de.uftos.timefold.domain.RoomTimefoldInstance;
+import de.uftos.timefold.domain.StudentGroupTimefoldInstance;
+import de.uftos.timefold.domain.StudentTimefoldInstance;
+import de.uftos.timefold.domain.SubjectTimefoldInstance;
+import de.uftos.timefold.domain.TagTimefoldInstance;
+import de.uftos.timefold.domain.TeacherTimefoldInstance;
+import de.uftos.timefold.domain.TimeslotTimefoldInstance;
+import de.uftos.timefold.domain.TimetableSolutionTimefoldInstance;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -38,6 +50,9 @@ public class ConstraintDefinitionFactory {
 
     return new ConstraintDefinitionTimefoldInstance(name, defaultType, function);
   }
+
+  //If not specified differently, then the first parameter "List<ResourceTimefoldInstance" are the
+  //parameters given in the constraint definition.
 
   private static Function<List<ResourceTimefoldInstance>, Boolean> convertCodeblock(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
@@ -87,7 +102,7 @@ public class ConstraintDefinitionFactory {
 
     ControlSequenceDto root = (ControlSequenceDto) ast;
 
-    Function<List<ResourceTimefoldInstance>, List<ResourceTimefoldInstance>> variableDefinition =
+    Function<List<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>> variableDefinition =
         convertOf(root.parenthesesContent(), params);
 
     OperatorDto of = (OperatorDto) root.parenthesesContent();
@@ -297,7 +312,7 @@ public class ConstraintDefinitionFactory {
 
     QuantifierDto root = (QuantifierDto) ast;
 
-    Function<List<ResourceTimefoldInstance>, List<ResourceTimefoldInstance>> variableDefinition =
+    Function<List<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>> variableDefinition =
         convertOf(root.elements(), params);
 
     OperatorDto of = (OperatorDto) root.elements();
@@ -334,7 +349,7 @@ public class ConstraintDefinitionFactory {
 
     QuantifierDto root = (QuantifierDto) ast;
 
-    Function<List<ResourceTimefoldInstance>, List<ResourceTimefoldInstance>> variableDefinition =
+    Function<List<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>> variableDefinition =
         convertOf(root.elements(), params);
 
     OperatorDto of = (OperatorDto) root.elements();
@@ -532,12 +547,12 @@ public class ConstraintDefinitionFactory {
     }
     Function<List<ResourceTimefoldInstance>, ResourceTimefoldInstance> element =
         convertElement(in.parameters().getFirst(), params);
-    Function<List<ResourceTimefoldInstance>, List<ResourceTimefoldInstance>> set =
+    Function<List<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>> set =
         convertSet(in.parameters().getLast(), params);
     return (l) -> set.apply(l).contains(element.apply(l));
   }
 
-  private static Function<List<ResourceTimefoldInstance>, List<ResourceTimefoldInstance>> convertOf(
+  private static Function<List<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>> convertOf(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.OF) {
       throw new IllegalStateException();
@@ -554,8 +569,31 @@ public class ConstraintDefinitionFactory {
     return convertSet(set, params);
   }
 
+  //todo: fix filters
   private static Function<List<ResourceTimefoldInstance>, Boolean> convertFilter(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
+    if (ast.getToken() != UcdlToken.FILTER) {
+      throw new IllegalStateException();
+    }
+
+    OperatorDto filter = (OperatorDto) ast;
+
+    List<Function<List<ResourceTimefoldInstance>, Boolean>> functions = new ArrayList<>();
+
+    for (AbstractSyntaxTreeDto param : filter.parameters()) {
+      if (param.getToken() == UcdlToken.NUMBER_SET || param.getToken() == UcdlToken.RESOURCE_SET) {
+        functions.add((l) -> {
+          Set<ResourceTimefoldInstance> set = convertSet(param, params).apply(l);
+          ResourceTimefoldInstance element =
+              convertValueReference(new ValueDto<>(UcdlToken.VALUE_REFERENCE, "this"),
+                  params).apply(l);//getting the "this"-reference
+          return set.contains(element);
+        });
+      } else {
+        functions.add(convertBool(param, params));
+      }
+    }
+
     return null;
   }
 
@@ -568,7 +606,7 @@ public class ConstraintDefinitionFactory {
     if (isEmpty.parameters().size() != 1) {
       throw new IllegalStateException();
     }
-    Function<List<ResourceTimefoldInstance>, List<ResourceTimefoldInstance>> set =
+    Function<List<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>> set =
         convertSet(isEmpty.parameters().getFirst(), params);
     return (l) -> set.apply(l).isEmpty();
   }
@@ -582,12 +620,12 @@ public class ConstraintDefinitionFactory {
     if (size.parameters().size() != 1) {
       throw new IllegalStateException();
     }
-    Function<List<ResourceTimefoldInstance>, List<ResourceTimefoldInstance>> set =
+    Function<List<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>> set =
         convertSet(size.parameters().getFirst(), params);
     return (l) -> new Number(set.apply(l).size());
   }
 
-  private static Function<List<ResourceTimefoldInstance>, List<ResourceTimefoldInstance>> convertSet(
+  private static Function<List<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>> convertSet(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     return switch (ast.getToken()) {
       case RESOURCE_SET -> convertResourceSet(ast, params);
@@ -596,24 +634,358 @@ public class ConstraintDefinitionFactory {
     };
   }
 
-  private static Function<List<ResourceTimefoldInstance>, List<ResourceTimefoldInstance>> convertResourceSet(
+  private static Function<List<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>> convertResourceSet(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
-    return null;
+    //todo: adjust to fit to sets (currently copy-paste from element)
+    if (ast.getToken() != UcdlToken.ELEMENT) {
+      throw new IllegalStateException();
+    }
+    ElementDto element = (ElementDto) ast;
+
+    Function<List<ResourceTimefoldInstance>, ResourceTimefoldInstance> name =
+        convertValueReference(element.name(), params);
+
+    List<Function<Set<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>>> attributes =
+        new ArrayList<>();
+
+    for (AbstractSyntaxTreeDto attribute : element.attributes()) {
+      attributes.add(convertAttribute(attribute, params));
+    }
+
+    return (l) -> {
+      Set<ResourceTimefoldInstance> reference = new HashSet<>();
+      reference.add(name.apply(l));
+
+      for (Function<Set<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>> function : attributes) {
+        reference = function.apply(reference);
+      }
+      if (reference.size() != 1) {
+        throw new IllegalStateException();
+      }
+      return reference;
+    };
   }
 
-  private static Function<List<ResourceTimefoldInstance>, List<ResourceTimefoldInstance>> convertNumberSet(
+  private static Function<List<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>> convertNumberSet(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
-    return null;
+    if (ast.getToken() != UcdlToken.NUMBER_SET) {
+      throw new IllegalStateException();
+    }
+    ValueDto<Integer[]> set = (ValueDto<Integer[]>) ast;
+
+    Set<ResourceTimefoldInstance> resources = new HashSet<>();
+
+    for (Integer i : set.value()) {
+      resources.add(new Number(i));
+    }
+
+    return (l) -> resources;
   }
 
+  //In this case the given List is the List is the List of elements of the set, and it returns the
+  //set after applying the attribute.
   private static Function<Set<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>> convertAttribute(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
-    return null;
+    if (ast.getToken() != UcdlToken.ATTRIBUTE) {
+      throw new IllegalStateException();
+    }
+
+    String attribute = ((ValueDto<String>) ast).value();
+
+    return switch (attribute) {
+      case "index" -> (l) -> {
+        Set<ResourceTimefoldInstance> resultSet = new HashSet<>();
+        for (ResourceTimefoldInstance resource : l) {
+          if (resource.getResourceType() == ResourceType.LESSON) {
+            resultSet.add(new Number(((LessonTimefoldInstance) resource).getIndex()));
+          } else {
+            throw new IllegalStateException();
+          }
+        }
+        return resultSet;
+      };
+      case "teacher" -> (l) -> {
+        Set<ResourceTimefoldInstance> resultSet = new HashSet<>();
+        for (ResourceTimefoldInstance resource : l) {
+          if (resource.getResourceType() == ResourceType.LESSON) {
+            resultSet.add(((LessonTimefoldInstance) resource).getTeacher());
+          } else {
+            throw new IllegalStateException();
+          }
+        }
+        return resultSet;
+      };
+      case "timeslot" -> (l) -> {
+        Set<ResourceTimefoldInstance> resultSet = new HashSet<>();
+        for (ResourceTimefoldInstance resource : l) {
+          if (resource.getResourceType() == ResourceType.LESSON) {
+            resultSet.add(((LessonTimefoldInstance) resource).getTimeslot());
+          } else {
+            throw new IllegalStateException();
+          }
+        }
+        return resultSet;
+      };
+      case "room" -> (l) -> {
+        Set<ResourceTimefoldInstance> resultSet = new HashSet<>();
+        for (ResourceTimefoldInstance resource : l) {
+          if (resource.getResourceType() == ResourceType.LESSON) {
+            resultSet.add(((LessonTimefoldInstance) resource).getRoom());
+          } else {
+            throw new IllegalStateException();
+          }
+        }
+        return resultSet;
+      };
+      case "subject" -> (l) -> {
+        Set<ResourceTimefoldInstance> resultSet = new HashSet<>();
+        for (ResourceTimefoldInstance resource : l) {
+          if (resource.getResourceType() == ResourceType.LESSON) {
+            resultSet.add(((LessonTimefoldInstance) resource).getSubject());
+          } else {
+            throw new IllegalStateException();
+          }
+        }
+        return resultSet;
+      };
+      case "studentGroup" -> (l) -> {
+        Set<ResourceTimefoldInstance> resultSet = new HashSet<>();
+        for (ResourceTimefoldInstance resource : l) {
+          if (resource.getResourceType() == ResourceType.LESSON) {
+            resultSet.add(((LessonTimefoldInstance) resource).getStudentGroup());
+          } else {
+            throw new IllegalStateException();
+          }
+        }
+        return resultSet;
+      };
+      case "grade" -> (l) -> {
+        Set<ResourceTimefoldInstance> resultSet = new HashSet<>();
+        for (ResourceTimefoldInstance resource : l) {
+          if (resource.getResourceType() == ResourceType.STUDENT_GROUP) {
+            resultSet.add(((StudentGroupTimefoldInstance) resource).getGrade());
+          } else {
+            throw new IllegalStateException();
+          }
+        }
+        return resultSet;
+      };
+      case "day" -> (l) -> {
+        Set<ResourceTimefoldInstance> resultSet = new HashSet<>();
+        for (ResourceTimefoldInstance resource : l) {
+          if (resource.getResourceType() == ResourceType.TIMESLOT) {
+            resultSet.add(new Number(((TimeslotTimefoldInstance) resource).getDayOfWeek()));
+          } else {
+            throw new IllegalStateException();
+          }
+        }
+        return resultSet;
+      };
+      case "slot" -> (l) -> {
+        Set<ResourceTimefoldInstance> resultSet = new HashSet<>();
+        for (ResourceTimefoldInstance resource : l) {
+          if (resource.getResourceType() == ResourceType.TIMESLOT) {
+            resultSet.add(new Number(((TimeslotTimefoldInstance) resource).getSlotId()));
+          } else {
+            throw new IllegalStateException();
+          }
+        }
+        return resultSet;
+      };
+      case "students" -> (l) -> {
+        Set<ResourceTimefoldInstance> resultSet = new HashSet<>();
+        for (ResourceTimefoldInstance resource : l) {
+          if (resource.getResourceType() == ResourceType.TIMETABLE) {
+            resultSet.addAll(((TimetableSolutionTimefoldInstance) resource).getStudents());
+          } else if (resource.getResourceType() == ResourceType.TAG) {
+            resultSet.addAll(((TagTimefoldInstance) resource).getStudentList());
+          } else if (resource.getResourceType() == ResourceType.STUDENT_GROUP) {
+            resultSet.addAll(((StudentGroupTimefoldInstance) resource).getStudentList());
+          } else {
+            throw new IllegalStateException();
+          }
+        }
+        return resultSet;
+      };
+      case "teachers" -> (l) -> {
+        Set<ResourceTimefoldInstance> resultSet = new HashSet<>();
+        for (ResourceTimefoldInstance resource : l) {
+          if (resource.getResourceType() == ResourceType.TIMETABLE) {
+            resultSet.addAll(((TimetableSolutionTimefoldInstance) resource).getTeachers());
+          } else if (resource.getResourceType() == ResourceType.TAG) {
+            resultSet.addAll(((TagTimefoldInstance) resource).getTeacherList());
+          } else if (resource.getResourceType() == ResourceType.SUBJECT) {
+            resultSet.addAll(((SubjectTimefoldInstance) resource).getTeacherList());
+          } else {
+            throw new IllegalStateException();
+          }
+        }
+        return resultSet;
+      };
+      case "studentGroups" -> (l) -> {
+        Set<ResourceTimefoldInstance> resultSet = new HashSet<>();
+        for (ResourceTimefoldInstance resource : l) {
+          if (resource.getResourceType() == ResourceType.TIMETABLE) {
+            resultSet.addAll(((TimetableSolutionTimefoldInstance) resource).getStudentGroups());
+          } else if (resource.getResourceType() == ResourceType.TAG) {
+            resultSet.addAll(((TagTimefoldInstance) resource).getStudentGroupList());
+          } else if (resource.getResourceType() == ResourceType.GRADE) {
+            resultSet.addAll(((GradeTimefoldInstance) resource).getStudentGroupList());
+          } else if (resource.getResourceType() == ResourceType.STUDENT) {
+            resultSet.addAll(((StudentTimefoldInstance) resource).getStudentGroupList());
+          } else {
+            throw new IllegalStateException();
+          }
+        }
+        return resultSet;
+      };
+      case "rooms" -> (l) -> {
+        Set<ResourceTimefoldInstance> resultSet = new HashSet<>();
+        for (ResourceTimefoldInstance resource : l) {
+          if (resource.getResourceType() == ResourceType.TIMETABLE) {
+            resultSet.addAll(((TimetableSolutionTimefoldInstance) resource).getRooms());
+          } else if (resource.getResourceType() == ResourceType.TAG) {
+            resultSet.addAll(((TagTimefoldInstance) resource).getRoomList());
+          } else {
+            throw new IllegalStateException();
+          }
+        }
+        return resultSet;
+      };
+      case "subjects" -> (l) -> {
+        Set<ResourceTimefoldInstance> resultSet = new HashSet<>();
+        for (ResourceTimefoldInstance resource : l) {
+          if (resource.getResourceType() == ResourceType.TIMETABLE) {
+            resultSet.addAll(((TimetableSolutionTimefoldInstance) resource).getSubjects());
+          } else if (resource.getResourceType() == ResourceType.TAG) {
+            resultSet.addAll(((TagTimefoldInstance) resource).getSubjectList());
+          } else if (resource.getResourceType() == ResourceType.TEACHER) {
+            resultSet.addAll(((TeacherTimefoldInstance) resource).getSubjectList());
+          } else {
+            throw new IllegalStateException();
+          }
+        }
+        return resultSet;
+      };
+      case "grades" -> (l) -> {
+        Set<ResourceTimefoldInstance> resultSet = new HashSet<>();
+        for (ResourceTimefoldInstance resource : l) {
+          if (resource.getResourceType() == ResourceType.TIMETABLE) {
+            resultSet.addAll(((TimetableSolutionTimefoldInstance) resource).getGrades());
+          } else if (resource.getResourceType() == ResourceType.TAG) {
+            resultSet.addAll(((TagTimefoldInstance) resource).getGradeList());
+          } else {
+            throw new IllegalStateException();
+          }
+        }
+        return resultSet;
+      };
+      case "timeslots" -> (l) -> {
+        Set<ResourceTimefoldInstance> resultSet = new HashSet<>();
+        for (ResourceTimefoldInstance resource : l) {
+          if (resource.getResourceType() == ResourceType.TIMETABLE) {
+            resultSet.addAll(((TimetableSolutionTimefoldInstance) resource).getTimeslots());
+          } else if (resource.getResourceType() == ResourceType.TAG) {
+            resultSet.addAll(((TagTimefoldInstance) resource).getTimeslotList());
+          } else {
+            throw new IllegalStateException();
+          }
+        }
+        return resultSet;
+      };
+      case "lessons" -> (l) -> {
+        Set<ResourceTimefoldInstance> resultSet = new HashSet<>();
+        for (ResourceTimefoldInstance resource : l) {
+          if (resource.getResourceType() == ResourceType.TIMETABLE) {
+            resultSet.addAll(((TimetableSolutionTimefoldInstance) resource).getLessons());
+          } else if (resource.getResourceType() == ResourceType.TEACHER) {
+            resultSet.addAll(((TeacherTimefoldInstance) resource).getLessonList());
+          } else if (resource.getResourceType() == ResourceType.STUDENT_GROUP) {
+            resultSet.addAll(((StudentGroupTimefoldInstance) resource).getLessonList());
+          } else if (resource.getResourceType() == ResourceType.ROOM) {
+            resultSet.addAll(((RoomTimefoldInstance) resource).getLessonList());
+          } else if (resource.getResourceType() == ResourceType.SUBJECT) {
+            resultSet.addAll(((SubjectTimefoldInstance) resource).getLessonList());
+          } else if (resource.getResourceType() == ResourceType.TIMESLOT) {
+            resultSet.addAll(((TimeslotTimefoldInstance) resource).getLessonList());
+          } else {
+            throw new IllegalStateException();
+          }
+        }
+        return resultSet;
+      };
+      case "tags" -> (l) -> {
+        Set<ResourceTimefoldInstance> resultSet = new HashSet<>();
+        for (ResourceTimefoldInstance resource : l) {
+          if (resource.getResourceType() == ResourceType.TIMETABLE) {
+            resultSet.addAll(((TimetableSolutionTimefoldInstance) resource).getTags());
+          } else if (resource.getResourceType() == ResourceType.STUDENT) {
+            resultSet.addAll(((StudentTimefoldInstance) resource).getProvidedTagsList());
+          } else if (resource.getResourceType() == ResourceType.TEACHER) {
+            resultSet.addAll(((TeacherTimefoldInstance) resource).getProvidedTagsList());
+          } else if (resource.getResourceType() == ResourceType.STUDENT_GROUP) {
+            resultSet.addAll(((StudentGroupTimefoldInstance) resource).getProvidedTagsList());
+          } else if (resource.getResourceType() == ResourceType.ROOM) {
+            resultSet.addAll(((RoomTimefoldInstance) resource).getProvidedTagsList());
+          } else if (resource.getResourceType() == ResourceType.SUBJECT) {
+            resultSet.addAll(((SubjectTimefoldInstance) resource).getProvidedTagsList());
+          } else if (resource.getResourceType() == ResourceType.GRADE) {
+            resultSet.addAll(((GradeTimefoldInstance) resource).getProvidedTagsList());
+          } else if (resource.getResourceType() == ResourceType.TIMESLOT) {
+            resultSet.addAll(((TimeslotTimefoldInstance) resource).getProvidedTagsList());
+          } else {
+            throw new IllegalStateException();
+          }
+        }
+        return resultSet;
+      };
+      default -> throw new IllegalStateException();
+    };
   }
 
   private static Function<List<ResourceTimefoldInstance>, ResourceTimefoldInstance> convertElement(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
-    return null;
+    if (ast.getToken() == UcdlToken.NUMBER || ast.getToken() == UcdlToken.SIZE) {
+      Function<List<ResourceTimefoldInstance>, Number> function = convertNumberElement(ast, params);
+      return (l) -> (ResourceTimefoldInstance) function.apply(l);
+    }
+
+    if (ast.getToken() != UcdlToken.ELEMENT) {
+      throw new IllegalStateException();
+    }
+    ElementDto element = (ElementDto) ast;
+
+    Function<List<ResourceTimefoldInstance>, ResourceTimefoldInstance> name =
+        convertValueReference(element.name(), params);
+
+    List<Function<Set<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>>> attributes =
+        new ArrayList<>();
+
+    for (AbstractSyntaxTreeDto attribute : element.attributes()) {
+      attributes.add(convertAttribute(attribute, params));
+    }
+
+    return (l) -> {
+      Set<ResourceTimefoldInstance> reference = new HashSet<>();
+      reference.add(name.apply(l));
+
+      for (Function<Set<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>> function : attributes) {
+        reference = function.apply(reference);
+      }
+      if (reference.size() != 1) {
+        throw new IllegalStateException();
+      }
+      return reference.iterator().next();
+    };
+  }
+
+  private static Function<List<ResourceTimefoldInstance>, Number> convertNumberElement(
+      AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
+    return switch (ast.getToken()) {
+      case NUMBER -> convertNumber(ast, params);
+      case SIZE -> convertSize(ast, params);
+      default -> throw new IllegalStateException();
+    };
   }
 
   private static Function<List<ResourceTimefoldInstance>, Number> convertNumber(
@@ -680,9 +1052,9 @@ public class ConstraintDefinitionFactory {
   IS_EMPTY, //-> operatordto        x
   SIZE, //-> operatordto            x
   RESOURCE_SET, //-> valuedto       -
-  NUMBER_SET, //-> valuedto         -
-  ATTRIBUTE, //-> valuedto          -
-  ELEMENT, //-> valuedto            -
+  NUMBER_SET, //-> valuedto         x
+  ATTRIBUTE, //-> valuedto          x
+  ELEMENT, //-> valuedto            x
   NUMBER, //-> valuedto             x
   VALUE_REFERENCE //-> valuedto     x
    */
