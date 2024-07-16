@@ -379,7 +379,7 @@ public class DefinitionParser {
                   if (filter.getToken() == UcdlToken.RESOURCE_SET
                       && ((SetDto) filter).type() != ResourceType.NUMBER) {
                     throw new ParseException(
-                        "ets can only be filtered using sets of the same type!");
+                        "Sets can only be filtered using sets of the same type!");
                   }
                 }
                 modifiers.add(new OperatorDto(UcdlToken.FILTER, filters));
