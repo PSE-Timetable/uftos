@@ -1,6 +1,8 @@
 package de.uftos.dto;
 
 import de.uftos.entities.Teacher;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -12,8 +14,9 @@ import java.util.List;
  * @param subjectIds the id of the subjects the teacher teaches.
  * @param tagIds     the tags associated with the teacher.
  */
-public record TeacherRequestDto(String firstName, String lastName, String acronym,
-                                List<String> subjectIds, List<String> tagIds) {
+public record TeacherRequestDto(@NotEmpty String firstName, @NotEmpty String lastName,
+                                @NotEmpty String acronym,
+                                @NotNull List<String> subjectIds, @NotNull List<String> tagIds) {
 
   /**
    * Maps the information from the data transfer object to a new teacher entity.

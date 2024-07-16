@@ -1,7 +1,9 @@
-export const load = async () => {
+import type { PageLoad } from './$types';
+
+export const load = (() => {
   return {
     meta: {
-      title: 'Teachers',
+      title: 'Lehrer',
     },
   };
-};
+}) satisfies PageLoad;
