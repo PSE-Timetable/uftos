@@ -272,7 +272,7 @@ public class DefinitionParser {
         return new ValueDto<>(UcdlToken.VALUE_REFERENCE, image);
       }
       case "NUMBERELEMENT" -> {
-        if (((SimpleNode) root).jjtGetFirstToken().image.equals("SIZE")) {
+        if (((SimpleNode) root).jjtGetFirstToken().image.equals("size")) {
           List<AbstractSyntaxTreeDto> set = new ArrayList<>();
           set.add(buildAst(root.jjtGetChild(0), parameters));
           return new OperatorDto(UcdlToken.SIZE, set);
@@ -391,9 +391,13 @@ public class DefinitionParser {
           case "ELEMENT":
             switch (root.jjtGetChild(1).toString()) {
               case "SETMODIFICATION":
-                ElementDto setName = (ElementDto) buildAst(root.jjtGetChild(0), parameters);
-
-                ResourceType setType = setName.type();
+                AbstractSyntaxTreeDto setName = buildAst(root.jjtGetChild(0), parameters);
+                ResourceType setType;
+                if (setName.getToken() == UcdlToken.NUMBER) {
+                  setType = ResourceType.NUMBER;
+                } else {
+                  setType = ((ElementDto) setName).type();
+                }
 
                 modifiers = new ArrayList<>();
 
