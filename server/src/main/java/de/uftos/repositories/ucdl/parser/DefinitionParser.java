@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 
 //TODO: !!!REFACTOR!!!
+//todo: throws ClassCastException on invalid Input "NumberSet NumberSet" (e.g.: "3 in [1,2,3][1,2,3]")
 
 /**
  * This class parses the ucdl-code of the "definition"-field of a constraint definition and returns
