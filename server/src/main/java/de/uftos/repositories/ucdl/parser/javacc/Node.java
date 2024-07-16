@@ -3,7 +3,7 @@
 
 package de.uftos.repositories.ucdl.parser.javacc;
 
-@SuppressWarnings({"checkstyle:all", "all"})
+@SuppressWarnings("checkstyle:all")
 
 
 /* All AST nodes must implement this interface.  It provides basic
