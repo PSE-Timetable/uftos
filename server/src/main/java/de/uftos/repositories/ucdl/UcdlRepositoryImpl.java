@@ -19,7 +19,6 @@ public class UcdlRepositoryImpl implements UcdlRepository {
   private static final Path UCDL_PATH = Paths.get("/app/ucdl/ucdl.yml");
   private HashMap<String, ConstraintDefinitionDto> currentDefinitions = null;
 
-  //todo: use java.nio
   @Override
   public String getUcdl() throws IOException {
     Files.createFile(UCDL_PATH);
