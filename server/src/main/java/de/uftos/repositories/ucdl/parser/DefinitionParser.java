@@ -606,10 +606,11 @@ public class DefinitionParser {
         yield ResourceType.STUDENT;
       }
       case "teachers" -> {
-        if (currentType != ResourceType.TIMETABLE && currentType != ResourceType.TAG) {
+        if (currentType != ResourceType.TIMETABLE && currentType != ResourceType.TAG
+            && currentType != ResourceType.SUBJECT) {
           throw new ParseException(
               "Attribute \"" + attribute
-                  + "\" is only available for \"this\"(outside filters) and tags!");
+                  + "\" is only available for \"this\"(outside filters), subjects and tags!");
         }
         yield ResourceType.TEACHER;
       }
