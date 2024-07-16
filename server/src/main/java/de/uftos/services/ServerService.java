@@ -2,6 +2,7 @@ package de.uftos.services;
 
 import de.uftos.dto.ServerStatisticsResponseDto;
 import de.uftos.entities.Server;
+import de.uftos.entities.TimetableMetadata;
 import de.uftos.repositories.database.RoomRepository;
 import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.StudentGroupRepository;
@@ -54,22 +55,22 @@ public class ServerService {
   }
 
   /**
-   * Gets the current timeslot length.
+   * Gets the current timetable metadata.
    *
-   * @return the current timeslot length.
+   * @return the current timetable metadata.
    */
-  public int getTimeslotLength() {
-    return this.repository.findAll().getFirst().getTimeslotLength();
+  public TimetableMetadata getTimetableMetadata() {
+    return this.repository.findAll().getFirst().getTimetableMetadata();
   }
 
   /**
-   * Sets the current timeslot length.
+   * Sets the current timetable metadata.
    *
-   * @param length the new timeslot length.
+   * @param timetableMetadata the new timetable metadata.
    */
-  public void setTimeslotLength(int length) {
+  public void setTimetableMetadata(TimetableMetadata timetableMetadata) {
     Server server = this.repository.findAll().getFirst();
-    server.setTimeslotLength(length);
+    server.setTimetableMetadata(timetableMetadata);
 
     this.repository.save(server);
   }

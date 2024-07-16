@@ -6,7 +6,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
+import jakarta.validation.constraints.NotEmpty;
 import java.util.List;
+import java.util.Objects;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -21,36 +23,38 @@ import lombok.NoArgsConstructor;
 public class Tag {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
+  @NotEmpty
   private String id;
 
+  @NotEmpty
   private String name;
 
-  @ManyToMany
   @JsonIgnore
+  @ManyToMany(mappedBy = "tags")
   private List<Student> students;
 
-  @ManyToMany
   @JsonIgnore
+  @ManyToMany(mappedBy = "tags")
   private List<Teacher> teachers;
 
-  @ManyToMany
   @JsonIgnore
+  @ManyToMany(mappedBy = "tags")
   private List<StudentGroup> studentGroups;
 
-  @ManyToMany
   @JsonIgnore
+  @ManyToMany(mappedBy = "tags")
   private List<Room> rooms;
 
-  @ManyToMany
   @JsonIgnore
+  @ManyToMany(mappedBy = "tags")
   private List<Subject> subjects;
 
-  @ManyToMany
   @JsonIgnore
+  @ManyToMany(mappedBy = "tags")
   private List<Grade> grades;
 
-  @ManyToMany
   @JsonIgnore
+  @ManyToMany(mappedBy = "tags")
   private List<Timeslot> timeslots;
 
   /**
@@ -71,5 +75,17 @@ public class Tag {
    */
   public Tag(String id, String name) {
     this.name = name;
+  }
+
+  @Override
+  public boolean equals(Object other) {
+    if (this == other) {
+      return true;
+    }
+    if (other == null || getClass() != other.getClass()) {
+      return false;
+    }
+    Tag tag = (Tag) other;
+    return Objects.equals(id, tag.id);
   }
 }

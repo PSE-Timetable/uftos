@@ -1,6 +1,5 @@
 package de.uftos.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.uftos.dto.ResourceType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -8,7 +7,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import java.util.Objects;
 import lombok.Data;
 
 /**
@@ -27,7 +26,15 @@ public class ConstraintParameter {
   @Enumerated(EnumType.STRING)
   private ResourceType parameterType;
 
-  @ManyToOne
-  @JsonIgnore
-  private ConstraintSignature constraintSignature;
+  @Override
+  public boolean equals(Object other) {
+    if (this == other) {
+      return true;
+    }
+    if (other == null || getClass() != other.getClass()) {
+      return false;
+    }
+    ConstraintParameter that = (ConstraintParameter) other;
+    return Objects.equals(id, that.id);
+  }
 }

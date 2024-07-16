@@ -1,13 +1,14 @@
 package de.uftos.dto;
 
 import de.uftos.entities.Tag;
+import jakarta.validation.constraints.NotEmpty;
 
 /**
  * A data transfer object used in the tag HTTP requests.
  *
  * @param tagName the name of the tag.
  */
-public record TagRequestDto(String tagName) {
+public record TagRequestDto(@NotEmpty String tagName) {
 
   /**
    * Maps the information from the data transfer object to a new tag entity.

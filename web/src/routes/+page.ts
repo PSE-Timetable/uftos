@@ -1,6 +1,6 @@
 import type { PageLoad } from './$types';
 
-export const load = (async () => {
+export const load = (() => {
   return {
     meta: {
       title: 'UFTOS',

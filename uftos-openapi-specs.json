@@ -1,12 +1,12 @@
 {
   "openapi" : "3.0.1",
   "info" : {
-    "title" : "OpenAPI definition",
+    "title" : "UFTOS OpenAPI definition",
     "version" : "v0"
   },
   "servers" : [ {
-    "url" : "http://localhost:8080",
-    "description" : "Generated server url"
+    "url" : "http://localhost:5173/api",
+    "description" : "UFTOS api URL"
   } ],
   "paths" : {
     "/constraints" : {
@@ -916,16 +916,15 @@
         "tags" : [ "server-controller" ]
       }
     },
-    "/server/timeslot-length" : {
+    "/server/timetable-metadata" : {
       "get" : {
-        "operationId" : "getTimeslotLength",
+        "operationId" : "getTimetableMetadata",
         "responses" : {
           "200" : {
             "content" : {
               "*/*" : {
                 "schema" : {
-                  "type" : "integer",
-                  "format" : "int32"
+                  "$ref" : "#/components/schemas/TimetableMetadata"
                 }
               }
             },
@@ -935,14 +934,13 @@
         "tags" : [ "server-controller" ]
       },
       "put" : {
-        "operationId" : "setTimeslotLength",
+        "operationId" : "setTimetableMetadata",
         "parameters" : [ {
           "in" : "query",
-          "name" : "length",
+          "name" : "timetableMetadata",
           "required" : true,
           "schema" : {
-            "type" : "integer",
-            "format" : "int32"
+            "$ref" : "#/components/schemas/TimetableMetadata"
           }
         } ],
         "responses" : {
@@ -1798,10 +1796,7 @@
             "content" : {
               "*/*" : {
                 "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/LessonResponseDto"
-                  }
+                  "$ref" : "#/components/schemas/LessonResponseDto"
                 }
               }
             },
@@ -2045,7 +2040,25 @@
   },
   "components" : {
     "schemas" : {
+      "Break" : {
+        "required" : [ "afterSlot", "length" ],
+        "type" : "object",
+        "properties" : {
+          "afterSlot" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "length" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "long" : {
+            "type" : "boolean"
+          }
+        }
+      },
       "BulkLesson" : {
+        "required" : [ "gradeIds", "id", "roomId", "subjectId", "teacherId", "timeslot" ],
         "type" : "object",
         "properties" : {
           "gradeIds" : {
@@ -2066,12 +2079,6 @@
           },
           "subjectId" : {
             "type" : "string"
-          },
-          "tags" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/Tag"
-            }
           },
           "teacherId" : {
             "type" : "string"
@@ -2096,6 +2103,7 @@
         }
       },
       "ConstraintInstance" : {
+        "required" : [ "arguments", "id", "signature", "type" ],
         "type" : "object",
         "properties" : {
           "arguments" : {
@@ -2117,6 +2125,7 @@
         }
       },
       "ConstraintInstanceRequestDto" : {
+        "required" : [ "arguments" ],
         "type" : "object",
         "properties" : {
           "arguments" : {
@@ -2147,6 +2156,7 @@
         }
       },
       "ConstraintSignature" : {
+        "required" : [ "defaultType", "description", "name", "parameters" ],
         "type" : "object",
         "properties" : {
           "defaultType" : {
@@ -2168,6 +2178,7 @@
         }
       },
       "CurriculumRequestDto" : {
+        "required" : [ "gradeId", "lessonsCounts" ],
         "type" : "object",
         "properties" : {
           "gradeId" : {
@@ -2182,6 +2193,7 @@
         }
       },
       "CurriculumResponseDto" : {
+        "required" : [ "grade", "id", "lessonsCounts", "name" ],
         "type" : "object",
         "properties" : {
           "grade" : {
@@ -2225,6 +2237,7 @@
         }
       },
       "GradeRequestDto" : {
+        "required" : [ "name", "studentGroupsIds", "tagIds" ],
         "type" : "object",
         "properties" : {
           "name" : {
@@ -2245,6 +2258,7 @@
         }
       },
       "GradeResponseDto" : {
+        "required" : [ "id", "name", "studentGroupIds", "studentIds", "tags" ],
         "type" : "object",
         "properties" : {
           "id" : {
@@ -2274,6 +2288,7 @@
         }
       },
       "Lesson" : {
+        "required" : [ "id", "index", "room", "studentGroup", "subject", "teacher", "timeslot", "timetable", "year" ],
         "type" : "object",
         "properties" : {
           "id" : {
@@ -2300,10 +2315,14 @@
           },
           "timetable" : {
             "$ref" : "#/components/schemas/Timetable"
+          },
+          "year" : {
+            "type" : "string"
           }
         }
       },
       "LessonRequestDto" : {
+        "required" : [ "index", "roomId", "studentGroupId", "subjectId", "teacherId", "timeslotId", "timetableId" ],
         "type" : "object",
         "properties" : {
           "index" : {
@@ -2331,6 +2350,7 @@
         }
       },
       "LessonResponseDto" : {
+        "required" : [ "grades", "lessons", "rooms", "subjects", "teachers", "timetable" ],
         "type" : "object",
         "properties" : {
           "grades" : {
@@ -2384,6 +2404,7 @@
         }
       },
       "LessonsCountRequestDto" : {
+        "required" : [ "count", "subjectId" ],
         "type" : "object",
         "properties" : {
           "count" : {
@@ -3094,6 +3115,7 @@
         }
       },
       "Room" : {
+        "required" : [ "buildingName", "capacity", "id", "name", "tags" ],
         "type" : "object",
         "properties" : {
           "buildingName" : {
@@ -3118,6 +3140,7 @@
         }
       },
       "RoomRequestDto" : {
+        "required" : [ "buildingName", "capacity", "name", "tagIds" ],
         "type" : "object",
         "properties" : {
           "buildingName" : {
@@ -3139,6 +3162,7 @@
         }
       },
       "ServerStatisticsResponseDto" : {
+        "required" : [ "classCount", "resourceCount", "roomCount", "studentCount", "teacherCount" ],
         "type" : "object",
         "properties" : {
           "classCount" : {
@@ -3184,6 +3208,7 @@
         }
       },
       "Student" : {
+        "required" : [ "firstName", "id", "lastName", "tags" ],
         "type" : "object",
         "properties" : {
           "firstName" : {
@@ -3204,6 +3229,7 @@
         }
       },
       "StudentGroup" : {
+        "required" : [ "grades", "id", "name", "students", "tags" ],
         "type" : "object",
         "properties" : {
           "grades" : {
@@ -3233,6 +3259,7 @@
         }
       },
       "StudentGroupRequestDto" : {
+        "required" : [ "gradeIds", "name", "studentIds", "tagIds" ],
         "type" : "object",
         "properties" : {
           "gradeIds" : {
@@ -3259,6 +3286,7 @@
         }
       },
       "StudentRequestDto" : {
+        "required" : [ "firstName", "lastName", "tagIds" ],
         "type" : "object",
         "properties" : {
           "firstName" : {
@@ -3276,8 +3304,12 @@
         }
       },
       "Subject" : {
+        "required" : [ "id", "name", "tags" ],
         "type" : "object",
         "properties" : {
+          "color" : {
+            "type" : "string"
+          },
           "id" : {
             "type" : "string"
           },
@@ -3293,8 +3325,12 @@
         }
       },
       "SubjectRequestDto" : {
+        "required" : [ "name", "tagIds" ],
         "type" : "object",
         "properties" : {
+          "color" : {
+            "type" : "string"
+          },
           "name" : {
             "type" : "string"
           },
@@ -3307,6 +3343,7 @@
         }
       },
       "Tag" : {
+        "required" : [ "id", "name" ],
         "type" : "object",
         "properties" : {
           "id" : {
@@ -3318,6 +3355,7 @@
         }
       },
       "TagRequestDto" : {
+        "required" : [ "tagName" ],
         "type" : "object",
         "properties" : {
           "tagName" : {
@@ -3326,6 +3364,7 @@
         }
       },
       "Teacher" : {
+        "required" : [ "acronym", "firstName", "id", "lastName", "subjects", "tags" ],
         "type" : "object",
         "properties" : {
           "acronym" : {
@@ -3355,6 +3394,7 @@
         }
       },
       "TeacherRequestDto" : {
+        "required" : [ "acronym", "firstName", "lastName", "subjectIds", "tagIds" ],
         "type" : "object",
         "properties" : {
           "acronym" : {
@@ -3381,6 +3421,7 @@
         }
       },
       "Timeslot" : {
+        "required" : [ "day", "id", "slot", "tags" ],
         "type" : "object",
         "properties" : {
           "day" : {
@@ -3403,6 +3444,7 @@
         }
       },
       "TimeslotRequestDto" : {
+        "required" : [ "day", "slot", "tagIds" ],
         "type" : "object",
         "properties" : {
           "day" : {
@@ -3422,6 +3464,7 @@
         }
       },
       "Timetable" : {
+        "required" : [ "id", "name" ],
         "type" : "object",
         "properties" : {
           "id" : {
@@ -3432,7 +3475,27 @@
           }
         }
       },
+      "TimetableMetadata" : {
+        "required" : [ "breaks", "startTime", "timeslotLength" ],
+        "type" : "object",
+        "properties" : {
+          "breaks" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Break"
+            }
+          },
+          "startTime" : {
+            "type" : "string"
+          },
+          "timeslotLength" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
       "TimetableRequestDto" : {
+        "required" : [ "name" ],
         "type" : "object",
         "properties" : {
           "name" : {
