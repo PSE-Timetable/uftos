@@ -6,7 +6,6 @@
 
   let columnNames = ['Name'];
   let keys = ['id', 'name'];
-  let pageLoaded: boolean = false;
 
   onMount(() => (pageLoaded = true));
 
@@ -43,7 +42,5 @@
 </script>
 
 <div class="p-10 w-full">
-  {#if pageLoaded}
-    <DataTable {columnNames} {keys} {loadPage} {deleteEntry} />
-  {/if}
+  <DataTable {columnNames} {keys} {loadPage} {deleteEntry} />
 </div>
