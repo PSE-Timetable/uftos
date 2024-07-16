@@ -40,6 +40,7 @@ public class DefinitionParser {
     return buildAst(root, parameters);
   }
 
+  @SuppressWarnings("checkstyle:VariableDeclarationUsageDistance")
   private static AbstractSyntaxTreeDto buildAst(Node root, HashMap<String, ResourceType> parameters)
       throws ParseException {
     String s = root.toString();

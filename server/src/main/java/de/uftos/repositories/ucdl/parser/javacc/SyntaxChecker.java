@@ -5,7 +5,7 @@ package de.uftos.repositories.ucdl.parser.javacc;
 import java.io.Reader;
 import java.io.StringReader;
 
-@SuppressWarnings({"checkstyle:all", "all"})
+@SuppressWarnings("all")
 
 public class SyntaxChecker/*@bgen(jjtree)*/
     implements SyntaxCheckerTreeConstants, SyntaxCheckerConstants {/*@bgen(jjtree)*/

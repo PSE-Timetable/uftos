@@ -2,7 +2,7 @@
 
 package de.uftos.repositories.ucdl.parser.javacc;
 
-@SuppressWarnings({"checkstyle:all", "all"})
+@SuppressWarnings("all")
 
 
 public interface SyntaxCheckerTreeConstants {
