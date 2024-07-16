@@ -1,14 +1,14 @@
 package de.uftos.e2e;
 
+import static de.uftos.utils.JsonGenerator.generatePageJson;
+import static de.uftos.utils.JsonGenerator.generateSubjectJson;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
 import io.restassured.http.ContentType;
 import java.util.Collections;
-import java.util.List;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -61,23 +61,6 @@ class SubjectsTest {
         .delete("/subjects/{id}", subject2Id)
         .then()
         .statusCode(200);
-  }
-
-  private static String generateSubjectJson(String name)
-      throws JSONException {
-    return new JSONObject()
-        .put("name", name)
-        .put("tags", Collections.emptyList())
-        .toString();
-  }
-
-  private static String generatePageJson(int page, int size, List<String> sort)
-      throws JSONException {
-    return new JSONObject()
-        .put("page", page)
-        .put("size", size)
-        .put("sort", sort)
-        .toString();
   }
 
   @Test
