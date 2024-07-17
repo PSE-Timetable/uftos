@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 
 //TODO: !!!REFACTOR!!!
+//magic numbers are tied directly to the used grammar
+//(see ucdl.jjt in server/src/main/resources/ucdl.jjt)
 
 /**
  * This class parses the ucdl-code of the "definition"-field of a constraint definition and returns
@@ -35,9 +37,10 @@ public class DefinitionParser {
   public static AbstractSyntaxTreeDto parseDefinition(String definition,
                                                       HashMap<String, ResourceType> parameters)
       throws ParseException {
-    parameters.put("this", ResourceType.TIMETABLE);
+    HashMap<String, ResourceType> params = (HashMap<String, ResourceType>) parameters.clone();
+    params.put("this", ResourceType.TIMETABLE);
     SimpleNode root = SyntaxChecker.parseString(definition);
-    return buildAst(root, parameters);
+    return buildAst(root, params);
   }
 
   @SuppressWarnings("checkstyle:VariableDeclarationUsageDistance")
@@ -63,18 +66,14 @@ public class DefinitionParser {
         params.add(buildAst(root.jjtGetChild(1), parameters)); //return
 
         //semantic check for legal return values
-        boolean returnValue =
-            getReturnValue(params); //returned value is irrelevant, only error checking
+        // returned value is irrelevant, only error checking
+        boolean returnValue = getReturnValue(params);
         return new OperatorDto(UcdlToken.CODEBLOCK, params);
       }
       case "RETURN" -> {
         SimpleNode boolVal = (SimpleNode) root.jjtGetChild(0);
-        return switch (boolVal.jjtGetFirstToken().image) {
-          case "true" -> new ValueDto<>(UcdlToken.RETURN, true);
-          case "false" -> new ValueDto<>(UcdlToken.RETURN, false);
-          default -> throw new ParseException(
-              "Illegal return value! \"true\" or \"false\" expected!");
-        };
+        return new ValueDto<>(UcdlToken.RETURN,
+            Boolean.parseBoolean(boolVal.jjtGetFirstToken().image));
       }
       case "FOR" -> {
         List<AbstractSyntaxTreeDto> variableDefinition = new ArrayList<>();
@@ -381,7 +380,7 @@ public class DefinitionParser {
                   if (filter.getToken() == UcdlToken.RESOURCE_SET
                       && ((SetDto) filter).type() != ResourceType.NUMBER) {
                     throw new ParseException(
-                        "ets can only be filtered using sets of the same type!");
+                        "Sets can only be filtered using sets of the same type!");
                   }
                 }
                 modifiers.add(new OperatorDto(UcdlToken.FILTER, filters));
@@ -503,8 +502,8 @@ public class DefinitionParser {
     for (AbstractSyntaxTreeDto ast : body) {
       if (ast.getToken() == UcdlToken.FOR || ast.getToken() == UcdlToken.IF) {
         ControlSequenceDto cs = (ControlSequenceDto) ast;
-        and = and && cs.returnValue();
-        or = or || cs.returnValue();
+        and &= cs.returnValue();
+        or |= cs.returnValue();
       }
     }
     if (and != or) {
@@ -529,7 +528,6 @@ public class DefinitionParser {
     if (token == UcdlToken.GREATER || token == UcdlToken.SMALLER
         || token == UcdlToken.GREATER_EQUALS || token == UcdlToken.SMALLER_EQUALS) {
       for (AbstractSyntaxTreeDto ast : params) {
-
         if (ast.getToken() != UcdlToken.NUMBER && ast.getToken() != UcdlToken.SIZE
             && !(ast.getToken() == UcdlToken.ELEMENT
             && ((ElementDto) ast).type() == ResourceType.NUMBER)) {

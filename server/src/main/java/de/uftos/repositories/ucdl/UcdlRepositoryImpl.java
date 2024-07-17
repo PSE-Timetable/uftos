@@ -34,7 +34,7 @@ public class UcdlRepositoryImpl implements UcdlRepository {
   @Override
   public ParsingResponse parseFile() {
     try {
-      this.setCurrentDefinitions();
+      this.currentDefinitions = UcdlParser.getDefinitions(this.getUcdl());
     } catch (ParseException | IOException e) {
       return new ParsingResponse(false, e.getMessage());
     }
@@ -47,10 +47,5 @@ public class UcdlRepositoryImpl implements UcdlRepository {
       return null;
     }
     return this.currentDefinitions;
-  }
-
-  private void setCurrentDefinitions() throws IOException,
-      de.uftos.repositories.ucdl.parser.javacc.ParseException {
-    this.currentDefinitions = UcdlParser.getDefinitions(this.getUcdl());
   }
 }
