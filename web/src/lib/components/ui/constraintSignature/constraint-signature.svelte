@@ -114,6 +114,8 @@
     {#each constraintSignature.parameters as parameter}
       <div class="flex flex-row items-center justify-around w-full gap-8">
         <p>{parameter.parameterName}</p>
+        {console.log(parameter.parameterName)}
+
         <div class="text-primary">
           {#if parameter.parameterType === ParameterType.Teacher}
             <ComboBox
