@@ -39,6 +39,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.web.server.ResponseStatusException;
 
+@SuppressWarnings("checkstyle:MissingJavadocType")
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class ConstraintInstanceServiceTest {
@@ -139,7 +140,7 @@ public class ConstraintInstanceServiceTest {
         Map.of(
             "teacher123", "teacherId2"
         ), RewardPenalize.HARD_PENALIZE);
-    
+
     assertThrows(ResponseStatusException.class,
         () -> constraintInstanceService.create("test constraint", constraintInstanceRequestDto));
   }
