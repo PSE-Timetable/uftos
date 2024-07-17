@@ -1,5 +1,6 @@
 package de.uftos.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.uftos.dto.ResourceType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -7,6 +8,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import java.util.List;
 import java.util.Objects;
 import lombok.Data;
 
@@ -22,6 +25,10 @@ public class ConstraintParameter {
   private String id;
 
   private String parameterName;
+
+  @JsonIgnore
+  @OneToMany(mappedBy = "constraintParameter")
+  private List<ConstraintArgument> constraintArguments;
 
   @Enumerated(EnumType.STRING)
   private ResourceType parameterType;
