@@ -2089,12 +2089,13 @@
         }
       },
       "ConstraintArgument" : {
+        "required" : [ "constraintParameter", "id", "value" ],
         "type" : "object",
         "properties" : {
-          "id" : {
-            "type" : "string"
+          "constraintParameter" : {
+            "$ref" : "#/components/schemas/ConstraintParameter"
           },
-          "name" : {
+          "id" : {
             "type" : "string"
           },
           "value" : {
@@ -2141,6 +2142,7 @@
         }
       },
       "ConstraintParameter" : {
+        "required" : [ "id", "parameterName", "parameterType" ],
         "type" : "object",
         "properties" : {
           "id" : {
