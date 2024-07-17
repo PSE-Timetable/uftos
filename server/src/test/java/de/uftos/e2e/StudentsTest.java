@@ -1,5 +1,8 @@
 package de.uftos.e2e;
 
+import static de.uftos.utils.JsonGenerator.generatePageJson;
+import static de.uftos.utils.JsonGenerator.generateStudentJson;
+import static de.uftos.utils.JsonGenerator.generateTagJson;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
@@ -8,7 +11,6 @@ import io.restassured.http.ContentType;
 import java.util.Collections;
 import java.util.List;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -87,31 +89,6 @@ class StudentsTest {
         .delete("/tags/{id}", tagId)
         .then()
         .statusCode(200);
-  }
-
-  private static String generateStudentJson(String firstName, String lastName, List<String> tags)
-      throws JSONException {
-    return new JSONObject()
-        .put("firstName", firstName)
-        .put("lastName", lastName)
-        .put("tags", tags)
-        .toString();
-  }
-
-  private static String generateTagJson(String name)
-      throws JSONException {
-    return new JSONObject()
-        .put("tagName", name)
-        .toString();
-  }
-
-  private static String generatePageJson(int page, int size, List<String> sort)
-      throws JSONException {
-    return new JSONObject()
-        .put("page", page)
-        .put("size", size)
-        .put("sort", sort)
-        .toString();
   }
 
   @Test

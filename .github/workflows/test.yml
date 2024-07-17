@@ -10,8 +10,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  web-format-tests:
-    name: Web Test
+  web:
+    name: Web Tests
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -48,3 +48,55 @@ jobs:
       # - name: Run unit tests & coverage
       #   run: npm run test:cov
       #   if: ${{ !cancelled() }}
+
+  server:
+    name: Server Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./server
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "21"
+
+      - name: Run checkstyle
+        uses: dbelyaev/action-checkstyle@v1.14.0
+        with:
+          github_token: ${{ secrets.github_token }}
+          reporter: github-check
+          workdir: ./server
+          checkstyle_config: ./server/checkstyle.xml
+          level: error
+
+      - name: Run unit tests
+        run: ./mvnw -Dtest='!de.uftos.e2e.**,!UftosApplicationTests' test
+
+  e2e:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./server
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "21"
+
+      - name: Build container
+        run: docker compose build api
+
+      - name: Run Server e2e tests
+        run: ./mvnw -Dtest='UftosApplicationTests' test

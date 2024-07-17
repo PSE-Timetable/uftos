@@ -3,6 +3,8 @@ package de.uftos.controller;
 import de.uftos.dto.ConstraintInstanceRequestDto;
 import de.uftos.entities.ConstraintInstance;
 import de.uftos.entities.ConstraintSignature;
+import de.uftos.repositories.database.ConstraintInstanceRepository;
+import de.uftos.repositories.database.ConstraintSignatureRepository;
 import de.uftos.services.ConstraintInstanceService;
 import de.uftos.services.ConstraintSignatureService;
 import java.util.Optional;
@@ -26,6 +28,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class ConstraintController {
   private final ConstraintSignatureService constraintSignatureService;
   private final ConstraintInstanceService constraintInstanceService;
+  private final ConstraintInstanceRepository constraintInstanceRepository;
+  private final ConstraintSignatureRepository constraintSignatureRepository;
 
   /**
    * Creates the constraint controller.
@@ -35,9 +39,13 @@ public class ConstraintController {
    */
   @Autowired
   public ConstraintController(ConstraintSignatureService constraintSignatureService,
-                              ConstraintInstanceService constraintInstanceService) {
+                              ConstraintInstanceService constraintInstanceService,
+                              ConstraintInstanceRepository constraintInstanceRepository,
+                              ConstraintSignatureRepository constraintSignatureRepository) {
     this.constraintSignatureService = constraintSignatureService;
     this.constraintInstanceService = constraintInstanceService;
+    this.constraintInstanceRepository = constraintInstanceRepository;
+    this.constraintSignatureRepository = constraintSignatureRepository;
   }
 
   /**
