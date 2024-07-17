@@ -73,14 +73,20 @@ public class SpecificationBuilder<T> {
     return this;
   }
 
-  public SpecificationBuilder<T> andEqual(String attributeValue, String attribute) {
-    specification =
-        specification.and((root, query, cb) -> cb.equal(root.get(attribute), attributeValue));
-    return this;
-  }
-
-  public SpecificationBuilder<T> optionalAndJoinLike(Optional<String> attributeValue,
-                                                     String relationName, String attributeName) {
+  /**
+   * Adds a filter to the specification by joining with another relation if the
+   * provided attribute value array is present and checking whether the given attribute
+   * has a similar value to the wanted one.
+   *
+   * @param attributeValue The optional attribute value to filter by.
+   * @param relationName   The name of the relation to join.
+   * @param attributeName  The name of the attribute in the joined relation to filter on.
+   * @return The current instance of {@code SpecificationBuilder} with the join filter
+   *     added if the attribute value is present.
+   */
+  public SpecificationBuilder<T> optionalAndJoinLikeIgnoreCase(Optional<String> attributeValue,
+                                                               String relationName,
+                                                               String attributeName) {
     if (attributeValue.isEmpty()) {
       return this;
     }
@@ -91,6 +97,17 @@ public class SpecificationBuilder<T> {
     return this;
   }
 
+  /**
+   * Adds a filter to the specification by joining with another relation if the
+   * provided attribute value array is present and checking whether the given attribute
+   * has the exact same value as the wanted one.
+   *
+   * @param attributeValue The optional attribute value to filter by.
+   * @param relationName   The name of the relation to join.
+   * @param attributeName  The name of the attribute in the joined relation to filter on.
+   * @return The current instance of {@code SpecificationBuilder} with the join filter
+   *     added if the attribute value is present.
+   */
   public SpecificationBuilder<T> andJoinEquals(String attributeValue,
                                                String relationName, String attributeName) {
     if (attributeValue.isEmpty()) {

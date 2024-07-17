@@ -129,7 +129,7 @@ public class ConstraintInstanceService {
                                       Optional<String> argument) {
     Specification<ConstraintInstance> specification = new SpecificationBuilder<ConstraintInstance>()
         .andJoinEquals(signatureId, "signature", "name")
-        .optionalAndJoinLike(argument, "arguments", "value")
+        .optionalAndJoinLikeIgnoreCase(argument, "arguments", "value")
         .build();
 
     return this.repository.findAll(specification, pageable);
