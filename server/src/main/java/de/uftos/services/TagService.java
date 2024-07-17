@@ -1,9 +1,8 @@
 package de.uftos.services;
 
-import de.uftos.builders.SpecificationBuilder;
+import de.uftos.utils.SpecificationBuilder;
 import de.uftos.dto.TagRequestDto;
 import de.uftos.entities.Tag;
-import de.uftos.entities.Teacher;
 import de.uftos.repositories.database.TagRepository;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
