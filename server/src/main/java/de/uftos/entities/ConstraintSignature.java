@@ -30,11 +30,11 @@ public class ConstraintSignature {
   private RewardPenalize defaultType;
 
   @NotNull
-  @OneToMany
+  @OneToMany(cascade = CascadeType.ALL)
   private List<ConstraintParameter> parameters;
 
   @JsonIgnore
-  @OneToMany(mappedBy = "signature", cascade = CascadeType.REMOVE)
+  @OneToMany(mappedBy = "signature", cascade = CascadeType.ALL)
   private List<ConstraintInstance> instances;
 
   @Override
