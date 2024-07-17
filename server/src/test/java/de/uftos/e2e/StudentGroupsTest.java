@@ -59,6 +59,9 @@ public class StudentGroupsTest {
         .extract()
         .body().jsonPath().getString("id");
 
+    System.out.println(
+        generateStudentJson(STUDENT_FIRST_NAME, STUDENT_LAST_NAME, Collections.emptyList()));
+
     gradeId = given().contentType(ContentType.JSON)
         .body(generateGradeJson(GRADE_NAME, Collections.emptyList(), Collections.emptyList()))
         .when()
@@ -71,6 +74,8 @@ public class StudentGroupsTest {
         .extract()
         .body().jsonPath().getString("id");
 
+    System.out.println(generateStudentGroupJson(FIRST_STUDENT_GROUP_NAME, List.of(studentId),
+        Collections.emptyList(), Collections.emptyList()));
 
     firstStudentGroup = given().contentType(ContentType.JSON)
         .body(generateStudentGroupJson(FIRST_STUDENT_GROUP_NAME, Collections.emptyList(),

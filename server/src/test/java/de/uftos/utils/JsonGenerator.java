@@ -80,8 +80,8 @@ public class JsonGenerator {
 
     return new JSONObject()
         .put("name", name)
-        .put("students", studentIds)
-        .put("grades", gradeIds)
+        .put("studentIds", studentIds)
+        .put("gradeIds", gradeIds)
         .put("tagIds", tagIds)
         .toString();
   }
