@@ -16,31 +16,31 @@
   let open = false;
   let value = '';
   let searchedValue: string;
-  let selectedValue = '';
+  let selectedValue = 'Resource auswählen';
   let lastSearchedValued: string;
 
-  export let onSearch = (string: string) => {};
+  export let onSearch: (string: string) => void;
 
-  $: {
-    selectedValue = 'Select a framework...';
-    if (searchedValue !== lastSearchedValued) {
-      onSearch(searchedValue);
-      lastSearchedValued = searchedValue;
-    }
+  $: searchedValue,
+    data,
+    (() => {
+      if (searchedValue !== lastSearchedValued) {
+        onSearch(searchedValue);
+        lastSearchedValued = searchedValue;
+      }
 
-    if (value) {
-      selectedValue = data.find((f) => f.value === value)?.label ?? 'Select a framework...';
-    }
-  }
+      if (value) {
+        selectedValue = data.find((f) => f.value === value)?.label ?? 'Resource auswählen';
+      }
+    })();
 
   // We want to refocus the trigger button when the user selects
   // an item from the list so users can continue navigating the
   // rest of the form with the keyboard.
-  function closeAndFocusTrigger(triggerId: string) {
+  async function closeAndFocusTrigger(triggerId: string) {
     open = false;
-    tick().then(() => {
-      document.getElementById(triggerId)?.focus();
-    });
+    await tick();
+    document.getElementById(triggerId)?.focus();
   }
 </script>
 
@@ -58,23 +58,21 @@
     </Button>
   </Popover.Trigger>
   <Popover.Content class="w-[200px] p-0">
-    <Command.Root>
-      <Command.Input bind:value={searchedValue} placeholder="Search framework..." />
-      <Command.Empty>No framework found.</Command.Empty>
-      <Command.Group>
-        {#each data as framework}
-          <Command.Item
-            value={framework.value}
-            onSelect={(currentValue) => {
-              value = currentValue;
-              closeAndFocusTrigger(ids.trigger);
-            }}
-          >
-            <Check class={cn('mr-2 h-4 w-4', value !== framework.value && 'text-transparent')} />
-            {framework.label}
-          </Command.Item>
-        {/each}
-      </Command.Group>
+    <Command.Root shouldFilter={false}>
+      <Command.Input bind:value={searchedValue} placeholder="Suche Resource" />
+      <Command.Empty>Keine Resource gefunden</Command.Empty>
+      {#each data as resource (resource.value)}
+        <Command.Item
+          value={resource.value}
+          onSelect={async (currentValue) => {
+            value = currentValue;
+            await closeAndFocusTrigger(ids.trigger);
+          }}
+        >
+          <Check class={cn('mr-2 h-4 w-4', value !== resource.value && 'text-transparent')} />
+          {resource.label}
+        </Command.Item>
+      {/each}
     </Command.Root>
   </Popover.Content>
 </Popover.Root>

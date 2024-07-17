@@ -36,47 +36,47 @@
       switch (parameterType) {
         case ParameterType.Grade: {
           const { content } = value ? await getGrades(page, { name: value }) : { content: grades };
-          data[name] = content?.map((grade) => ({ value: grade.name ?? '', label: grade.name ?? '' })) || [];
+          data[name] = content?.map((grade) => ({ value: grade.id, label: grade.name ?? '' })) || [];
           break;
         }
         case ParameterType.Subject: {
           const { content } = value ? await getSubjects(page, { name: value }) : { content: subjects };
-          data[name] = content?.map((subject) => ({ value: subject.name, label: subject.name })) || [];
+          data[name] = content?.map((subject) => ({ value: subject.id, label: subject.name })) || [];
           break;
         }
         case ParameterType.Room: {
           const { content } = await getRooms(page, { name: value });
           data[name] =
             content?.map((room) => ({
-              value: `${room.buildingName}: ${room.name}`,
+              value: room.id,
               label: `${room.buildingName}: ${room.name}`,
             })) || [];
           break;
         }
         case ParameterType.StudentGroup: {
           const { content } = await getStudentGroups(page, { name: value });
-          data[name] = content?.map((studentGroup) => ({ value: studentGroup.name, label: studentGroup.name })) || [];
+          data[name] = content?.map((studentGroup) => ({ value: studentGroup.id, label: studentGroup.name })) || [];
           break;
         }
         case ParameterType.Student: {
           const { content } = await getStudents(page, { firstName: value });
           data[name] =
             content?.map((student) => ({
-              value: `${student.firstName} ${student.lastName}`,
+              value: student.id,
               label: `${student.firstName} ${student.lastName}`,
             })) || [];
           break;
         }
         case ParameterType.Tag: {
           const { content } = await getTags(page, { name: value });
-          data[name] = content?.map((tag) => ({ value: tag.name, label: tag.name })) || [];
+          data[name] = content?.map((tag) => ({ value: tag.id, label: tag.name })) || [];
           break;
         }
         case ParameterType.Teacher: {
           const { content } = value ? await getTeachers(page, { firstName: value }) : { content: teachers };
           data[name] =
             content?.map((teacher) => ({
-              value: `${teacher.firstName} ${teacher.lastName}`,
+              value: teacher.id,
               label: `${teacher.firstName} ${teacher.lastName}`,
             })) || [];
           break;
@@ -85,7 +85,7 @@
           const { content } = await getTimeslots(page);
           data[name] =
             content?.map((timeslot) => ({
-              value: `${timeslot.day}: ${timeslot.slot}`,
+              value: timeslot.id,
               label: `${timeslot.day}: ${timeslot.slot}`,
             })) || [];
           break;
@@ -95,26 +95,22 @@
       console.error('Error fetching data:', error);
     }
   }
-
   const initData = async () => {
     await Promise.all(
       constraintSignature.parameters.map(({ parameterName, parameterType }) =>
         updateItems('', parameterName, parameterType),
       ),
     );
-
-    data = data;
   };
 </script>
 
 <div class="flex flex-col gap-8 bg-primary w-fit p-6 rounded-md text-white">
   <p class="font-bold text-md">{constraintSignature.description}</p>
 
-  {#await initData()}
-    {#each constraintSignature.parameters as parameter}
+  {#await initData() then}
+    {#each constraintSignature.parameters as parameter (parameter.id)}
       <div class="flex flex-row items-center justify-around w-full gap-8">
         <p>{parameter.parameterName}</p>
-        {console.log(parameter.parameterName)}
 
         <div class="text-primary">
           {#if parameter.parameterType === ParameterType.Teacher}
