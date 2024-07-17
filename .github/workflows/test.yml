@@ -10,8 +10,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  web-format-tests:
-    name: Web Test
+  web:
+    name: Web Tests
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -41,10 +41,29 @@ jobs:
         run: npm run check:svelte
         if: ${{ !cancelled() }}
 
-      # - name: Run tsc
-      #   run: npm run check:typescript
-      #   if: ${{ !cancelled() }}
+      - name: Run tsc
+        run: npm run check:typescript
+        if: ${{ !cancelled() }}
 
       # - name: Run unit tests & coverage
       #   run: npm run test:cov
       #   if: ${{ !cancelled() }}
+
+  server:
+    name: Server Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./server
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Run checkstyle
+        uses: dbelyaev/action-checkstyle@v1.14.0
+        with:
+          github_token: ${{ secrets.github_token }}
+          reporter: github-check
+          workdir: ./server
+          checkstyle_config: ./server/checkstyle.xml
+          level: error

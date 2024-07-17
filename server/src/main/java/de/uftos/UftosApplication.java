@@ -1,5 +1,7 @@
 package de.uftos;
 
+import de.uftos.entities.Break;
+import de.uftos.entities.TimetableMetadata;
 import de.uftos.repositories.database.ServerRepository;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
@@ -29,6 +31,6 @@ public class UftosApplication {
   @Bean
   ApplicationRunner init(ServerRepository serverRepository) {
     return (ApplicationArguments args) -> serverRepository.save(
-        new de.uftos.entities.Server(45, "2024"));
+        new de.uftos.entities.Server(new TimetableMetadata(45, "7:45", new Break[] {}), "2024"));
   }
 }
