@@ -105,18 +105,18 @@ public class TimeslotTest {
         .log().ifValidationFails();
   }
 
-//  @Test
-//  void getTimeslotsWithTag() throws JSONException {
-//    given().contentType(ContentType.JSON)
-//        .body(generatePageJson(0, 10, Collections.emptyList()))
-//        .param("tags", List.of(tagId))
-//        .when()
-//        .get("/timeslots")
-//        .then()
-//        .statusCode(200)
-//        .body("totalElements", equalTo(1))
-//        .body("content[0].id", equalTo(secondTimeslot))
-//        .log().ifValidationFails();
-//  }
+  @Test
+  void getTimeslotsWithTag() throws JSONException {
+    given().contentType(ContentType.JSON)
+        .body(generatePageJson(0, 10, Collections.emptyList()))
+        .param("tags", List.of(tagId))
+        .when()
+        .get("/timeslots")
+        .then()
+        .statusCode(200)
+        .body("totalElements", equalTo(1))
+        .body("content[0].id", equalTo(secondTimeslot))
+        .log().ifValidationFails();
+  }
 
 }
