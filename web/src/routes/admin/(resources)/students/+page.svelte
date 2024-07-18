@@ -2,9 +2,13 @@
   import DataTable, { type DataItem } from '$lib/elements/ui/dataTable/data-table.svelte';
   import { deleteStudent, getStudents, type Pageable, type PageStudent } from '$lib/sdk/fetch-client';
   import { error } from '@sveltejs/kit';
+  import { onMount } from 'svelte';
 
   let columnNames = ['Vorname', 'Nachname', 'Tags'];
   let keys = ['id', 'firstName', 'lastName', 'tags'];
+  let pageLoaded = false;
+
+  onMount(() => (pageLoaded = true));
 
   async function loadPage(index: number, sortString: string, filter: string) {
     let pageable: Pageable = { page: index, size: 10, sort: [sortString] };
@@ -43,5 +47,7 @@
 
 <div class="p-10 w-full">
   <!--Avoids warning that fetch calls should be in onMount or load function, there must be a better solution-->
-  <DataTable {columnNames} {keys} {loadPage} {deleteEntry} />
+  {#if pageLoaded}
+    <DataTable {columnNames} {keys} {loadPage} {deleteEntry} />
+  {/if}
 </div>
