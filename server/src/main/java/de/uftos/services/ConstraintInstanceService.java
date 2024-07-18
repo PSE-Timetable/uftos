@@ -128,7 +128,7 @@ public class ConstraintInstanceService {
    *
    * @param signatureId the ID of the signature for the instances.
    * @param pageable    contains the parameters for the page.
-   * @return the page of the entries fitting the parameters.
+   * @return the entries fitting the parameters.
    */
   public ConstraintInstanceResponseDto get(String signatureId, Pageable pageable,
                                            Optional<String> argument) {
