@@ -43,7 +43,7 @@ public class SimpleNode implements Node {
     if (children == null) {
       children = new Node[i + 1];
     } else if (i >= children.length) {
-      Node[] c = new Node[i + 1];
+      Node c[] = new Node[i + 1];
       System.arraycopy(children, 0, c, 0, children.length);
       children = c;
     }
@@ -93,7 +93,7 @@ public class SimpleNode implements Node {
   }
 
   public String toString(String prefix) {
-    return prefix + this;
+    return prefix + toString();
   }
 
   /* Override this method if you want to customize how the node dumps

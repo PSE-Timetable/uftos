@@ -180,7 +180,7 @@ public interface SyntaxCheckerConstants {
       "<NOT>",
       "<IMPLIES>",
       "\"in\"",
-      "<EQUALS>",
+      "\"==\"",
       "\"!=\"",
       "\"<=\"",
       "\">=\"",

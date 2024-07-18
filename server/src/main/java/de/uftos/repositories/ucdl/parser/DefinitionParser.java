@@ -137,7 +137,7 @@ public class DefinitionParser {
         }
         return new ControlSequenceDto(UcdlToken.IF, bool, body, returnValue);
       }
-      case "FORALL" -> {
+      case "FOR_ALL" -> {
         return buildQuantifier(UcdlToken.FOR_ALL, root, parameters);
       }
       case "EXISTS" -> {
@@ -158,16 +158,16 @@ public class DefinitionParser {
         }
         return buildAst(root.jjtGetChild(0), parameters);
       }
-      case "ISEMPTY" -> {
+      case "IS_EMPTY" -> {
         return buildUnaryOperator(UcdlToken.IS_EMPTY, root, parameters);
       }
-      case "ELEMENTINSETOREQUATION" -> {
+      case "ELEMENT_IN_SET_OR_EQUATION" -> {
         List<AbstractSyntaxTreeDto> params = new ArrayList<>();
         params.add(buildAst(root.jjtGetChild(0), parameters));
 
         Node secondPart = root.jjtGetChild(1);
 
-        if (secondPart.toString().equals("ELEMENTINSET")) {
+        if (secondPart.toString().equals("ELEMENT_IN_SET")) {
           params.add(buildAst(secondPart.jjtGetChild(0), parameters));
           return new OperatorDto(UcdlToken.IN, params);
         }
@@ -203,7 +203,7 @@ public class DefinitionParser {
         }
         return new ElementDto(UcdlToken.ELEMENT, elementName, attributes, elementType);
       }
-      case "ELEMENTNAME" -> {
+      case "ELEMENT_NAME" -> {
         String image = ((SimpleNode) root).jjtGetFirstToken().image;
         if (!parameters.containsKey(image)) {
           throw new ParseException("Parameter/Variable \"" + image + "\" does not exist!");
@@ -269,7 +269,7 @@ public class DefinitionParser {
 
         return new SetDto(UcdlToken.RESOURCE_SET, setType, setName, modifiers);
       }
-      case "NUMBERSET" -> {
+      case "NUMBER_SET" -> {
         List<Integer> values = new ArrayList<>();
 
         values.add(Integer.parseInt(((SimpleNode) root).jjtGetFirstToken().next.image));
@@ -281,18 +281,18 @@ public class DefinitionParser {
         }
         return new ValueDto<>(UcdlToken.NUMBER_SET, values.toArray(new Integer[0]));
       }
-      case "VALUEREFERENCE" -> {
+      case "VALUE_REFERENCE" -> {
         return new ValueDto<>(UcdlToken.VALUE_REFERENCE,
             ((SimpleNode) root).jjtGetFirstToken().image);
       }
       case "FILTER" -> {
         switch (root.jjtGetChild(0).toString()) {
           case "BOOLVALUE":
-          case "FORALL":
+          case "FOR_ALL":
           case "EXISTS":
-          case "ISEMPTY":
+          case "IS_EMPTY":
             return buildAst(root.jjtGetChild(0), parameters);
-          case "NUMBERSET":
+          case "NUMBER_SET":
             AbstractSyntaxTreeDto numberSet = buildAst(root.jjtGetChild(0), parameters);
 
             ResourceType thisType = parameters.get("this");
@@ -327,7 +327,7 @@ public class DefinitionParser {
             return new SetDto(UcdlToken.RESOURCE_SET, ResourceType.NUMBER, numberSet, modifiers);
           case "ELEMENT":
             switch (root.jjtGetChild(1).toString()) {
-              case "SETMODIFICATION":
+              case "SET_MODIFICATION":
                 AbstractSyntaxTreeDto setName = buildAst(root.jjtGetChild(0), parameters);
                 ResourceType setType;
                 if (setName.getToken() == UcdlToken.NUMBER) {
@@ -378,7 +378,7 @@ public class DefinitionParser {
 
                 return new SetDto(UcdlToken.RESOURCE_SET, setType, setName, modifiers);
 
-              case "ELEMENTINSET":
+              case "ELEMENT_IN_SET":
                 ElementDto element = (ElementDto) buildAst(root.jjtGetChild(0), parameters);
                 SetDto set = (SetDto) buildAst(root.jjtGetChild(1).jjtGetChild(0), parameters);
 
@@ -423,10 +423,10 @@ public class DefinitionParser {
 
         }
       }
-      //includes cases: "CONTROLSEQUENCELIST", "CONTROLSEQUENCERETURN",
-      // "OPTIONALIMPLIES", "OPTIONALOR", "OPTIONALAND",
-      // "ELEMENTINSET", "EQUATION", "ELEMENTEQUATION", "ELEMENTATTRIBUTELIST",
-      // "SETNAME", "SETMODIFICATION", "NUMBERLIST", "ATTRIBUTE", "FILTERLIST"
+      //includes cases: "CONTROLSEQUENCE_LIST", "CONTROLSEQUENCE_RETURN",
+      // "OPTIONAL_IMPLIES", "OPTIONAL_OR", "OPTIONAL_AND",
+      // "ELEMENT_IN_SET", "EQUATION", "ELEMENT_EQUATION", "ELEMENT_ATTRIBUTE_LIST",
+      // "SETNAME", "SET_MODIFICATION", "NUMBER_LIST", "ATTRIBUTE", "FILTER_LIST"
       default -> throw new IllegalStateException();
     }
   }
@@ -508,7 +508,7 @@ public class DefinitionParser {
       case "<" -> UcdlToken.SMALLER;
       case ">=" -> UcdlToken.GREATER_EQUALS;
       case "<=" -> UcdlToken.SMALLER_EQUALS;
-      case "=", "==" -> UcdlToken.EQUALS;
+      case "==" -> UcdlToken.EQUALS;
       case "!=" -> UcdlToken.NOT_EQUALS;
       default -> throw new IllegalStateException();
     };

@@ -5,8 +5,8 @@ package de.uftos.repositories.ucdl.parser.javacc;
 @SuppressWarnings("all")
 
 public class JJTSyntaxCheckerState {
-  private java.util.List nodes;
-  private java.util.List marks;
+  private final java.util.List nodes;
+  private final java.util.List marks;
 
   private int sp;        // number of nodes on stack
   private int mk;        // current mark
@@ -77,7 +77,7 @@ public class JJTSyntaxCheckerState {
 
 
   public void openNodeScope(Node n) {
-    marks.add(new Integer(mk));
+    marks.add(Integer.valueOf(mk));
     mk = sp;
     n.jjtOpen();
   }

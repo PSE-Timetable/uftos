@@ -10,40 +10,40 @@ public interface SyntaxCheckerTreeConstants {
   int JJTDEFINITION = 1;
   int JJTBOOLVALUE = 2;
   int JJTCODEBLOCK = 3;
-  int JJTCONTROLSEQUENCELIST = 4;
+  int JJTCONTROLSEQUENCE_LIST = 4;
   int JJTCONTROLSEQUENCE = 5;
   int JJTRETURN = 6;
   int JJTFOR = 7;
   int JJTIF = 8;
-  int JJTCONTROLSEQUENCERETURN = 9;
-  int JJTFORALL = 10;
+  int JJTCONTROLSEQUENCE_RETURN = 9;
+  int JJTFOR_ALL = 10;
   int JJTEXISTS = 11;
   int JJTIMPLIES = 12;
-  int JJTOPTIONALIMPLIES = 13;
+  int JJTOPTIONAL_IMPLIES = 13;
   int JJTOR = 14;
-  int JJTOPTIONALOR = 15;
+  int JJTOPTIONAL_OR = 15;
   int JJTAND = 16;
-  int JJTOPTIONALAND = 17;
+  int JJTOPTIONAL_AND = 17;
   int JJTNOT = 18;
-  int JJTISEMPTY = 19;
+  int JJTIS_EMPTY = 19;
   int JJTBOOL = 20;
-  int JJTELEMENTINSETOREQUATION = 21;
-  int JJTELEMENTINSET = 22;
+  int JJTELEMENT_IN_SET_OR_EQUATION = 21;
+  int JJTELEMENT_IN_SET = 22;
   int JJTEQUATION = 23;
-  int JJTELEMENTEQUATION = 24;
+  int JJTELEMENT_EQUATION = 24;
   int JJTELEMENT = 25;
-  int JJTELEMENTNAME = 26;
-  int JJTELEMENTATTRIBUTELIST = 27;
+  int JJTELEMENT_NAME = 26;
+  int JJTELEMENT_ATTRIBUTE_LIST = 27;
   int JJTNUMBERELEMENT = 28;
   int JJTSET = 29;
-  int JJTSETNAME = 30;
-  int JJTSETMODIFICATION = 31;
-  int JJTNUMBERSET = 32;
-  int JJTNUMBERLIST = 33;
+  int JJTSET_NAME = 30;
+  int JJTSET_MODIFICATION = 31;
+  int JJTNUMBER_SET = 32;
+  int JJTNUMBER_LIST = 33;
   int JJTATTRIBUTE = 34;
-  int JJTVALUEREFERENCE = 35;
+  int JJTVALUE_REFERENCE = 35;
   int JJTFILTER = 36;
-  int JJTFILTERLIST = 37;
+  int JJTFILTER_LIST = 37;
 
 
   String[] jjtNodeName = {
@@ -51,40 +51,40 @@ public interface SyntaxCheckerTreeConstants {
       "DEFINITION",
       "BOOLVALUE",
       "CODEBLOCK",
-      "CONTROLSEQUENCELIST",
+      "CONTROLSEQUENCE_LIST",
       "CONTROLSEQUENCE",
       "RETURN",
       "FOR",
       "IF",
-      "CONTROLSEQUENCERETURN",
-      "FORALL",
+      "CONTROLSEQUENCE_RETURN",
+      "FOR_ALL",
       "EXISTS",
       "IMPLIES",
-      "OPTIONALIMPLIES",
+      "OPTIONAL_IMPLIES",
       "OR",
-      "OPTIONALOR",
+      "OPTIONAL_OR",
       "AND",
-      "OPTIONALAND",
+      "OPTIONAL_AND",
       "NOT",
-      "ISEMPTY",
+      "IS_EMPTY",
       "BOOL",
-      "ELEMENTINSETOREQUATION",
-      "ELEMENTINSET",
+      "ELEMENT_IN_SET_OR_EQUATION",
+      "ELEMENT_IN_SET",
       "EQUATION",
-      "ELEMENTEQUATION",
+      "ELEMENT_EQUATION",
       "ELEMENT",
-      "ELEMENTNAME",
-      "ELEMENTATTRIBUTELIST",
+      "ELEMENT_NAME",
+      "ELEMENT_ATTRIBUTE_LIST",
       "NUMBERELEMENT",
       "SET",
-      "SETNAME",
-      "SETMODIFICATION",
-      "NUMBERSET",
-      "NUMBERLIST",
+      "SET_NAME",
+      "SET_MODIFICATION",
+      "NUMBER_SET",
+      "NUMBER_LIST",
       "ATTRIBUTE",
-      "VALUEREFERENCE",
+      "VALUE_REFERENCE",
       "FILTER",
-      "FILTERLIST",
+      "FILTER_LIST",
   };
 }
-/* JavaCC - OriginalChecksum=49ccde3e4bfe2645ea8680d192f90e09 (do not edit this line) */
+/* JavaCC - OriginalChecksum=626c849f4e12f749ebb66eaf7feec7b5 (do not edit this line) */

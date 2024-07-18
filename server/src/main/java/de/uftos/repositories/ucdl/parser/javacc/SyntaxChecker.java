@@ -257,7 +257,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     jjtree.openNodeScope(jjtn000);
     jjtn000.jjtSetFirstToken(getToken(1));
     try {
-      CONTROLSEQUENCELIST();
+      CONTROLSEQUENCE_LIST();
       RETURN();
     } catch (Throwable jjte000) {
       if (jjtc000) {
@@ -293,16 +293,16 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     }
   }
 
-  final public void CONTROLSEQUENCELIST() throws ParseException {
-    /*@bgen(jjtree) CONTROLSEQUENCELIST */
-    SimpleNode jjtn000 = new SimpleNode(JJTCONTROLSEQUENCELIST);
+  final public void CONTROLSEQUENCE_LIST() throws ParseException {
+    /*@bgen(jjtree) CONTROLSEQUENCE_LIST */
+    SimpleNode jjtn000 = new SimpleNode(JJTCONTROLSEQUENCE_LIST);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
     jjtn000.jjtSetFirstToken(getToken(1));
     try {
       if (jj_2_5(2)) {
         CONTROLSEQUENCE();
-        CONTROLSEQUENCELIST();
+        CONTROLSEQUENCE_LIST();
       } else {
         jjtree.closeNodeScope(jjtn000, true);
         jjtc000 = false;
@@ -444,13 +444,13 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     try {
       jj_consume_token(FOR);
       jj_consume_token(LPAREN);
-      VALUEREFERENCE();
+      VALUE_REFERENCE();
       jj_consume_token(OF);
       SET();
       jj_consume_token(RPAREN);
       jj_consume_token(LBRACE);
       CONTROLSEQUENCE();
-      CONTROLSEQUENCELIST();
+      CONTROLSEQUENCE_LIST();
       jj_consume_token(RBRACE);
     } catch (Throwable jjte000) {
       if (jjtc000) {
@@ -498,7 +498,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
       IMPLIES();
       jj_consume_token(RPAREN);
       jj_consume_token(LBRACE);
-      CONTROLSEQUENCERETURN();
+      CONTROLSEQUENCE_RETURN();
       jj_consume_token(RBRACE);
     } catch (Throwable jjte000) {
       if (jjtc000) {
@@ -534,16 +534,16 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     }
   }
 
-  final public void CONTROLSEQUENCERETURN() throws ParseException {
-    /*@bgen(jjtree) CONTROLSEQUENCERETURN */
-    SimpleNode jjtn000 = new SimpleNode(JJTCONTROLSEQUENCERETURN);
+  final public void CONTROLSEQUENCE_RETURN() throws ParseException {
+    /*@bgen(jjtree) CONTROLSEQUENCE_RETURN */
+    SimpleNode jjtn000 = new SimpleNode(JJTCONTROLSEQUENCE_RETURN);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
     jjtn000.jjtSetFirstToken(getToken(1));
     try {
       if (jj_2_8(2)) {
         CONTROLSEQUENCE();
-        CONTROLSEQUENCELIST();
+        CONTROLSEQUENCE_LIST();
       } else if (jj_2_9(2)) {
         RETURN();
       } else {
@@ -584,16 +584,16 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     }
   }
 
-  final public void FORALL() throws ParseException {
-    /*@bgen(jjtree) FORALL */
-    SimpleNode jjtn000 = new SimpleNode(JJTFORALL);
+  final public void FOR_ALL() throws ParseException {
+    /*@bgen(jjtree) FOR_ALL */
+    SimpleNode jjtn000 = new SimpleNode(JJTFOR_ALL);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
     jjtn000.jjtSetFirstToken(getToken(1));
     try {
       jj_consume_token(FORALL);
       jj_consume_token(LPAREN);
-      VALUEREFERENCE();
+      VALUE_REFERENCE();
       jj_consume_token(OF);
       SET();
       jj_consume_token(RPAREN);
@@ -643,7 +643,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     try {
       jj_consume_token(EXISTS);
       jj_consume_token(LPAREN);
-      VALUEREFERENCE();
+      VALUE_REFERENCE();
       jj_consume_token(OF);
       SET();
       jj_consume_token(RPAREN);
@@ -692,7 +692,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     jjtn000.jjtSetFirstToken(getToken(1));
     try {
       OR();
-      OPTIONALIMPLIES();
+      OPTIONAL_IMPLIES();
     } catch (Throwable jjte000) {
       if (jjtc000) {
         jjtree.clearNodeScope(jjtn000);
@@ -727,9 +727,9 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     }
   }
 
-  final public void OPTIONALIMPLIES() throws ParseException {
-    /*@bgen(jjtree) OPTIONALIMPLIES */
-    SimpleNode jjtn000 = new SimpleNode(JJTOPTIONALIMPLIES);
+  final public void OPTIONAL_IMPLIES() throws ParseException {
+    /*@bgen(jjtree) OPTIONAL_IMPLIES */
+    SimpleNode jjtn000 = new SimpleNode(JJTOPTIONAL_IMPLIES);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
     jjtn000.jjtSetFirstToken(getToken(1));
@@ -785,7 +785,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     jjtn000.jjtSetFirstToken(getToken(1));
     try {
       AND();
-      OPTIONALOR();
+      OPTIONAL_OR();
     } catch (Throwable jjte000) {
       if (jjtc000) {
         jjtree.clearNodeScope(jjtn000);
@@ -820,9 +820,9 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     }
   }
 
-  final public void OPTIONALOR() throws ParseException {
-    /*@bgen(jjtree) OPTIONALOR */
-    SimpleNode jjtn000 = new SimpleNode(JJTOPTIONALOR);
+  final public void OPTIONAL_OR() throws ParseException {
+    /*@bgen(jjtree) OPTIONAL_OR */
+    SimpleNode jjtn000 = new SimpleNode(JJTOPTIONAL_OR);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
     jjtn000.jjtSetFirstToken(getToken(1));
@@ -878,7 +878,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     jjtn000.jjtSetFirstToken(getToken(1));
     try {
       NOT();
-      OPTIONALAND();
+      OPTIONAL_AND();
     } catch (Throwable jjte000) {
       if (jjtc000) {
         jjtree.clearNodeScope(jjtn000);
@@ -913,9 +913,9 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     }
   }
 
-  final public void OPTIONALAND() throws ParseException {
-    /*@bgen(jjtree) OPTIONALAND */
-    SimpleNode jjtn000 = new SimpleNode(JJTOPTIONALAND);
+  final public void OPTIONAL_AND() throws ParseException {
+    /*@bgen(jjtree) OPTIONAL_AND */
+    SimpleNode jjtn000 = new SimpleNode(JJTOPTIONAL_AND);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
     jjtn000.jjtSetFirstToken(getToken(1));
@@ -1026,9 +1026,9 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     }
   }
 
-  final public void ISEMPTY() throws ParseException {
-    /*@bgen(jjtree) ISEMPTY */
-    SimpleNode jjtn000 = new SimpleNode(JJTISEMPTY);
+  final public void IS_EMPTY() throws ParseException {
+    /*@bgen(jjtree) IS_EMPTY */
+    SimpleNode jjtn000 = new SimpleNode(JJTIS_EMPTY);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
     jjtn000.jjtSetFirstToken(getToken(1));
@@ -1081,13 +1081,13 @@ public class SyntaxChecker/*@bgen(jjtree)*/
       if (jj_2_18(2)) {
         BOOLVALUE();
       } else if (jj_2_19(2)) {
-        FORALL();
+        FOR_ALL();
       } else if (jj_2_20(2)) {
         EXISTS();
       } else if (jj_2_21(2)) {
-        ISEMPTY();
+        IS_EMPTY();
       } else if (jj_2_22(2)) {
-        ELEMENTINSETOREQUATION();
+        ELEMENT_IN_SET_OR_EQUATION();
       } else {
         jj_consume_token(-1);
         throw new ParseException();
@@ -1126,16 +1126,16 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     }
   }
 
-  final public void ELEMENTINSETOREQUATION() throws ParseException {
-    /*@bgen(jjtree) ELEMENTINSETOREQUATION */
-    SimpleNode jjtn000 = new SimpleNode(JJTELEMENTINSETOREQUATION);
+  final public void ELEMENT_IN_SET_OR_EQUATION() throws ParseException {
+    /*@bgen(jjtree) ELEMENT_IN_SET_OR_EQUATION */
+    SimpleNode jjtn000 = new SimpleNode(JJTELEMENT_IN_SET_OR_EQUATION);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
     jjtn000.jjtSetFirstToken(getToken(1));
     try {
       ELEMENT();
       if (jj_2_23(2)) {
-        ELEMENTINSET();
+        ELEMENT_IN_SET();
       } else if (jj_2_24(2)) {
         EQUATION();
       } else {
@@ -1176,9 +1176,9 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     }
   }
 
-  final public void ELEMENTINSET() throws ParseException {
-    /*@bgen(jjtree) ELEMENTINSET */
-    SimpleNode jjtn000 = new SimpleNode(JJTELEMENTINSET);
+  final public void ELEMENT_IN_SET() throws ParseException {
+    /*@bgen(jjtree) ELEMENT_IN_SET */
+    SimpleNode jjtn000 = new SimpleNode(JJTELEMENT_IN_SET);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
     jjtn000.jjtSetFirstToken(getToken(1));
@@ -1226,7 +1226,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     jjtree.openNodeScope(jjtn000);
     jjtn000.jjtSetFirstToken(getToken(1));
     try {
-      ELEMENTEQUATION();
+      ELEMENT_EQUATION();
       ELEMENT();
     } catch (Throwable jjte000) {
       if (jjtc000) {
@@ -1262,9 +1262,9 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     }
   }
 
-  final public void ELEMENTEQUATION() throws ParseException {
-    /*@bgen(jjtree) ELEMENTEQUATION */
-    SimpleNode jjtn000 = new SimpleNode(JJTELEMENTEQUATION);
+  final public void ELEMENT_EQUATION() throws ParseException {
+    /*@bgen(jjtree) ELEMENT_EQUATION */
+    SimpleNode jjtn000 = new SimpleNode(JJTELEMENT_EQUATION);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
     jjtn000.jjtSetFirstToken(getToken(1));
@@ -1301,8 +1301,8 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     jjtn000.jjtSetFirstToken(getToken(1));
     try {
       if (jj_2_31(2)) {
-        ELEMENTNAME();
-        ELEMENTATTRIBUTELIST();
+        ELEMENT_NAME();
+        ELEMENT_ATTRIBUTE_LIST();
       } else if (jj_2_32(2)) {
         NUMBERELEMENT();
       } else {
@@ -1343,9 +1343,9 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     }
   }
 
-  final public void ELEMENTNAME() throws ParseException {
-    /*@bgen(jjtree) ELEMENTNAME */
-    SimpleNode jjtn000 = new SimpleNode(JJTELEMENTNAME);
+  final public void ELEMENT_NAME() throws ParseException {
+    /*@bgen(jjtree) ELEMENT_NAME */
+    SimpleNode jjtn000 = new SimpleNode(JJTELEMENT_NAME);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
     jjtn000.jjtSetFirstToken(getToken(1));
@@ -1353,7 +1353,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
       if (jj_2_33(2)) {
         jj_consume_token(THIS);
       } else if (jj_2_34(2)) {
-        VALUEREFERENCE();
+        VALUE_REFERENCE();
       } else {
         jj_consume_token(-1);
         throw new ParseException();
@@ -1392,9 +1392,9 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     }
   }
 
-  final public void ELEMENTATTRIBUTELIST() throws ParseException {
-    /*@bgen(jjtree) ELEMENTATTRIBUTELIST */
-    SimpleNode jjtn000 = new SimpleNode(JJTELEMENTATTRIBUTELIST);
+  final public void ELEMENT_ATTRIBUTE_LIST() throws ParseException {
+    /*@bgen(jjtree) ELEMENT_ATTRIBUTE_LIST */
+    SimpleNode jjtn000 = new SimpleNode(JJTELEMENT_ATTRIBUTE_LIST);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
     jjtn000.jjtSetFirstToken(getToken(1));
@@ -1402,7 +1402,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
       if (jj_2_35(2)) {
         jj_consume_token(FLATMAP);
         jj_consume_token(ELEMENTATTRIBUTE);
-        ELEMENTATTRIBUTELIST();
+        ELEMENT_ATTRIBUTE_LIST();
       } else {
         jjtree.closeNodeScope(jjtn000, true);
         jjtc000 = false;
@@ -1502,8 +1502,8 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     jjtree.openNodeScope(jjtn000);
     jjtn000.jjtSetFirstToken(getToken(1));
     try {
-      SETNAME();
-      SETMODIFICATION();
+      SET_NAME();
+      SET_MODIFICATION();
     } catch (Throwable jjte000) {
       if (jjtc000) {
         jjtree.clearNodeScope(jjtn000);
@@ -1538,9 +1538,9 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     }
   }
 
-  final public void SETNAME() throws ParseException {
-    /*@bgen(jjtree) SETNAME */
-    SimpleNode jjtn000 = new SimpleNode(JJTSETNAME);
+  final public void SET_NAME() throws ParseException {
+    /*@bgen(jjtree) SET_NAME */
+    SimpleNode jjtn000 = new SimpleNode(JJTSET_NAME);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
     jjtn000.jjtSetFirstToken(getToken(1));
@@ -1548,7 +1548,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
       if (jj_2_38(2)) {
         ELEMENT();
       } else if (jj_2_39(2)) {
-        NUMBERSET();
+        NUMBER_SET();
       } else {
         jj_consume_token(-1);
         throw new ParseException();
@@ -1587,9 +1587,9 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     }
   }
 
-  final public void SETMODIFICATION() throws ParseException {
-    /*@bgen(jjtree) SETMODIFICATION */
-    SimpleNode jjtn000 = new SimpleNode(JJTSETMODIFICATION);
+  final public void SET_MODIFICATION() throws ParseException {
+    /*@bgen(jjtree) SET_MODIFICATION */
+    SimpleNode jjtn000 = new SimpleNode(JJTSET_MODIFICATION);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
     jjtn000.jjtSetFirstToken(getToken(1));
@@ -1597,13 +1597,13 @@ public class SyntaxChecker/*@bgen(jjtree)*/
       if (jj_2_40(2)) {
         jj_consume_token(FLATMAP);
         ATTRIBUTE();
-        SETMODIFICATION();
+        SET_MODIFICATION();
       } else if (jj_2_41(2)) {
         jj_consume_token(LBRACKET);
         FILTER();
-        FILTERLIST();
+        FILTER_LIST();
         jj_consume_token(RBRACKET);
-        SETMODIFICATION();
+        SET_MODIFICATION();
       } else {
         jjtree.closeNodeScope(jjtn000, true);
         jjtc000 = false;
@@ -1644,16 +1644,16 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     }
   }
 
-  final public void NUMBERSET() throws ParseException {
-    /*@bgen(jjtree) NUMBERSET */
-    SimpleNode jjtn000 = new SimpleNode(JJTNUMBERSET);
+  final public void NUMBER_SET() throws ParseException {
+    /*@bgen(jjtree) NUMBER_SET */
+    SimpleNode jjtn000 = new SimpleNode(JJTNUMBER_SET);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
     jjtn000.jjtSetFirstToken(getToken(1));
     try {
       jj_consume_token(LBRACKET);
       jj_consume_token(NUM);
-      NUMBERLIST();
+      NUMBER_LIST();
       jj_consume_token(RBRACKET);
     } catch (Throwable jjte000) {
       if (jjtc000) {
@@ -1689,9 +1689,9 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     }
   }
 
-  final public void NUMBERLIST() throws ParseException {
-    /*@bgen(jjtree) NUMBERLIST */
-    SimpleNode jjtn000 = new SimpleNode(JJTNUMBERLIST);
+  final public void NUMBER_LIST() throws ParseException {
+    /*@bgen(jjtree) NUMBER_LIST */
+    SimpleNode jjtn000 = new SimpleNode(JJTNUMBER_LIST);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
     jjtn000.jjtSetFirstToken(getToken(1));
@@ -1699,7 +1699,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
       if (jj_2_42(2)) {
         jj_consume_token(COMMA);
         jj_consume_token(NUM);
-        NUMBERLIST();
+        NUMBER_LIST();
       } else {
         jjtree.closeNodeScope(jjtn000, true);
         jjtc000 = false;
@@ -1763,9 +1763,9 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     }
   }
 
-  final public void VALUEREFERENCE() throws ParseException {
-    /*@bgen(jjtree) VALUEREFERENCE */
-    SimpleNode jjtn000 = new SimpleNode(JJTVALUEREFERENCE);
+  final public void VALUE_REFERENCE() throws ParseException {
+    /*@bgen(jjtree) VALUE_REFERENCE */
+    SimpleNode jjtn000 = new SimpleNode(JJTVALUE_REFERENCE);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
     jjtn000.jjtSetFirstToken(getToken(1));
@@ -1796,21 +1796,21 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     jjtn000.jjtSetFirstToken(getToken(1));
     try {
       if (jj_2_54(2)) {
-        NUMBERSET();
-        SETMODIFICATION();
+        NUMBER_SET();
+        SET_MODIFICATION();
       } else if (jj_2_55(2)) {
         BOOLVALUE();
       } else if (jj_2_56(2)) {
-        FORALL();
+        FOR_ALL();
       } else if (jj_2_57(2)) {
         EXISTS();
       } else if (jj_2_58(2)) {
-        ISEMPTY();
+        IS_EMPTY();
       } else if (jj_2_59(2)) {
         ELEMENT();
         if (jj_2_53(2)) {
           if (jj_2_48(2)) {
-            ELEMENTINSET();
+            ELEMENT_IN_SET();
           } else if (jj_2_49(2)) {
             EQUATION();
           } else {
@@ -1833,7 +1833,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
 
           }
         } else {
-          SETMODIFICATION();
+          SET_MODIFICATION();
         }
       } else {
         jj_consume_token(-1);
@@ -1873,9 +1873,9 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     }
   }
 
-  final public void FILTERLIST() throws ParseException {
-    /*@bgen(jjtree) FILTERLIST */
-    SimpleNode jjtn000 = new SimpleNode(JJTFILTERLIST);
+  final public void FILTER_LIST() throws ParseException {
+    /*@bgen(jjtree) FILTER_LIST */
+    SimpleNode jjtn000 = new SimpleNode(JJTFILTER_LIST);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
     jjtn000.jjtSetFirstToken(getToken(1));
@@ -1883,7 +1883,7 @@ public class SyntaxChecker/*@bgen(jjtree)*/
       if (jj_2_60(2)) {
         jj_consume_token(COMMA);
         FILTER();
-        FILTERLIST();
+        FILTER_LIST();
       } else {
         jjtree.closeNodeScope(jjtn000, true);
         jjtc000 = false;
@@ -2709,6 +2709,10 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     return jj_3R_10();
   }
 
+  private boolean jj_3_24() {
+    return jj_3R_16();
+  }
+
   private boolean jj_3_50() {
     if (jj_scan_token(IMPLIES)) {
       return true;
@@ -2720,20 +2724,16 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     return jj_3R_19();
   }
 
-  private boolean jj_3_24() {
-    return jj_3R_16();
-  }
-
   private boolean jj_3_22() {
     return jj_3R_14();
   }
 
-  private boolean jj_3_27() {
-    return jj_scan_token(GREATER);
-  }
-
   private boolean jj_3_9() {
     return jj_3R_6();
+  }
+
+  private boolean jj_3_27() {
+    return jj_scan_token(GREATER);
   }
 
   private boolean jj_3_44() {
@@ -2763,6 +2763,10 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     return jj_3R_13();
   }
 
+  private boolean jj_3_23() {
+    return jj_3R_15();
+  }
+
   private boolean jj_3_17() {
     if (jj_scan_token(NOT)) {
       return true;
@@ -2789,10 +2793,6 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     return false;
   }
 
-  private boolean jj_3_23() {
-    return jj_3R_15();
-  }
-
   private boolean jj_3_45() {
     return jj_scan_token(STRING);
   }
@@ -2812,11 +2812,14 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     return jj_3R_22();
   }
 
-  private boolean jj_3_37() {
-    if (jj_scan_token(SIZE)) {
-      return true;
+  private boolean jj_3R_18() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_35()) {
+      jj_scanpos = xsp;
+      return jj_3R_31();
     }
-    return jj_scan_token(LPAREN);
+    return false;
   }
 
   private boolean jj_3R_32() {
@@ -2830,6 +2833,20 @@ public class SyntaxChecker/*@bgen(jjtree)*/
       }
     }
     return false;
+  }
+
+  private boolean jj_3_35() {
+    if (jj_scan_token(FLATMAP)) {
+      return true;
+    }
+    return jj_scan_token(ELEMENTATTRIBUTE);
+  }
+
+  private boolean jj_3_37() {
+    if (jj_scan_token(SIZE)) {
+      return true;
+    }
+    return jj_scan_token(LPAREN);
   }
 
   private boolean jj_3R_24() {
@@ -2854,14 +2871,11 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     return false;
   }
 
-  private boolean jj_3R_18() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_35()) {
-      jj_scanpos = xsp;
-      return jj_3R_31();
+  private boolean jj_3_40() {
+    if (jj_scan_token(FLATMAP)) {
+      return true;
     }
-    return false;
+    return jj_3R_23();
   }
 
   private boolean jj_3R_23() {
@@ -2874,24 +2888,6 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     return false;
   }
 
-  private boolean jj_3_35() {
-    if (jj_scan_token(FLATMAP)) {
-      return true;
-    }
-    return jj_scan_token(ELEMENTATTRIBUTE);
-  }
-
-  private boolean jj_3_40() {
-    if (jj_scan_token(FLATMAP)) {
-      return true;
-    }
-    return jj_3R_23();
-  }
-
-  private boolean jj_3_54() {
-    return jj_3R_22();
-  }
-
   private boolean jj_3_34() {
     return jj_3R_20();
   }
@@ -2900,8 +2896,21 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     return jj_3R_12();
   }
 
-  private boolean jj_3_43() {
-    return jj_scan_token(ELEMENTATTRIBUTE);
+  private boolean jj_3_54() {
+    return jj_3R_22();
+  }
+
+  private boolean jj_3R_14() {
+    if (jj_3R_21()) {
+      return true;
+    }
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_23()) {
+      jj_scanpos = xsp;
+      return jj_3_24();
+    }
+    return false;
   }
 
   private boolean jj_3_42() {
@@ -2909,6 +2918,10 @@ public class SyntaxChecker/*@bgen(jjtree)*/
       return true;
     }
     return jj_scan_token(NUM);
+  }
+
+  private boolean jj_3_43() {
+    return jj_scan_token(ELEMENTATTRIBUTE);
   }
 
   private boolean jj_3R_22() {
@@ -2932,39 +2945,16 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     return false;
   }
 
-  private boolean jj_3R_14() {
-    if (jj_3R_21()) {
-      return true;
-    }
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_23()) {
-      jj_scanpos = xsp;
-      return jj_3_24();
-    }
-    return false;
-  }
-
   private boolean jj_3_48() {
     return jj_3R_15();
-  }
-
-  private boolean jj_3_36() {
-    return jj_scan_token(NUM);
   }
 
   private boolean jj_3R_40() {
     return false;
   }
 
-  private boolean jj_3_53() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_48()) {
-      jj_scanpos = xsp;
-      return jj_3_49();
-    }
-    return false;
+  private boolean jj_3_36() {
+    return jj_scan_token(NUM);
   }
 
   private boolean jj_3R_36() {
@@ -2999,6 +2989,16 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     return false;
   }
 
+  private boolean jj_3_53() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_48()) {
+      jj_scanpos = xsp;
+      return jj_3_49();
+    }
+    return false;
+  }
+
   private boolean jj_3R_17() {
     Token xsp;
     xsp = jj_scanpos;
@@ -3025,6 +3025,13 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     return false;
   }
 
+  private boolean jj_3R_15() {
+    if (jj_scan_token(IN)) {
+      return true;
+    }
+    return jj_3R_29();
+  }
+
   private boolean jj_3_19() {
     return jj_3R_11();
   }
@@ -3041,13 +3048,6 @@ public class SyntaxChecker/*@bgen(jjtree)*/
       return jj_3_32();
     }
     return false;
-  }
-
-  private boolean jj_3R_15() {
-    if (jj_scan_token(IN)) {
-      return true;
-    }
-    return jj_3R_29();
   }
 
   private boolean jj_3R_16() {
@@ -3077,13 +3077,6 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     return false;
   }
 
-  private boolean jj_3_16() {
-    if (jj_scan_token(LPAREN)) {
-      return true;
-    }
-    return jj_3R_1();
-  }
-
   private boolean jj_3R_38() {
     Token xsp;
     xsp = jj_scanpos;
@@ -3106,6 +3099,13 @@ public class SyntaxChecker/*@bgen(jjtree)*/
 
   private boolean jj_3_8() {
     return jj_3R_3();
+  }
+
+  private boolean jj_3_16() {
+    if (jj_scan_token(LPAREN)) {
+      return true;
+    }
+    return jj_3R_1();
   }
 
   private boolean jj_3_10() {
@@ -3173,6 +3173,16 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     return jj_3R_5();
   }
 
+  private boolean jj_3R_27() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_5()) {
+      jj_scanpos = xsp;
+      return jj_3R_35();
+    }
+    return false;
+  }
+
   private boolean jj_3R_28() {
     Token xsp;
     xsp = jj_scanpos;
@@ -3182,16 +3192,6 @@ public class SyntaxChecker/*@bgen(jjtree)*/
         jj_scanpos = xsp;
         return jj_3_17();
       }
-    }
-    return false;
-  }
-
-  private boolean jj_3R_27() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_5()) {
-      jj_scanpos = xsp;
-      return jj_3R_35();
     }
     return false;
   }
@@ -3243,6 +3243,13 @@ public class SyntaxChecker/*@bgen(jjtree)*/
     return false;
   }
 
+  private boolean jj_3R_11() {
+    if (jj_scan_token(FORALL)) {
+      return true;
+    }
+    return jj_scan_token(LPAREN);
+  }
+
   private boolean jj_3_6() {
     return jj_3R_4();
   }
@@ -3252,13 +3259,6 @@ public class SyntaxChecker/*@bgen(jjtree)*/
       return true;
     }
     return jj_3R_33();
-  }
-
-  private boolean jj_3R_11() {
-    if (jj_scan_token(FORALL)) {
-      return true;
-    }
-    return jj_scan_token(LPAREN);
   }
 
   private boolean jj_3R_2() {
