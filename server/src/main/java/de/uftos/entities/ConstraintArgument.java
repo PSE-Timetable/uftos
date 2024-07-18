@@ -7,6 +7,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import java.util.Objects;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,11 +24,15 @@ import lombok.NoArgsConstructor;
 public class ConstraintArgument {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
+  @NotEmpty
   private String id;
 
+  @NotNull
   @ManyToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "constraint_parameter_id", nullable = false)
   private ConstraintParameter constraintParameter;
+
+  @NotEmpty
   private String value;
 
 
