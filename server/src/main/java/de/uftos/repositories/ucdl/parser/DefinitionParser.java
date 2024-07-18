@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-//TODO: !!!REFACTOR!!!
 //magic numbers are tied directly to the used grammar
 //(see ucdl.jjt in server/src/main/resources/ucdl.jjt)
 
@@ -25,6 +24,7 @@ import java.util.List;
  * This class parses the ucdl-code of the "definition"-field of a constraint definition and returns
  * the abstract syntax tree, which resembles the code.
  */
+@SuppressWarnings("checkstyle:VariableDeclarationUsageDistance")
 public class DefinitionParser {
   /**
    * Parses the given definition using the given parameters.
@@ -43,7 +43,6 @@ public class DefinitionParser {
     return buildAst(root, params);
   }
 
-  @SuppressWarnings("checkstyle:VariableDeclarationUsageDistance")
   private static AbstractSyntaxTreeDto buildAst(Node root, HashMap<String, ResourceType> parameters)
       throws ParseException {
     String s = root.toString();
@@ -225,52 +224,8 @@ public class DefinitionParser {
           setType = ((ElementDto) setName).type();
         }
 
-        List<AbstractSyntaxTreeDto> modifiers = new ArrayList<>();
+        return buildSet(setName, setType, root.jjtGetChild(1), parameters);
 
-        Node modifierList = root.jjtGetChild(1);
-        while (modifierList.jjtGetNumChildren() > 0) {
-          if (modifierList.jjtGetNumChildren() == 2) {
-            SimpleNode flatmap = (SimpleNode) modifierList.jjtGetChild(0);
-            String attribute = flatmap.jjtGetFirstToken().image;
-            setType = getNextResourceType(setType, attribute);
-            modifiers.add(new ValueDto<>(UcdlToken.ATTRIBUTE, attribute));
-            modifierList = modifierList.jjtGetChild(1);
-
-          } else if (modifierList.jjtGetNumChildren() == 3) {
-            ResourceType thisType = parameters.get("this");
-            parameters.replace("this", setType);
-
-            List<AbstractSyntaxTreeDto> filters = new ArrayList<>();
-            filters.add(buildAst(modifierList.jjtGetChild(0), parameters));
-
-            Node filterList = modifierList.jjtGetChild(1);
-            while (filterList.jjtGetNumChildren() > 0) {
-              filters.add(buildAst(filterList.jjtGetChild(0), parameters));
-              filterList = filterList.jjtGetChild(1);
-            }
-
-            for (AbstractSyntaxTreeDto filter : filters) {
-              if (filter.getToken() == UcdlToken.NUMBER_SET && setType == ResourceType.NUMBER) {
-                continue; //valid number set
-              }
-              if (filter.getToken() == UcdlToken.RESOURCE_SET
-                  && ((SetDto) filter).type() == setType) {
-                continue; //valid resource set
-              }
-              if (filter.getToken() != UcdlToken.NUMBER_SET
-                  && filter.getToken() != UcdlToken.RESOURCE_SET) {
-                continue; //bool
-              }
-              throw new ParseException("Sets can only be filtered using sets of the same type!");
-            }
-
-            modifiers.add(new OperatorDto(UcdlToken.FILTER, filters));
-            modifierList = modifierList.jjtGetChild(2);
-            parameters.replace("this", thisType);
-          }
-        }
-
-        return new SetDto(UcdlToken.RESOURCE_SET, setType, setName, modifiers);
       }
       case "NUMBER_SET" -> {
         List<Integer> values = new ArrayList<>();
@@ -342,68 +297,46 @@ public class DefinitionParser {
                 } else {
                   setType = ((ElementDto) setName).type();
                 }
-
-                List<AbstractSyntaxTreeDto> modifiers = new ArrayList<>();
-
-                Node modifierList = root.jjtGetChild(1);
-                while (modifierList.jjtGetNumChildren() > 0) {
-                  if (modifierList.jjtGetNumChildren() == 2) {
-                    SimpleNode flatmap = (SimpleNode) modifierList.jjtGetChild(0);
-                    String attribute = flatmap.jjtGetFirstToken().image;
-                    setType = getNextResourceType(setType, attribute);
-                    modifiers.add(new ValueDto<>(UcdlToken.ATTRIBUTE, attribute));
-                    modifierList = modifierList.jjtGetChild(1);
-
-                  } else if (modifierList.jjtGetNumChildren() == 3) {
-                    ResourceType thisType = parameters.get("this");
-                    parameters.replace("this", setType);
-
-                    List<AbstractSyntaxTreeDto> filters = new ArrayList<>();
-                    filters.add(buildAst(modifierList.jjtGetChild(0), parameters));
-
-                    Node filterList = modifierList.jjtGetChild(1);
-                    while (filterList.jjtGetNumChildren() > 0) {
-                      filters.add(buildAst(filterList.jjtGetChild(0), parameters));
-                      filterList = filterList.jjtGetChild(1);
-                    }
-
-                    for (AbstractSyntaxTreeDto filter : filters) {
-                      if ((filter.getToken() == UcdlToken.NUMBER_SET
-                          && setType != ResourceType.NUMBER)
-                          || (filter.getToken() == UcdlToken.RESOURCE_SET
-                          && ((SetDto) filter).type() != setType)) {
-                        throw new ParseException(
-                            "Sets can only be filtered using sets of the same type!");
-                      }
-                    }
-
-                    modifiers.add(new OperatorDto(UcdlToken.FILTER, filters));
-                    modifierList = modifierList.jjtGetChild(2);
-                    parameters.replace("this", thisType);
-                  }
-                }
-
-                return new SetDto(UcdlToken.RESOURCE_SET, setType, setName, modifiers);
+                return buildSet(setName, setType, root.jjtGetChild(1), parameters);
               }
-              case "ELEMENT_IN_SET" -> {
-                ElementDto element = (ElementDto) buildAst(root.jjtGetChild(0), parameters);
-                SetDto set = (SetDto) buildAst(root.jjtGetChild(1).jjtGetChild(0), parameters);
-
-                if (element.type() != set.type()) {
-                  throw new ParseException("Elements can only be in Sets of the same type!");
-                }
+              case "ELEMENT_IN_SET", "EQUATION" -> {
+                String operator = root.jjtGetChild(1).toString();
+                AbstractSyntaxTreeDto ast;
 
                 List<AbstractSyntaxTreeDto> params = new ArrayList<>();
+                ElementDto element = (ElementDto) buildAst(root.jjtGetChild(0), parameters);
                 params.add(element);
-                params.add(set);
 
-                AbstractSyntaxTreeDto elementInSet = new OperatorDto(UcdlToken.IN, params);
+                if (operator.equals("ELEMENT_IN_SET")) {
+                  SetDto set = (SetDto) buildAst(root.jjtGetChild(1).jjtGetChild(0), parameters);
+                  params.add(set);
+
+                  if (element.type() != set.type()) {
+                    throw new ParseException("Elements can only be in Sets of the same type!");
+                  }
+
+                  ast = new OperatorDto(UcdlToken.IN, params);
+
+                } else if (operator.equals("EQUATION")) {
+                  Node secondElement = root.jjtGetChild(1).jjtGetChild(1);
+                  String comparator =
+                      ((SimpleNode) root.jjtGetChild(1).jjtGetChild(0)).jjtGetFirstToken().image;
+
+                  params.add(buildAst(secondElement, parameters));
+                  UcdlToken token = getComparatorToken(comparator, params);
+                  ast = new OperatorDto(token, params);
+
+                } else {
+                  throw new IllegalStateException();
+                }
 
                 if (root.jjtGetNumChildren() == 2) {
-                  return elementInSet;
+                  return ast; //operator isn't followed by further optional boolean operations
                 }
+
+                //further optional boolean operations are following
                 params = new ArrayList<>();
-                params.add(elementInSet);
+                params.add(ast);
                 params.add(buildAst(root.jjtGetChild(2).jjtGetChild(0), parameters));
                 return switch (((SimpleNode) root.jjtGetChild(2)).jjtGetFirstToken().image) {
                   case "implies", "->" -> new OperatorDto(UcdlToken.IMPLIES, params);
@@ -411,18 +344,6 @@ public class DefinitionParser {
                   case "and", "&&" -> new OperatorDto(UcdlToken.AND, params);
                   default -> throw new IllegalStateException();
                 };
-              }
-              case "EQUATION" -> {
-                List<AbstractSyntaxTreeDto> params = new ArrayList<>();
-                Node firstElement = root.jjtGetChild(0);
-                Node secondElement = root.jjtGetChild(1).jjtGetChild(1);
-                String comparator =
-                    ((SimpleNode) root.jjtGetChild(1).jjtGetChild(0)).jjtGetFirstToken().image;
-
-                params.add(buildAst(firstElement, parameters));
-                params.add(buildAst(secondElement, parameters));
-                UcdlToken token = getComparatorToken(comparator, params);
-                return new OperatorDto(token, params);
               }
               default -> throw new IllegalStateException();
             }
@@ -437,6 +358,57 @@ public class DefinitionParser {
       // "SET_NAME", "SET_MODIFICATION", "NUMBER_LIST", "ATTRIBUTE", "FILTER_LIST"
       default -> throw new IllegalStateException();
     }
+  }
+
+  private static AbstractSyntaxTreeDto buildSet(AbstractSyntaxTreeDto setName,
+                                                ResourceType setType, Node modifierList,
+                                                HashMap<String, ResourceType> parameters)
+      throws ParseException {
+    List<AbstractSyntaxTreeDto> modifiers = new ArrayList<>();
+
+    while (modifierList.jjtGetNumChildren() > 0) {
+      if (modifierList.jjtGetNumChildren() == 2) {
+        SimpleNode flatmap = (SimpleNode) modifierList.jjtGetChild(0);
+        String attribute = flatmap.jjtGetFirstToken().image;
+        setType = getNextResourceType(setType, attribute);
+        modifiers.add(new ValueDto<>(UcdlToken.ATTRIBUTE, attribute));
+        modifierList = modifierList.jjtGetChild(1);
+
+      } else if (modifierList.jjtGetNumChildren() == 3) {
+        ResourceType thisType = parameters.get("this");
+        parameters.replace("this", setType);
+
+        List<AbstractSyntaxTreeDto> filters = new ArrayList<>();
+        filters.add(buildAst(modifierList.jjtGetChild(0), parameters));
+
+        Node filterList = modifierList.jjtGetChild(1);
+        while (filterList.jjtGetNumChildren() > 0) {
+          filters.add(buildAst(filterList.jjtGetChild(0), parameters));
+          filterList = filterList.jjtGetChild(1);
+        }
+
+        for (AbstractSyntaxTreeDto filter : filters) {
+          if (filter.getToken() == UcdlToken.NUMBER_SET && setType == ResourceType.NUMBER) {
+            continue; //valid number set
+          }
+          if (filter.getToken() == UcdlToken.RESOURCE_SET
+              && ((SetDto) filter).type() == setType) {
+            continue; //valid resource set
+          }
+          if (filter.getToken() != UcdlToken.NUMBER_SET
+              && filter.getToken() != UcdlToken.RESOURCE_SET) {
+            continue; //bool
+          }
+          throw new ParseException("Sets can only be filtered using sets of the same type!");
+        }
+
+        modifiers.add(new OperatorDto(UcdlToken.FILTER, filters));
+        modifierList = modifierList.jjtGetChild(2);
+        parameters.replace("this", thisType);
+      }
+    }
+
+    return new SetDto(UcdlToken.RESOURCE_SET, setType, setName, modifiers);
   }
 
   private static AbstractSyntaxTreeDto buildUnaryOperator(UcdlToken token, Node root,
