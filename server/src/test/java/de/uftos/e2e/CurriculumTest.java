@@ -3,14 +3,11 @@ package de.uftos.e2e;
 import static de.uftos.utils.JsonGenerator.generateCurriculumJson;
 import static de.uftos.utils.JsonGenerator.generateGradeJson;
 import static de.uftos.utils.JsonGenerator.generatePageJson;
-import static de.uftos.utils.JsonGenerator.generateStudentJson;
-import static de.uftos.utils.JsonGenerator.generateTagJson;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
 import de.uftos.dto.LessonsCountRequestDto;
-import de.uftos.entities.LessonsCount;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.http.ContentType;
 import java.util.Collections;

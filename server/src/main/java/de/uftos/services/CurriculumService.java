@@ -3,16 +3,12 @@ package de.uftos.services;
 
 import de.uftos.dto.CurriculumRequestDto;
 import de.uftos.dto.CurriculumResponseDto;
-import de.uftos.dto.GradeRequestDto;
 import de.uftos.dto.GradeResponseDto;
 import de.uftos.entities.Curriculum;
 import de.uftos.entities.Grade;
-import de.uftos.entities.Student;
-import de.uftos.entities.StudentGroup;
 import de.uftos.repositories.database.CurriculumRepository;
-import java.util.HashSet;
+import de.uftos.repositories.database.GradeRepository;
 import java.util.List;
-import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -27,6 +23,7 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class CurriculumService {
   private final CurriculumRepository repository;
+  private final GradeRepository gradeRepository;
 
   /**
    * Creates a curriculum service.
@@ -34,8 +31,9 @@ public class CurriculumService {
    * @param repository the repository for accessing the curriculum table.
    */
   @Autowired
-  public CurriculumService(CurriculumRepository repository) {
+  public CurriculumService(CurriculumRepository repository, GradeRepository gradeRepository) {
     this.repository = repository;
+    this.gradeRepository = gradeRepository;
   }
 
   /**
@@ -74,7 +72,9 @@ public class CurriculumService {
    *                                 is already present in the database.
    */
   public CurriculumResponseDto create(CurriculumRequestDto curriculum) {
-    return this.mapResponseDto(this.repository.save(curriculum.map()));
+    Grade grade = gradeRepository.findById(curriculum.gradeId())
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+    return this.mapResponseDto(this.repository.save(curriculum.map(grade)));
   }
 
   private CurriculumResponseDto mapResponseDto(Curriculum curriculum) {
@@ -91,7 +91,7 @@ public class CurriculumService {
    * @return the updated grade.
    */
   public CurriculumResponseDto update(String id, CurriculumRequestDto curriculumRequest) {
-    Curriculum curriculum = curriculumRequest.map();
+    Curriculum curriculum = curriculumRequest.map(null);
     curriculum.setId(id);
     return CurriculumResponseDto.createResponseDtoFromCurriculum(this.repository.save(curriculum));
   }

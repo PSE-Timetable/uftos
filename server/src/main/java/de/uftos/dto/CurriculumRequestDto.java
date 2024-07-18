@@ -1,6 +1,7 @@
 package de.uftos.dto;
 
 import de.uftos.entities.Curriculum;
+import de.uftos.entities.Grade;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
@@ -20,8 +21,8 @@ public record CurriculumRequestDto(@NotEmpty String gradeId, @NotEmpty String na
    *
    * @return the new curriculum entity.
    */
-  public Curriculum map() {
-    return new Curriculum(this.gradeId, this.name, this.lessonsCounts);
+  public Curriculum map(Grade grade) {
+    return new Curriculum(grade, this.name, this.lessonsCounts);
   }
 
 }

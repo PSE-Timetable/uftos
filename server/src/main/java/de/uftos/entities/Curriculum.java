@@ -6,6 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotEmpty;
@@ -31,6 +32,7 @@ public class Curriculum {
 
   //multiple curricula from different years can exist for the same grade
   @ManyToOne
+  @JoinColumn(name = "grades_id", nullable = false)
   private Grade grade;
 
   @OneToMany(cascade = CascadeType.REMOVE)
@@ -39,13 +41,13 @@ public class Curriculum {
   /**
    * Creates a new curriculum.
    *
-   * @param gradeId       the grade id to which the curriculum applies to.
+   * @param grade         the grade to which the curriculum applies to.
    * @param name          the name given to the curriculum.
    * @param lessonsCounts the lesson counts which apply to the given grade.
    */
-  public Curriculum(String gradeId, String name, List<LessonsCountRequestDto> lessonsCounts) {
+  public Curriculum(Grade grade, String name, List<LessonsCountRequestDto> lessonsCounts) {
     this.name = name;
-    this.grade = new Grade(gradeId);
+    this.grade = grade;
     this.lessonsCounts = lessonsCounts.stream().map(LessonsCountRequestDto::map).toList();
   }
 

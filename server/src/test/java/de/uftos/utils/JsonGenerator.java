@@ -1,7 +1,6 @@
 package de.uftos.utils;
 
 import de.uftos.dto.LessonsCountRequestDto;
-import de.uftos.entities.LessonsCount;
 import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -43,7 +42,7 @@ public class JsonGenerator {
     JSONArray jsonArray = new JSONArray();
     lessonsCounts.forEach(jsonArray::put);
     return new JSONObject()
-        .put("grade", gradeId)
+        .put("gradeId", gradeId)
         .put("name", name)
         .put("lessonsCounts", jsonArray)
         .toString();
