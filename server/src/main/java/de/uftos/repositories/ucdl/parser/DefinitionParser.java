@@ -426,7 +426,7 @@ public class DefinitionParser {
       //includes cases: "CONTROLSEQUENCE_LIST", "CONTROLSEQUENCE_RETURN",
       // "OPTIONAL_IMPLIES", "OPTIONAL_OR", "OPTIONAL_AND",
       // "ELEMENT_IN_SET", "EQUATION", "ELEMENT_EQUATION", "ELEMENT_ATTRIBUTE_LIST",
-      // "SETNAME", "SET_MODIFICATION", "NUMBER_LIST", "ATTRIBUTE", "FILTER_LIST"
+      // "SET_NAME", "SET_MODIFICATION", "NUMBER_LIST", "ATTRIBUTE", "FILTER_LIST"
       default -> throw new IllegalStateException();
     }
   }
@@ -673,4 +673,5 @@ public class DefinitionParser {
       default -> throw new ParseException("Illegal attribute name: " + attribute);
     };
   }
+
 }
