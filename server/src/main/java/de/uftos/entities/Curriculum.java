@@ -30,7 +30,7 @@ public class Curriculum {
   private String name;
 
   //multiple curricula from different years can exist for the same grade
-  @ManyToOne(cascade = CascadeType.ALL)
+  @ManyToOne
   private Grade grade;
 
   @OneToMany(cascade = CascadeType.REMOVE)
