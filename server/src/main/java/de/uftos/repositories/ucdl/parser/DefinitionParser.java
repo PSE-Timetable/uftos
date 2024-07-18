@@ -252,11 +252,15 @@ public class DefinitionParser {
 
             for (AbstractSyntaxTreeDto filter : filters) {
               if (filter.getToken() == UcdlToken.NUMBER_SET && setType == ResourceType.NUMBER) {
-                continue;
+                continue; //valid number set
               }
               if (filter.getToken() == UcdlToken.RESOURCE_SET
                   && ((SetDto) filter).type() == setType) {
-                continue;
+                continue; //valid resource set
+              }
+              if (filter.getToken() != UcdlToken.NUMBER_SET
+                  && filter.getToken() != UcdlToken.RESOURCE_SET) {
+                continue; //bool
               }
               throw new ParseException("Sets can only be filtered using sets of the same type!");
             }
