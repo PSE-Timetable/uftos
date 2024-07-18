@@ -11,6 +11,7 @@ import static org.hamcrest.Matchers.notNullValue;
 
 import de.uftos.dto.LessonsCountRequestDto;
 import de.uftos.entities.LessonsCount;
+import io.restassured.filter.log.LogDetail;
 import io.restassured.http.ContentType;
 import java.util.Collections;
 import java.util.List;
@@ -72,11 +73,11 @@ public class CurriculumTest {
         .when()
         .post("/curriculum")
         .then()
+        .log().ifValidationFails(LogDetail.BODY)
         .statusCode(200)
         .body("id", notNullValue())
         .body("grade", equalTo(firstGrade))
         .body("name", equalTo(FIRST_CURRICULUM_NAME))
-        .log().ifValidationFails()
         .extract()
         .body().jsonPath().getString("id");
 
@@ -90,7 +91,7 @@ public class CurriculumTest {
         .body("id", notNullValue())
         .body("grade", equalTo(secondGrade))
         .body("name", equalTo(SECOND_CURRICULUM_NAME))
-        .log().ifValidationFails()
+        .log().ifValidationFails(LogDetail.ALL)
         .extract()
         .body().jsonPath().getString("id");
   }

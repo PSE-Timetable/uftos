@@ -3,9 +3,16 @@ package de.uftos.services;
 
 import de.uftos.dto.CurriculumRequestDto;
 import de.uftos.dto.CurriculumResponseDto;
+import de.uftos.dto.GradeRequestDto;
+import de.uftos.dto.GradeResponseDto;
 import de.uftos.entities.Curriculum;
+import de.uftos.entities.Grade;
+import de.uftos.entities.Student;
+import de.uftos.entities.StudentGroup;
 import de.uftos.repositories.database.CurriculumRepository;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -67,8 +74,13 @@ public class CurriculumService {
    *                                 is already present in the database.
    */
   public CurriculumResponseDto create(CurriculumRequestDto curriculum) {
-    return CurriculumResponseDto.createResponseDtoFromCurriculum(
-        this.repository.save(curriculum.map()));
+    return this.mapResponseDto(this.repository.save(curriculum.map()));
+  }
+
+  private CurriculumResponseDto mapResponseDto(Curriculum curriculum) {
+    return new CurriculumResponseDto(curriculum.getId(), curriculum.getName(),
+        GradeResponseDto.createResponseDtoFromGrade(curriculum.getGrade()),
+        curriculum.getLessonsCounts());
   }
 
   /**
