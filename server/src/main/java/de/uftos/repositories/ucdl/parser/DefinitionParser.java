@@ -118,9 +118,7 @@ public class DefinitionParser {
           case "RETURN":
             ValueDto<Boolean> dto =
                 (ValueDto<Boolean>) buildAst(bodyElements.jjtGetChild(0), parameters);
-            returnValue = dto.value();
-            body.add(dto);
-            break;
+            return new ControlSequenceDto(UcdlToken.IF, bool, body, dto.value());
           case "CONTROLSEQUENCE":
             body.add(buildAst(bodyElements.jjtGetChild(0), parameters)); //first control sequence
 
@@ -129,13 +127,12 @@ public class DefinitionParser {
               body.add(buildAst(controlSequenceList.jjtGetChild(0), parameters));
               controlSequenceList = controlSequenceList.jjtGetChild(1);
             }
-            //semantic check for legal return values
-            returnValue = getReturnValue(body);
-            break;
+
+            //getReturnValue() includes a semantic check for legal return values
+            return new ControlSequenceDto(UcdlToken.IF, bool, body, getReturnValue(body));
           default:
             throw new IllegalStateException();
         }
-        return new ControlSequenceDto(UcdlToken.IF, bool, body, returnValue);
       }
       case "FOR_ALL" -> {
         return buildQuantifier(UcdlToken.FOR_ALL, root, parameters);
