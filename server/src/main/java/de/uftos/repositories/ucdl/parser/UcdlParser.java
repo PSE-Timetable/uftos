@@ -84,6 +84,9 @@ public class UcdlParser {
       Map.Entry<String, JsonNode> entry = iterator.next();
       if (entry != null) {
         parameters.put(entry.getKey(), getResourceType(entry.getValue().textValue()));
+        if (entry.getKey().equals("this")) {
+          throw new ParseException("Parameters can't be called \"this\"!");
+        }
       }
     }
 
