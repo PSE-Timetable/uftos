@@ -10,7 +10,7 @@ import java.util.List;
  * @param constraintInstances the instances of the constraints
  * @param displayNames        the display names of the arguments of the constraint instances
  */
-public record ConstraintInstanceResponseDto(@NotNull List<ConstraintInstance> constraintInstances,
-                                            @NotNull
-                                            List<ConstraintArgumentDisplayName> displayNames) {
+public record ConstraintInstancesResponseDto(@NotNull List<ConstraintInstance> constraintInstances,
+                                             @NotNull
+                                             List<ConstraintArgumentDisplayName> displayNames) {
 }

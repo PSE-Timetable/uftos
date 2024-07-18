@@ -223,38 +223,47 @@ public class ConstraintInstanceService {
     String id = constraintArgument.getValue();
     return switch (constraintArgument.getConstraintParameter().getParameterType()) {
       case TAG -> new ConstraintArgumentDisplayName(id,
-          tagRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST)).getName());
+          tagRepository.findById(id)
+              .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST)).getName());
       case ROOM -> {
-        Room room = roomRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+        Room room = roomRepository.findById(id)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
         yield new ConstraintArgumentDisplayName(id,
             "%s %s".formatted(room.getBuildingName(), room.getName()));
       }
       case GRADE -> new ConstraintArgumentDisplayName(id,
-          gradeRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST))
+          gradeRepository.findById(id)
+              .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST))
               .getName());
       case LESSON -> new ConstraintArgumentDisplayName(id,
-          lessonRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST))
+          lessonRepository.findById(id)
+              .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST))
               .getYear());
       case STUDENT -> {
         Student student =
-            studentRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+            studentRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
         yield new ConstraintArgumentDisplayName(id,
             "%s %s".formatted(student.getFirstName(), student.getLastName()));
       }
       case SUBJECT -> new ConstraintArgumentDisplayName(id,
-          subjectRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST))
+          subjectRepository.findById(id)
+              .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST))
               .getName());
       case TEACHER -> {
         Teacher teacher =
-            teacherRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+            teacherRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
         yield new ConstraintArgumentDisplayName(id,
             "%s %s".formatted(teacher.getFirstName(), teacher.getLastName()));
       }
       case STUDENT_GROUP -> new ConstraintArgumentDisplayName(id,
-          studentGroupRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST))
+          studentGroupRepository.findById(id)
+              .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST))
               .getName());
       case TIMESLOT -> new ConstraintArgumentDisplayName(id,
-          timeslotRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST))
+          timeslotRepository.findById(id)
+              .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST))
               .getDay().toString());
     };
   }
