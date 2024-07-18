@@ -132,9 +132,10 @@ public class ConstraintInstanceService {
    */
   public ConstraintInstanceResponseDto get(String signatureId, Pageable pageable,
                                            Optional<String> argument) {
-    // TODO search for "argument" in all resources relations and get all IDs of the resources that fulfill the filter,
-    //  then merge all the IDs with the IDs of the arguments of the instances of this specific signature.
-    //  THEN return the instances that own these arguments. GOOD LUCK!
+    // TODO search for "argument" in all resources relations and get all IDs of the resources
+    //  that fulfill the filter, then merge all the IDs with the IDs of the arguments of the
+    //  instances of this specific signature. THEN return the instances that own these arguments.
+    //  GOOD LUCK!
     Specification<ConstraintInstance> specification = new SpecificationBuilder<ConstraintInstance>()
         .build();
 
