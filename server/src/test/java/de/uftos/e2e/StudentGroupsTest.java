@@ -17,6 +17,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+@SuppressWarnings("checkstyle:MissingJavadocType")
 public class StudentGroupsTest {
   private static final String FIRST_STUDENT_GROUP_NAME = "5-Ethik";
   private static final String SECOND_STUDENT_GROUP_NAME = "5-Religion";
