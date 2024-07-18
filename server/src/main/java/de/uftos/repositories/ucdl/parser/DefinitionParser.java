@@ -67,7 +67,7 @@ public class DefinitionParser {
 
         //semantic check for legal return values
         // returned value is irrelevant, only error checking
-        boolean returnValue = getReturnValue(params);
+        getReturnValue(params);
         return new OperatorDto(UcdlToken.CODEBLOCK, params);
       }
       case "RETURN" -> {
@@ -106,7 +106,7 @@ public class DefinitionParser {
         return new ControlSequenceDto(UcdlToken.FOR, variable, body, returnValue);
       }
       case "IF" -> {
-        boolean returnValue = false;
+        boolean returnValue;
 
         AbstractSyntaxTreeDto bool = buildAst(root.jjtGetChild(0), parameters);
 
@@ -138,89 +138,28 @@ public class DefinitionParser {
         return new ControlSequenceDto(UcdlToken.IF, bool, body, returnValue);
       }
       case "FORALL" -> {
-        List<AbstractSyntaxTreeDto> variableDefinition = new ArrayList<>();
-        ValueDto<String> varName = (ValueDto<String>) buildAst(root.jjtGetChild(0), parameters);
-        variableDefinition.add(varName); //variable name
-        if (parameters.containsKey(varName.value())) {
-          throw new ParseException("Variable name \"" + varName.value()
-              + "\" does already exist inside this namespace!");
-        }
-        SetDto set = (SetDto) buildAst(root.jjtGetChild(1), parameters);
-        variableDefinition.add(set); //set
-        OperatorDto variable = new OperatorDto(UcdlToken.OF, variableDefinition);
-
-        parameters.put(varName.value(), set.type()); //adding the new variable
-        AbstractSyntaxTreeDto body = buildAst(root.jjtGetChild(1), parameters);
-        parameters.remove(varName.value()); //removing the new variable
-
-        return new QuantifierDto(UcdlToken.FOR_ALL, variable, body);
+        return buildQuantifier(UcdlToken.FOR_ALL, root, parameters);
       }
       case "EXISTS" -> {
-        List<AbstractSyntaxTreeDto> variableDefinition = new ArrayList<>();
-        ValueDto<String> varName = (ValueDto<String>) buildAst(root.jjtGetChild(0), parameters);
-        variableDefinition.add(varName); //variable name
-        if (parameters.containsKey(varName.value())) {
-          throw new ParseException("Variable name \"" + varName.value()
-              + "\" does already exist inside this namespace!");
-        }
-        SetDto set = (SetDto) buildAst(root.jjtGetChild(1), parameters);
-        variableDefinition.add(set); //set
-        OperatorDto variable = new OperatorDto(UcdlToken.OF, variableDefinition);
-
-        parameters.put(varName.value(), set.type()); //adding the new variable
-        AbstractSyntaxTreeDto body = buildAst(root.jjtGetChild(1), parameters);
-        parameters.remove(varName.value()); //removing the new variable
-
-        return new QuantifierDto(UcdlToken.EXISTS, variable, body);
+        return buildQuantifier(UcdlToken.EXISTS, root, parameters);
       }
       case "IMPLIES" -> {
-        AbstractSyntaxTreeDto firstArgument = buildAst(root.jjtGetChild(0), parameters);
-        if (root.jjtGetChild(1).jjtGetNumChildren() > 0) {
-          AbstractSyntaxTreeDto secondArgument =
-              buildAst(root.jjtGetChild(1).jjtGetChild(0), parameters);
-          List<AbstractSyntaxTreeDto> params = new ArrayList<>();
-          params.add(firstArgument);
-          params.add(secondArgument);
-          return new OperatorDto(UcdlToken.IMPLIES, params);
-        }
-        return firstArgument;
+        return buildBinaryOperator(UcdlToken.IMPLIES, root, parameters);
       }
       case "OR" -> {
-        AbstractSyntaxTreeDto firstArgument = buildAst(root.jjtGetChild(0), parameters);
-        if (root.jjtGetChild(1).jjtGetNumChildren() > 0) {
-          AbstractSyntaxTreeDto secondArgument =
-              buildAst(root.jjtGetChild(1).jjtGetChild(0), parameters);
-          List<AbstractSyntaxTreeDto> params = new ArrayList<>();
-          params.add(firstArgument);
-          params.add(secondArgument);
-          return new OperatorDto(UcdlToken.OR, params);
-        }
-        return firstArgument;
+        return buildBinaryOperator(UcdlToken.OR, root, parameters);
       }
       case "AND" -> {
-        AbstractSyntaxTreeDto firstArgument = buildAst(root.jjtGetChild(0), parameters);
-        if (root.jjtGetChild(1).jjtGetNumChildren() > 0) {
-          AbstractSyntaxTreeDto secondArgument =
-              buildAst(root.jjtGetChild(1).jjtGetChild(0), parameters);
-          List<AbstractSyntaxTreeDto> params = new ArrayList<>();
-          params.add(firstArgument);
-          params.add(secondArgument);
-          return new OperatorDto(UcdlToken.AND, params);
-        }
-        return firstArgument;
+        return buildBinaryOperator(UcdlToken.AND, root, parameters);
       }
       case "NOT" -> {
         if (((SimpleNode) root).jjtGetFirstToken().image.equals("NOT")) {
-          List<AbstractSyntaxTreeDto> param = new ArrayList<>();
-          param.add(buildAst(root.jjtGetChild(0), parameters));
-          return new OperatorDto(UcdlToken.NOT, param);
+          return buildUnaryOperator(UcdlToken.NOT, root, parameters);
         }
         return buildAst(root.jjtGetChild(0), parameters);
       }
       case "ISEMPTY" -> {
-        List<AbstractSyntaxTreeDto> param = new ArrayList<>();
-        param.add(buildAst(root.jjtGetChild(0), parameters));
-        return new OperatorDto(UcdlToken.IS_EMPTY, param);
+        return buildUnaryOperator(UcdlToken.IS_EMPTY, root, parameters);
       }
       case "ELEMENTINSETOREQUATION" -> {
         List<AbstractSyntaxTreeDto> params = new ArrayList<>();
@@ -273,9 +212,7 @@ public class DefinitionParser {
       }
       case "NUMBERELEMENT" -> {
         if (((SimpleNode) root).jjtGetFirstToken().image.equals("size")) {
-          List<AbstractSyntaxTreeDto> set = new ArrayList<>();
-          set.add(buildAst(root.jjtGetChild(0), parameters));
-          return new OperatorDto(UcdlToken.SIZE, set);
+          return buildUnaryOperator(UcdlToken.SIZE, root, parameters);
         } else {
           return new ValueDto<>(UcdlToken.NUMBER, Integer.parseInt(
               ((SimpleNode) root).jjtGetFirstToken().image));
@@ -494,8 +431,58 @@ public class DefinitionParser {
     }
   }
 
-  //checks that all returnValues are the same and returns the value
-  // (throws an exception if true and false are returnValues inside the body)
+  private static AbstractSyntaxTreeDto buildUnaryOperator(UcdlToken token, Node root,
+                                                          HashMap<String, ResourceType> parameters)
+      throws ParseException {
+    List<AbstractSyntaxTreeDto> param = new ArrayList<>();
+    param.add(buildAst(root.jjtGetChild(0), parameters));
+    return new OperatorDto(token, param);
+  }
+
+  private static AbstractSyntaxTreeDto buildBinaryOperator(UcdlToken token, Node root,
+                                                           HashMap<String, ResourceType> parameters)
+      throws ParseException {
+    AbstractSyntaxTreeDto firstArgument = buildAst(root.jjtGetChild(0), parameters);
+    if (root.jjtGetChild(1).jjtGetNumChildren() > 0) {
+      AbstractSyntaxTreeDto secondArgument =
+          buildAst(root.jjtGetChild(1).jjtGetChild(0), parameters);
+      List<AbstractSyntaxTreeDto> params = new ArrayList<>();
+      params.add(firstArgument);
+      params.add(secondArgument);
+      return new OperatorDto(token, params);
+    }
+    return firstArgument;
+  }
+
+  private static QuantifierDto buildQuantifier(UcdlToken token, Node root,
+                                               HashMap<String, ResourceType> parameters)
+      throws ParseException {
+    List<AbstractSyntaxTreeDto> variableDefinition = new ArrayList<>();
+    ValueDto<String> varName = (ValueDto<String>) buildAst(root.jjtGetChild(0), parameters);
+    variableDefinition.add(varName); //variable name
+    if (parameters.containsKey(varName.value())) {
+      throw new ParseException("Variable name \"" + varName.value()
+          + "\" does already exist inside this namespace!");
+    }
+    SetDto set = (SetDto) buildAst(root.jjtGetChild(1), parameters);
+    variableDefinition.add(set); //set
+    OperatorDto variable = new OperatorDto(UcdlToken.OF, variableDefinition);
+
+    parameters.put(varName.value(), set.type()); //adding the new variable
+    AbstractSyntaxTreeDto body = buildAst(root.jjtGetChild(1), parameters);
+    parameters.remove(varName.value()); //removing the new variable
+
+    return new QuantifierDto(token, variable, body);
+  }
+
+  /**
+   * Checks that all returnValues of the ControlSequences inside the body are the same
+   * and returns that value.
+   *
+   * @param body the List of all ASTs inside the body.
+   * @return the value these ASTs return.
+   * @throws ParseException if the List contains ASTs which would return different values.
+   */
   private static boolean getReturnValue(List<AbstractSyntaxTreeDto> body) throws ParseException {
     boolean and = true;
     boolean or = false;
