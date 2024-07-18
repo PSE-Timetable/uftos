@@ -25,6 +25,9 @@
   import { ArrowDown, ArrowUp } from 'lucide-svelte';
   import { Input } from '$lib/elements/ui/input';
   import { writable, type Writable } from 'svelte/store';
+  import { onMount } from 'svelte';
+
+  onMount(async () => await getData());
 
   let tableData: Writable<DataItem[]> = writable([]);
   export let columnNames;
@@ -158,11 +161,11 @@
     await getData();
   }
 
-  $: async () => {
+  $: (async () => {
     $filterValue;
     $pageIndex;
     await getData();
-  };
+  })();
 </script>
 
 <svelte:window on:keydown={onDeleteKey} />
