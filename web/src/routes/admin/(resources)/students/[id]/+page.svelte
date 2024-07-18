@@ -1,6 +1,5 @@
 <script lang="ts">
-  import { Input } from '$lib/elements/ui/input';
-  import { Button } from '$lib/elements/ui/button';
+  import AddResource from '$lib/components/ui/add-Resource/add-resource.svelte';
   import {
     createStudent,
     updateStudent,
@@ -8,18 +7,18 @@
     type StudentRequestDto,
     type Tag,
   } from '$lib/sdk/fetch-client.js';
-  import TagsMultipleSelect from '$lib/components/ui/tags-multiple-select/tags-multiple-select.svelte';
   import { error } from '@sveltejs/kit';
 
   export let data;
   let student: Student = data.student;
-  let selectedTagIds: string[] = student.tags.map((tag) => tag.id);
+  let values: string[] = [student.firstName, student.lastName];
+  let descriptions: string[] = ['Vorname', 'Nachname', 'Tags'];
 
-  async function create() {
+  async function create(values: string[], tagIds: string[]) {
     let studentRequestDto: StudentRequestDto = {
-      firstName: student.firstName,
-      lastName: student.lastName,
-      tagIds: selectedTagIds,
+      firstName: values[0],
+      lastName: values[1],
+      tagIds,
     };
     try {
       await createStudent(studentRequestDto);
@@ -28,11 +27,11 @@
     }
   }
 
-  async function update() {
+  async function update(values: string[], tagIds: string[]) {
     let studentRequestDto: StudentRequestDto = {
-      firstName: student.firstName,
-      lastName: student.lastName,
-      tagIds: selectedTagIds,
+      firstName: values[0],
+      lastName: values[1],
+      tagIds,
     };
     try {
       await updateStudent(student.id, studentRequestDto);
@@ -52,31 +51,4 @@
   ]; //TODO get tags for the resource.
 </script>
 
-<div class="flex flex-row">
-  <div class="m-7 text-xl flex flex-col font-bold">
-    <div class="my-5 flex">Vorname:</div>
-    <div class="my-5 flex">Nachname:</div>
-    <div class="my-5 flex">Tags:</div>
-  </div>
-  <div class="m-7 flex flex-col w-80">
-    <Input
-      bind:value={student.firstName}
-      class="rounded-none border-0 border-b-4 border-foreground focus-visible:ring-0 focus-visible:border-b-4  text-lg font-normal mt-4"
-    />
-    <Input
-      bind:value={student.lastName}
-      class="rounded-none border-0 border-b-4 border-foreground focus-visible:ring-0 focus-visible:border-b-4 text-lg font-normal mt-7"
-    />
-    <div class="max-w-sm mt-7">
-      <TagsMultipleSelect {tags} bind:selectedTagIds />
-    </div>
-    <div class="max-w-sm mt-5"></div>
-    <Button
-      on:click={async () => {
-        data.create ? await create() : await update();
-      }}
-      class="max-w-52 px-10 mt-5 bg-accent text-white"
-      variant="secondary">Speichern</Button
-    >
-  </div>
-</div>
+<AddResource {descriptions} {values} {create} {update} createEntity={data.create} {tags} />

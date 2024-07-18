@@ -43,5 +43,6 @@
 
 <div class="p-10 w-full">
   <!--Avoids warning that fetch calls should be in onMount or load function, there must be a better solution-->
+
   <DataTable {columnNames} {keys} {loadPage} {deleteEntry} />
 </div>
