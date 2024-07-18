@@ -254,11 +254,14 @@ public class DefinitionParser {
             }
 
             for (AbstractSyntaxTreeDto filter : filters) {
-              if ((filter.getToken() == UcdlToken.NUMBER_SET && setType != ResourceType.NUMBER)
-                  || (filter.getToken() == UcdlToken.RESOURCE_SET
-                  && ((SetDto) filter).type() != setType)) {
-                throw new ParseException("Sets can only be filtered using sets of the same type!");
+              if (filter.getToken() == UcdlToken.NUMBER_SET && setType == ResourceType.NUMBER) {
+                continue;
               }
+              if (filter.getToken() == UcdlToken.RESOURCE_SET
+                  && ((SetDto) filter).type() == setType) {
+                continue;
+              }
+              throw new ParseException("Sets can only be filtered using sets of the same type!");
             }
 
             modifiers.add(new OperatorDto(UcdlToken.FILTER, filters));
@@ -515,13 +518,19 @@ public class DefinitionParser {
     if (token == UcdlToken.GREATER || token == UcdlToken.SMALLER
         || token == UcdlToken.GREATER_EQUALS || token == UcdlToken.SMALLER_EQUALS) {
       for (AbstractSyntaxTreeDto ast : params) {
-        if (ast.getToken() != UcdlToken.NUMBER && ast.getToken() != UcdlToken.SIZE
-            && !(ast.getToken() == UcdlToken.ELEMENT
-            && ((ElementDto) ast).type() == ResourceType.NUMBER)) {
-          throw new ParseException(
-              "Illegal comparison argument! Only numbers can be compared using "
-                  + "\"<\",\">\",\"<=\",\">=\"!");
+        if (ast.getToken() == UcdlToken.NUMBER) {
+          continue;
         }
+        if (ast.getToken() == UcdlToken.SIZE) {
+          continue;
+        }
+        if (ast.getToken() == UcdlToken.ELEMENT
+            && ((ElementDto) ast).type() == ResourceType.NUMBER) {
+          continue;
+        }
+        throw new ParseException(
+            "Illegal comparison argument! Only numbers can be compared using "
+                + "\"<\",\">\",\"<=\",\">=\"!");
       }
     }
     return token;
