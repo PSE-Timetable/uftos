@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 import de.uftos.dto.ConstraintInstanceRequestDto;
-import de.uftos.dto.ConstraintInstanceResponseDto;
+import de.uftos.dto.ConstraintInstancesResponseDto;
 import de.uftos.dto.ResourceType;
 import de.uftos.dto.solver.RewardPenalize;
 import de.uftos.entities.ConstraintArgument;
@@ -127,7 +127,7 @@ public class ConstraintInstanceServiceTest {
 
   @Test
   void constrainInstanceById() {
-    ConstraintInstanceResponseDto constraintInstanceResponse =
+    ConstraintInstancesResponseDto constraintInstanceResponse =
         constraintInstanceService.getById("test constraint", "123");
     assertNotNull(constraintInstanceResponse);
     assertEquals(1, constraintInstanceResponse.constraintInstances().size());

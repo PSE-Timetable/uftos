@@ -2,12 +2,13 @@ package de.uftos.services;
 
 import de.uftos.dto.ConstraintArgumentDisplayName;
 import de.uftos.dto.ConstraintInstanceRequestDto;
-import de.uftos.dto.ConstraintInstanceResponseDto;
+import de.uftos.dto.ConstraintInstancesResponseDto;
 import de.uftos.dto.ResourceType;
 import de.uftos.entities.ConstraintArgument;
 import de.uftos.entities.ConstraintInstance;
 import de.uftos.entities.ConstraintParameter;
 import de.uftos.entities.ConstraintSignature;
+import de.uftos.entities.Room;
 import de.uftos.entities.Student;
 import de.uftos.entities.Teacher;
 import de.uftos.repositories.database.ConstraintInstanceRepository;
@@ -130,8 +131,8 @@ public class ConstraintInstanceService {
    * @param pageable    contains the parameters for the page.
    * @return the entries fitting the parameters.
    */
-  public ConstraintInstanceResponseDto get(String signatureId, Pageable pageable,
-                                           Optional<String> argument) {
+  public ConstraintInstancesResponseDto get(String signatureId, Pageable pageable,
+                                            Optional<String> argument) {
     // TODO search for "argument" in all resources relations and get all IDs of the resources
     //  that fulfill the filter, then merge all the IDs with the IDs of the arguments of the
     //  instances of this specific signature. THEN return the instances that own these arguments.
@@ -142,7 +143,7 @@ public class ConstraintInstanceService {
     Page<ConstraintInstance> constraintInstances = this.repository.findAll(specification, pageable);
     List<ConstraintArgumentDisplayName> displayNames =
         processConstraintInstances(constraintInstances.getContent());
-    return new ConstraintInstanceResponseDto(constraintInstances.getContent(), displayNames);
+    return new ConstraintInstancesResponseDto(constraintInstances.getContent(), displayNames);
   }
 
   /**
@@ -152,11 +153,11 @@ public class ConstraintInstanceService {
    * @return the constraintInstance with the given ID.
    * @throws ResponseStatusException if the ID doesn't have a corresponding constraintInstance.
    */
-  public ConstraintInstanceResponseDto getById(String signatureId, String id) {
+  public ConstraintInstancesResponseDto getById(String signatureId, String id) {
     ConstraintInstance constraintInstance = getInstanceById(signatureId, id);
     List<ConstraintArgumentDisplayName> displayNames =
-        processConstraintInstance(constraintInstance);
-    return new ConstraintInstanceResponseDto(List.of(constraintInstance), displayNames);
+        getDisplayNamesFromInstances(constraintInstance);
+    return new ConstraintInstancesResponseDto(List.of(constraintInstance), displayNames);
   }
 
   /**
@@ -199,7 +200,7 @@ public class ConstraintInstanceService {
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
   }
 
-  private List<ConstraintArgumentDisplayName> processConstraintInstance(
+  private List<ConstraintArgumentDisplayName> getDisplayNamesFromInstances(
       ConstraintInstance constraintInstance) {
     List<ConstraintArgumentDisplayName> displayNames = new ArrayList<>();
     for (ConstraintArgument constraintArgument : constraintInstance.getArguments()) {
@@ -213,7 +214,7 @@ public class ConstraintInstanceService {
       List<ConstraintInstance> constraintInstances) {
     List<ConstraintArgumentDisplayName> displayNames = new ArrayList<>();
     for (ConstraintInstance constraintInstance : constraintInstances) {
-      displayNames.addAll(processConstraintInstance(constraintInstance));
+      displayNames.addAll(getDisplayNamesFromInstances(constraintInstance));
     }
     return displayNames;
   }
@@ -221,30 +222,40 @@ public class ConstraintInstanceService {
   private ConstraintArgumentDisplayName getDisplayName(ConstraintArgument constraintArgument) {
     String id = constraintArgument.getValue();
     return switch (constraintArgument.getConstraintParameter().getParameterType()) {
-      case TAG ->
-          new ConstraintArgumentDisplayName(id, tagRepository.findById(id).orElseThrow().getName());
-      case ROOM -> new ConstraintArgumentDisplayName(id,
-          roomRepository.findById(id).orElseThrow().getName());
+      case TAG -> new ConstraintArgumentDisplayName(id,
+          tagRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST)).getName());
+      case ROOM -> {
+        Room room = roomRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+        yield new ConstraintArgumentDisplayName(id,
+            "%s %s".formatted(room.getBuildingName(), room.getName()));
+      }
       case GRADE -> new ConstraintArgumentDisplayName(id,
-          gradeRepository.findById(id).orElseThrow().getName());
+          gradeRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST))
+              .getName());
       case LESSON -> new ConstraintArgumentDisplayName(id,
-          lessonRepository.findById(id).orElseThrow().getYear());
+          lessonRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST))
+              .getYear());
       case STUDENT -> {
-        Student student = studentRepository.findById(id).orElseThrow();
+        Student student =
+            studentRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
         yield new ConstraintArgumentDisplayName(id,
             "%s %s".formatted(student.getFirstName(), student.getLastName()));
       }
       case SUBJECT -> new ConstraintArgumentDisplayName(id,
-          subjectRepository.findById(id).orElseThrow().getName());
+          subjectRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST))
+              .getName());
       case TEACHER -> {
-        Teacher teacher = teacherRepository.findById(id).orElseThrow();
+        Teacher teacher =
+            teacherRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
         yield new ConstraintArgumentDisplayName(id,
             "%s %s".formatted(teacher.getFirstName(), teacher.getLastName()));
       }
       case STUDENT_GROUP -> new ConstraintArgumentDisplayName(id,
-          studentGroupRepository.findById(id).orElseThrow().getName());
+          studentGroupRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST))
+              .getName());
       case TIMESLOT -> new ConstraintArgumentDisplayName(id,
-          timeslotRepository.findById(id).orElseThrow().getDay().toString());
+          timeslotRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST))
+              .getDay().toString());
     };
   }
 

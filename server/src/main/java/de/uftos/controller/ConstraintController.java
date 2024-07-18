@@ -1,13 +1,9 @@
 package de.uftos.controller;
 
 import de.uftos.dto.ConstraintInstanceRequestDto;
-import de.uftos.dto.ConstraintInstanceResponseDto;
+import de.uftos.dto.ConstraintInstancesResponseDto;
 import de.uftos.entities.ConstraintInstance;
 import de.uftos.entities.ConstraintSignature;
-import de.uftos.repositories.database.ConstraintInstanceRepository;
-import de.uftos.repositories.database.ConstraintSignatureRepository;
-import de.uftos.repositories.database.StudentGroupRepository;
-import de.uftos.repositories.database.TeacherRepository;
 import de.uftos.services.ConstraintInstanceService;
 import de.uftos.services.ConstraintSignatureService;
 import java.util.Optional;
@@ -31,10 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ConstraintController {
   private final ConstraintSignatureService constraintSignatureService;
   private final ConstraintInstanceService constraintInstanceService;
-  private final ConstraintSignatureRepository constraintSignatureRepository;
-  private final ConstraintInstanceRepository constraintInstanceRepository;
-  private final TeacherRepository teacherRepository;
-  private final StudentGroupRepository studentGroupRepository;
+
 
   /**
    * Creates the constraint controller.
@@ -44,17 +37,9 @@ public class ConstraintController {
    */
   @Autowired
   public ConstraintController(ConstraintSignatureService constraintSignatureService,
-                              ConstraintInstanceService constraintInstanceService,
-                              ConstraintSignatureRepository constraintSignatureRepository,
-                              ConstraintInstanceRepository constraintInstanceRepository,
-                              TeacherRepository teacherRepository,
-                              StudentGroupRepository studentGroupRepository) {
+                              ConstraintInstanceService constraintInstanceService) {
     this.constraintSignatureService = constraintSignatureService;
     this.constraintInstanceService = constraintInstanceService;
-    this.constraintSignatureRepository = constraintSignatureRepository;
-    this.constraintInstanceRepository = constraintInstanceRepository;
-    this.teacherRepository = teacherRepository;
-    this.studentGroupRepository = studentGroupRepository;
   }
 
   /**
@@ -111,9 +96,9 @@ public class ConstraintController {
    * @return the constraint signature with the given ID.
    */
   @GetMapping("/{signatureId}/instances")
-  public ConstraintInstanceResponseDto getConstraintInstances(@PathVariable String signatureId,
-                                                              Pageable pageable,
-                                                              Optional<String> argument) {
+  public ConstraintInstancesResponseDto getConstraintInstances(@PathVariable String signatureId,
+                                                               Pageable pageable,
+                                                               Optional<String> argument) {
     return this.constraintInstanceService.get(signatureId, pageable, argument);
   }
 
@@ -127,8 +112,8 @@ public class ConstraintController {
    * @return the constraint instance with the given ID.
    */
   @GetMapping("/{signatureId}/instances/{id}")
-  public ConstraintInstanceResponseDto getConstraintInstanceById(@PathVariable String signatureId,
-                                                                 @PathVariable String id) {
+  public ConstraintInstancesResponseDto getConstraintInstanceById(@PathVariable String signatureId,
+                                                                  @PathVariable String id) {
     return this.constraintInstanceService.getById(signatureId, id);
   }
 
