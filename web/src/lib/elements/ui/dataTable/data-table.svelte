@@ -22,10 +22,12 @@
   import ChevronDown from 'lucide-svelte/icons/chevron-down';
   import * as DropdownMenu from '$lib/elements/ui/dropdown-menu';
   import DataTableCheckbox from './data-table-checkbox.svelte';
-  import { ArrowDown, ArrowUp } from 'lucide-svelte';
+  import { ArrowDown, ArrowUp, Plus } from 'lucide-svelte';
   import { Input } from '$lib/elements/ui/input';
   import { writable, type Writable } from 'svelte/store';
   import { onMount } from 'svelte';
+  import { goto } from '$app/navigation';
+  import { page } from '$app/stores';
 
   onMount(async () => await getData());
 
@@ -194,6 +196,15 @@
         {/each}
       </DropdownMenu.Content>
     </DropdownMenu.Root>
+    <Button
+      class="ml-auto text-md"
+      variant="secondary"
+      on:click={async () => {
+        await goto(`${$page.url}/new`);
+      }}
+      >Hinzufügen
+      <Plus class="ml-3" />
+    </Button>
   </div>
   <div>
     <Table.Root {...$tableAttrs}>

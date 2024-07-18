@@ -1,5 +1,5 @@
 <script lang="ts">
-  import AddResource from '$lib/components/ui/add-Resource/add-resource.svelte';
+  import AddResource from '$lib/components/ui/add-resource/add-resource.svelte';
   import {
     createStudent,
     updateStudent,
@@ -12,7 +12,7 @@
   export let data;
   let student: Student = data.student;
   let values: string[] = [student.firstName, student.lastName];
-  let descriptions: string[] = ['Vorname', 'Nachname', 'Tags'];
+  let descriptions: string[] = ['Vorname:', 'Nachname:', 'Tags:'];
 
   async function create(values: string[], tagIds: string[]) {
     let studentRequestDto: StudentRequestDto = {
@@ -51,4 +51,4 @@
   ]; //TODO get tags for the resource.
 </script>
 
-<AddResource {descriptions} {values} {create} {update} createEntity={data.create} {tags} />
+<AddResource {descriptions} {values} {create} {update} createEntity={data.create} {tags} entityTags={student.tags} />

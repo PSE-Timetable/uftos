@@ -3,7 +3,7 @@ import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
 
 export const load = (async ({ params }) => {
-  if (params.id == 'new') {
+  if (params.id === 'new') {
     const student: Student = { id: 'new', firstName: '', lastName: '', tags: [] };
     return {
       student,
