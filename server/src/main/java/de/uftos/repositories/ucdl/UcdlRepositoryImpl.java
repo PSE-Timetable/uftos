@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -20,15 +21,27 @@ public class UcdlRepositoryImpl implements UcdlRepository {
   private HashMap<String, ConstraintDefinitionDto> currentDefinitions = null;
 
   @Override
-  public String getUcdl() throws IOException {
-    Files.createFile(UCDL_PATH);
-    return Files.readString(UCDL_PATH);
+  public String getUcdl() throws BadRequestException {
+    try {
+      Files.createFile(UCDL_PATH);
+    } catch (IOException e) {
+      throw new BadRequestException(e);
+    }
+    try {
+      return Files.readString(UCDL_PATH);
+    } catch (IOException e) {
+      throw new BadRequestException(e);
+    }
   }
 
   @Override
-  public void setUcdl(String ucdl) throws IOException {
+  public void setUcdl(String ucdl) throws BadRequestException {
     this.currentDefinitions = null;
-    Files.writeString(UCDL_PATH, ucdl);
+    try {
+      Files.writeString(UCDL_PATH, ucdl);
+    } catch (IOException e) {
+      throw new BadRequestException(e);
+    }
   }
 
   @Override
