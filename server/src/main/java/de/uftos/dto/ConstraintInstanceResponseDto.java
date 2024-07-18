@@ -12,5 +12,6 @@ import java.util.List;
  * @param displayNames        the display names of the arguments of the constraint instances
  */
 public record ConstraintInstanceResponseDto(@NotNull List<ConstraintInstance> constraintInstances,
-                                            @NotNull List<ConstraintArgumentDisplayName> displayNames) {
+                                            @NotNull
+                                            List<ConstraintArgumentDisplayName> displayNames) {
 }
