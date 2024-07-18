@@ -1,11 +1,16 @@
 package de.uftos.services;
 
+import de.uftos.dto.ConstraintArgumentDisplayName;
 import de.uftos.dto.ConstraintInstanceRequestDto;
+import de.uftos.dto.ConstraintInstancesResponseDto;
 import de.uftos.dto.ResourceType;
 import de.uftos.entities.ConstraintArgument;
 import de.uftos.entities.ConstraintInstance;
 import de.uftos.entities.ConstraintParameter;
 import de.uftos.entities.ConstraintSignature;
+import de.uftos.entities.Room;
+import de.uftos.entities.Student;
+import de.uftos.entities.Teacher;
 import de.uftos.repositories.database.ConstraintInstanceRepository;
 import de.uftos.repositories.database.ConstraintSignatureRepository;
 import de.uftos.repositories.database.GradeRepository;
@@ -19,6 +24,7 @@ import de.uftos.repositories.database.TeacherRepository;
 import de.uftos.repositories.database.TimeslotRepository;
 import de.uftos.utils.SpecificationBuilder;
 import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -123,16 +129,21 @@ public class ConstraintInstanceService {
    *
    * @param signatureId the ID of the signature for the instances.
    * @param pageable    contains the parameters for the page.
-   * @return the page of the entries fitting the parameters.
+   * @return the entries fitting the parameters.
    */
-  public Page<ConstraintInstance> get(String signatureId, Pageable pageable,
-                                      Optional<String> argument) {
+  public ConstraintInstancesResponseDto get(String signatureId, Pageable pageable,
+                                            Optional<String> argument) {
+    // TODO search for "argument" in all resources relations and get all IDs of the resources
+    //  that fulfill the filter, then merge all the IDs with the IDs of the arguments of the
+    //  instances of this specific signature. THEN return the instances that own these arguments.
+    //  GOOD LUCK!
     Specification<ConstraintInstance> specification = new SpecificationBuilder<ConstraintInstance>()
-        .andJoinEquals(signatureId, "signature", "name")
-        .optionalAndJoinLikeIgnoreCase(argument, "arguments", "value")
         .build();
 
-    return this.repository.findAll(specification, pageable);
+    Page<ConstraintInstance> constraintInstances = this.repository.findAll(specification, pageable);
+    List<ConstraintArgumentDisplayName> displayNames =
+        processConstraintInstances(constraintInstances.getContent());
+    return new ConstraintInstancesResponseDto(constraintInstances.getContent(), displayNames);
   }
 
   /**
@@ -142,12 +153,11 @@ public class ConstraintInstanceService {
    * @return the constraintInstance with the given ID.
    * @throws ResponseStatusException if the ID doesn't have a corresponding constraintInstance.
    */
-  public ConstraintInstance getById(String signatureId, String id) {
-    ConstraintSignature signature = this.signatureRepository.findById(signatureId)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
-
-    return this.repository.findBySignatureAndId(signature, id)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+  public ConstraintInstancesResponseDto getById(String signatureId, String id) {
+    ConstraintInstance constraintInstance = getInstanceById(signatureId, id);
+    List<ConstraintArgumentDisplayName> displayNames =
+        getDisplayNamesFromInstances(constraintInstance);
+    return new ConstraintInstancesResponseDto(List.of(constraintInstance), displayNames);
   }
 
   /**
@@ -159,7 +169,7 @@ public class ConstraintInstanceService {
    */
   public ConstraintInstance update(String signatureId, String id,
                                    ConstraintInstanceRequestDto request) {
-    ConstraintInstance instance = this.getById(signatureId, id);
+    ConstraintInstance instance = this.getInstanceById(signatureId, id);
 
     List<ConstraintArgument> arguments = request.arguments().entrySet().stream()
         .map(item -> new ConstraintArgument(item.getKey(), item.getValue())).toList();
@@ -177,11 +187,86 @@ public class ConstraintInstanceService {
    * @param id          the ID of the constraintInstance.
    */
   public void delete(String signatureId, String id) {
-    ConstraintInstance instance = this.getById(signatureId, id);
+    ConstraintInstance instance = this.getInstanceById(signatureId, id);
 
     this.repository.delete(instance);
   }
 
+  private ConstraintInstance getInstanceById(String signatureId, String id) {
+    ConstraintSignature signature = this.signatureRepository.findById(signatureId)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+
+    return this.repository.findBySignatureAndId(signature, id)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+  }
+
+  private List<ConstraintArgumentDisplayName> getDisplayNamesFromInstances(
+      ConstraintInstance constraintInstance) {
+    List<ConstraintArgumentDisplayName> displayNames = new ArrayList<>();
+    for (ConstraintArgument constraintArgument : constraintInstance.getArguments()) {
+      ConstraintArgumentDisplayName displayName = getDisplayName(constraintArgument);
+      displayNames.add(displayName);
+    }
+    return displayNames;
+  }
+
+  private List<ConstraintArgumentDisplayName> processConstraintInstances(
+      List<ConstraintInstance> constraintInstances) {
+    List<ConstraintArgumentDisplayName> displayNames = new ArrayList<>();
+    for (ConstraintInstance constraintInstance : constraintInstances) {
+      displayNames.addAll(getDisplayNamesFromInstances(constraintInstance));
+    }
+    return displayNames;
+  }
+
+  private ConstraintArgumentDisplayName getDisplayName(ConstraintArgument constraintArgument) {
+    String id = constraintArgument.getValue();
+    return switch (constraintArgument.getConstraintParameter().getParameterType()) {
+      case TAG -> new ConstraintArgumentDisplayName(id,
+          tagRepository.findById(id)
+              .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST)).getName());
+      case ROOM -> {
+        Room room = roomRepository.findById(id)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+        yield new ConstraintArgumentDisplayName(id,
+            "%s %s".formatted(room.getBuildingName(), room.getName()));
+      }
+      case GRADE -> new ConstraintArgumentDisplayName(id,
+          gradeRepository.findById(id)
+              .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST))
+              .getName());
+      case LESSON -> new ConstraintArgumentDisplayName(id,
+          lessonRepository.findById(id)
+              .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST))
+              .getYear());
+      case STUDENT -> {
+        Student student =
+            studentRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+        yield new ConstraintArgumentDisplayName(id,
+            "%s %s".formatted(student.getFirstName(), student.getLastName()));
+      }
+      case SUBJECT -> new ConstraintArgumentDisplayName(id,
+          subjectRepository.findById(id)
+              .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST))
+              .getName());
+      case TEACHER -> {
+        Teacher teacher =
+            teacherRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+        yield new ConstraintArgumentDisplayName(id,
+            "%s %s".formatted(teacher.getFirstName(), teacher.getLastName()));
+      }
+      case STUDENT_GROUP -> new ConstraintArgumentDisplayName(id,
+          studentGroupRepository.findById(id)
+              .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST))
+              .getName());
+      case TIMESLOT -> new ConstraintArgumentDisplayName(id,
+          timeslotRepository.findById(id)
+              .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST))
+              .getDay().toString());
+    };
+  }
 
   private Map<ResourceType, Boolean> getResourceTypeMapping(String id) {
     return Map.ofEntries(

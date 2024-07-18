@@ -1,10 +1,9 @@
 package de.uftos.controller;
 
 import de.uftos.dto.ConstraintInstanceRequestDto;
+import de.uftos.dto.ConstraintInstancesResponseDto;
 import de.uftos.entities.ConstraintInstance;
 import de.uftos.entities.ConstraintSignature;
-import de.uftos.repositories.database.ConstraintInstanceRepository;
-import de.uftos.repositories.database.ConstraintSignatureRepository;
 import de.uftos.services.ConstraintInstanceService;
 import de.uftos.services.ConstraintSignatureService;
 import java.util.Optional;
@@ -28,8 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ConstraintController {
   private final ConstraintSignatureService constraintSignatureService;
   private final ConstraintInstanceService constraintInstanceService;
-  private final ConstraintInstanceRepository constraintInstanceRepository;
-  private final ConstraintSignatureRepository constraintSignatureRepository;
+
 
   /**
    * Creates the constraint controller.
@@ -39,13 +37,9 @@ public class ConstraintController {
    */
   @Autowired
   public ConstraintController(ConstraintSignatureService constraintSignatureService,
-                              ConstraintInstanceService constraintInstanceService,
-                              ConstraintInstanceRepository constraintInstanceRepository,
-                              ConstraintSignatureRepository constraintSignatureRepository) {
+                              ConstraintInstanceService constraintInstanceService) {
     this.constraintSignatureService = constraintSignatureService;
     this.constraintInstanceService = constraintInstanceService;
-    this.constraintInstanceRepository = constraintInstanceRepository;
-    this.constraintSignatureRepository = constraintSignatureRepository;
   }
 
   /**
@@ -102,9 +96,9 @@ public class ConstraintController {
    * @return the constraint signature with the given ID.
    */
   @GetMapping("/{signatureId}/instances")
-  public Page<ConstraintInstance> getConstraintInstances(@PathVariable String signatureId,
-                                                         Pageable pageable,
-                                                         Optional<String> argument) {
+  public ConstraintInstancesResponseDto getConstraintInstances(@PathVariable String signatureId,
+                                                               Pageable pageable,
+                                                               Optional<String> argument) {
     return this.constraintInstanceService.get(signatureId, pageable, argument);
   }
 
@@ -118,8 +112,8 @@ public class ConstraintController {
    * @return the constraint instance with the given ID.
    */
   @GetMapping("/{signatureId}/instances/{id}")
-  public ConstraintInstance getConstraintInstanceById(@PathVariable String signatureId,
-                                                      @PathVariable String id) {
+  public ConstraintInstancesResponseDto getConstraintInstanceById(@PathVariable String signatureId,
+                                                                  @PathVariable String id) {
     return this.constraintInstanceService.getById(signatureId, id);
   }
 
