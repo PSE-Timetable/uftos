@@ -35,13 +35,13 @@ public class TagsTest {
         .body().jsonPath().getString("id");
 
     tagId2 = given().contentType(ContentType.JSON)
-        .body(generateTagJson(FIRST_TAG_NAME))
+        .body(generateTagJson(SECOND_TAG_NAME))
         .when()
         .post("/tags")
         .then()
         .statusCode(200)
         .body("id", notNullValue())
-        .body("name", equalTo(FIRST_TAG_NAME))
+        .body("name", equalTo(SECOND_TAG_NAME))
         .log().ifValidationFails()
         .extract()
         .body().jsonPath().getString("id");
