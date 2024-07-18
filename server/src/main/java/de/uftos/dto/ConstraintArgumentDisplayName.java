@@ -1,7 +1,6 @@
-package de.uftos.controller;
+package de.uftos.dto;
 
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 
 /**
  * A data transfer object used in the curriculum HTTP requests.
@@ -9,5 +8,5 @@ import jakarta.validation.constraints.NotNull;
  * @param id          the id of the resource
  * @param displayName the name to be displayed for this resource
  */
-public record ConstraintArgumentDisplayName(@NotEmpty String id, @NotNull String displayName) {
+public record ConstraintArgumentDisplayName(@NotEmpty String id, @NotEmpty String displayName) {
 }

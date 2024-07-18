@@ -1,6 +1,6 @@
 package de.uftos.services;
 
-import de.uftos.controller.ConstraintArgumentDisplayName;
+import de.uftos.dto.ConstraintArgumentDisplayName;
 import de.uftos.dto.ConstraintInstanceRequestDto;
 import de.uftos.dto.ConstraintInstanceResponseDto;
 import de.uftos.dto.ResourceType;

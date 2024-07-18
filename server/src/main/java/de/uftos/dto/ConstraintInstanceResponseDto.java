@@ -1,6 +1,5 @@
 package de.uftos.dto;
 
-import de.uftos.controller.ConstraintArgumentDisplayName;
 import de.uftos.entities.ConstraintInstance;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
