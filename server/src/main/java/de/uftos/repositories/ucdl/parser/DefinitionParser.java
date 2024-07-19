@@ -158,12 +158,34 @@ public class DefinitionParser {
       }
       case "ELEMENT_IN_SET_OR_EQUATION" -> {
         List<AbstractSyntaxTreeDto> params = new ArrayList<>();
-        params.add(buildAst(root.jjtGetChild(0), parameters));
+        AbstractSyntaxTreeDto element = buildAst(root.jjtGetChild(0), parameters);
+        ResourceType elementType;
+        if (element.getToken() == UcdlToken.NUMBER || element.getToken() == UcdlToken.SIZE) {
+          elementType = ResourceType.NUMBER;
+        } else {
+          elementType = ((ElementDto) element).type();
+        }
+        params.add(element);
 
         Node secondPart = root.jjtGetChild(1);
 
         if (secondPart.toString().equals("ELEMENT_IN_SET")) {
-          params.add(buildAst(secondPart.jjtGetChild(0), parameters));
+          AbstractSyntaxTreeDto set = buildAst(secondPart.jjtGetChild(0), parameters);
+          ResourceType setType;
+          if (set.getToken() == UcdlToken.NUMBER || set.getToken() == UcdlToken.NUMBER_SET
+              || set.getToken() == UcdlToken.SIZE) {
+            setType = ResourceType.NUMBER;
+          } else if (set.getToken() == UcdlToken.ELEMENT) {
+            setType = ((ElementDto) set).type();
+          } else {
+            setType = ((SetDto) set).type();
+          }
+
+          params.add(set);
+
+          if (elementType != setType) {
+            throw new ParseException("Elements can only be in Sets of the same type!");
+          }
           return new OperatorDto(UcdlToken.IN, params);
         }
 
@@ -292,7 +314,8 @@ public class DefinitionParser {
               case "SET_MODIFICATION" -> {
                 AbstractSyntaxTreeDto setName = buildAst(root.jjtGetChild(0), parameters);
                 ResourceType setType;
-                if (setName.getToken() == UcdlToken.NUMBER) {
+                if (setName.getToken() == UcdlToken.NUMBER
+                    || setName.getToken() == UcdlToken.SIZE) {
                   setType = ResourceType.NUMBER;
                 } else {
                   setType = ((ElementDto) setName).type();
@@ -304,14 +327,33 @@ public class DefinitionParser {
                 AbstractSyntaxTreeDto ast;
 
                 List<AbstractSyntaxTreeDto> params = new ArrayList<>();
-                ElementDto element = (ElementDto) buildAst(root.jjtGetChild(0), parameters);
+                AbstractSyntaxTreeDto element = buildAst(root.jjtGetChild(0), parameters);
+                ResourceType elementType;
+                if (element.getToken() == UcdlToken.NUMBER
+                    || element.getToken() == UcdlToken.SIZE) {
+                  elementType = ResourceType.NUMBER;
+                } else {
+                  elementType = ((ElementDto) element).type();
+                }
                 params.add(element);
 
                 if (operator.equals("ELEMENT_IN_SET")) {
-                  SetDto set = (SetDto) buildAst(root.jjtGetChild(1).jjtGetChild(0), parameters);
+                  AbstractSyntaxTreeDto set =
+                      buildAst(root.jjtGetChild(1).jjtGetChild(0), parameters);
+                  ResourceType setType;
+                  if (set.getToken() == UcdlToken.NUMBER
+                      || set.getToken() == UcdlToken.NUMBER_SET
+                      || set.getToken() == UcdlToken.SIZE) {
+                    setType = ResourceType.NUMBER;
+                  } else if (set.getToken() == UcdlToken.ELEMENT) {
+                    setType = ((ElementDto) set).type();
+                  } else {
+                    setType = ((SetDto) set).type();
+                  }
+
                   params.add(set);
 
-                  if (element.type() != set.type()) {
+                  if (elementType != setType) {
                     throw new ParseException("Elements can only be in Sets of the same type!");
                   }
 
@@ -449,7 +491,7 @@ public class DefinitionParser {
     OperatorDto variable = new OperatorDto(UcdlToken.OF, variableDefinition);
 
     parameters.put(varName.value(), set.type()); //adding the new variable
-    AbstractSyntaxTreeDto body = buildAst(root.jjtGetChild(1), parameters);
+    AbstractSyntaxTreeDto body = buildAst(root.jjtGetChild(2), parameters);
     parameters.remove(varName.value()); //removing the new variable
 
     return new QuantifierDto(token, variable, body);
@@ -483,6 +525,10 @@ public class DefinitionParser {
 
   private static UcdlToken getComparatorToken(String comparator, List<AbstractSyntaxTreeDto> params)
       throws ParseException {
+    if (params.size() != 2) {
+      throw new IllegalStateException();
+    }
+
     UcdlToken token = switch (comparator) {
       case ">" -> UcdlToken.GREATER;
       case "<" -> UcdlToken.SMALLER;
@@ -492,22 +538,31 @@ public class DefinitionParser {
       case "!=" -> UcdlToken.NOT_EQUALS;
       default -> throw new IllegalStateException();
     };
+
+    List<ResourceType> types = new ArrayList<>(2);
+
+    for (AbstractSyntaxTreeDto ast : params) {
+      if (ast.getToken() == UcdlToken.NUMBER || ast.getToken() == UcdlToken.SIZE) {
+        types.add(ResourceType.NUMBER);
+      } else if (ast.getToken() == UcdlToken.ELEMENT) {
+        types.add(((ElementDto) ast).type());
+      } else {
+        throw new IllegalStateException();
+      }
+    }
+
+    if (types.get(0) != types.get(1)) {
+      throw new ParseException("Only elements of the same type can be compared!");
+    }
+
     if (token == UcdlToken.GREATER || token == UcdlToken.SMALLER
         || token == UcdlToken.GREATER_EQUALS || token == UcdlToken.SMALLER_EQUALS) {
-      for (AbstractSyntaxTreeDto ast : params) {
-        if (ast.getToken() == UcdlToken.NUMBER) {
-          continue;
+      for (ResourceType type : types) {
+        if (type != ResourceType.NUMBER) {
+          throw new ParseException(
+              "Illegal comparison argument! Only numbers can be compared using "
+                  + "\"<\",\">\",\"<=\",\">=\"!");
         }
-        if (ast.getToken() == UcdlToken.SIZE) {
-          continue;
-        }
-        if (ast.getToken() == UcdlToken.ELEMENT
-            && ((ElementDto) ast).type() == ResourceType.NUMBER) {
-          continue;
-        }
-        throw new ParseException(
-            "Illegal comparison argument! Only numbers can be compared using "
-                + "\"<\",\">\",\"<=\",\">=\"!");
       }
     }
     return token;
