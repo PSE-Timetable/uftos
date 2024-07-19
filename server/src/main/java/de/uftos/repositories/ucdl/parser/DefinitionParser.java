@@ -14,7 +14,7 @@ import de.uftos.repositories.ucdl.parser.javacc.ParseException;
 import de.uftos.repositories.ucdl.parser.javacc.SimpleNode;
 import de.uftos.repositories.ucdl.parser.javacc.SyntaxChecker;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 //magic numbers are tied directly to the used grammar
@@ -35,15 +35,18 @@ public class DefinitionParser {
    * @throws ParseException if the given ucdl-code isn't correct.
    */
   public static AbstractSyntaxTreeDto parseDefinition(String definition,
-                                                      HashMap<String, ResourceType> parameters)
+                                                      LinkedHashMap<String, ResourceType> parameters)
       throws ParseException {
-    HashMap<String, ResourceType> params = (HashMap<String, ResourceType>) parameters.clone();
+    LinkedHashMap<String, ResourceType> params = new LinkedHashMap<>();
     params.put("this", ResourceType.TIMETABLE);
+    params.putAll(parameters);
+
     SimpleNode root = SyntaxChecker.parseString(definition);
     return buildAst(root, params);
   }
 
-  private static AbstractSyntaxTreeDto buildAst(Node root, HashMap<String, ResourceType> parameters)
+  private static AbstractSyntaxTreeDto buildAst(Node root,
+                                                LinkedHashMap<String, ResourceType> parameters)
       throws ParseException {
     String s = root.toString();
     switch (s) {
@@ -362,7 +365,7 @@ public class DefinitionParser {
 
   private static AbstractSyntaxTreeDto buildSet(AbstractSyntaxTreeDto setName,
                                                 ResourceType setType, Node modifierList,
-                                                HashMap<String, ResourceType> parameters)
+                                                LinkedHashMap<String, ResourceType> parameters)
       throws ParseException {
     List<AbstractSyntaxTreeDto> modifiers = new ArrayList<>();
 
@@ -412,7 +415,7 @@ public class DefinitionParser {
   }
 
   private static AbstractSyntaxTreeDto buildUnaryOperator(UcdlToken token, Node root,
-                                                          HashMap<String, ResourceType> parameters)
+                                                          LinkedHashMap<String, ResourceType> parameters)
       throws ParseException {
     List<AbstractSyntaxTreeDto> param = new ArrayList<>();
     param.add(buildAst(root.jjtGetChild(0), parameters));
@@ -420,7 +423,7 @@ public class DefinitionParser {
   }
 
   private static AbstractSyntaxTreeDto buildBinaryOperator(UcdlToken token, Node root,
-                                                           HashMap<String, ResourceType> parameters)
+                                                           LinkedHashMap<String, ResourceType> parameters)
       throws ParseException {
     AbstractSyntaxTreeDto firstArgument = buildAst(root.jjtGetChild(0), parameters);
     if (root.jjtGetChild(1).jjtGetNumChildren() > 0) {
@@ -435,7 +438,7 @@ public class DefinitionParser {
   }
 
   private static QuantifierDto buildQuantifier(UcdlToken token, Node root,
-                                               HashMap<String, ResourceType> parameters)
+                                               LinkedHashMap<String, ResourceType> parameters)
       throws ParseException {
     List<AbstractSyntaxTreeDto> variableDefinition = new ArrayList<>();
     ValueDto<String> varName = (ValueDto<String>) buildAst(root.jjtGetChild(0), parameters);
