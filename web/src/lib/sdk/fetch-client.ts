@@ -20,9 +20,9 @@ export type Pageable = {
     sort?: string[];
 };
 export type ConstraintParameter = {
-    id?: string;
-    parameterName?: string;
-    parameterType?: ParameterType;
+    id: string;
+    parameterName: string;
+    parameterType: ParameterType;
 };
 export type ConstraintSignature = {
     defaultType: DefaultType;
@@ -59,9 +59,9 @@ export type PageConstraintSignature = {
     totalPages?: number;
 };
 export type ConstraintArgument = {
-    id?: string;
-    name?: string;
-    value?: string;
+    constraintParameter: ConstraintParameter;
+    id: string;
+    value: string;
 };
 export type ConstraintInstance = {
     arguments: ConstraintArgument[];

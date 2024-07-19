@@ -1,14 +1,54 @@
 <script lang="ts">
-  import WorkingHours from '$lib/components/ui/working-hours/working-hours-day-container.svelte';
-  import { WeekDay } from '$lib/utils';
+  import DataTable, { type DataItem } from '$lib/elements/ui/dataTable/data-table.svelte';
+  import { deleteTeacher, getTeachers, type Pageable, type PageTeacher } from '$lib/sdk/fetch-client';
+  import { error } from '@sveltejs/kit';
+  import { onMount } from 'svelte';
+
+  let columnNames = ['Vorname', 'Nachname', 'Akronym', 'Fächer', 'Tags'];
+  let keys = ['id', 'firstName', 'lastName', 'acronym', 'subjects', 'tags'];
+  let pageLoaded = false;
+
+  onMount(() => (pageLoaded = true));
+
+  async function loadPage(index: number, sortString: string, filter: string) {
+    let pageable: Pageable = { page: index, size: 10, sort: [sortString] };
+    try {
+      const result: PageTeacher = await getTeachers(pageable, {
+        firstName: filter,
+        lastName: filter,
+        acronym: filter,
+      });
+      let dataItems: DataItem[] = result.content
+        ? result.content.map(
+            (teacher): DataItem => ({
+              id: teacher.id,
+              firstName: teacher.firstName,
+              lastName: teacher.lastName,
+              acronym: teacher.acronym,
+              tags: teacher.tags.map((tag) => tag.name),
+            }),
+          )
+        : [];
+      return {
+        data: dataItems,
+        totalElements: Number(result.totalElements),
+      };
+    } catch {
+      error(400, { message: 'Could not fetch page' });
+    }
+  }
+
+  async function deleteEntry(id: string) {
+    try {
+      await deleteTeacher(id);
+    } catch {
+      error(400, { message: `could not delete teacher with id ${id}` });
+    }
+  }
 </script>
 
-123
-<div class="h-[200px]"></div>
-<div class="flex flex-col gap-2">
-  <WorkingHours weekDay={WeekDay.MONDAY} />
-  <WorkingHours weekDay={WeekDay.TUESDAY} />
-  <WorkingHours weekDay={WeekDay.WEDNESDAY} />
-  <WorkingHours weekDay={WeekDay.THURSDAY} />
-  <WorkingHours weekDay={WeekDay.FRIDAY} />
+<div class="p-10 w-full">
+  {#if pageLoaded}
+    <DataTable {columnNames} {keys} {loadPage} {deleteEntry} />
+  {/if}
 </div>

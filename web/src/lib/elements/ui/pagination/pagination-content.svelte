@@ -2,12 +2,12 @@
   import type { HTMLAttributes } from 'svelte/elements';
   import { cn } from '$lib/utils.js';
 
-  type $$Props = HTMLAttributes<HTMLTableSectionElement>;
+  type $$Props = HTMLAttributes<HTMLUListElement>;
 
   let className: $$Props['class'] = undefined;
   export { className as class };
 </script>
 
-<tbody class={cn('[&_tr:last-child]:border-0 bg-white', className)} {...$$restProps}>
+<ul class={cn('flex flex-row items-center gap-1', className)} {...$$restProps}>
   <slot />
-</tbody>
+</ul>

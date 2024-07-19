@@ -32,7 +32,7 @@ public class ConstraintInstance {
   private ConstraintSignature signature;
 
   @NotNull
-  @OneToMany(cascade = CascadeType.REMOVE)
+  @OneToMany(cascade = CascadeType.ALL)
   private List<ConstraintArgument> arguments;
 
   @NotNull
