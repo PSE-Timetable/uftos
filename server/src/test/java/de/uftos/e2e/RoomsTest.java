@@ -2,7 +2,6 @@ package de.uftos.e2e;
 
 import static de.uftos.utils.JsonGenerator.generatePageJson;
 import static de.uftos.utils.JsonGenerator.generateRoomJson;
-import static de.uftos.utils.JsonGenerator.generateStudentJson;
 import static de.uftos.utils.JsonGenerator.generateTagJson;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
@@ -16,7 +15,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class RoomsTest {
+class RoomsTest {
 
   private static final String FIRST_ROOM_NAME = "100";
   private static final String FIRST_ROOM_BUILDING = "10.10";
