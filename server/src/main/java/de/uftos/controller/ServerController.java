@@ -1,6 +1,7 @@
 package de.uftos.controller;
 
 import de.uftos.dto.ServerStatisticsResponseDto;
+import de.uftos.entities.TimetableMetadata;
 import de.uftos.services.ServerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,23 +41,23 @@ public class ServerController {
 
   /**
    * Returns the currently set timeslot length by GET-ting /timeslot-length, using the
-   * {@link ServerService#getTimeslotLength()} function of the server service.
+   * {@link ServerService#getTimetableMetadata()} function of the server service.
    *
    * @return the timeslot length
    */
-  @GetMapping("/timeslot-length")
-  public int getTimeslotLength() {
-    return this.serverService.getTimeslotLength();
+  @GetMapping("/timetable-metadata")
+  public TimetableMetadata getTimetableMetadata() {
+    return this.serverService.getTimetableMetadata();
   }
 
   /**
    * Sets the timeslot length by PUT-ting /timeslot-length, using the
-   * {@link ServerService#setTimeslotLength(int)} function of the server service.
+   * {@link ServerService#setTimetableMetadata(TimetableMetadata)} function of the server service.
    *
-   * @param length the new timeslot length
+   * @param timetableMetadata the new timetable metadata
    */
-  @PutMapping("/timeslot-length")
-  public void setTimeslotLength(int length) {
-    this.serverService.setTimeslotLength(length);
+  @PutMapping("/timetable-metadata")
+  public void setTimetableMetadata(TimetableMetadata timetableMetadata) {
+    this.serverService.setTimetableMetadata(timetableMetadata);
   }
 }

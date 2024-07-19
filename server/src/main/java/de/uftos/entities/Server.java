@@ -1,5 +1,8 @@
 package de.uftos.entities;
 
+import de.uftos.utils.JsonbConverter;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -21,12 +24,14 @@ public class Server {
   @GeneratedValue(strategy = GenerationType.UUID)
   private String id;
 
-  private int timeslotLength;
-
   private String currentYear;
 
-  public Server(int timeslotLength, String currentYear) {
-    this.timeslotLength = timeslotLength;
+  @Convert(converter = JsonbConverter.class)
+  @Column(columnDefinition = "jsonb")
+  private TimetableMetadata timetableMetadata;
+
+  public Server(TimetableMetadata timetableMetadata, String currentYear) {
+    this.timetableMetadata = timetableMetadata;
     this.currentYear = currentYear;
   }
 

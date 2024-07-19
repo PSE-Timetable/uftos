@@ -279,6 +279,16 @@ export type ServerStatisticsResponseDto = {
     studentCount: number;
     teacherCount: number;
 };
+export type Break = {
+    afterSlot: number;
+    length: number;
+    long?: boolean;
+};
+export type TimetableMetadata = {
+    breaks: Break[];
+    startTime: string;
+    timeslotLength: number;
+};
 export type PageStudentGroup = {
     content?: StudentGroup[];
     empty?: boolean;
@@ -706,17 +716,17 @@ export function getServerStats(opts?: Oazapfts.RequestOpts) {
         ...opts
     }));
 }
-export function getTimeslotLength(opts?: Oazapfts.RequestOpts) {
+export function getTimetableMetadata(opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
-        data: number;
-    }>("/server/timeslot-length", {
+        data: TimetableMetadata;
+    }>("/server/timetable-metadata", {
         ...opts
     }));
 }
-export function setTimeslotLength(length: number, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.ok(oazapfts.fetchText(`/server/timeslot-length${QS.query(QS.explode({
-        length
+export function setTimetableMetadata(timetableMetadata: TimetableMetadata, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.ok(oazapfts.fetchText(`/server/timetable-metadata${QS.query(QS.explode({
+        timetableMetadata
     }))}`, {
         ...opts,
         method: "PUT"

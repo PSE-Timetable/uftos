@@ -3,6 +3,7 @@ package de.uftos.dto;
 import de.uftos.entities.Subject;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -19,6 +20,6 @@ public record SubjectRequestDto(@NotEmpty String name, String color, @NotNull Li
    * @return the new subject entity.
    */
   public Subject map() {
-    return new Subject(this.name, this.color, this.tagIds);
+    return new Subject(this.name, this.color, this.tagIds == null ? Collections.emptyList() : this.tagIds);
   }
 }
