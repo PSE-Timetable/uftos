@@ -35,32 +35,30 @@ import java.util.function.Function;
 //todo: update signatures to correct signature
 public class ConstraintDefinitionFactory {
 
-  private static LinkedHashMap<String, ResourceType> params = null;
-
   public static ConstraintDefinitionTimefoldInstance getConstraintDefinition(
       ConstraintDefinitionDto definition) {
     String name = definition.name();
     RewardPenalize defaultType = definition.defaultType();
     Function<List<ResourceTimefoldInstance>, Boolean> function;
 
-    params = definition.parameters();
+    LinkedHashMap<String, ResourceType> params = definition.parameters();
 
     AbstractSyntaxTreeDto ast = definition.root();
 
     if (ast.getToken() == UcdlToken.CODEBLOCK) {
-      function = convertCodeblock(ast);
+      function = convertCodeblock(ast, params);
     } else {
-      function = convertBool(ast);
+      function = convertBool(ast, params);
     }
 
     return new ConstraintDefinitionTimefoldInstance(name, defaultType, function);
   }
 
-  //If not specified differently, then the first parameter "List<ResourceTimefoldInstance" are the
-  //parameters given in the constraint definition.
+  //The first parameter "List<ResourceTimefoldInstance" contains always the parameters given in the
+  //constraint definition.
 
   private static Function<List<ResourceTimefoldInstance>, Boolean> convertCodeblock(
-      AbstractSyntaxTreeDto ast) {
+      AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.CODEBLOCK) {
       throw new IllegalStateException();
     }
@@ -72,11 +70,11 @@ public class ConstraintDefinitionFactory {
 
     for (AbstractSyntaxTreeDto child : root.parameters()) {
       if (child.getToken() == UcdlToken.FOR) {
-        functions.add(convertFor(child));
+        functions.add(convertFor(child, params));
       } else if (child.getToken() == UcdlToken.IF) {
-        functions.add(convertIf(child));
+        functions.add(convertIf(child, params));
       } else if (child.getToken() == UcdlToken.RETURN) {
-        returnValue = convertReturn(child);
+        returnValue = convertReturn(child, params);
         break;
       } else {
         throw new IllegalStateException();
@@ -88,33 +86,33 @@ public class ConstraintDefinitionFactory {
     }
 
     Function<List<ResourceTimefoldInstance>, Boolean> finalReturnValue = returnValue;
-    return (l) -> {
-      for (Function<List<ResourceTimefoldInstance>, Optional<Boolean>> f : functions) {
-        Optional<Boolean> bool = f.apply(l);
+    return (parameters) -> {
+      for (Function<List<ResourceTimefoldInstance>, Optional<Boolean>> function : functions) {
+        Optional<Boolean> bool = function.apply(parameters);
         if (bool.isPresent()) {
           return bool.get();
         }
       }
-      return finalReturnValue.apply(l);
+      return finalReturnValue.apply(parameters);
     };
   }
 
   private static Function<List<ResourceTimefoldInstance>, Optional<Boolean>> convertFor(
-      AbstractSyntaxTreeDto ast) {
+      AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.FOR) {
       throw new IllegalStateException();
     }
 
     ControlSequenceDto root = (ControlSequenceDto) ast;
 
-    Function<List<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>> variableDefinition =
-        convertOf(root.parenthesesContent());
-
     OperatorDto of = (OperatorDto) root.parenthesesContent();
 
     if (of.parameters().size() != 2) {
       throw new IllegalStateException();
     }
+
+    Function<List<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>> variableDefinition =
+        convertOf(of, params);
 
     ValueDto<String> variableReference = (ValueDto<String>) of.parameters().getFirst();
     SetDto set = (SetDto) of.parameters().getLast();
@@ -125,9 +123,9 @@ public class ConstraintDefinitionFactory {
 
     for (AbstractSyntaxTreeDto child : root.body()) {
       if (child.getToken() == UcdlToken.FOR) {
-        functions.add(convertFor(child));
+        functions.add(convertFor(child, params));
       } else if (child.getToken() == UcdlToken.IF) {
-        functions.add(convertIf(child));
+        functions.add(convertIf(child, params));
       } else {
         throw new IllegalStateException();
       }
@@ -135,13 +133,13 @@ public class ConstraintDefinitionFactory {
 
     params.remove(variableReference.value());
 
-    return (l) -> {
+    return (parameters) -> {
       Optional<Boolean> current = Optional.empty();
-      for (ResourceTimefoldInstance resource : variableDefinition.apply(l)) {
-        for (Function<List<ResourceTimefoldInstance>, Optional<Boolean>> f : functions) {
-          l.add(resource);
-          current = f.apply(l);
-          l.remove(resource);
+      for (ResourceTimefoldInstance resource : variableDefinition.apply(parameters)) {
+        for (Function<List<ResourceTimefoldInstance>, Optional<Boolean>> function : functions) {
+          parameters.add(resource);
+          current = function.apply(parameters);
+          parameters.remove(resource);
           if (current.isPresent()) {
             return current;
           }
@@ -152,7 +150,7 @@ public class ConstraintDefinitionFactory {
   }
 
   private static Function<List<ResourceTimefoldInstance>, Optional<Boolean>> convertIf(
-      AbstractSyntaxTreeDto ast) {
+      AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.IF) {
       throw new IllegalStateException();
     }
@@ -160,15 +158,15 @@ public class ConstraintDefinitionFactory {
     ControlSequenceDto root = (ControlSequenceDto) ast;
 
     Function<List<ResourceTimefoldInstance>, Boolean> condition =
-        convertBool(root.parenthesesContent());
+        convertBool(root.parenthesesContent(), params);
 
     if (root.body().size() == 1 && root.body().getFirst().getToken() == UcdlToken.RETURN) {
       Function<List<ResourceTimefoldInstance>, Boolean> returnValue =
-          convertReturn(root.body().getFirst());
+          convertReturn(root.body().getFirst(), params);
 
-      return (l) -> {
-        if (condition.apply(l)) {
-          return Optional.of(returnValue.apply(l));
+      return (parameters) -> {
+        if (condition.apply(parameters)) {
+          return Optional.of(returnValue.apply(parameters));
         }
         return Optional.empty();
       };
@@ -178,19 +176,19 @@ public class ConstraintDefinitionFactory {
 
     for (AbstractSyntaxTreeDto child : root.body()) {
       if (child.getToken() == UcdlToken.FOR) {
-        functions.add(convertFor(child));
+        functions.add(convertFor(child, params));
       } else if (child.getToken() == UcdlToken.IF) {
-        functions.add(convertIf(child));
+        functions.add(convertIf(child, params));
       } else {
         throw new IllegalStateException();
       }
     }
 
-    return (l) -> {
+    return (parameters) -> {
       Optional<Boolean> current = Optional.empty();
-      if (condition.apply(l)) {
-        for (Function<List<ResourceTimefoldInstance>, Optional<Boolean>> f : functions) {
-          current = f.apply(l);
+      if (condition.apply(parameters)) {
+        for (Function<List<ResourceTimefoldInstance>, Optional<Boolean>> function : functions) {
+          current = function.apply(parameters);
           if (current.isPresent()) {
             return current;
           }
@@ -201,32 +199,32 @@ public class ConstraintDefinitionFactory {
   }
 
   private static Function<List<ResourceTimefoldInstance>, Boolean> convertReturn(
-      AbstractSyntaxTreeDto ast) {
+      AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.RETURN) {
       throw new IllegalStateException();
     }
     boolean value = ((ValueDto<Boolean>) ast).value();
-    return (l) -> value;
+    return (parameters) -> value;
   }
 
   private static Function<List<ResourceTimefoldInstance>, Boolean> convertBool(
-      AbstractSyntaxTreeDto ast) {
+      AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     return switch (ast.getToken()) {
-      case IMPLIES -> convertImplies(ast);
-      case OR -> convertOr(ast);
-      case AND -> convertAnd(ast);
-      case NOT -> convertNot(ast);
-      case FOR_ALL -> convertForAll(ast);
-      case EXISTS -> convertExists(ast);
-      case BOOL_VALUE -> convertBoolValue(ast);
-      case IN -> convertIn(ast);
-      case IS_EMPTY -> convertIsEmpty(ast);
-      default -> convertEquation(ast);
+      case IMPLIES -> convertImplies(ast, params);
+      case OR -> convertOr(ast, params);
+      case AND -> convertAnd(ast, params);
+      case NOT -> convertNot(ast, params);
+      case FOR_ALL -> convertForAll(ast, params);
+      case EXISTS -> convertExists(ast, params);
+      case BOOL_VALUE -> convertBoolValue(ast, params);
+      case IN -> convertIn(ast, params);
+      case IS_EMPTY -> convertIsEmpty(ast, params);
+      default -> convertEquation(ast, params);
     };
   }
 
   private static Function<List<ResourceTimefoldInstance>, Boolean> convertAnd(
-      AbstractSyntaxTreeDto ast) {
+      AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.AND) {
       throw new IllegalStateException();
     }
@@ -236,20 +234,20 @@ public class ConstraintDefinitionFactory {
     List<Function<List<ResourceTimefoldInstance>, Boolean>> functions = new ArrayList<>();
 
     for (AbstractSyntaxTreeDto child : and.parameters()) {
-      functions.add(convertBool(child));
+      functions.add(convertBool(child, params));
     }
 
-    return (l) -> {
+    return (parameters) -> {
       boolean returnValue = true;
       for (Function<List<ResourceTimefoldInstance>, Boolean> function : functions) {
-        returnValue = returnValue && function.apply(l);
+        returnValue = returnValue && function.apply(parameters);
       }
       return returnValue;
     };
   }
 
   private static Function<List<ResourceTimefoldInstance>, Boolean> convertOr(
-      AbstractSyntaxTreeDto ast) {
+      AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.OR) {
       throw new IllegalStateException();
     }
@@ -259,20 +257,20 @@ public class ConstraintDefinitionFactory {
     List<Function<List<ResourceTimefoldInstance>, Boolean>> functions = new ArrayList<>();
 
     for (AbstractSyntaxTreeDto child : or.parameters()) {
-      functions.add(convertBool(child));
+      functions.add(convertBool(child, params));
     }
 
-    return (l) -> {
+    return (parameters) -> {
       boolean returnValue = false;
       for (Function<List<ResourceTimefoldInstance>, Boolean> function : functions) {
-        returnValue = returnValue || function.apply(l);
+        returnValue = returnValue || function.apply(parameters);
       }
       return returnValue;
     };
   }
 
   private static Function<List<ResourceTimefoldInstance>, Boolean> convertNot(
-      AbstractSyntaxTreeDto ast) {
+      AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.NOT) {
       throw new IllegalStateException();
     }
@@ -284,13 +282,13 @@ public class ConstraintDefinitionFactory {
     }
 
     Function<List<ResourceTimefoldInstance>, Boolean> bool =
-        convertBool(not.parameters().getFirst());
+        convertBool(not.parameters().getFirst(), params);
 
-    return (l) -> !bool.apply(l);
+    return (parameters) -> !bool.apply(parameters);
   }
 
   private static Function<List<ResourceTimefoldInstance>, Boolean> convertImplies(
-      AbstractSyntaxTreeDto ast) {
+      AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.IMPLIES) {
       throw new IllegalStateException();
     }
@@ -302,111 +300,111 @@ public class ConstraintDefinitionFactory {
     }
 
     Function<List<ResourceTimefoldInstance>, Boolean> firstParameter =
-        convertBool(implies.parameters().getFirst());
+        convertBool(implies.parameters().getFirst(), params);
     Function<List<ResourceTimefoldInstance>, Boolean> secondParameter =
-        convertBool(implies.parameters().getLast());
+        convertBool(implies.parameters().getLast(), params);
 
-    return (l) -> !firstParameter.apply(l) || secondParameter.apply(l);
+    return (parameters) -> !firstParameter.apply(parameters) || secondParameter.apply(parameters);
   }
 
   private static Function<List<ResourceTimefoldInstance>, Boolean> convertForAll(
-      AbstractSyntaxTreeDto ast) {
+      AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.FOR_ALL) {
       throw new IllegalStateException();
     }
 
     QuantifierDto root = (QuantifierDto) ast;
 
-    Function<List<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>> variableDefinition =
-        convertOf(root.elements());
-
     OperatorDto of = (OperatorDto) root.elements();
 
     if (of.parameters().size() != 2) {
       throw new IllegalStateException();
     }
 
+    Function<List<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>> variableDefinition =
+        convertOf(of, params);
+
     ValueDto<String> variableReference = (ValueDto<String>) of.parameters().getFirst();
     SetDto set = (SetDto) of.parameters().getLast();
 
     params.put(variableReference.value(), set.type());
 
-    Function<List<ResourceTimefoldInstance>, Boolean> function = convertBool(root.body());
+    Function<List<ResourceTimefoldInstance>, Boolean> function = convertBool(root.body(), params);
 
     params.remove(variableReference.value());
 
-    return (l) -> {
+    return (parameters) -> {
       boolean and = true;
-      for (ResourceTimefoldInstance resource : variableDefinition.apply(l)) {
-        l.add(resource);
-        and = and && function.apply(l);
-        l.remove(resource);
+      for (ResourceTimefoldInstance resource : variableDefinition.apply(parameters)) {
+        parameters.add(resource);
+        and = and && function.apply(parameters);
+        parameters.remove(resource);
       }
       return and;
     };
   }
 
   private static Function<List<ResourceTimefoldInstance>, Boolean> convertExists(
-      AbstractSyntaxTreeDto ast) {
+      AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.EXISTS) {
       throw new IllegalStateException();
     }
 
     QuantifierDto root = (QuantifierDto) ast;
-
-    Function<List<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>> variableDefinition =
-        convertOf(root.elements());
-
     OperatorDto of = (OperatorDto) root.elements();
 
     if (of.parameters().size() != 2) {
       throw new IllegalStateException();
     }
 
+    Function<List<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>> variableDefinition =
+        convertOf(of, params);
+
+
     ValueDto<String> variableReference = (ValueDto<String>) of.parameters().getFirst();
     SetDto set = (SetDto) of.parameters().getLast();
 
     params.put(variableReference.value(), set.type());
 
-    Function<List<ResourceTimefoldInstance>, Boolean> function = convertBool(root.body());
+    Function<List<ResourceTimefoldInstance>, Boolean> function = convertBool(root.body(), params);
 
     params.remove(variableReference.value());
 
-    return (l) -> {
+    return (parameters) -> {
       boolean or = false;
-      for (ResourceTimefoldInstance resource : variableDefinition.apply(l)) {
-        l.add(resource);
-        or = or || function.apply(l);
-        l.remove(resource);
+      for (ResourceTimefoldInstance resource : variableDefinition.apply(parameters)) {
+        parameters.add(resource);
+        or = or || function.apply(parameters);
+        parameters.remove(resource);
       }
       return or;
     };
   }
 
   private static Function<List<ResourceTimefoldInstance>, Boolean> convertBoolValue(
-      AbstractSyntaxTreeDto ast) {
+      AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.BOOL_VALUE) {
       throw new IllegalStateException();
     }
     boolean value = ((ValueDto<Boolean>) ast).value();
-    return (l) -> value;
+    return (parameters) -> value;
   }
 
   private static Function<List<ResourceTimefoldInstance>, Boolean> convertEquation(
-      AbstractSyntaxTreeDto ast) {
+      AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     return switch (ast.getToken()) {
-      case EQUALS -> convertEquals(ast);
-      case NOT_EQUALS -> convertNotEquals(ast);
-      case SMALLER_EQUALS -> convertSmallerEquals(ast);
-      case SMALLER -> convertSmaller(ast);
-      case GREATER_EQUALS -> convertGreaterEquals(ast);
-      case GREATER -> convertGreater(ast);
+      case EQUALS -> convertEquals(ast, params);
+      case NOT_EQUALS -> convertNotEquals(ast, params);
+      case SMALLER_EQUALS -> convertSmallerEquals(ast, params);
+      case SMALLER -> convertSmaller(ast, params);
+      case GREATER_EQUALS -> convertGreaterEquals(ast, params);
+      case GREATER -> convertGreater(ast, params);
       default -> throw new IllegalStateException();
     };
   }
 
   private static Function<List<ResourceTimefoldInstance>, Boolean> convertEquals(
-      AbstractSyntaxTreeDto ast) {
+      AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.EQUALS) {
       throw new IllegalStateException();
     }
@@ -415,14 +413,23 @@ public class ConstraintDefinitionFactory {
       throw new IllegalStateException();
     }
     Function<List<ResourceTimefoldInstance>, ResourceTimefoldInstance> firstElement =
-        convertElement(equation.parameters().getFirst());
+        convertElement(equation.parameters().getFirst(), params);
     Function<List<ResourceTimefoldInstance>, ResourceTimefoldInstance> secondElement =
-        convertElement(equation.parameters().getLast());
-    return (l) -> firstElement.apply(l).equals(secondElement.apply(l));
+        convertElement(equation.parameters().getLast(), params);
+    return (parameters) -> {
+      ResourceTimefoldInstance first = firstElement.apply(parameters);
+      ResourceTimefoldInstance second = secondElement.apply(parameters);
+
+      if (first.getResourceType() != second.getResourceType()) {
+        throw new IllegalArgumentException();
+      }
+
+      return first.equals(second);
+    };
   }
 
   private static Function<List<ResourceTimefoldInstance>, Boolean> convertNotEquals(
-      AbstractSyntaxTreeDto ast) {
+      AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.NOT_EQUALS) {
       throw new IllegalStateException();
     }
@@ -431,14 +438,23 @@ public class ConstraintDefinitionFactory {
       throw new IllegalStateException();
     }
     Function<List<ResourceTimefoldInstance>, ResourceTimefoldInstance> firstElement =
-        convertElement(equation.parameters().getFirst());
+        convertElement(equation.parameters().getFirst(), params);
     Function<List<ResourceTimefoldInstance>, ResourceTimefoldInstance> secondElement =
-        convertElement(equation.parameters().getLast());
-    return (l) -> !firstElement.apply(l).equals(secondElement.apply(l));
+        convertElement(equation.parameters().getLast(), params);
+    return (parameters) -> {
+      ResourceTimefoldInstance first = firstElement.apply(parameters);
+      ResourceTimefoldInstance second = secondElement.apply(parameters);
+
+      if (first.getResourceType() != second.getResourceType()) {
+        throw new IllegalArgumentException();
+      }
+
+      return !first.equals(second);
+    };
   }
 
   private static Function<List<ResourceTimefoldInstance>, Boolean> convertSmallerEquals(
-      AbstractSyntaxTreeDto ast) {
+      AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.SMALLER_EQUALS) {
       throw new IllegalStateException();
     }
@@ -447,15 +463,15 @@ public class ConstraintDefinitionFactory {
       throw new IllegalStateException();
     }
     Function<List<ResourceTimefoldInstance>, ResourceTimefoldInstance> firstElement =
-        convertElement(equation.parameters().getFirst());
+        convertElement(equation.parameters().getFirst(), params);
     Function<List<ResourceTimefoldInstance>, ResourceTimefoldInstance> secondElement =
-        convertElement(equation.parameters().getLast());
-    return (l) -> {
-      ResourceTimefoldInstance first = firstElement.apply(l);
-      ResourceTimefoldInstance second = secondElement.apply(l);
+        convertElement(equation.parameters().getLast(), params);
+    return (parameters) -> {
+      ResourceTimefoldInstance first = firstElement.apply(parameters);
+      ResourceTimefoldInstance second = secondElement.apply(parameters);
 
-      if (first.getResourceType() != ResourceType.NUMBER ||
-          second.getResourceType() != ResourceType.NUMBER) {
+      if (first.getResourceType() != ResourceType.NUMBER
+          || second.getResourceType() != ResourceType.NUMBER) {
         throw new IllegalArgumentException();
       }
 
@@ -464,7 +480,7 @@ public class ConstraintDefinitionFactory {
   }
 
   private static Function<List<ResourceTimefoldInstance>, Boolean> convertSmaller(
-      AbstractSyntaxTreeDto ast) {
+      AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.SMALLER) {
       throw new IllegalStateException();
     }
@@ -473,15 +489,15 @@ public class ConstraintDefinitionFactory {
       throw new IllegalStateException();
     }
     Function<List<ResourceTimefoldInstance>, ResourceTimefoldInstance> firstElement =
-        convertElement(equation.parameters().getFirst());
+        convertElement(equation.parameters().getFirst(), params);
     Function<List<ResourceTimefoldInstance>, ResourceTimefoldInstance> secondElement =
-        convertElement(equation.parameters().getLast());
-    return (l) -> {
-      ResourceTimefoldInstance first = firstElement.apply(l);
-      ResourceTimefoldInstance second = secondElement.apply(l);
+        convertElement(equation.parameters().getLast(), params);
+    return (parameters) -> {
+      ResourceTimefoldInstance first = firstElement.apply(parameters);
+      ResourceTimefoldInstance second = secondElement.apply(parameters);
 
-      if (first.getResourceType() != ResourceType.NUMBER ||
-          second.getResourceType() != ResourceType.NUMBER) {
+      if (first.getResourceType() != ResourceType.NUMBER
+          || second.getResourceType() != ResourceType.NUMBER) {
         throw new IllegalArgumentException();
       }
 
@@ -490,7 +506,7 @@ public class ConstraintDefinitionFactory {
   }
 
   private static Function<List<ResourceTimefoldInstance>, Boolean> convertGreaterEquals(
-      AbstractSyntaxTreeDto ast) {
+      AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.GREATER_EQUALS) {
       throw new IllegalStateException();
     }
@@ -499,15 +515,15 @@ public class ConstraintDefinitionFactory {
       throw new IllegalStateException();
     }
     Function<List<ResourceTimefoldInstance>, ResourceTimefoldInstance> firstElement =
-        convertElement(equation.parameters().getFirst());
+        convertElement(equation.parameters().getFirst(), params);
     Function<List<ResourceTimefoldInstance>, ResourceTimefoldInstance> secondElement =
-        convertElement(equation.parameters().getLast());
-    return (l) -> {
-      ResourceTimefoldInstance first = firstElement.apply(l);
-      ResourceTimefoldInstance second = secondElement.apply(l);
+        convertElement(equation.parameters().getLast(), params);
+    return (parameters) -> {
+      ResourceTimefoldInstance first = firstElement.apply(parameters);
+      ResourceTimefoldInstance second = secondElement.apply(parameters);
 
-      if (first.getResourceType() != ResourceType.NUMBER ||
-          second.getResourceType() != ResourceType.NUMBER) {
+      if (first.getResourceType() != ResourceType.NUMBER
+          || second.getResourceType() != ResourceType.NUMBER) {
         throw new IllegalArgumentException();
       }
 
@@ -516,7 +532,7 @@ public class ConstraintDefinitionFactory {
   }
 
   private static Function<List<ResourceTimefoldInstance>, Boolean> convertGreater(
-      AbstractSyntaxTreeDto ast) {
+      AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.GREATER) {
       throw new IllegalStateException();
     }
@@ -525,15 +541,15 @@ public class ConstraintDefinitionFactory {
       throw new IllegalStateException();
     }
     Function<List<ResourceTimefoldInstance>, ResourceTimefoldInstance> firstElement =
-        convertElement(equation.parameters().getFirst());
+        convertElement(equation.parameters().getFirst(), params);
     Function<List<ResourceTimefoldInstance>, ResourceTimefoldInstance> secondElement =
-        convertElement(equation.parameters().getLast());
-    return (l) -> {
-      ResourceTimefoldInstance first = firstElement.apply(l);
-      ResourceTimefoldInstance second = secondElement.apply(l);
+        convertElement(equation.parameters().getLast(), params);
+    return (parameters) -> {
+      ResourceTimefoldInstance first = firstElement.apply(parameters);
+      ResourceTimefoldInstance second = secondElement.apply(parameters);
 
-      if (first.getResourceType() != ResourceType.NUMBER ||
-          second.getResourceType() != ResourceType.NUMBER) {
+      if (first.getResourceType() != ResourceType.NUMBER
+          || second.getResourceType() != ResourceType.NUMBER) {
         throw new IllegalArgumentException();
       }
 
@@ -542,7 +558,7 @@ public class ConstraintDefinitionFactory {
   }
 
   private static Function<List<ResourceTimefoldInstance>, Boolean> convertIn(
-      AbstractSyntaxTreeDto ast) {
+      AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.IN) {
       throw new IllegalStateException();
     }
@@ -551,14 +567,14 @@ public class ConstraintDefinitionFactory {
       throw new IllegalStateException();
     }
     Function<List<ResourceTimefoldInstance>, ResourceTimefoldInstance> element =
-        convertElement(in.parameters().getFirst());
+        convertElement(in.parameters().getFirst(), params);
     Function<List<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>> set =
-        convertSet(in.parameters().getLast());
-    return (l) -> set.apply(l).contains(element.apply(l));
+        convertSet(in.parameters().getLast(), params);
+    return (parameters) -> set.apply(parameters).contains(element.apply(parameters));
   }
 
   private static Function<List<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>> convertOf(
-      AbstractSyntaxTreeDto ast) {
+      AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.OF) {
       throw new IllegalStateException();
     }
@@ -571,12 +587,12 @@ public class ConstraintDefinitionFactory {
 
     AbstractSyntaxTreeDto set = of.parameters().getLast();
 
-    return convertSet(set);
+    return convertSet(set, params);
   }
 
-  //todo: fix filters
-  private static Function<Set<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>> convertFilter(
-      AbstractSyntaxTreeDto ast) {
+  //todo: finish implementing filters
+  private static Function<List<ResourceTimefoldInstance>, Function<Set<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>>> convertFilter(
+      AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.FILTER) {
       throw new IllegalStateException();
     }
@@ -597,7 +613,7 @@ public class ConstraintDefinitionFactory {
   }
 
   private static Function<List<ResourceTimefoldInstance>, Boolean> convertIsEmpty(
-      AbstractSyntaxTreeDto ast) {
+      AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.IS_EMPTY) {
       throw new IllegalStateException();
     }
@@ -606,12 +622,12 @@ public class ConstraintDefinitionFactory {
       throw new IllegalStateException();
     }
     Function<List<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>> set =
-        convertSet(isEmpty.parameters().getFirst());
-    return (l) -> set.apply(l).isEmpty();
+        convertSet(isEmpty.parameters().getFirst(), params);
+    return (parameters) -> set.apply(parameters).isEmpty();
   }
 
   private static Function<List<ResourceTimefoldInstance>, Number> convertSize(
-      AbstractSyntaxTreeDto ast) {
+      AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.SIZE) {
       throw new IllegalStateException();
     }
@@ -620,61 +636,58 @@ public class ConstraintDefinitionFactory {
       throw new IllegalStateException();
     }
     Function<List<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>> set =
-        convertSet(size.parameters().getFirst());
-    return (l) -> new Number(set.apply(l).size());
+        convertSet(size.parameters().getFirst(), params);
+    return (parameters) -> new Number(set.apply(parameters).size());
   }
 
   private static Function<List<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>> convertSet(
-      AbstractSyntaxTreeDto ast) {
+      AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     return switch (ast.getToken()) {
-      case RESOURCE_SET -> convertResourceSet(ast);
-      case NUMBER_SET -> convertNumberSet(ast);
+      case RESOURCE_SET -> convertResourceSet(ast, params);
+      case NUMBER_SET -> convertNumberSet(ast, params);
       default -> throw new IllegalStateException();
     };
   }
 
   private static Function<List<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>> convertResourceSet(
-      AbstractSyntaxTreeDto ast) {
+      AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.RESOURCE_SET) {
       throw new IllegalStateException();
     }
     SetDto set = (SetDto) ast;
-    
+
     Function<List<ResourceTimefoldInstance>, ResourceTimefoldInstance> name;
 
     if (set.setName().getToken() == UcdlToken.VALUE_REFERENCE) {
-      name = convertValueReference(set.setName());
+      name = convertValueReference(set.setName(), params);
     } else {
-      name = convertElement(set.setName());
+      name = convertElement(set.setName(), params);
     }
 
-    List<Function<Set<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>>> modifiers =
-        new ArrayList<>();
+    List<Function<List<ResourceTimefoldInstance>, Function<Set<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>>>>
+        modifiers = new ArrayList<>();
 
     for (AbstractSyntaxTreeDto modifier : set.modifiers()) {
       if (modifier.getToken() == UcdlToken.ATTRIBUTE) {
-        modifiers.add(convertAttribute(modifier));
+        modifiers.add(convertAttribute(modifier, params));
       } else {
-        modifiers.add(convertFilter(modifier));
+        modifiers.add(convertFilter(modifier, params));
       }
     }
 
-    return (l) -> {
-      Set<ResourceTimefoldInstance> reference = new HashSet<>();
-      reference.add(name.apply(l));
+    return (parameters) -> {
+      Set<ResourceTimefoldInstance> setReference = new HashSet<>();
+      setReference.add(name.apply(parameters));
 
-      for (Function<Set<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>> function : modifiers) {
-        reference = function.apply(reference);
+      for (Function<List<ResourceTimefoldInstance>, Function<Set<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>>> function : modifiers) {
+        setReference = function.apply(parameters).apply(setReference);
       }
-      if (reference.size() != 1) {
-        throw new IllegalStateException();
-      }
-      return reference;
+      return setReference;
     };
   }
 
   private static Function<List<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>> convertNumberSet(
-      AbstractSyntaxTreeDto ast) {
+      AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.NUMBER_SET) {
       throw new IllegalStateException();
     }
@@ -686,13 +699,12 @@ public class ConstraintDefinitionFactory {
       resources.add(new Number(i));
     }
 
-    return (l) -> resources;
+    return (parameters) -> resources;
   }
 
-  //In this case the given List is the List is the List of elements of the set, and it returns the
-  //set after applying the attribute.
-  private static Function<Set<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>> convertAttribute(
-      AbstractSyntaxTreeDto ast) {
+  //todo: replace if-else with switch
+  private static Function<List<ResourceTimefoldInstance>, Function<Set<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>>> convertAttribute(
+      AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.ATTRIBUTE) {
       throw new IllegalStateException();
     }
@@ -700,9 +712,9 @@ public class ConstraintDefinitionFactory {
     String attribute = ((ValueDto<String>) ast).value();
 
     return switch (attribute) {
-      case "index" -> (l) -> {
+      case "index" -> (parameters) -> (set) -> {
         Set<ResourceTimefoldInstance> resultSet = new HashSet<>();
-        for (ResourceTimefoldInstance resource : l) {
+        for (ResourceTimefoldInstance resource : set) {
           if (resource.getResourceType() == ResourceType.LESSON) {
             resultSet.add(new Number(((LessonTimefoldInstance) resource).getIndex()));
           } else {
@@ -711,9 +723,9 @@ public class ConstraintDefinitionFactory {
         }
         return resultSet;
       };
-      case "teacher" -> (l) -> {
+      case "teacher" -> (parameters) -> (set) -> {
         Set<ResourceTimefoldInstance> resultSet = new HashSet<>();
-        for (ResourceTimefoldInstance resource : l) {
+        for (ResourceTimefoldInstance resource : set) {
           if (resource.getResourceType() == ResourceType.LESSON) {
             resultSet.add(((LessonTimefoldInstance) resource).getTeacher());
           } else {
@@ -722,9 +734,9 @@ public class ConstraintDefinitionFactory {
         }
         return resultSet;
       };
-      case "timeslot" -> (l) -> {
+      case "timeslot" -> (parameters) -> (set) -> {
         Set<ResourceTimefoldInstance> resultSet = new HashSet<>();
-        for (ResourceTimefoldInstance resource : l) {
+        for (ResourceTimefoldInstance resource : set) {
           if (resource.getResourceType() == ResourceType.LESSON) {
             resultSet.add(((LessonTimefoldInstance) resource).getTimeslot());
           } else {
@@ -733,9 +745,9 @@ public class ConstraintDefinitionFactory {
         }
         return resultSet;
       };
-      case "room" -> (l) -> {
+      case "room" -> (parameters) -> (set) -> {
         Set<ResourceTimefoldInstance> resultSet = new HashSet<>();
-        for (ResourceTimefoldInstance resource : l) {
+        for (ResourceTimefoldInstance resource : set) {
           if (resource.getResourceType() == ResourceType.LESSON) {
             resultSet.add(((LessonTimefoldInstance) resource).getRoom());
           } else {
@@ -744,9 +756,9 @@ public class ConstraintDefinitionFactory {
         }
         return resultSet;
       };
-      case "subject" -> (l) -> {
+      case "subject" -> (parameters) -> (set) -> {
         Set<ResourceTimefoldInstance> resultSet = new HashSet<>();
-        for (ResourceTimefoldInstance resource : l) {
+        for (ResourceTimefoldInstance resource : set) {
           if (resource.getResourceType() == ResourceType.LESSON) {
             resultSet.add(((LessonTimefoldInstance) resource).getSubject());
           } else {
@@ -755,9 +767,9 @@ public class ConstraintDefinitionFactory {
         }
         return resultSet;
       };
-      case "studentGroup" -> (l) -> {
+      case "studentGroup" -> (parameters) -> (set) -> {
         Set<ResourceTimefoldInstance> resultSet = new HashSet<>();
-        for (ResourceTimefoldInstance resource : l) {
+        for (ResourceTimefoldInstance resource : set) {
           if (resource.getResourceType() == ResourceType.LESSON) {
             resultSet.add(((LessonTimefoldInstance) resource).getStudentGroup());
           } else {
@@ -766,9 +778,9 @@ public class ConstraintDefinitionFactory {
         }
         return resultSet;
       };
-      case "grade" -> (l) -> {
+      case "grade" -> (parameters) -> (set) -> {
         Set<ResourceTimefoldInstance> resultSet = new HashSet<>();
-        for (ResourceTimefoldInstance resource : l) {
+        for (ResourceTimefoldInstance resource : set) {
           if (resource.getResourceType() == ResourceType.STUDENT_GROUP) {
             resultSet.add(((StudentGroupTimefoldInstance) resource).getGrade());
           } else {
@@ -777,9 +789,9 @@ public class ConstraintDefinitionFactory {
         }
         return resultSet;
       };
-      case "day" -> (l) -> {
+      case "day" -> (parameters) -> (set) -> {
         Set<ResourceTimefoldInstance> resultSet = new HashSet<>();
-        for (ResourceTimefoldInstance resource : l) {
+        for (ResourceTimefoldInstance resource : set) {
           if (resource.getResourceType() == ResourceType.TIMESLOT) {
             resultSet.add(new Number(((TimeslotTimefoldInstance) resource).getDayOfWeek()));
           } else {
@@ -788,9 +800,9 @@ public class ConstraintDefinitionFactory {
         }
         return resultSet;
       };
-      case "slot" -> (l) -> {
+      case "slot" -> (parameters) -> (set) -> {
         Set<ResourceTimefoldInstance> resultSet = new HashSet<>();
-        for (ResourceTimefoldInstance resource : l) {
+        for (ResourceTimefoldInstance resource : set) {
           if (resource.getResourceType() == ResourceType.TIMESLOT) {
             resultSet.add(new Number(((TimeslotTimefoldInstance) resource).getSlotId()));
           } else {
@@ -799,9 +811,9 @@ public class ConstraintDefinitionFactory {
         }
         return resultSet;
       };
-      case "students" -> (l) -> {
+      case "students" -> (parameters) -> (set) -> {
         Set<ResourceTimefoldInstance> resultSet = new HashSet<>();
-        for (ResourceTimefoldInstance resource : l) {
+        for (ResourceTimefoldInstance resource : set) {
           if (resource.getResourceType() == ResourceType.TIMETABLE) {
             resultSet.addAll(((TimetableSolutionTimefoldInstance) resource).getStudents());
           } else if (resource.getResourceType() == ResourceType.TAG) {
@@ -814,9 +826,9 @@ public class ConstraintDefinitionFactory {
         }
         return resultSet;
       };
-      case "teachers" -> (l) -> {
+      case "teachers" -> (parameters) -> (set) -> {
         Set<ResourceTimefoldInstance> resultSet = new HashSet<>();
-        for (ResourceTimefoldInstance resource : l) {
+        for (ResourceTimefoldInstance resource : set) {
           if (resource.getResourceType() == ResourceType.TIMETABLE) {
             resultSet.addAll(((TimetableSolutionTimefoldInstance) resource).getTeachers());
           } else if (resource.getResourceType() == ResourceType.TAG) {
@@ -829,9 +841,9 @@ public class ConstraintDefinitionFactory {
         }
         return resultSet;
       };
-      case "studentGroups" -> (l) -> {
+      case "studentGroups" -> (parameters) -> (set) -> {
         Set<ResourceTimefoldInstance> resultSet = new HashSet<>();
-        for (ResourceTimefoldInstance resource : l) {
+        for (ResourceTimefoldInstance resource : set) {
           if (resource.getResourceType() == ResourceType.TIMETABLE) {
             resultSet.addAll(((TimetableSolutionTimefoldInstance) resource).getStudentGroups());
           } else if (resource.getResourceType() == ResourceType.TAG) {
@@ -846,9 +858,9 @@ public class ConstraintDefinitionFactory {
         }
         return resultSet;
       };
-      case "rooms" -> (l) -> {
+      case "rooms" -> (parameters) -> (set) -> {
         Set<ResourceTimefoldInstance> resultSet = new HashSet<>();
-        for (ResourceTimefoldInstance resource : l) {
+        for (ResourceTimefoldInstance resource : set) {
           if (resource.getResourceType() == ResourceType.TIMETABLE) {
             resultSet.addAll(((TimetableSolutionTimefoldInstance) resource).getRooms());
           } else if (resource.getResourceType() == ResourceType.TAG) {
@@ -859,9 +871,9 @@ public class ConstraintDefinitionFactory {
         }
         return resultSet;
       };
-      case "subjects" -> (l) -> {
+      case "subjects" -> (parameters) -> (set) -> {
         Set<ResourceTimefoldInstance> resultSet = new HashSet<>();
-        for (ResourceTimefoldInstance resource : l) {
+        for (ResourceTimefoldInstance resource : set) {
           if (resource.getResourceType() == ResourceType.TIMETABLE) {
             resultSet.addAll(((TimetableSolutionTimefoldInstance) resource).getSubjects());
           } else if (resource.getResourceType() == ResourceType.TAG) {
@@ -874,9 +886,9 @@ public class ConstraintDefinitionFactory {
         }
         return resultSet;
       };
-      case "grades" -> (l) -> {
+      case "grades" -> (parameters) -> (set) -> {
         Set<ResourceTimefoldInstance> resultSet = new HashSet<>();
-        for (ResourceTimefoldInstance resource : l) {
+        for (ResourceTimefoldInstance resource : set) {
           if (resource.getResourceType() == ResourceType.TIMETABLE) {
             resultSet.addAll(((TimetableSolutionTimefoldInstance) resource).getGrades());
           } else if (resource.getResourceType() == ResourceType.TAG) {
@@ -887,9 +899,9 @@ public class ConstraintDefinitionFactory {
         }
         return resultSet;
       };
-      case "timeslots" -> (l) -> {
+      case "timeslots" -> (parameters) -> (set) -> {
         Set<ResourceTimefoldInstance> resultSet = new HashSet<>();
-        for (ResourceTimefoldInstance resource : l) {
+        for (ResourceTimefoldInstance resource : set) {
           if (resource.getResourceType() == ResourceType.TIMETABLE) {
             resultSet.addAll(((TimetableSolutionTimefoldInstance) resource).getTimeslots());
           } else if (resource.getResourceType() == ResourceType.TAG) {
@@ -900,9 +912,9 @@ public class ConstraintDefinitionFactory {
         }
         return resultSet;
       };
-      case "lessons" -> (l) -> {
+      case "lessons" -> (parameters) -> (set) -> {
         Set<ResourceTimefoldInstance> resultSet = new HashSet<>();
-        for (ResourceTimefoldInstance resource : l) {
+        for (ResourceTimefoldInstance resource : set) {
           if (resource.getResourceType() == ResourceType.TIMETABLE) {
             resultSet.addAll(((TimetableSolutionTimefoldInstance) resource).getLessons());
           } else if (resource.getResourceType() == ResourceType.TEACHER) {
@@ -921,9 +933,9 @@ public class ConstraintDefinitionFactory {
         }
         return resultSet;
       };
-      case "tags" -> (l) -> {
+      case "tags" -> (parameters) -> (set) -> {
         Set<ResourceTimefoldInstance> resultSet = new HashSet<>();
-        for (ResourceTimefoldInstance resource : l) {
+        for (ResourceTimefoldInstance resource : set) {
           if (resource.getResourceType() == ResourceType.TIMETABLE) {
             resultSet.addAll(((TimetableSolutionTimefoldInstance) resource).getTags());
           } else if (resource.getResourceType() == ResourceType.STUDENT) {
@@ -951,10 +963,10 @@ public class ConstraintDefinitionFactory {
   }
 
   private static Function<List<ResourceTimefoldInstance>, ResourceTimefoldInstance> convertElement(
-      AbstractSyntaxTreeDto ast) {
+      AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() == UcdlToken.NUMBER || ast.getToken() == UcdlToken.SIZE) {
-      Function<List<ResourceTimefoldInstance>, Number> function = convertNumberElement(ast);
-      return (l) -> (ResourceTimefoldInstance) function.apply(l);
+      Function<List<ResourceTimefoldInstance>, Number> function = convertNumberElement(ast, params);
+      return (parameters) -> (ResourceTimefoldInstance) function.apply(parameters);
     }
 
     if (ast.getToken() != UcdlToken.ELEMENT) {
@@ -963,53 +975,55 @@ public class ConstraintDefinitionFactory {
     ElementDto element = (ElementDto) ast;
 
     Function<List<ResourceTimefoldInstance>, ResourceTimefoldInstance> name =
-        convertValueReference(element.name());
+        convertValueReference(element.name(), params);
 
-    List<Function<Set<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>>> attributes =
-        new ArrayList<>();
+    List<Function<List<ResourceTimefoldInstance>, Function<Set<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>>>>
+        attributes = new ArrayList<>();
 
     for (AbstractSyntaxTreeDto attribute : element.attributes()) {
-      attributes.add(convertAttribute(attribute));
+      attributes.add(convertAttribute(attribute, params));
     }
 
-    return (l) -> {
-      Set<ResourceTimefoldInstance> reference = new HashSet<>();
-      reference.add(name.apply(l));
+    return (parameters) -> {
+      Set<ResourceTimefoldInstance> elementReference = new HashSet<>();
+      elementReference.add(name.apply(parameters));
 
-      for (Function<Set<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>> function : attributes) {
-        reference = function.apply(reference);
+      for (Function<List<ResourceTimefoldInstance>, Function<Set<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>>> function : attributes) {
+        elementReference = function.apply(parameters).apply(elementReference);
       }
-      if (reference.size() != 1) {
+      if (elementReference.size() != 1) {
         throw new IllegalStateException();
       }
-      return reference.iterator().next();
+      return elementReference.iterator().next();
     };
   }
 
   private static Function<List<ResourceTimefoldInstance>, Number> convertNumberElement(
-      AbstractSyntaxTreeDto ast) {
+      AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     return switch (ast.getToken()) {
-      case NUMBER -> convertNumber(ast);
-      case SIZE -> convertSize(ast);
+      case NUMBER -> convertNumber(ast, params);
+      case SIZE -> convertSize(ast, params);
       default -> throw new IllegalStateException();
     };
   }
 
   private static Function<List<ResourceTimefoldInstance>, Number> convertNumber(
-      AbstractSyntaxTreeDto ast) {
+      AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.NUMBER) {
       throw new IllegalStateException();
     }
     ValueDto<Integer> value = (ValueDto<Integer>) ast;
-    return (l) -> new Number(value.value());
+    return (parameters) -> new Number(value.value());
   }
 
   private static Function<List<ResourceTimefoldInstance>, ResourceTimefoldInstance> convertValueReference(
-      AbstractSyntaxTreeDto ast) {
+      AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.VALUE_REFERENCE) {
       throw new IllegalStateException();
     }
     ValueDto<String> reference = (ValueDto<String>) ast;
+    //searching index of parameter in HashMap which corresponds to the index of the parameter in the
+    //parameter list given to the returned function
     Iterator<String> iterator = params.sequencedKeySet().iterator();
     int index = 0;
     while (iterator.hasNext()) {
@@ -1019,12 +1033,13 @@ public class ConstraintDefinitionFactory {
       index++;
     }
     int finalIndex = index;
-    return (l) -> {
-      ResourceTimefoldInstance resource = l.get(finalIndex);
-      if (resource.getResourceType() != params.get(reference.value())) {
+    ResourceType type = params.get(reference.value());
+    return (parameters) -> {
+      ResourceTimefoldInstance resource = parameters.get(finalIndex);
+      if (resource.getResourceType() != type) {
         throw new IllegalArgumentException();
       }
-      return l.get(finalIndex);
+      return resource;
     };
   }
 
@@ -1058,7 +1073,7 @@ public class ConstraintDefinitionFactory {
   FILTER, //-> operatordto          -
   IS_EMPTY, //-> operatordto        x
   SIZE, //-> operatordto            x
-  RESOURCE_SET, //-> valuedto       -
+  RESOURCE_SET, //-> valuedto       x
   NUMBER_SET, //-> valuedto         x
   ATTRIBUTE, //-> valuedto          x
   ELEMENT, //-> valuedto            x
