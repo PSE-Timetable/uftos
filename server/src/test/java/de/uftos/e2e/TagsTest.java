@@ -13,7 +13,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class TagsTest {
+class TagsTest {
   private static final String FIRST_TAG_NAME = "Sehbehinderung";
   private static final String SECOND_TAG_NAME = "Rollstuhl";
 
@@ -21,7 +21,7 @@ public class TagsTest {
   static String tagId2;
 
   @BeforeAll
-  static void createTestStudents() throws JSONException {
+  static void createTestTags() throws JSONException {
     tagId1 = given().contentType(ContentType.JSON)
         .body(generateTagJson(FIRST_TAG_NAME))
         .when()
@@ -48,7 +48,7 @@ public class TagsTest {
   }
 
   @AfterAll
-  static void deleteCreatedEntities() {
+  static void deleteCreatedTags() {
     given().contentType(ContentType.JSON)
         .when()
         .delete("/tags/{id}", tagId1)
@@ -72,6 +72,21 @@ public class TagsTest {
         .statusCode(200)
         .body("totalElements", equalTo(2))
         .log().ifValidationFails();
+  }
+
+  @Test
+  void getTagsWithName() throws JSONException {
+    given().contentType(ContentType.JSON)
+        .body(generatePageJson(0, 10, Collections.emptyList()))
+        .param("name", FIRST_TAG_NAME)
+        .when()
+        .get("/tags")
+        .then()
+        .statusCode(200)
+        .body("totalElements", equalTo(1))
+        .body("content[0].id", equalTo(tagId1))
+        .log().ifValidationFails();
+
   }
 
 }
