@@ -1,6 +1,6 @@
-package de.uftos.dto.parser;
+package de.uftos.dto.ucdl.ast;
 
-import de.uftos.ucdl.UcdlToken;
+import de.uftos.dto.ucdl.UcdlToken;
 
 /**
  * The abstract syntax tree describing the structure of a constraint definition.
