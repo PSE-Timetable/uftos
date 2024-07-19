@@ -12,10 +12,10 @@ public enum UcdlToken {
   RETURN, //-> valuedto
 
   //bool
-  IMPLIES, //-> operatordto
-  OR, //-> operatordto
   AND, //-> operatordto
+  OR, //-> operatordto
   NOT, //-> operatordto
+  IMPLIES, //-> operatordto
   FOR_ALL, //-> quantifierdto
   EXISTS, //-> quantifierdto
   BOOL_VALUE, //-> valuedto
@@ -34,10 +34,10 @@ public enum UcdlToken {
   FILTER, //-> operatordto
   IS_EMPTY, //-> operatordto
   SIZE, //-> operatordto
-  RESOURCE_SET, //-> valuedto
+  RESOURCE_SET, //-> setdto
   NUMBER_SET, //-> valuedto
   ATTRIBUTE, //-> valuedto
-  ELEMENT, //-> valuedto
+  ELEMENT, //-> elementdto
   NUMBER, //-> valuedto
   VALUE_REFERENCE //-> valuedto
 }

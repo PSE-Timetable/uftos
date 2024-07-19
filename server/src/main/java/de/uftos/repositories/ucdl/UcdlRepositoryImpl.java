@@ -4,11 +4,12 @@ import de.uftos.dto.ucdl.ConstraintDefinitionDto;
 import de.uftos.dto.ucdl.ParsingResponse;
 import de.uftos.repositories.ucdl.parser.UcdlParser;
 import de.uftos.repositories.ucdl.parser.javacc.ParseException;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
+import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -16,36 +17,37 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public class UcdlRepositoryImpl implements UcdlRepository {
-  private final File ucdlFile = new File("/app/ucdl/ucdl.yml");
+  private static final Path UCDL_PATH = Paths.get("/app/ucdl/ucdl.yml");
   private HashMap<String, ConstraintDefinitionDto> currentDefinitions = null;
 
-  //todo: use java.nio
   @Override
-  public String getUcdl() throws IOException {
-    this.ucdlFile.createNewFile();
-    FileReader reader = new FileReader(this.ucdlFile);
-    int readInformation = reader.read();
-    StringBuilder sb = new StringBuilder();
-    while (readInformation >= 0) {
-      sb.append((char) readInformation);
-      readInformation = reader.read();
+  public String getUcdl() throws BadRequestException {
+    try {
+      Files.createFile(UCDL_PATH);
+    } catch (IOException e) {
+      throw new BadRequestException(e);
     }
-    return sb.toString();
+    try {
+      return Files.readString(UCDL_PATH);
+    } catch (IOException e) {
+      throw new BadRequestException(e);
+    }
   }
 
   @Override
-  public void setUcdl(String ucdl) throws IOException {
+  public void setUcdl(String ucdl) throws BadRequestException {
     this.currentDefinitions = null;
-    FileWriter writer = new FileWriter(ucdlFile);
-    writer.write(ucdl);
-    writer.close();
-
+    try {
+      Files.writeString(UCDL_PATH, ucdl);
+    } catch (IOException e) {
+      throw new BadRequestException(e);
+    }
   }
 
   @Override
   public ParsingResponse parseFile() {
     try {
-      this.setCurrentDefinitions();
+      this.currentDefinitions = UcdlParser.getDefinitions(this.getUcdl());
     } catch (ParseException | IOException e) {
       return new ParsingResponse(false, e.getMessage());
     }
@@ -58,10 +60,5 @@ public class UcdlRepositoryImpl implements UcdlRepository {
       return null;
     }
     return this.currentDefinitions;
-  }
-
-  private void setCurrentDefinitions() throws IOException,
-      de.uftos.repositories.ucdl.parser.javacc.ParseException {
-    this.currentDefinitions = UcdlParser.getDefinitions(this.getUcdl());
   }
 }

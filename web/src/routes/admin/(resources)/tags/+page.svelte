@@ -2,9 +2,13 @@
   import DataTable, { type DataItem } from '$lib/elements/ui/dataTable/data-table.svelte';
   import { deleteTag, getTags, type Pageable, type PageTag } from '$lib/sdk/fetch-client';
   import { error } from '@sveltejs/kit';
+  import { onMount } from 'svelte';
 
   let columnNames = ['Name'];
   let keys = ['id', 'name'];
+  let pageLoaded = false;
+
+  onMount(() => (pageLoaded = true));
 
   async function loadPage(index: number, sortString: string, filter: string) {
     let pageable: Pageable = { page: index, size: 10, sort: [sortString] };
@@ -39,5 +43,7 @@
 </script>
 
 <div class="p-10 w-full">
-  <DataTable {columnNames} {keys} {loadPage} {deleteEntry} />
+  {#if pageLoaded}
+    <DataTable {columnNames} {keys} {loadPage} {deleteEntry} />
+  {/if}
 </div>

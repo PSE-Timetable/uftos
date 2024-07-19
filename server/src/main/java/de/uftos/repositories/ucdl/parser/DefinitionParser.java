@@ -17,13 +17,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-//TODO: !!!REFACTOR!!!
-//todo: update for changed grammar/parser behaviour (definition -> controlstructure | implies; etc.)
+//magic numbers are tied directly to the used grammar
+//(see ucdl.jjt in server/src/main/resources/ucdl.jjt)
 
 /**
  * This class parses the ucdl-code of the "definition"-field of a constraint definition and returns
  * the abstract syntax tree, which resembles the code.
  */
+@SuppressWarnings("checkstyle:VariableDeclarationUsageDistance")
 public class DefinitionParser {
   /**
    * Parses the given definition using the given parameters.
@@ -36,8 +37,10 @@ public class DefinitionParser {
   public static AbstractSyntaxTreeDto parseDefinition(String definition,
                                                       HashMap<String, ResourceType> parameters)
       throws ParseException {
+    HashMap<String, ResourceType> params = (HashMap<String, ResourceType>) parameters.clone();
+    params.put("this", ResourceType.TIMETABLE);
     SimpleNode root = SyntaxChecker.parseString(definition);
-    return buildAst(root, parameters);
+    return buildAst(root, params);
   }
 
   private static AbstractSyntaxTreeDto buildAst(Node root, HashMap<String, ResourceType> parameters)
@@ -62,18 +65,14 @@ public class DefinitionParser {
         params.add(buildAst(root.jjtGetChild(1), parameters)); //return
 
         //semantic check for legal return values
-        boolean returnValue =
-            getReturnValue(params); //returned value is irrelevant, only error checking
+        // returned value is irrelevant, only error checking
+        getReturnValue(params);
         return new OperatorDto(UcdlToken.CODEBLOCK, params);
       }
       case "RETURN" -> {
         SimpleNode boolVal = (SimpleNode) root.jjtGetChild(0);
-        return switch (boolVal.jjtGetFirstToken().image) {
-          case "true" -> new ValueDto<>(UcdlToken.RETURN, true);
-          case "false" -> new ValueDto<>(UcdlToken.RETURN, false);
-          default -> throw new ParseException(
-              "Illegal return value! \"true\" or \"false\" expected!");
-        };
+        return new ValueDto<>(UcdlToken.RETURN,
+            Boolean.parseBoolean(boolVal.jjtGetFirstToken().image));
       }
       case "FOR" -> {
         List<AbstractSyntaxTreeDto> variableDefinition = new ArrayList<>();
@@ -106,8 +105,6 @@ public class DefinitionParser {
         return new ControlSequenceDto(UcdlToken.FOR, variable, body, returnValue);
       }
       case "IF" -> {
-        boolean returnValue = false;
-
         AbstractSyntaxTreeDto bool = buildAst(root.jjtGetChild(0), parameters);
 
         List<AbstractSyntaxTreeDto> body = new ArrayList<>();
@@ -115,13 +112,12 @@ public class DefinitionParser {
         Node bodyElements = root.jjtGetChild(1);
 
         switch (bodyElements.jjtGetChild(0).toString()) {
-          case "RETURN":
+          case "RETURN" -> {
             ValueDto<Boolean> dto =
                 (ValueDto<Boolean>) buildAst(bodyElements.jjtGetChild(0), parameters);
-            returnValue = dto.value();
-            body.add(dto);
-            break;
-          case "CONTROLSEQUENCE":
+            return new ControlSequenceDto(UcdlToken.IF, bool, body, dto.value());
+          }
+          case "CONTROLSEQUENCE" -> {
             body.add(buildAst(bodyElements.jjtGetChild(0), parameters)); //first control sequence
 
             Node controlSequenceList = bodyElements.jjtGetChild(1); //rest of the control sequences
@@ -129,106 +125,44 @@ public class DefinitionParser {
               body.add(buildAst(controlSequenceList.jjtGetChild(0), parameters));
               controlSequenceList = controlSequenceList.jjtGetChild(1);
             }
-            //semantic check for legal return values
-            returnValue = getReturnValue(body);
-            break;
-          default:
-            throw new IllegalStateException();
+
+            //getReturnValue() includes a semantic check for legal return values
+            return new ControlSequenceDto(UcdlToken.IF, bool, body, getReturnValue(body));
+          }
+          default -> throw new IllegalStateException();
         }
-        return new ControlSequenceDto(UcdlToken.IF, bool, body, returnValue);
       }
-      case "FORALL" -> {
-        List<AbstractSyntaxTreeDto> variableDefinition = new ArrayList<>();
-        ValueDto<String> varName = (ValueDto<String>) buildAst(root.jjtGetChild(0), parameters);
-        variableDefinition.add(varName); //variable name
-        if (parameters.containsKey(varName.value())) {
-          throw new ParseException("Variable name \"" + varName.value()
-              + "\" does already exist inside this namespace!");
-        }
-        SetDto set = (SetDto) buildAst(root.jjtGetChild(1), parameters);
-        variableDefinition.add(set); //set
-        OperatorDto variable = new OperatorDto(UcdlToken.OF, variableDefinition);
-
-        parameters.put(varName.value(), set.type()); //adding the new variable
-        AbstractSyntaxTreeDto body = buildAst(root.jjtGetChild(1), parameters);
-        parameters.remove(varName.value()); //removing the new variable
-
-        return new QuantifierDto(UcdlToken.FOR_ALL, variable, body);
+      case "FOR_ALL" -> {
+        return buildQuantifier(UcdlToken.FOR_ALL, root, parameters);
       }
       case "EXISTS" -> {
-        List<AbstractSyntaxTreeDto> variableDefinition = new ArrayList<>();
-        ValueDto<String> varName = (ValueDto<String>) buildAst(root.jjtGetChild(0), parameters);
-        variableDefinition.add(varName); //variable name
-        if (parameters.containsKey(varName.value())) {
-          throw new ParseException("Variable name \"" + varName.value()
-              + "\" does already exist inside this namespace!");
-        }
-        SetDto set = (SetDto) buildAst(root.jjtGetChild(1), parameters);
-        variableDefinition.add(set); //set
-        OperatorDto variable = new OperatorDto(UcdlToken.OF, variableDefinition);
-
-        parameters.put(varName.value(), set.type()); //adding the new variable
-        AbstractSyntaxTreeDto body = buildAst(root.jjtGetChild(1), parameters);
-        parameters.remove(varName.value()); //removing the new variable
-
-        return new QuantifierDto(UcdlToken.EXISTS, variable, body);
+        return buildQuantifier(UcdlToken.EXISTS, root, parameters);
       }
       case "IMPLIES" -> {
-        AbstractSyntaxTreeDto firstArgument = buildAst(root.jjtGetChild(0), parameters);
-        if (root.jjtGetChild(1).jjtGetNumChildren() > 0) {
-          AbstractSyntaxTreeDto secondArgument =
-              buildAst(root.jjtGetChild(1).jjtGetChild(0), parameters);
-          List<AbstractSyntaxTreeDto> params = new ArrayList<>();
-          params.add(firstArgument);
-          params.add(secondArgument);
-          return new OperatorDto(UcdlToken.IMPLIES, params);
-        }
-        return firstArgument;
+        return buildBinaryOperator(UcdlToken.IMPLIES, root, parameters);
       }
       case "OR" -> {
-        AbstractSyntaxTreeDto firstArgument = buildAst(root.jjtGetChild(0), parameters);
-        if (root.jjtGetChild(1).jjtGetNumChildren() > 0) {
-          AbstractSyntaxTreeDto secondArgument =
-              buildAst(root.jjtGetChild(1).jjtGetChild(0), parameters);
-          List<AbstractSyntaxTreeDto> params = new ArrayList<>();
-          params.add(firstArgument);
-          params.add(secondArgument);
-          return new OperatorDto(UcdlToken.OR, params);
-        }
-        return firstArgument;
+        return buildBinaryOperator(UcdlToken.OR, root, parameters);
       }
       case "AND" -> {
-        AbstractSyntaxTreeDto firstArgument = buildAst(root.jjtGetChild(0), parameters);
-        if (root.jjtGetChild(1).jjtGetNumChildren() > 0) {
-          AbstractSyntaxTreeDto secondArgument =
-              buildAst(root.jjtGetChild(1).jjtGetChild(0), parameters);
-          List<AbstractSyntaxTreeDto> params = new ArrayList<>();
-          params.add(firstArgument);
-          params.add(secondArgument);
-          return new OperatorDto(UcdlToken.AND, params);
-        }
-        return firstArgument;
+        return buildBinaryOperator(UcdlToken.AND, root, parameters);
       }
       case "NOT" -> {
         if (((SimpleNode) root).jjtGetFirstToken().image.equals("NOT")) {
-          List<AbstractSyntaxTreeDto> param = new ArrayList<>();
-          param.add(buildAst(root.jjtGetChild(0), parameters));
-          return new OperatorDto(UcdlToken.NOT, param);
+          return buildUnaryOperator(UcdlToken.NOT, root, parameters);
         }
         return buildAst(root.jjtGetChild(0), parameters);
       }
-      case "ISEMPTY" -> {
-        List<AbstractSyntaxTreeDto> param = new ArrayList<>();
-        param.add(buildAst(root.jjtGetChild(0), parameters));
-        return new OperatorDto(UcdlToken.IS_EMPTY, param);
+      case "IS_EMPTY" -> {
+        return buildUnaryOperator(UcdlToken.IS_EMPTY, root, parameters);
       }
-      case "ELEMENTINSETOREQUATION" -> {
+      case "ELEMENT_IN_SET_OR_EQUATION" -> {
         List<AbstractSyntaxTreeDto> params = new ArrayList<>();
         params.add(buildAst(root.jjtGetChild(0), parameters));
 
         Node secondPart = root.jjtGetChild(1);
 
-        if (secondPart.toString().equals("ELEMENTINSET")) {
+        if (secondPart.toString().equals("ELEMENT_IN_SET")) {
           params.add(buildAst(secondPart.jjtGetChild(0), parameters));
           return new OperatorDto(UcdlToken.IN, params);
         }
@@ -264,7 +198,7 @@ public class DefinitionParser {
         }
         return new ElementDto(UcdlToken.ELEMENT, elementName, attributes, elementType);
       }
-      case "ELEMENTNAME" -> {
+      case "ELEMENT_NAME" -> {
         String image = ((SimpleNode) root).jjtGetFirstToken().image;
         if (!parameters.containsKey(image)) {
           throw new ParseException("Parameter/Variable \"" + image + "\" does not exist!");
@@ -273,9 +207,7 @@ public class DefinitionParser {
       }
       case "NUMBERELEMENT" -> {
         if (((SimpleNode) root).jjtGetFirstToken().image.equals("size")) {
-          List<AbstractSyntaxTreeDto> set = new ArrayList<>();
-          set.add(buildAst(root.jjtGetChild(0), parameters));
-          return new OperatorDto(UcdlToken.SIZE, set);
+          return buildUnaryOperator(UcdlToken.SIZE, root, parameters);
         } else {
           return new ValueDto<>(UcdlToken.NUMBER, Integer.parseInt(
               ((SimpleNode) root).jjtGetFirstToken().image));
@@ -292,47 +224,10 @@ public class DefinitionParser {
           setType = ((ElementDto) setName).type();
         }
 
-        List<AbstractSyntaxTreeDto> modifiers = new ArrayList<>();
+        return buildSet(setName, setType, root.jjtGetChild(1), parameters);
 
-        Node modifierList = root.jjtGetChild(1);
-        while (modifierList.jjtGetNumChildren() > 0) {
-          if (modifierList.jjtGetNumChildren() == 2) {
-            SimpleNode flatmap = (SimpleNode) modifierList.jjtGetChild(0);
-            String attribute = flatmap.jjtGetFirstToken().image;
-            setType = getNextResourceType(setType, attribute);
-            modifiers.add(new ValueDto<>(UcdlToken.ATTRIBUTE, attribute));
-            modifierList = modifierList.jjtGetChild(1);
-
-          } else if (modifierList.jjtGetNumChildren() == 3) {
-            ResourceType thisType = parameters.get("this");
-            parameters.replace("this", setType);
-
-            List<AbstractSyntaxTreeDto> filters = new ArrayList<>();
-            filters.add(buildAst(modifierList.jjtGetChild(0), parameters));
-
-            Node filterList = modifierList.jjtGetChild(1);
-            while (filterList.jjtGetNumChildren() > 0) {
-              filters.add(buildAst(filterList.jjtGetChild(0), parameters));
-              filterList = filterList.jjtGetChild(1);
-            }
-
-            for (AbstractSyntaxTreeDto filter : filters) {
-              if ((filter.getToken() == UcdlToken.NUMBER_SET && setType != ResourceType.NUMBER)
-                  || (filter.getToken() == UcdlToken.RESOURCE_SET
-                  && ((SetDto) filter).type() != setType)) {
-                throw new ParseException("Sets can only be filtered using sets of the same type!");
-              }
-            }
-
-            modifiers.add(new OperatorDto(UcdlToken.FILTER, filters));
-            modifierList = modifierList.jjtGetChild(2);
-            parameters.replace("this", thisType);
-          }
-        }
-
-        return new SetDto(UcdlToken.RESOURCE_SET, setType, setName, modifiers);
       }
-      case "NUMBERSET" -> {
+      case "NUMBER_SET" -> {
         List<Integer> values = new ArrayList<>();
 
         values.add(Integer.parseInt(((SimpleNode) root).jjtGetFirstToken().next.image));
@@ -344,18 +239,21 @@ public class DefinitionParser {
         }
         return new ValueDto<>(UcdlToken.NUMBER_SET, values.toArray(new Integer[0]));
       }
-      case "VALUEREFERENCE" -> {
-        return new ValueDto<>(UcdlToken.VALUE_REFERENCE,
-            ((SimpleNode) root).jjtGetFirstToken().image);
+      case "VALUE_REFERENCE" -> {
+        //only used in variable definition (elementName is already taken care of
+
+        String image = ((SimpleNode) root).jjtGetFirstToken().image;
+        if (image.equals("this")) {
+          throw new ParseException("\"this\" is reserved and can't be used as variable!");
+        }
+        return new ValueDto<>(UcdlToken.VALUE_REFERENCE, image);
       }
       case "FILTER" -> {
         switch (root.jjtGetChild(0).toString()) {
-          case "BOOLVALUE":
-          case "FORALL":
-          case "EXISTS":
-          case "ISEMPTY":
+          case "BOOLVALUE", "FOR_ALL", "EXISTS", "IS_EMPTY" -> {
             return buildAst(root.jjtGetChild(0), parameters);
-          case "NUMBERSET":
+          }
+          case "NUMBER_SET" -> {
             AbstractSyntaxTreeDto numberSet = buildAst(root.jjtGetChild(0), parameters);
 
             ResourceType thisType = parameters.get("this");
@@ -388,74 +286,57 @@ public class DefinitionParser {
             }
             parameters.replace("this", thisType);
             return new SetDto(UcdlToken.RESOURCE_SET, ResourceType.NUMBER, numberSet, modifiers);
-          case "ELEMENT":
+          }
+          case "ELEMENT" -> {
             switch (root.jjtGetChild(1).toString()) {
-              case "SETMODIFICATION":
-                ElementDto setName = (ElementDto) buildAst(root.jjtGetChild(0), parameters);
-
-                ResourceType setType = setName.type();
-
-                modifiers = new ArrayList<>();
-
-                modifierList = root.jjtGetChild(1);
-                while (modifierList.jjtGetNumChildren() > 0) {
-                  if (modifierList.jjtGetNumChildren() == 2) {
-                    SimpleNode flatmap = (SimpleNode) modifierList.jjtGetChild(0);
-                    String attribute = flatmap.jjtGetFirstToken().image;
-                    setType = getNextResourceType(setType, attribute);
-                    modifiers.add(new ValueDto<>(UcdlToken.ATTRIBUTE, attribute));
-                    modifierList = modifierList.jjtGetChild(1);
-
-                  } else if (modifierList.jjtGetNumChildren() == 3) {
-                    thisType = parameters.get("this");
-                    parameters.replace("this", setType);
-
-                    List<AbstractSyntaxTreeDto> filters = new ArrayList<>();
-                    filters.add(buildAst(modifierList.jjtGetChild(0), parameters));
-
-                    Node filterList = modifierList.jjtGetChild(1);
-                    while (filterList.jjtGetNumChildren() > 0) {
-                      filters.add(buildAst(filterList.jjtGetChild(0), parameters));
-                      filterList = filterList.jjtGetChild(1);
-                    }
-
-                    for (AbstractSyntaxTreeDto filter : filters) {
-                      if ((filter.getToken() == UcdlToken.NUMBER_SET
-                          && setType != ResourceType.NUMBER)
-                          || (filter.getToken() == UcdlToken.RESOURCE_SET
-                          && ((SetDto) filter).type() != setType)) {
-                        throw new ParseException(
-                            "Sets can only be filtered using sets of the same type!");
-                      }
-                    }
-
-                    modifiers.add(new OperatorDto(UcdlToken.FILTER, filters));
-                    modifierList = modifierList.jjtGetChild(2);
-                    parameters.replace("this", thisType);
-                  }
+              case "SET_MODIFICATION" -> {
+                AbstractSyntaxTreeDto setName = buildAst(root.jjtGetChild(0), parameters);
+                ResourceType setType;
+                if (setName.getToken() == UcdlToken.NUMBER) {
+                  setType = ResourceType.NUMBER;
+                } else {
+                  setType = ((ElementDto) setName).type();
                 }
-
-                return new SetDto(UcdlToken.RESOURCE_SET, setType, setName, modifiers);
-
-              case "ELEMENTINSET":
-                ElementDto element = (ElementDto) buildAst(root.jjtGetChild(0), parameters);
-                SetDto set = (SetDto) buildAst(root.jjtGetChild(1).jjtGetChild(0), parameters);
-
-                if (element.type() != set.type()) {
-                  throw new ParseException("Elements can only be in Sets of the same type!");
-                }
+                return buildSet(setName, setType, root.jjtGetChild(1), parameters);
+              }
+              case "ELEMENT_IN_SET", "EQUATION" -> {
+                String operator = root.jjtGetChild(1).toString();
+                AbstractSyntaxTreeDto ast;
 
                 List<AbstractSyntaxTreeDto> params = new ArrayList<>();
+                ElementDto element = (ElementDto) buildAst(root.jjtGetChild(0), parameters);
                 params.add(element);
-                params.add(set);
 
-                AbstractSyntaxTreeDto elementInSet = new OperatorDto(UcdlToken.IN, params);
+                if (operator.equals("ELEMENT_IN_SET")) {
+                  SetDto set = (SetDto) buildAst(root.jjtGetChild(1).jjtGetChild(0), parameters);
+                  params.add(set);
+
+                  if (element.type() != set.type()) {
+                    throw new ParseException("Elements can only be in Sets of the same type!");
+                  }
+
+                  ast = new OperatorDto(UcdlToken.IN, params);
+
+                } else if (operator.equals("EQUATION")) {
+                  Node secondElement = root.jjtGetChild(1).jjtGetChild(1);
+                  String comparator =
+                      ((SimpleNode) root.jjtGetChild(1).jjtGetChild(0)).jjtGetFirstToken().image;
+
+                  params.add(buildAst(secondElement, parameters));
+                  UcdlToken token = getComparatorToken(comparator, params);
+                  ast = new OperatorDto(token, params);
+
+                } else {
+                  throw new IllegalStateException();
+                }
 
                 if (root.jjtGetNumChildren() == 2) {
-                  return elementInSet;
+                  return ast; //operator isn't followed by further optional boolean operations
                 }
+
+                //further optional boolean operations are following
                 params = new ArrayList<>();
-                params.add(elementInSet);
+                params.add(ast);
                 params.add(buildAst(root.jjtGetChild(2).jjtGetChild(0), parameters));
                 return switch (((SimpleNode) root.jjtGetChild(2)).jjtGetFirstToken().image) {
                   case "implies", "->" -> new OperatorDto(UcdlToken.IMPLIES, params);
@@ -463,43 +344,133 @@ public class DefinitionParser {
                   case "and", "&&" -> new OperatorDto(UcdlToken.AND, params);
                   default -> throw new IllegalStateException();
                 };
-              case "EQUATION":
-                params = new ArrayList<>();
-                Node firstElement = root.jjtGetChild(0);
-                Node secondElement = root.jjtGetChild(1).jjtGetChild(1);
-                String comparator =
-                    ((SimpleNode) root.jjtGetChild(1).jjtGetChild(0)).jjtGetFirstToken().image;
-
-                params.add(buildAst(firstElement, parameters));
-                params.add(buildAst(secondElement, parameters));
-                UcdlToken token = getComparatorToken(comparator, params);
-                return new OperatorDto(token, params);
-              default:
-                throw new IllegalStateException();
+              }
+              default -> throw new IllegalStateException();
             }
-          default:
-            throw new IllegalStateException();
+          }
+          default -> throw new IllegalStateException();
 
         }
       }
-      //includes cases: "CONTROLSEQUENCELIST", "CONTROLSEQUENCERETURN",
-      // "OPTIONALIMPLIES", "OPTIONALOR", "OPTIONALAND",
-      // "ELEMENTINSET", "EQUATION", "ELEMENTEQUATION", "ELEMENTATTRIBUTELIST",
-      // "SETNAME", "SETMODIFICATION", "NUMBERLIST", "ATTRIBUTE", "FILTERLIST"
+      //includes cases: "CONTROLSEQUENCE_LIST", "CONTROLSEQUENCE_RETURN",
+      // "OPTIONAL_IMPLIES", "OPTIONAL_OR", "OPTIONAL_AND",
+      // "ELEMENT_IN_SET", "EQUATION", "ELEMENT_EQUATION", "ELEMENT_ATTRIBUTE_LIST",
+      // "SET_NAME", "SET_MODIFICATION", "NUMBER_LIST", "ATTRIBUTE", "FILTER_LIST"
       default -> throw new IllegalStateException();
     }
   }
 
-  //checks that all returnValues are the same and returns the value
-  // (throws an exception if true and false are returnValues inside the body)
+  private static AbstractSyntaxTreeDto buildSet(AbstractSyntaxTreeDto setName,
+                                                ResourceType setType, Node modifierList,
+                                                HashMap<String, ResourceType> parameters)
+      throws ParseException {
+    List<AbstractSyntaxTreeDto> modifiers = new ArrayList<>();
+
+    while (modifierList.jjtGetNumChildren() > 0) {
+      if (modifierList.jjtGetNumChildren() == 2) {
+        SimpleNode flatmap = (SimpleNode) modifierList.jjtGetChild(0);
+        String attribute = flatmap.jjtGetFirstToken().image;
+        setType = getNextResourceType(setType, attribute);
+        modifiers.add(new ValueDto<>(UcdlToken.ATTRIBUTE, attribute));
+        modifierList = modifierList.jjtGetChild(1);
+
+      } else if (modifierList.jjtGetNumChildren() == 3) {
+        ResourceType thisType = parameters.get("this");
+        parameters.replace("this", setType);
+
+        List<AbstractSyntaxTreeDto> filters = new ArrayList<>();
+        filters.add(buildAst(modifierList.jjtGetChild(0), parameters));
+
+        Node filterList = modifierList.jjtGetChild(1);
+        while (filterList.jjtGetNumChildren() > 0) {
+          filters.add(buildAst(filterList.jjtGetChild(0), parameters));
+          filterList = filterList.jjtGetChild(1);
+        }
+
+        for (AbstractSyntaxTreeDto filter : filters) {
+          if (filter.getToken() == UcdlToken.NUMBER_SET && setType == ResourceType.NUMBER) {
+            continue; //valid number set
+          }
+          if (filter.getToken() == UcdlToken.RESOURCE_SET
+              && ((SetDto) filter).type() == setType) {
+            continue; //valid resource set
+          }
+          if (filter.getToken() != UcdlToken.NUMBER_SET
+              && filter.getToken() != UcdlToken.RESOURCE_SET) {
+            continue; //bool
+          }
+          throw new ParseException("Sets can only be filtered using sets of the same type!");
+        }
+
+        modifiers.add(new OperatorDto(UcdlToken.FILTER, filters));
+        modifierList = modifierList.jjtGetChild(2);
+        parameters.replace("this", thisType);
+      }
+    }
+
+    return new SetDto(UcdlToken.RESOURCE_SET, setType, setName, modifiers);
+  }
+
+  private static AbstractSyntaxTreeDto buildUnaryOperator(UcdlToken token, Node root,
+                                                          HashMap<String, ResourceType> parameters)
+      throws ParseException {
+    List<AbstractSyntaxTreeDto> param = new ArrayList<>();
+    param.add(buildAst(root.jjtGetChild(0), parameters));
+    return new OperatorDto(token, param);
+  }
+
+  private static AbstractSyntaxTreeDto buildBinaryOperator(UcdlToken token, Node root,
+                                                           HashMap<String, ResourceType> parameters)
+      throws ParseException {
+    AbstractSyntaxTreeDto firstArgument = buildAst(root.jjtGetChild(0), parameters);
+    if (root.jjtGetChild(1).jjtGetNumChildren() > 0) {
+      AbstractSyntaxTreeDto secondArgument =
+          buildAst(root.jjtGetChild(1).jjtGetChild(0), parameters);
+      List<AbstractSyntaxTreeDto> params = new ArrayList<>();
+      params.add(firstArgument);
+      params.add(secondArgument);
+      return new OperatorDto(token, params);
+    }
+    return firstArgument;
+  }
+
+  private static QuantifierDto buildQuantifier(UcdlToken token, Node root,
+                                               HashMap<String, ResourceType> parameters)
+      throws ParseException {
+    List<AbstractSyntaxTreeDto> variableDefinition = new ArrayList<>();
+    ValueDto<String> varName = (ValueDto<String>) buildAst(root.jjtGetChild(0), parameters);
+    variableDefinition.add(varName); //variable name
+    if (parameters.containsKey(varName.value())) {
+      throw new ParseException("Variable name \"" + varName.value()
+          + "\" does already exist inside this namespace!");
+    }
+    SetDto set = (SetDto) buildAst(root.jjtGetChild(1), parameters);
+    variableDefinition.add(set); //set
+    OperatorDto variable = new OperatorDto(UcdlToken.OF, variableDefinition);
+
+    parameters.put(varName.value(), set.type()); //adding the new variable
+    AbstractSyntaxTreeDto body = buildAst(root.jjtGetChild(1), parameters);
+    parameters.remove(varName.value()); //removing the new variable
+
+    return new QuantifierDto(token, variable, body);
+  }
+
+  /**
+   * Checks that all returnValues of the ControlSequences inside the body are the same
+   * and returns that value.
+   *
+   * @param body the List of all ASTs inside the body.
+   * @return the value these ASTs return.
+   * @throws ParseException if the List contains ASTs which would return different values.
+   */
   private static boolean getReturnValue(List<AbstractSyntaxTreeDto> body) throws ParseException {
     boolean and = true;
     boolean or = false;
     for (AbstractSyntaxTreeDto ast : body) {
       if (ast.getToken() == UcdlToken.FOR || ast.getToken() == UcdlToken.IF) {
         ControlSequenceDto cs = (ControlSequenceDto) ast;
-        and = and && cs.returnValue();
-        or = or || cs.returnValue();
+        and &= cs.returnValue();
+        or |= cs.returnValue();
       }
     }
     if (and != or) {
@@ -517,21 +488,26 @@ public class DefinitionParser {
       case "<" -> UcdlToken.SMALLER;
       case ">=" -> UcdlToken.GREATER_EQUALS;
       case "<=" -> UcdlToken.SMALLER_EQUALS;
-      case "=", "==" -> UcdlToken.EQUALS;
+      case "==" -> UcdlToken.EQUALS;
       case "!=" -> UcdlToken.NOT_EQUALS;
       default -> throw new IllegalStateException();
     };
     if (token == UcdlToken.GREATER || token == UcdlToken.SMALLER
         || token == UcdlToken.GREATER_EQUALS || token == UcdlToken.SMALLER_EQUALS) {
       for (AbstractSyntaxTreeDto ast : params) {
-
-        if (ast.getToken() != UcdlToken.NUMBER && ast.getToken() != UcdlToken.SIZE
-            && !(ast.getToken() == UcdlToken.ELEMENT
-            && ((ElementDto) ast).type() == ResourceType.NUMBER)) {
-          throw new ParseException(
-              "Illegal comparison argument! Only numbers can be compared using "
-                  + "\"<\",\">\",\"<=\",\">=\"!");
+        if (ast.getToken() == UcdlToken.NUMBER) {
+          continue;
         }
+        if (ast.getToken() == UcdlToken.SIZE) {
+          continue;
+        }
+        if (ast.getToken() == UcdlToken.ELEMENT
+            && ((ElementDto) ast).type() == ResourceType.NUMBER) {
+          continue;
+        }
+        throw new ParseException(
+            "Illegal comparison argument! Only numbers can be compared using "
+                + "\"<\",\">\",\"<=\",\">=\"!");
       }
     }
     return token;
@@ -610,7 +586,7 @@ public class DefinitionParser {
             && currentType != ResourceType.SUBJECT) {
           throw new ParseException(
               "Attribute \"" + attribute
-                  + "\" is only available for \"this\"(outside filters) and tags!");
+                  + "\" is only available for \"this\"(outside filters), subjects and tags!");
         }
         yield ResourceType.TEACHER;
       }
@@ -683,4 +659,5 @@ public class DefinitionParser {
       default -> throw new ParseException("Illegal attribute name: " + attribute);
     };
   }
+
 }
