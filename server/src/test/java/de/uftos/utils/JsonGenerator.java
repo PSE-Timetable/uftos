@@ -13,6 +13,28 @@ public class JsonGenerator {
   /**
    * Generates the student JSON.
    *
+   * @param name         The name of the room
+   * @param buildingName The name of the building the room is in
+   * @param capacity     The maximum number of people the room is suitable for
+   * @param tags         The ids of the tags the student has
+   * @return The requested JSON
+   * @throws JSONException If something is malformed.
+   */
+  public static String generateRoomJson(String name, String buildingName, int capacity,
+                                        List<String> tags) throws JSONException {
+    JSONArray jsonArray = new JSONArray();
+    tags.forEach(jsonArray::put);
+    return new JSONObject()
+        .put("name", name)
+        .put("buildingName", buildingName)
+        .put("capacity", capacity)
+        .put("tagIds", jsonArray)
+        .toString();
+  }
+
+  /**
+   * Generates the student JSON.
+   *
    * @param firstName The first name of the student
    * @param lastName  The last name of the student
    * @param tags      The ids of the tags the student has
