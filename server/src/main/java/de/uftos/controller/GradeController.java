@@ -58,7 +58,8 @@ public class GradeController {
    * @return the page of grades fitting the parameters.
    */
   @GetMapping()
-  public Page<GradeResponseDto> getGrades(Pageable pageable, Optional<String> name, Optional<String[]> tags) {
+  public Page<GradeResponseDto> getGrades(Pageable pageable, Optional<String> name,
+                                          Optional<String[]> tags) {
     return this.gradeService.get(pageable, name, tags);
   }
 

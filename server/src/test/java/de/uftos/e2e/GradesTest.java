@@ -15,7 +15,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class GradesTest {
+class GradesTest {
   private static final String FIRST_GRADE_NAME = "5";
   private static final String SECOND_GRADE_NAME = "7";
   private static final String TAG_NAME = "Nachmittagsunterricht";
@@ -66,7 +66,7 @@ public class GradesTest {
   }
 
   @AfterAll
-  static void deleteCreatedGrades() {
+  static void deleteCreatedEntities() {
     given().contentType(ContentType.JSON)
         .when()
         .delete("/grades/{id}", firstGrade)
