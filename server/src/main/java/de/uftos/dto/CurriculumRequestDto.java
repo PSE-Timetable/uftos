@@ -1,5 +1,6 @@
 package de.uftos.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.uftos.entities.Curriculum;
 import de.uftos.entities.Grade;
 import jakarta.validation.constraints.NotEmpty;
@@ -19,6 +20,7 @@ public record CurriculumRequestDto(@NotEmpty String gradeId, @NotEmpty String na
   /**
    * Maps the information from the data transfer object to a new curriculum entity.
    *
+   * @param grade the Grade object to be mapped
    * @return the new curriculum entity.
    */
   public Curriculum map(Grade grade) {

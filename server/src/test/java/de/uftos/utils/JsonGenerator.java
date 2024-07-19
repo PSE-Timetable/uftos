@@ -2,6 +2,7 @@ package de.uftos.utils;
 
 import de.uftos.dto.LessonsCountRequestDto;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,12 +41,22 @@ public class JsonGenerator {
                                               List<LessonsCountRequestDto> lessonsCounts)
       throws JSONException {
     JSONArray jsonArray = new JSONArray();
-    lessonsCounts.forEach(jsonArray::put);
+    for (LessonsCountRequestDto dto : lessonsCounts) {
+      JSONObject dtoJson = generateLessonsCountJson(dto);
+      jsonArray.put(dtoJson);
+    }
     return new JSONObject()
         .put("gradeId", gradeId)
         .put("name", name)
         .put("lessonsCounts", jsonArray)
         .toString();
+  }
+
+  public static JSONObject generateLessonsCountJson(LessonsCountRequestDto dto)
+      throws JSONException {
+    return new JSONObject()
+        .put("subjectId", dto.subjectId())
+        .put("count", dto.count());
   }
 
   /**

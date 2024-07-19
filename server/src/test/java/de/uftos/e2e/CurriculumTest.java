@@ -3,6 +3,7 @@ package de.uftos.e2e;
 import static de.uftos.utils.JsonGenerator.generateCurriculumJson;
 import static de.uftos.utils.JsonGenerator.generateGradeJson;
 import static de.uftos.utils.JsonGenerator.generatePageJson;
+import static de.uftos.utils.JsonGenerator.generateSubjectJson;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
@@ -10,6 +11,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import de.uftos.dto.LessonsCountRequestDto;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.http.ContentType;
+import java.sql.SQLOutput;
 import java.util.Collections;
 import java.util.List;
 import org.json.JSONException;
@@ -21,22 +23,36 @@ public class CurriculumTest {
   private static final String FIRST_CURRICULUM_NAME = "5 / SS24";
   private static final String SECOND_CURRICULUM_NAME = "7 / SS24";
 
+  private static final String SUBJECT_NAME = "Mathe";
+
   private static final String FIRST_GRADE_NAME = "5";
   private static final String SECOND_GRADE_NAME = "7";
 
 
-  private static final LessonsCountRequestDto lessonsCount = new LessonsCountRequestDto("Mathe", 3);
+  static String firstGradeId;
+  static String secondGradeId;
 
-  static String firstGrade;
-  static String secondGrade;
+  static String subjectId;
 
   static String firstCurriculum;
   static String secondCurriculum;
 
   @BeforeAll
-  static void createTestStudents() throws JSONException {
+  static void createTestCurricula() throws JSONException {
 
-    firstGrade = given().contentType(ContentType.JSON)
+    subjectId = given().contentType(ContentType.JSON)
+        .body(generateSubjectJson(SUBJECT_NAME))
+        .when()
+        .post("/subjects")
+        .then()
+        .statusCode(200)
+        .body("id", notNullValue())
+        .body("name", equalTo(SUBJECT_NAME))
+        .log().ifValidationFails()
+        .extract()
+        .body().jsonPath().getString("id");
+
+    firstGradeId = given().contentType(ContentType.JSON)
         .body(generateGradeJson(FIRST_GRADE_NAME, Collections.emptyList(),
             Collections.emptyList()))
         .when()
@@ -49,9 +65,7 @@ public class CurriculumTest {
         .extract()
         .body().jsonPath().getString("id");
 
-    System.out.println(firstGrade);
-
-    secondGrade = given().contentType(ContentType.JSON)
+    secondGradeId = given().contentType(ContentType.JSON)
         .body(generateGradeJson(SECOND_GRADE_NAME, Collections.emptyList(),
             Collections.emptyList()))
         .when()
@@ -65,48 +79,42 @@ public class CurriculumTest {
         .body().jsonPath().getString("id");
 
     firstCurriculum = given().contentType(ContentType.JSON)
-        .body(generateCurriculumJson(firstGrade, FIRST_CURRICULUM_NAME,
+        .body(generateCurriculumJson(firstGradeId, FIRST_CURRICULUM_NAME,
             Collections.emptyList()))
+        .when()
+        .post("/curriculum")
+        .then()
+        .statusCode(200)
+        .body("id", notNullValue())
+        .body("grade.id", equalTo(firstGradeId))
+        .body("name", equalTo(FIRST_CURRICULUM_NAME))
+        .log().ifValidationFails(LogDetail.BODY)
+        .extract()
+        .body().jsonPath().getString("id");
+
+
+    LessonsCountRequestDto lessonsCount = new LessonsCountRequestDto(subjectId, 3);
+
+    System.out.println(generateCurriculumJson(secondGradeId, SECOND_CURRICULUM_NAME,
+        List.of(lessonsCount)));
+
+    secondCurriculum = given().contentType(ContentType.JSON)
+        .body(generateCurriculumJson(secondGradeId, SECOND_CURRICULUM_NAME,
+            List.of(lessonsCount)))//TODO problem with lessonsCountRequestDto creation
         .when()
         .post("/curriculum")
         .then()
         .log().ifValidationFails(LogDetail.BODY)
         .statusCode(200)
         .body("id", notNullValue())
-        .body("grade", equalTo(firstGrade))
-        .body("name", equalTo(FIRST_CURRICULUM_NAME))
-        .extract()
-        .body().jsonPath().getString("id");
-
-    secondCurriculum = given().contentType(ContentType.JSON)
-        .body(generateCurriculumJson(secondGrade, SECOND_CURRICULUM_NAME,
-            List.of(lessonsCount)))
-        .when()
-        .post("/curriculum")
-        .then()
-        .statusCode(200)
-        .body("id", notNullValue())
-        .body("grade", equalTo(secondGrade))
+        .body("grade.id", equalTo(secondGradeId))
         .body("name", equalTo(SECOND_CURRICULUM_NAME))
-        .log().ifValidationFails(LogDetail.ALL)
         .extract()
         .body().jsonPath().getString("id");
   }
 
   @AfterAll
   static void deleteCreatedEntities() {
-    given().contentType(ContentType.JSON)
-        .when()
-        .delete("/grades/{id}", firstGrade)
-        .then()
-        .statusCode(200);
-
-    given().contentType(ContentType.JSON)
-        .when()
-        .delete("/grades/{id}", secondGrade)
-        .then()
-        .statusCode(200);
-
     given().contentType(ContentType.JSON)
         .when()
         .delete("/curriculum/{id}", firstCurriculum)
@@ -116,6 +124,18 @@ public class CurriculumTest {
     given().contentType(ContentType.JSON)
         .when()
         .delete("/curriculum/{id}", secondCurriculum)
+        .then()
+        .statusCode(200);
+
+    given().contentType(ContentType.JSON)
+        .when()
+        .delete("/grades/{id}", firstGradeId)
+        .then()
+        .statusCode(200);
+
+    given().contentType(ContentType.JSON)
+        .when()
+        .delete("/grades/{id}", secondGradeId)
         .then()
         .statusCode(200);
   }
