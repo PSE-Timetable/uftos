@@ -4,13 +4,16 @@ import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
 import ai.timefold.solver.core.api.score.stream.Constraint;
 import ai.timefold.solver.core.api.score.stream.ConstraintFactory;
 import ai.timefold.solver.core.api.score.stream.ConstraintProvider;
-import de.uftos.solver.timefold.domain.constraintInstances.ConstraintInstanceHardPenalize;
-import de.uftos.solver.timefold.domain.constraintInstances.ConstraintInstanceHardReward;
-import de.uftos.solver.timefold.domain.constraintInstances.ConstraintInstanceSoftPenalize;
-import de.uftos.solver.timefold.domain.constraintInstances.ConstraintInstanceSoftReward;
+import de.uftos.solver.timefold.domain.constraintinstances.ConstraintInstanceHardPenalize;
+import de.uftos.solver.timefold.domain.constraintinstances.ConstraintInstanceHardReward;
+import de.uftos.solver.timefold.domain.constraintinstances.ConstraintInstanceSoftPenalize;
+import de.uftos.solver.timefold.domain.constraintinstances.ConstraintInstanceSoftReward;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class provides the constraint instances to the Timefold solver.
+ */
 public class ConstraintProviderTimefoldInstance implements ConstraintProvider {
   @Override
   public Constraint[] defineConstraints(ConstraintFactory constraintFactory) {

@@ -22,7 +22,7 @@ import de.uftos.solver.timefold.domain.TagTimefoldInstance;
 import de.uftos.solver.timefold.domain.TeacherTimefoldInstance;
 import de.uftos.solver.timefold.domain.TimeslotTimefoldInstance;
 import de.uftos.solver.timefold.domain.TimetableSolutionTimefoldInstance;
-import de.uftos.solver.timefold.domain.constraintInstances.ConstraintInstanceTimefoldInstance;
+import de.uftos.solver.timefold.domain.constraintinstances.ConstraintInstanceTimefoldInstance;
 import de.uftos.solver.timefold.solver.ConstraintProviderTimefoldInstance;
 import java.util.ArrayList;
 import java.util.Arrays;
