@@ -1,5 +1,6 @@
 package de.uftos.dto.solver;
 
+import de.uftos.dto.ucdl.ConstraintDefinitionDto;
 import java.util.List;
 
 /**
@@ -14,6 +15,8 @@ public record TimetableProblemDto(
     List<SubjectProblemDto> subjects,
     List<TagProblemDto> tags,
     List<TeacherProblemDto> teachers,
-    List<TimeslotProblemDto> timeslots
+    List<TimeslotProblemDto> timeslots,
+    List<ConstraintDefinitionDto> definitions,
+    List<ConstraintInstanceDto> instances
 ) {
 }

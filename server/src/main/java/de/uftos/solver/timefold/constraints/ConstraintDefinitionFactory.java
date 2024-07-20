@@ -32,8 +32,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
-//todo: update signatures to correct signature
-
 /**
  * This factory creates constraint definitions for use with the Timefold-solver
  * based on ConstraintDefinitionDtos.

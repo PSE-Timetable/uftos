@@ -1,5 +1,11 @@
 package de.uftos.solver;
 
+import ai.timefold.solver.core.api.solver.Solver;
+import ai.timefold.solver.core.api.solver.SolverFactory;
+import ai.timefold.solver.core.config.score.director.ScoreDirectorFactoryConfig;
+import ai.timefold.solver.core.config.solver.SolverConfig;
+import ai.timefold.solver.core.config.solver.termination.TerminationConfig;
+import ai.timefold.solver.core.impl.solver.DefaultSolverFactory;
 import de.uftos.dto.solver.ConstraintInstanceDto;
 import de.uftos.dto.solver.TimetableProblemDto;
 import de.uftos.dto.solver.TimetableSolutionDto;
@@ -13,7 +19,6 @@ import de.uftos.entities.Subject;
 import de.uftos.entities.Tag;
 import de.uftos.entities.Teacher;
 import de.uftos.entities.Timeslot;
-import de.uftos.entities.Timetable;
 import de.uftos.repositories.solver.SolverRepository;
 import de.uftos.solver.timefold.domain.GradeTimefoldInstance;
 import de.uftos.solver.timefold.domain.LessonTimefoldInstance;
@@ -25,125 +30,23 @@ import de.uftos.solver.timefold.domain.TagTimefoldInstance;
 import de.uftos.solver.timefold.domain.TeacherTimefoldInstance;
 import de.uftos.solver.timefold.domain.TimeslotTimefoldInstance;
 import de.uftos.solver.timefold.domain.TimetableSolutionTimefoldInstance;
+import de.uftos.solver.timefold.solver.ConstraintProviderTimefoldInstance;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-
-//todo: fix timetable translation
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class TimefoldSolver implements SolverRepository {
 
-  /*
-  public Future<Timetable> solve(HashMap<PredefinedConstraints, PredefinedConstraint> definitions,
-                                 List<PredefinedConstraintInstance> instances,
-                                 Timetable timetable) {
-    Callable<Timetable> solveTimetable = () -> {
-      TimetableSolutionTimefoldInstance solution =
-          getSolutionInstanceFromTimetableInstance(timetable);
-
-      for (PredefinedConstraintInstance i : instances) {
-        List<ResourceTimefoldInstance> parameters = new ArrayList<>();
-        for (Resource resource : i.parameters()) {
-          switch (resource.getResourceType()) {
-            case ROOM -> {
-              parameters.add(solution.getRooms().get(resource.getId()));
-            }
-            case STUDENT -> {
-              parameters.add(solution.getStudents().get(resource.getId()));
-            }
-            case TEACHER -> {
-              parameters.add(solution.getTeachers().get(resource.getId()));
-            }
-            case TAG -> {
-              parameters.add(solution.getTags().get(resource.getId()));
-            }
-            case GRADE -> {
-              parameters.add(solution.getGrades().get(resource.getId()));
-            }
-            case LESSON -> {
-              parameters.add(solution.getLessons().get(resource.getId()));
-            }
-            case SUBJECT -> {
-              parameters.add(solution.getSubjects().get(resource.getId()));
-            }
-            case TIMESLOT -> {
-              parameters.add(solution.getTimeslots().get(resource.getId()));
-            }
-            case TIMETABLE -> {
-              parameters.add(solution);
-            }
-            case STUDENT_GROUP -> {
-              parameters.add(solution.getStudentGroups().get(resource.getId()));
-            }
-          }
-        }
-        //solution.getConstrains().add(
-        //  new de.uftos.timefold.constraints.PredefinedConstraintInstance(i.name(), parameters));
-      }
-
-      SolverConfig solverConfig = new SolverConfig()
-          .withTerminationConfig(new TerminationConfig()
-              .withMillisecondsSpentLimit(1800000L))
-          .withSolutionClass(TimetableSolutionTimefoldInstance.class)
-          .withEntityClassList(
-              Arrays.stream(new Class<?>[] {LessonTimefoldInstance.class}).toList())
-          .withScoreDirectorFactory(
-              new ScoreDirectorFactoryConfig().withEasyScoreCalculatorClass(ScoreCalculator.class));
-
-      SolverFactory<TimetableSolutionTimefoldInstance> factory =
-          new DefaultSolverFactory<>(solverConfig);
-
-      Solver<TimetableSolutionTimefoldInstance> solver = factory.buildSolver();
-
-      System.out.println(solver);
-      System.out.println(solver.getClass());
-
-      return getTimetableInstanceFromSolutionInstance(solver.solve(solution));
-    };
-
-    BlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<>(1);
-    ExecutorService es = new ThreadPoolExecutor(1, 1, 1, TimeUnit.SECONDS, workQueue);
-
-    return es.submit(solveTimetable);
-  }
-
-  public Future<Timetable> solve(Timetable timetable,
-                                 HashMap<String, ConstraintDefinitionDto> definitions,
-                                 List<ConstraintInstanceDto> instances) {
-
-    Callable<Timetable> solveTimetable = () -> {
-      TimetableSolutionTimefoldInstance solution =
-          getSolutionInstanceFromTimetableInstance(timetable);
-
-      SolverConfig solverConfig = new SolverConfig()
-          .withTerminationConfig(new TerminationConfig()
-              .withMillisecondsSpentLimit(5000L))
-          .withSolutionClass(TimetableSolutionTimefoldInstance.class)
-          .withEntityClassList(
-              Arrays.stream(new Class<?>[] {LessonTimefoldInstance.class}).toList());
-      solverConfig.setScoreDirectorFactoryConfig(
-          new ScoreDirectorFactoryConfig().withConstraintProviderClass(
-              ConstraintProviderTimefoldInstance.class));
-
-      SolverFactory<TimetableSolutionTimefoldInstance> factory =
-          new DefaultSolverFactory<>(solverConfig);
-
-      Solver<TimetableSolutionTimefoldInstance> solver = factory.buildSolver();
-
-      solver.solve(solution);
-
-      return getTimetableInstanceFromSolutionInstance(solution);
-    };
-
-    BlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<>(1);
-    ExecutorService es = new ThreadPoolExecutor(1, 1, 1, TimeUnit.SECONDS, workQueue);
-
-    return es.submit(solveTimetable);
-  }
-   */
-
-  TimetableSolutionTimefoldInstance getSolutionInstanceFromTimetableInstance(Timetable timetable) {
+  TimetableSolutionTimefoldInstance getSolutionInstanceFromTimetableInstance(
+      TimetableProblemDto timetable) {
     List<GradeTimefoldInstance> grades = new ArrayList<>();
     List<RoomTimefoldInstance> rooms = new ArrayList<>();
     List<StudentGroupTimefoldInstance> studentGroups = new ArrayList<>();
@@ -246,7 +149,8 @@ public class TimefoldSolver implements SolverRepository {
         teachers, timeslots, tags, lessons);
   }
 
-  Timetable getTimetableInstanceFromSolutionInstance(TimetableSolutionTimefoldInstance solution) {
+  TimetableSolutionDto getTimetableInstanceFromSolutionInstance(
+      TimetableSolutionTimefoldInstance solution) {
     System.out.println(solution.getScore());
     List<Grade> grades = new ArrayList<>();
     List<Room> rooms = new ArrayList<>();
@@ -442,6 +346,33 @@ public class TimefoldSolver implements SolverRepository {
                                             HashMap<String, ConstraintDefinitionDto> constaintDefinitions,
                                             List<ConstraintInstanceDto> constraintInstances)
       throws IllegalArgumentException {
-    return null;
+    Callable<TimetableSolutionDto> solveTimetable = () -> {
+      TimetableSolutionTimefoldInstance solution =
+          getSolutionInstanceFromTimetableInstance(timetable);
+
+      SolverConfig solverConfig = new SolverConfig()
+          .withTerminationConfig(new TerminationConfig()
+              .withMillisecondsSpentLimit(5000L))
+          .withSolutionClass(TimetableSolutionTimefoldInstance.class)
+          .withEntityClassList(
+              Arrays.stream(new Class<?>[] {LessonTimefoldInstance.class}).toList());
+      solverConfig.setScoreDirectorFactoryConfig(
+          new ScoreDirectorFactoryConfig().withConstraintProviderClass(
+              ConstraintProviderTimefoldInstance.class));
+
+      SolverFactory<TimetableSolutionTimefoldInstance> factory =
+          new DefaultSolverFactory<>(solverConfig);
+
+      Solver<TimetableSolutionTimefoldInstance> solver = factory.buildSolver();
+
+      solver.solve(solution);
+
+      return getTimetableInstanceFromSolutionInstance(solution);
+    };
+
+    BlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<>(1);
+    ExecutorService es = new ThreadPoolExecutor(1, 1, 1, TimeUnit.SECONDS, workQueue);
+
+    return es.submit(solveTimetable);
   }
 }
