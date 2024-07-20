@@ -739,7 +739,6 @@ public class ConstraintDefinitionFactory {
     return (parameters) -> resources;
   }
 
-  //todo: replace if-else with switch
   private static Function<
       List<ResourceTimefoldInstance>,
       Function<Set<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>>
@@ -1074,42 +1073,4 @@ public class ConstraintDefinitionFactory {
       return resource;
     };
   }
-
-  /*
-  //control sequences
-  CODEBLOCK, //-> operatordto       x
-  FOR, //-> controlsequencedto      x
-  IF, //-> controlsequencedto       x
-  RETURN, //-> valuedto             x
-
-  //bool
-  AND, //-> operatordto             x
-  OR, //-> operatordto              x
-  NOT, //-> operatordto             x
-  IMPLIES, //-> operatordto         x
-  FOR_ALL, //-> quantifierdto       x
-  EXISTS, //-> quantifierdto        x
-  BOOL_VALUE, //-> valuedto         x
-
-  //comparisons
-  EQUALS, //-> operatordto          x
-  NOT_EQUALS, //-> operatordto      x
-  SMALLER_EQUALS, //-> operatordto  x
-  GREATER_EQUALS, //-> operatordto  x
-  SMALLER, //-> operatordto         x
-  GREATER, //-> operatordto         x
-
-  //sets and elements
-  IN, //-> operatordto              x
-  OF, //-> operatordto              x
-  FILTER, //-> operatordto          -
-  IS_EMPTY, //-> operatordto        x
-  SIZE, //-> operatordto            x
-  RESOURCE_SET, //-> valuedto       x
-  NUMBER_SET, //-> valuedto         x
-  ATTRIBUTE, //-> valuedto          x
-  ELEMENT, //-> valuedto            x
-  NUMBER, //-> valuedto             x
-  VALUE_REFERENCE //-> valuedto     x
-   */
 }
