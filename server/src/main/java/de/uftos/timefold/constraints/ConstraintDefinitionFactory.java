@@ -854,14 +854,13 @@ public class ConstraintDefinitionFactory {
       case "students" -> (parameters) -> (set) -> {
         Set<ResourceTimefoldInstance> resultSet = new HashSet<>();
         for (ResourceTimefoldInstance resource : set) {
-          if (resource.getResourceType() == ResourceType.TIMETABLE) {
-            resultSet.addAll(((TimetableSolutionTimefoldInstance) resource).getStudents());
-          } else if (resource.getResourceType() == ResourceType.TAG) {
-            resultSet.addAll(((TagTimefoldInstance) resource).getStudentList());
-          } else if (resource.getResourceType() == ResourceType.STUDENT_GROUP) {
-            resultSet.addAll(((StudentGroupTimefoldInstance) resource).getStudentList());
-          } else {
-            throw new IllegalStateException();
+          switch (resource.getResourceType()) {
+            case TIMETABLE ->
+                resultSet.addAll(((TimetableSolutionTimefoldInstance) resource).getStudents());
+            case TAG -> resultSet.addAll(((TagTimefoldInstance) resource).getStudentList());
+            case STUDENT_GROUP ->
+                resultSet.addAll(((StudentGroupTimefoldInstance) resource).getStudentList());
+            default -> throw new IllegalStateException();
           }
         }
         return resultSet;
@@ -869,14 +868,12 @@ public class ConstraintDefinitionFactory {
       case "teachers" -> (parameters) -> (set) -> {
         Set<ResourceTimefoldInstance> resultSet = new HashSet<>();
         for (ResourceTimefoldInstance resource : set) {
-          if (resource.getResourceType() == ResourceType.TIMETABLE) {
-            resultSet.addAll(((TimetableSolutionTimefoldInstance) resource).getTeachers());
-          } else if (resource.getResourceType() == ResourceType.TAG) {
-            resultSet.addAll(((TagTimefoldInstance) resource).getTeacherList());
-          } else if (resource.getResourceType() == ResourceType.SUBJECT) {
-            resultSet.addAll(((SubjectTimefoldInstance) resource).getTeacherList());
-          } else {
-            throw new IllegalStateException();
+          switch (resource.getResourceType()) {
+            case TIMETABLE ->
+                resultSet.addAll(((TimetableSolutionTimefoldInstance) resource).getTeachers());
+            case TAG -> resultSet.addAll(((TagTimefoldInstance) resource).getTeacherList());
+            case SUBJECT -> resultSet.addAll(((SubjectTimefoldInstance) resource).getTeacherList());
+            default -> throw new IllegalStateException();
           }
         }
         return resultSet;
@@ -884,16 +881,15 @@ public class ConstraintDefinitionFactory {
       case "studentGroups" -> (parameters) -> (set) -> {
         Set<ResourceTimefoldInstance> resultSet = new HashSet<>();
         for (ResourceTimefoldInstance resource : set) {
-          if (resource.getResourceType() == ResourceType.TIMETABLE) {
-            resultSet.addAll(((TimetableSolutionTimefoldInstance) resource).getStudentGroups());
-          } else if (resource.getResourceType() == ResourceType.TAG) {
-            resultSet.addAll(((TagTimefoldInstance) resource).getStudentGroupList());
-          } else if (resource.getResourceType() == ResourceType.GRADE) {
-            resultSet.addAll(((GradeTimefoldInstance) resource).getStudentGroupList());
-          } else if (resource.getResourceType() == ResourceType.STUDENT) {
-            resultSet.addAll(((StudentTimefoldInstance) resource).getStudentGroupList());
-          } else {
-            throw new IllegalStateException();
+          switch (resource.getResourceType()) {
+            case TIMETABLE ->
+                resultSet.addAll(((TimetableSolutionTimefoldInstance) resource).getStudentGroups());
+            case TAG -> resultSet.addAll(((TagTimefoldInstance) resource).getStudentGroupList());
+            case GRADE ->
+                resultSet.addAll(((GradeTimefoldInstance) resource).getStudentGroupList());
+            case STUDENT ->
+                resultSet.addAll(((StudentTimefoldInstance) resource).getStudentGroupList());
+            default -> throw new IllegalStateException();
           }
         }
         return resultSet;
@@ -901,12 +897,11 @@ public class ConstraintDefinitionFactory {
       case "rooms" -> (parameters) -> (set) -> {
         Set<ResourceTimefoldInstance> resultSet = new HashSet<>();
         for (ResourceTimefoldInstance resource : set) {
-          if (resource.getResourceType() == ResourceType.TIMETABLE) {
-            resultSet.addAll(((TimetableSolutionTimefoldInstance) resource).getRooms());
-          } else if (resource.getResourceType() == ResourceType.TAG) {
-            resultSet.addAll(((TagTimefoldInstance) resource).getRoomList());
-          } else {
-            throw new IllegalStateException();
+          switch (resource.getResourceType()) {
+            case TIMETABLE ->
+                resultSet.addAll(((TimetableSolutionTimefoldInstance) resource).getRooms());
+            case TAG -> resultSet.addAll(((TagTimefoldInstance) resource).getRoomList());
+            default -> throw new IllegalStateException();
           }
         }
         return resultSet;
@@ -914,14 +909,12 @@ public class ConstraintDefinitionFactory {
       case "subjects" -> (parameters) -> (set) -> {
         Set<ResourceTimefoldInstance> resultSet = new HashSet<>();
         for (ResourceTimefoldInstance resource : set) {
-          if (resource.getResourceType() == ResourceType.TIMETABLE) {
-            resultSet.addAll(((TimetableSolutionTimefoldInstance) resource).getSubjects());
-          } else if (resource.getResourceType() == ResourceType.TAG) {
-            resultSet.addAll(((TagTimefoldInstance) resource).getSubjectList());
-          } else if (resource.getResourceType() == ResourceType.TEACHER) {
-            resultSet.addAll(((TeacherTimefoldInstance) resource).getSubjectList());
-          } else {
-            throw new IllegalStateException();
+          switch (resource.getResourceType()) {
+            case TIMETABLE ->
+                resultSet.addAll(((TimetableSolutionTimefoldInstance) resource).getSubjects());
+            case TAG -> resultSet.addAll(((TagTimefoldInstance) resource).getSubjectList());
+            case TEACHER -> resultSet.addAll(((TeacherTimefoldInstance) resource).getSubjectList());
+            default -> throw new IllegalStateException();
           }
         }
         return resultSet;
@@ -929,12 +922,11 @@ public class ConstraintDefinitionFactory {
       case "grades" -> (parameters) -> (set) -> {
         Set<ResourceTimefoldInstance> resultSet = new HashSet<>();
         for (ResourceTimefoldInstance resource : set) {
-          if (resource.getResourceType() == ResourceType.TIMETABLE) {
-            resultSet.addAll(((TimetableSolutionTimefoldInstance) resource).getGrades());
-          } else if (resource.getResourceType() == ResourceType.TAG) {
-            resultSet.addAll(((TagTimefoldInstance) resource).getGradeList());
-          } else {
-            throw new IllegalStateException();
+          switch (resource.getResourceType()) {
+            case TIMETABLE ->
+                resultSet.addAll(((TimetableSolutionTimefoldInstance) resource).getGrades());
+            case TAG -> resultSet.addAll(((TagTimefoldInstance) resource).getGradeList());
+            default -> throw new IllegalStateException();
           }
         }
         return resultSet;
@@ -942,12 +934,11 @@ public class ConstraintDefinitionFactory {
       case "timeslots" -> (parameters) -> (set) -> {
         Set<ResourceTimefoldInstance> resultSet = new HashSet<>();
         for (ResourceTimefoldInstance resource : set) {
-          if (resource.getResourceType() == ResourceType.TIMETABLE) {
-            resultSet.addAll(((TimetableSolutionTimefoldInstance) resource).getTimeslots());
-          } else if (resource.getResourceType() == ResourceType.TAG) {
-            resultSet.addAll(((TagTimefoldInstance) resource).getTimeslotList());
-          } else {
-            throw new IllegalStateException();
+          switch (resource.getResourceType()) {
+            case TIMETABLE ->
+                resultSet.addAll(((TimetableSolutionTimefoldInstance) resource).getTimeslots());
+            case TAG -> resultSet.addAll(((TagTimefoldInstance) resource).getTimeslotList());
+            default -> throw new IllegalStateException();
           }
         }
         return resultSet;
@@ -955,20 +946,17 @@ public class ConstraintDefinitionFactory {
       case "lessons" -> (parameters) -> (set) -> {
         Set<ResourceTimefoldInstance> resultSet = new HashSet<>();
         for (ResourceTimefoldInstance resource : set) {
-          if (resource.getResourceType() == ResourceType.TIMETABLE) {
-            resultSet.addAll(((TimetableSolutionTimefoldInstance) resource).getLessons());
-          } else if (resource.getResourceType() == ResourceType.TEACHER) {
-            resultSet.addAll(((TeacherTimefoldInstance) resource).getLessonList());
-          } else if (resource.getResourceType() == ResourceType.STUDENT_GROUP) {
-            resultSet.addAll(((StudentGroupTimefoldInstance) resource).getLessonList());
-          } else if (resource.getResourceType() == ResourceType.ROOM) {
-            resultSet.addAll(((RoomTimefoldInstance) resource).getLessonList());
-          } else if (resource.getResourceType() == ResourceType.SUBJECT) {
-            resultSet.addAll(((SubjectTimefoldInstance) resource).getLessonList());
-          } else if (resource.getResourceType() == ResourceType.TIMESLOT) {
-            resultSet.addAll(((TimeslotTimefoldInstance) resource).getLessonList());
-          } else {
-            throw new IllegalStateException();
+          switch (resource.getResourceType()) {
+            case TIMETABLE ->
+                resultSet.addAll(((TimetableSolutionTimefoldInstance) resource).getLessons());
+            case TEACHER -> resultSet.addAll(((TeacherTimefoldInstance) resource).getLessonList());
+            case STUDENT_GROUP ->
+                resultSet.addAll(((StudentGroupTimefoldInstance) resource).getLessonList());
+            case ROOM -> resultSet.addAll(((RoomTimefoldInstance) resource).getLessonList());
+            case SUBJECT -> resultSet.addAll(((SubjectTimefoldInstance) resource).getLessonList());
+            case TIMESLOT ->
+                resultSet.addAll(((TimeslotTimefoldInstance) resource).getLessonList());
+            default -> throw new IllegalStateException();
           }
         }
         return resultSet;
@@ -976,24 +964,23 @@ public class ConstraintDefinitionFactory {
       case "tags" -> (parameters) -> (set) -> {
         Set<ResourceTimefoldInstance> resultSet = new HashSet<>();
         for (ResourceTimefoldInstance resource : set) {
-          if (resource.getResourceType() == ResourceType.TIMETABLE) {
-            resultSet.addAll(((TimetableSolutionTimefoldInstance) resource).getTags());
-          } else if (resource.getResourceType() == ResourceType.STUDENT) {
-            resultSet.addAll(((StudentTimefoldInstance) resource).getProvidedTagsList());
-          } else if (resource.getResourceType() == ResourceType.TEACHER) {
-            resultSet.addAll(((TeacherTimefoldInstance) resource).getProvidedTagsList());
-          } else if (resource.getResourceType() == ResourceType.STUDENT_GROUP) {
-            resultSet.addAll(((StudentGroupTimefoldInstance) resource).getProvidedTagsList());
-          } else if (resource.getResourceType() == ResourceType.ROOM) {
-            resultSet.addAll(((RoomTimefoldInstance) resource).getProvidedTagsList());
-          } else if (resource.getResourceType() == ResourceType.SUBJECT) {
-            resultSet.addAll(((SubjectTimefoldInstance) resource).getProvidedTagsList());
-          } else if (resource.getResourceType() == ResourceType.GRADE) {
-            resultSet.addAll(((GradeTimefoldInstance) resource).getProvidedTagsList());
-          } else if (resource.getResourceType() == ResourceType.TIMESLOT) {
-            resultSet.addAll(((TimeslotTimefoldInstance) resource).getProvidedTagsList());
-          } else {
-            throw new IllegalStateException();
+          switch (resource.getResourceType()) {
+            case TIMETABLE ->
+                resultSet.addAll(((TimetableSolutionTimefoldInstance) resource).getTags());
+            case STUDENT ->
+                resultSet.addAll(((StudentTimefoldInstance) resource).getProvidedTagsList());
+            case TEACHER ->
+                resultSet.addAll(((TeacherTimefoldInstance) resource).getProvidedTagsList());
+            case STUDENT_GROUP ->
+                resultSet.addAll(((StudentGroupTimefoldInstance) resource).getProvidedTagsList());
+            case ROOM -> resultSet.addAll(((RoomTimefoldInstance) resource).getProvidedTagsList());
+            case SUBJECT ->
+                resultSet.addAll(((SubjectTimefoldInstance) resource).getProvidedTagsList());
+            case GRADE ->
+                resultSet.addAll(((GradeTimefoldInstance) resource).getProvidedTagsList());
+            case TIMESLOT ->
+                resultSet.addAll(((TimeslotTimefoldInstance) resource).getProvidedTagsList());
+            default -> throw new IllegalStateException();
           }
         }
         return resultSet;
