@@ -7,18 +7,10 @@ import ai.timefold.solver.core.config.solver.SolverConfig;
 import ai.timefold.solver.core.config.solver.termination.TerminationConfig;
 import ai.timefold.solver.core.impl.solver.DefaultSolverFactory;
 import de.uftos.dto.solver.ConstraintInstanceDto;
+import de.uftos.dto.solver.LessonProblemDto;
 import de.uftos.dto.solver.TimetableProblemDto;
 import de.uftos.dto.solver.TimetableSolutionDto;
 import de.uftos.dto.ucdl.ConstraintDefinitionDto;
-import de.uftos.entities.Grade;
-import de.uftos.entities.Lesson;
-import de.uftos.entities.Room;
-import de.uftos.entities.Student;
-import de.uftos.entities.StudentGroup;
-import de.uftos.entities.Subject;
-import de.uftos.entities.Tag;
-import de.uftos.entities.Teacher;
-import de.uftos.entities.Timeslot;
 import de.uftos.repositories.solver.SolverRepository;
 import de.uftos.solver.timefold.domain.GradeTimefoldInstance;
 import de.uftos.solver.timefold.domain.LessonTimefoldInstance;
@@ -47,6 +39,7 @@ public class TimefoldSolver implements SolverRepository {
 
   TimetableSolutionTimefoldInstance getSolutionInstanceFromTimetableInstance(
       TimetableProblemDto timetable) {
+    //todo: build entire  problem instance from TimetableProblemDto
     List<GradeTimefoldInstance> grades = new ArrayList<>();
     List<RoomTimefoldInstance> rooms = new ArrayList<>();
     List<StudentGroupTimefoldInstance> studentGroups = new ArrayList<>();
@@ -151,193 +144,22 @@ public class TimefoldSolver implements SolverRepository {
 
   TimetableSolutionDto getTimetableInstanceFromSolutionInstance(
       TimetableSolutionTimefoldInstance solution) {
-    System.out.println(solution.getScore());
-    List<Grade> grades = new ArrayList<>();
-    List<Room> rooms = new ArrayList<>();
-    List<StudentGroup> studentGroups = new ArrayList<>();
-    List<Student> students = new ArrayList<>();
-    List<Subject> subjects = new ArrayList<>();
-    List<Teacher> teachers = new ArrayList<>();
-    List<Timeslot> timeslots = new ArrayList<>();
-    List<Tag> tags = new ArrayList<>();
-    List<Lesson> lessons = new ArrayList<>();
+    List<LessonProblemDto> lessons = new ArrayList<>();
 
-    /*
-    for (GradeTimefoldInstance g : solution.getGrades()) {
-      List<Integer> tagList = new ArrayList<>();
-      for (TagTimefoldInstance t : g.getProvidedTagsList()) {
-        tagList.add(t.getId());
-      }
-      List<Integer> studentGroupList = new ArrayList<>();
-      for (StudentGroupTimefoldInstance sg : g.getStudentGroupList()) {
-        studentGroupList.add(sg.getId());
-      }
-      grades.add(new Grade(g.getId(), tagList, studentGroupList));
-    }
-
-    for (RoomTimefoldInstance r : solution.getRooms()) {
-      List<Integer> tagList = new ArrayList<>();
-      for (TagTimefoldInstance t : r.getProvidedTagsList()) {
-        tagList.add(t.getId());
-      }
-      List<Integer> lessonList = new ArrayList<>();
-      for (LessonTimefoldInstance l : solution.getLessons().stream()
-          .filter((lesson) -> (lesson.getRoom() != null && lesson.getRoom().getId() == r.getId()))
-          .toList()) {
-        lessonList.add(l.getId());
-      }
-      rooms.add(new Room(r.getId(), tagList, lessonList));
-    }
-
-    for (StudentGroupTimefoldInstance sg : solution.getStudentGroups()) {
-      List<Integer> tagList = new ArrayList<>();
-      for (TagTimefoldInstance t : sg.getProvidedTagsList()) {
-        tagList.add(t.getId());
-      }
-      List<Integer> lessonList = new ArrayList<>();
-      for (LessonTimefoldInstance l : solution.getLessons().stream().filter(
-          (lesson) -> (lesson.getStudentGroup() != null &&
-              lesson.getStudentGroup().getId() == sg.getId())).toList()) {
-        lessonList.add(l.getId());
-      }
-      List<Integer> studentList = new ArrayList<>();
-      for (StudentTimefoldInstance s : sg.getStudentList()) {
-        studentList.add(s.getId());
-      }
-      if (sg.getGrade() == null) {
-        studentGroups.add(new StudentGroup(sg.getId(), -1, tagList, studentList, lessonList));
-      } else {
-        studentGroups.add(
-            new StudentGroup(sg.getId(), sg.getGrade().getId(), tagList, studentList, lessonList));
-      }
-    }
-
-    for (StudentTimefoldInstance s : solution.getStudents()) {
-      List<Integer> tagList = new ArrayList<>();
-      for (TagTimefoldInstance t : s.getProvidedTagsList()) {
-        tagList.add(t.getId());
-      }
-      List<Integer> studentGroupList = new ArrayList<>();
-      for (StudentGroupTimefoldInstance sg : s.getStudentGroupList()) {
-        studentGroupList.add(sg.getId());
-      }
-      students.add(new Student(s.getId(), tagList, studentGroupList));
-    }
-
-    for (SubjectTimefoldInstance s : solution.getSubjects()) {
-      List<Integer> tagList = new ArrayList<>();
-      for (TagTimefoldInstance t : s.getProvidedTagsList()) {
-        tagList.add(t.getId());
-      }
-      List<Integer> lessonList = new ArrayList<>();
-      for (LessonTimefoldInstance l : solution.getLessons().stream().filter(
-              (lesson) -> (lesson.getSubject() != null && lesson.getSubject().getId() == s.getId()))
-          .toList()) {
-        lessonList.add(l.getId());
-      }
-      List<Integer> teacherList = new ArrayList<>();
-      for (TeacherTimefoldInstance t : s.getTeacherList()) {
-        teacherList.add(t.getId());
-      }
-      subjects.add(new Subject(s.getId(), tagList, lessonList, teacherList));
-    }
-
-    for (TeacherTimefoldInstance t : solution.getTeachers()) {
-      List<Integer> tagList = new ArrayList<>();
-      for (TagTimefoldInstance tag : t.getProvidedTagsList()) {
-        tagList.add(tag.getId());
-      }
-      List<Integer> subjectList = new ArrayList<>();
-      for (SubjectTimefoldInstance s : t.getSubjectList()) {
-        subjectList.add(s.getId());
-      }
-      List<Integer> lessonList = new ArrayList<>();
-      for (LessonTimefoldInstance l : solution.getLessons().stream().filter(
-              (lesson) -> (lesson.getTeacher() != null && lesson.getTeacher().getId() == t.getId()))
-          .toList()) {
-        lessonList.add(l.getId());
-      }
-      teachers.add(new Teacher(t.getId(), tagList, subjectList, lessonList));
-    }
-
-    for (TimeslotTimefoldInstance t : solution.getTimeslots()) {
-      List<Integer> tagList = new ArrayList<>();
-      for (TagTimefoldInstance tag : t.getProvidedTagsList()) {
-        tagList.add(tag.getId());
-      }
-      List<Integer> lessonList = new ArrayList<>();
-      for (LessonTimefoldInstance l : solution.getLessons().stream().filter(
-              (lesson) -> (lesson.getTimeslot() != null && lesson.getTimeslot().getId() == t.getId()))
-          .toList()) {
-        lessonList.add(l.getId());
-      }
-      timeslots.add(new Timeslot(t.getId(), t.getDayOfWeek(), t.getSlotId(), tagList, lessonList));
-    }
-
-    for (TagTimefoldInstance t : solution.getTags()) {
-      List<Integer> studentList = new ArrayList<>();
-      for (StudentTimefoldInstance s : t.getStudentList()) {
-        studentList.add(s.getId());
-      }
-      List<Integer> studentGroupList = new ArrayList<>();
-      for (StudentGroupTimefoldInstance sg : t.getStudentGroupList()) {
-        studentGroupList.add(sg.getId());
-      }
-      List<Integer> teacherList = new ArrayList<>();
-      for (TeacherTimefoldInstance teacher : t.getTeacherList()) {
-        teacherList.add(teacher.getId());
-      }
-      List<Integer> roomList = new ArrayList<>();
-      for (RoomTimefoldInstance r : t.getRoomList()) {
-        roomList.add(r.getId());
-      }
-      List<Integer> subjectList = new ArrayList<>();
-      for (SubjectTimefoldInstance s : t.getSubjectList()) {
-        subjectList.add(s.getId());
-      }
-      List<Integer> gradeList = new ArrayList<>();
-      for (GradeTimefoldInstance g : t.getGradeList()) {
-        gradeList.add(g.getId());
-      }
-      List<Integer> timeslotList = new ArrayList<>();
-      for (TimeslotTimefoldInstance slot : t.getTimeslotList()) {
-        timeslotList.add(slot.getId());
-      }
-      tags.add(new Tag(t.getId(), studentList, studentGroupList, teacherList, roomList, subjectList,
-          gradeList, timeslotList));
-    }
-
-    for (LessonTimefoldInstance l : solution.getLessons()) {
-      int timeslotId = -1;
-      if (l.getTimeslot() != null) {
-        timeslotId = l.getTimeslot().getId();
-      }
-      int teacherId = -1;
-      if (l.getTeacher() != null) {
-        teacherId = l.getTeacher().getId();
-      }
-      int studentGroupId = -1;
-      if (l.getStudentGroup() != null) {
-        studentGroupId = l.getStudentGroup().getId();
-      }
-      int subjectId = -1;
-      if (l.getSubject() != null) {
-        subjectId = l.getSubject().getId();
-      }
-      int roomId = -1;
-      if (l.getRoom() != null) {
-        roomId = l.getRoom().getId();
-      }
+    for (LessonTimefoldInstance lesson : solution.getLessons()) {
       lessons.add(
-          new Lesson(l.getId(), l.getIndex(), timeslotId, teacherId, studentGroupId, subjectId,
-              roomId));
+          new LessonProblemDto(
+              lesson.getId(),
+              lesson.getIndex(),
+              lesson.getTeacher().getId(),
+              lesson.getStudentGroup().getId(),
+              lesson.getTimeslot().getId(),
+              lesson.getSubject().getId(),
+              lesson.getRoom().getId())
+      );
     }
 
-    return new Timetable(grades, rooms, studentGroups, students, subjects, teachers, timeslots,
-        lessons, tags);
-
-     */
-    return null;
+    return new TimetableSolutionDto(lessons);
 
   }
 
