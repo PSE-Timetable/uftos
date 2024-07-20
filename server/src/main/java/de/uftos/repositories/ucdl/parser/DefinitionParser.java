@@ -159,28 +159,14 @@ public class DefinitionParser {
       case "ELEMENT_IN_SET_OR_EQUATION" -> {
         List<AbstractSyntaxTreeDto> params = new ArrayList<>();
         AbstractSyntaxTreeDto element = buildAst(root.jjtGetChild(0), parameters);
-        ResourceType elementType;
-        if (element.getToken() == UcdlToken.NUMBER || element.getToken() == UcdlToken.SIZE) {
-          elementType = ResourceType.NUMBER;
-        } else {
-          elementType = ((ElementDto) element).type();
-        }
+        ResourceType elementType = getElementResourceType(element);
         params.add(element);
 
         Node secondPart = root.jjtGetChild(1);
 
         if (secondPart.toString().equals("ELEMENT_IN_SET")) {
           AbstractSyntaxTreeDto set = buildAst(secondPart.jjtGetChild(0), parameters);
-          ResourceType setType;
-          if (set.getToken() == UcdlToken.NUMBER || set.getToken() == UcdlToken.NUMBER_SET
-              || set.getToken() == UcdlToken.SIZE) {
-            setType = ResourceType.NUMBER;
-          } else if (set.getToken() == UcdlToken.ELEMENT) {
-            setType = ((ElementDto) set).type();
-          } else {
-            setType = ((SetDto) set).type();
-          }
-
+          ResourceType setType = getSetResourceType(set);
           params.add(set);
 
           if (elementType != setType) {
@@ -238,13 +224,7 @@ public class DefinitionParser {
       case "SET" -> {
         AbstractSyntaxTreeDto setName = buildAst(root.jjtGetChild(0).jjtGetChild(0), parameters);
 
-        ResourceType setType;
-
-        if (setName.getToken() == UcdlToken.NUMBER_SET) {
-          setType = ResourceType.NUMBER;
-        } else {
-          setType = ((ElementDto) setName).type();
-        }
+        ResourceType setType = getSetResourceType(setName);
 
         return buildSet(setName, setType, root.jjtGetChild(1), parameters);
 
@@ -313,13 +293,7 @@ public class DefinitionParser {
             switch (root.jjtGetChild(1).toString()) {
               case "SET_MODIFICATION" -> {
                 AbstractSyntaxTreeDto setName = buildAst(root.jjtGetChild(0), parameters);
-                ResourceType setType;
-                if (setName.getToken() == UcdlToken.NUMBER
-                    || setName.getToken() == UcdlToken.SIZE) {
-                  setType = ResourceType.NUMBER;
-                } else {
-                  setType = ((ElementDto) setName).type();
-                }
+                ResourceType setType = getSetResourceType(setName);
                 return buildSet(setName, setType, root.jjtGetChild(1), parameters);
               }
               case "ELEMENT_IN_SET", "EQUATION" -> {
@@ -328,29 +302,13 @@ public class DefinitionParser {
 
                 List<AbstractSyntaxTreeDto> params = new ArrayList<>();
                 AbstractSyntaxTreeDto element = buildAst(root.jjtGetChild(0), parameters);
-                ResourceType elementType;
-                if (element.getToken() == UcdlToken.NUMBER
-                    || element.getToken() == UcdlToken.SIZE) {
-                  elementType = ResourceType.NUMBER;
-                } else {
-                  elementType = ((ElementDto) element).type();
-                }
+                ResourceType elementType = getElementResourceType(element);
                 params.add(element);
 
                 if (operator.equals("ELEMENT_IN_SET")) {
                   AbstractSyntaxTreeDto set =
                       buildAst(root.jjtGetChild(1).jjtGetChild(0), parameters);
-                  ResourceType setType;
-                  if (set.getToken() == UcdlToken.NUMBER
-                      || set.getToken() == UcdlToken.NUMBER_SET
-                      || set.getToken() == UcdlToken.SIZE) {
-                    setType = ResourceType.NUMBER;
-                  } else if (set.getToken() == UcdlToken.ELEMENT) {
-                    setType = ((ElementDto) set).type();
-                  } else {
-                    setType = ((SetDto) set).type();
-                  }
-
+                  ResourceType setType = getSetResourceType(set);
                   params.add(set);
 
                   if (elementType != setType) {
@@ -399,6 +357,26 @@ public class DefinitionParser {
       // "ELEMENT_IN_SET", "EQUATION", "ELEMENT_EQUATION", "ELEMENT_ATTRIBUTE_LIST",
       // "SET_NAME", "SET_MODIFICATION", "NUMBER_LIST", "ATTRIBUTE", "FILTER_LIST"
       default -> throw new IllegalStateException();
+    }
+  }
+
+  private static ResourceType getSetResourceType(AbstractSyntaxTreeDto set) {
+    if (set.getToken() == UcdlToken.NUMBER || set.getToken() == UcdlToken.NUMBER_SET
+        || set.getToken() == UcdlToken.SIZE) {
+      return ResourceType.NUMBER;
+    } else if (set.getToken() == UcdlToken.ELEMENT) {
+      return ((ElementDto) set).type();
+    } else {
+      return ((SetDto) set).type();
+    }
+  }
+
+  private static ResourceType getElementResourceType(AbstractSyntaxTreeDto element) {
+    if (element.getToken() == UcdlToken.NUMBER
+        || element.getToken() == UcdlToken.SIZE) {
+      return ResourceType.NUMBER;
+    } else {
+      return ((ElementDto) element).type();
     }
   }
 
