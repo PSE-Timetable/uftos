@@ -1,6 +1,5 @@
 package de.uftos.rest;
 
-import de.uftos.demoDataSource.DemoDataSource;
 import de.uftos.dto.solver.ConstraintInstanceDto;
 import de.uftos.dto.solver.TimetableProblemDto;
 import de.uftos.dto.solver.TimetableSolutionDto;
@@ -37,7 +36,7 @@ public class MainController {
 
   @GetMapping(value = "/start")
   public ResponseEntity<Future<TimetableSolutionDto>> generateTimetable() {
-    this.timetable = DemoDataSource.getDemoTimetable();
+    //this.timetable = DemoDataSource.getDemoTimetable();
     //todo: fix data generation
     //this.constraints = DemoDataSource.getPredefinedConstraintDefinitions();
     //this.instances = DemoDataSource.getPredefinedConstraintInstances(this.timetable, this.constraints);
