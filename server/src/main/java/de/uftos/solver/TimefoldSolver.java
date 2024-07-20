@@ -22,6 +22,7 @@ import de.uftos.solver.timefold.domain.TagTimefoldInstance;
 import de.uftos.solver.timefold.domain.TeacherTimefoldInstance;
 import de.uftos.solver.timefold.domain.TimeslotTimefoldInstance;
 import de.uftos.solver.timefold.domain.TimetableSolutionTimefoldInstance;
+import de.uftos.solver.timefold.domain.constraintInstances.ConstraintInstanceTimefoldInstance;
 import de.uftos.solver.timefold.solver.ConstraintProviderTimefoldInstance;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,6 +50,7 @@ public class TimefoldSolver implements SolverRepository {
     List<TimeslotTimefoldInstance> timeslots = new ArrayList<>();
     List<TagTimefoldInstance> tags = new ArrayList<>();
     List<LessonTimefoldInstance> lessons = new ArrayList<>();
+    List<ConstraintInstanceTimefoldInstance> constraintInstances = new ArrayList<>();
 
     /*
     for (Grade g : timetable.grades()) {
@@ -139,7 +141,7 @@ public class TimefoldSolver implements SolverRepository {
      */
 
     return new TimetableSolutionTimefoldInstance(grades, rooms, studentGroups, students, subjects,
-        teachers, timeslots, tags, lessons);
+        teachers, timeslots, tags, lessons, constraintInstances);
   }
 
   TimetableSolutionDto getTimetableInstanceFromSolutionInstance(

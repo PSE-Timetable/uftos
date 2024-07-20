@@ -7,6 +7,7 @@ import ai.timefold.solver.core.api.domain.solution.ProblemFactCollectionProperty
 import ai.timefold.solver.core.api.domain.valuerange.ValueRangeProvider;
 import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
 import de.uftos.dto.ResourceType;
+import de.uftos.solver.timefold.domain.constraintInstances.ConstraintInstanceTimefoldInstance;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
@@ -49,6 +50,10 @@ public class TimetableSolutionTimefoldInstance implements ResourceTimefoldInstan
   @PlanningEntityCollectionProperty
   @Getter
   private List<LessonTimefoldInstance> lessons = new ArrayList<>();
+  @ProblemFactCollectionProperty
+  @ValueRangeProvider
+  @Getter
+  private List<ConstraintInstanceTimefoldInstance> constraintInstances = new ArrayList<>();
   @PlanningScore
   @Getter
   private HardSoftScore score;
@@ -65,7 +70,8 @@ public class TimetableSolutionTimefoldInstance implements ResourceTimefoldInstan
       List<TeacherTimefoldInstance> teachers,
       List<TimeslotTimefoldInstance> timeslots,
       List<TagTimefoldInstance> tags,
-      List<LessonTimefoldInstance> lessons
+      List<LessonTimefoldInstance> lessons,
+      List<ConstraintInstanceTimefoldInstance> constraintInstances
   ) {
     this.grades = grades;
     this.rooms = rooms;
@@ -76,6 +82,7 @@ public class TimetableSolutionTimefoldInstance implements ResourceTimefoldInstan
     this.timeslots = timeslots;
     this.tags = tags;
     this.lessons = lessons;
+    this.constraintInstances = constraintInstances;
   }
 
   @Override
