@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 
+/**
+ * This class models a teacher that can be used by the Timefold solver.
+ */
 @PlanningEntity
 @Getter
 @JsonIdentityInfo(scope = TeacherTimefoldInstance.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")

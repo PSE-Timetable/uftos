@@ -3,6 +3,9 @@ package de.uftos.solver.timefold.domain;
 import de.uftos.dto.ResourceType;
 import lombok.Getter;
 
+/**
+ * This class models a number that can be used by the Timefold solver.
+ */
 public class Number implements ResourceTimefoldInstance {
   @Getter
   private final int value;

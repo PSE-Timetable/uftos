@@ -8,6 +8,9 @@ import de.uftos.dto.ResourceType;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * This class models a lesson that can be used by the Timefold solver.
+ */
 @Getter
 @Setter
 @PlanningEntity

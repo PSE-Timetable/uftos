@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 
+/**
+ * This class models a timeslot that can be used by the Timefold solver.
+ */
 @PlanningEntity
 @Getter
 @JsonIdentityInfo(scope = TimeslotTimefoldInstance.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")

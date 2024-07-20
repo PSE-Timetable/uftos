@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 
+/**
+ * This class models a student group that can be used by the Timefold solver.
+ */
 @Getter
 @JsonIdentityInfo(scope = StudentGroupTimefoldInstance.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class StudentGroupTimefoldInstance implements ResourceTimefoldInstance {

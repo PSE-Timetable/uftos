@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 
+/**
+ * This class models a timetable problem instance that can be used by the Timefold solver.
+ */
 @PlanningSolution
 public class TimetableSolutionTimefoldInstance implements ResourceTimefoldInstance {
 
