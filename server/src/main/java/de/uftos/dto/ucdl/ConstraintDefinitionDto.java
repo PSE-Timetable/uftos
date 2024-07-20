@@ -16,7 +16,7 @@ public record ConstraintDefinitionDto(
     String name,
     String description,
     RewardPenalize defaultType,
-    LinkedHashMap<String, ResourceType> parameters, //todo: replace with LinkedHashMap
+    LinkedHashMap<String, ResourceType> parameters,
     AbstractSyntaxTreeDto root
 ) {
 }

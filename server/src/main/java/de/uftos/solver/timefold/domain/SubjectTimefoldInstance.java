@@ -12,7 +12,8 @@ import lombok.Getter;
  * This class models a subject that can be used by the Timefold solver.
  */
 @Getter
-@JsonIdentityInfo(scope = SubjectTimefoldInstance.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@JsonIdentityInfo(scope = SubjectTimefoldInstance.class,
+    generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class SubjectTimefoldInstance implements ResourceTimefoldInstance {
 
   @PlanningId

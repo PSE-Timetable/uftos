@@ -15,7 +15,8 @@ import lombok.Getter;
  */
 @PlanningEntity
 @Getter
-@JsonIdentityInfo(scope = RoomTimefoldInstance.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@JsonIdentityInfo(scope = RoomTimefoldInstance.class,
+    generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class RoomTimefoldInstance implements ResourceTimefoldInstance {
 
   @PlanningId

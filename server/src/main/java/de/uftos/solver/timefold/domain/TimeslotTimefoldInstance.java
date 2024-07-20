@@ -15,7 +15,8 @@ import lombok.Getter;
  */
 @PlanningEntity
 @Getter
-@JsonIdentityInfo(scope = TimeslotTimefoldInstance.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@JsonIdentityInfo(scope = TimeslotTimefoldInstance.class,
+    generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class TimeslotTimefoldInstance implements ResourceTimefoldInstance {
 
   @PlanningId
@@ -26,6 +27,13 @@ public class TimeslotTimefoldInstance implements ResourceTimefoldInstance {
   @InverseRelationShadowVariable(sourceVariableName = "timeslot")
   public List<LessonTimefoldInstance> lessonList;
 
+  /**
+   * Creates a new TimeslotTimefoldInstance.
+   *
+   * @param id        the id of the timeslot.
+   * @param dayOfWeek the day of the timeslot.
+   * @param slotId    the slot of the timeslot.
+   */
   public TimeslotTimefoldInstance(String id, int dayOfWeek, int slotId) {
     this.id = id;
     this.dayOfWeek = dayOfWeek;

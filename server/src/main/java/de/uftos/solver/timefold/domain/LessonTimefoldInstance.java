@@ -33,6 +33,14 @@ public class LessonTimefoldInstance implements ResourceTimefoldInstance {
   @PlanningVariable
   private RoomTimefoldInstance room;
 
+  /**
+   * Creates a new LessonTimefoldInstance.
+   *
+   * @param id           the UUID of the lesson.
+   * @param index        the index of the lesson.
+   * @param subject      the subject of the lesson.
+   * @param studentGroup the student group of the lesson.
+   */
   public LessonTimefoldInstance(String id, int index, SubjectTimefoldInstance subject,
                                 StudentGroupTimefoldInstance studentGroup) {
     this.id = id;
@@ -48,6 +56,17 @@ public class LessonTimefoldInstance implements ResourceTimefoldInstance {
     this.teacher = teacher;
   }
 
+  /**
+   * Creates a new LessonTimefoldInstance.
+   *
+   * @param id           the UUID of the lesson.
+   * @param index        the index of the lesson.
+   * @param timeslot     the timeslot of the lesson.
+   * @param teacher      the teacher of the lesson.
+   * @param studentGroup the student group of the lesson.
+   * @param subject      the subject of the lesson.
+   * @param room         the room of the lesson.
+   */
   public LessonTimefoldInstance(String id, int index, TimeslotTimefoldInstance timeslot,
                                 TeacherTimefoldInstance teacher,
                                 StudentGroupTimefoldInstance studentGroup,

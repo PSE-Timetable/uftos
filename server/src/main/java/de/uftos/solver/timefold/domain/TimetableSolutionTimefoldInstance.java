@@ -64,6 +64,20 @@ public class TimetableSolutionTimefoldInstance implements ResourceTimefoldInstan
   public TimetableSolutionTimefoldInstance() {
   }
 
+  /**
+   * Creates a new TimetableSolutionTimefoldInstance.
+   *
+   * @param grades              the grades ot the timetable.
+   * @param rooms               the rooms of the timetable.
+   * @param studentGroups       the student groups of the timetable.
+   * @param students            the students of the timetable.
+   * @param subjects            the subjects of the timetable.
+   * @param teachers            the teachers of the timetable.
+   * @param timeslots           the timeslots of the timetable.
+   * @param tags                the tags of the timetable.
+   * @param lessons             the lessons of the timetable.
+   * @param constraintInstances the constraint instances of the timetable.
+   */
   public TimetableSolutionTimefoldInstance(
       List<GradeTimefoldInstance> grades,
       List<RoomTimefoldInstance> rooms,

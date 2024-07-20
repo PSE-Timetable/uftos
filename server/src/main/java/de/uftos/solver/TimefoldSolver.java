@@ -36,6 +36,9 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * This class represents a implementation of the SolverRepository interface utilizing the Timefold solver.
+ */
 public class TimefoldSolver implements SolverRepository {
 
   TimetableSolutionTimefoldInstance getSolutionInstanceFromTimetableInstance(

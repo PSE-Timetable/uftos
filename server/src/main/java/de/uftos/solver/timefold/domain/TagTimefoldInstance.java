@@ -12,7 +12,8 @@ import lombok.Getter;
  * This class models a tag that can be used by the Timefold solver.
  */
 @Getter
-@JsonIdentityInfo(scope = TagTimefoldInstance.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@JsonIdentityInfo(scope = TagTimefoldInstance.class,
+    generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class TagTimefoldInstance implements ResourceTimefoldInstance {
 
   @PlanningId
