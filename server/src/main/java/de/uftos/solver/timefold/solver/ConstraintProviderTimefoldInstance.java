@@ -1,4 +1,4 @@
-package de.uftos.timefold.solver;
+package de.uftos.solver.timefold.solver;
 
 import ai.timefold.solver.core.api.score.stream.Constraint;
 import ai.timefold.solver.core.api.score.stream.ConstraintFactory;

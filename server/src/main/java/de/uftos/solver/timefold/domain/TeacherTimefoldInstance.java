@@ -1,4 +1,4 @@
-package de.uftos.timefold.domain;
+package de.uftos.solver.timefold.domain;
 
 import ai.timefold.solver.core.api.domain.entity.PlanningEntity;
 import ai.timefold.solver.core.api.domain.lookup.PlanningId;
@@ -12,21 +12,22 @@ import lombok.Getter;
 
 @PlanningEntity
 @Getter
-@JsonIdentityInfo(scope = RoomTimefoldInstance.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class RoomTimefoldInstance implements ResourceTimefoldInstance {
+@JsonIdentityInfo(scope = TeacherTimefoldInstance.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+public class TeacherTimefoldInstance implements ResourceTimefoldInstance {
 
   @PlanningId
   private final int id;
   private final List<TagTimefoldInstance> providedTagsList = new ArrayList<>();
-  @InverseRelationShadowVariable(sourceVariableName = "room")
+  private final List<SubjectTimefoldInstance> subjectList = new ArrayList<>();
+  @InverseRelationShadowVariable(sourceVariableName = "teacher")
   public List<LessonTimefoldInstance> lessonList;
 
-  public RoomTimefoldInstance(int id) {
+  public TeacherTimefoldInstance(int id) {
     this.id = id;
   }
 
   @Override
   public ResourceType getResourceType() {
-    return ResourceType.ROOM;
+    return ResourceType.TEACHER;
   }
 }

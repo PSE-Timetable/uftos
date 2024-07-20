@@ -1,4 +1,4 @@
-package de.uftos.timefold.domain;
+package de.uftos.solver.timefold.domain;
 
 import ai.timefold.solver.core.api.domain.entity.PlanningEntity;
 import ai.timefold.solver.core.api.domain.lookup.PlanningId;

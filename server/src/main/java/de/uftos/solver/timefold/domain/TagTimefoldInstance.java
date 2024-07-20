@@ -1,4 +1,4 @@
-package de.uftos.timefold.domain;
+package de.uftos.solver.timefold.domain;
 
 import ai.timefold.solver.core.api.domain.lookup.PlanningId;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
@@ -21,6 +21,7 @@ public class TagTimefoldInstance implements ResourceTimefoldInstance {
   private final List<SubjectTimefoldInstance> subjectList = new ArrayList<>();
   private final List<GradeTimefoldInstance> gradeList = new ArrayList<>();
   private final List<TimeslotTimefoldInstance> timeslotList = new ArrayList<>();
+
   public TagTimefoldInstance(int id) {
     this.id = id;
   }

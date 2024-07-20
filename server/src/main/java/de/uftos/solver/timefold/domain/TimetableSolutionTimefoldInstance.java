@@ -1,4 +1,4 @@
-package de.uftos.timefold.domain;
+package de.uftos.solver.timefold.domain;
 
 import ai.timefold.solver.core.api.domain.solution.PlanningEntityCollectionProperty;
 import ai.timefold.solver.core.api.domain.solution.PlanningScore;

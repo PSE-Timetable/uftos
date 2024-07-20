@@ -1,7 +1,7 @@
-package de.uftos.timefold.constraints;
+package de.uftos.solver.timefold.constraints;
 
 import de.uftos.dto.solver.RewardPenalize;
-import de.uftos.timefold.domain.ResourceTimefoldInstance;
+import de.uftos.solver.timefold.domain.ResourceTimefoldInstance;
 import java.util.List;
 import java.util.function.Function;
 
