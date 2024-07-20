@@ -265,6 +265,7 @@ public class ConstraintInstanceService {
           timeslotRepository.findById(id)
               .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST))
               .getDay().toString());
+      case TIMETABLE, NUMBER -> throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
     };
   }
 
