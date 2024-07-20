@@ -13,12 +13,12 @@ import lombok.Getter;
 public class SubjectTimefoldInstance implements ResourceTimefoldInstance {
 
   @PlanningId
-  private final int id;
+  private final String id;
   private final List<TagTimefoldInstance> providedTagsList = new ArrayList<>();
   private final List<TeacherTimefoldInstance> teacherList = new ArrayList<>();
   private final List<StudentTimefoldInstance> lessonList = new ArrayList<>();
 
-  public SubjectTimefoldInstance(int id) {
+  public SubjectTimefoldInstance(String id) {
     this.id = id;
   }
 

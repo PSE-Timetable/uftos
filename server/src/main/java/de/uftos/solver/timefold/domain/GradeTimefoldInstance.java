@@ -12,11 +12,11 @@ import lombok.Getter;
 @JsonIdentityInfo(scope = GradeTimefoldInstance.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class GradeTimefoldInstance implements ResourceTimefoldInstance {
   @PlanningId
-  private final int id;
+  private final String id;
   private final List<TagTimefoldInstance> providedTagsList = new ArrayList<>();
   private final List<StudentGroupTimefoldInstance> studentGroupList = new ArrayList<>();
 
-  public GradeTimefoldInstance(int id) {
+  public GradeTimefoldInstance(String id) {
     this.id = id;
   }
 

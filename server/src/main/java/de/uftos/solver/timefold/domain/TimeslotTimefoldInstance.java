@@ -16,14 +16,14 @@ import lombok.Getter;
 public class TimeslotTimefoldInstance implements ResourceTimefoldInstance {
 
   @PlanningId
-  private final int id;
+  private final String id;
   private final int dayOfWeek;
   private final int slotId;
   private final List<TagTimefoldInstance> providedTagsList = new ArrayList<>();
   @InverseRelationShadowVariable(sourceVariableName = "timeslot")
   public List<LessonTimefoldInstance> lessonList;
 
-  public TimeslotTimefoldInstance(int id, int dayOfWeek, int slotId) {
+  public TimeslotTimefoldInstance(String id, int dayOfWeek, int slotId) {
     this.id = id;
     this.dayOfWeek = dayOfWeek;
     this.slotId = slotId;

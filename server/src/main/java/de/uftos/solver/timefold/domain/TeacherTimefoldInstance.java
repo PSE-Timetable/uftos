@@ -16,13 +16,13 @@ import lombok.Getter;
 public class TeacherTimefoldInstance implements ResourceTimefoldInstance {
 
   @PlanningId
-  private final int id;
+  private final String id;
   private final List<TagTimefoldInstance> providedTagsList = new ArrayList<>();
   private final List<SubjectTimefoldInstance> subjectList = new ArrayList<>();
   @InverseRelationShadowVariable(sourceVariableName = "teacher")
   public List<LessonTimefoldInstance> lessonList;
 
-  public TeacherTimefoldInstance(int id) {
+  public TeacherTimefoldInstance(String id) {
     this.id = id;
   }
 

@@ -13,7 +13,7 @@ import lombok.Getter;
 public class TagTimefoldInstance implements ResourceTimefoldInstance {
 
   @PlanningId
-  private final int id;
+  private final String id;
   private final List<StudentTimefoldInstance> studentList = new ArrayList<>();
   private final List<StudentGroupTimefoldInstance> studentGroupList = new ArrayList<>();
   private final List<TeacherTimefoldInstance> teacherList = new ArrayList<>();
@@ -22,7 +22,7 @@ public class TagTimefoldInstance implements ResourceTimefoldInstance {
   private final List<GradeTimefoldInstance> gradeList = new ArrayList<>();
   private final List<TimeslotTimefoldInstance> timeslotList = new ArrayList<>();
 
-  public TagTimefoldInstance(int id) {
+  public TagTimefoldInstance(String id) {
     this.id = id;
   }
 
