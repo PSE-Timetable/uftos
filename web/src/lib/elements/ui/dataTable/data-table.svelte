@@ -20,6 +20,8 @@
   } from 'svelte-headless-table/plugins';
   import { Button } from '$lib/elements/ui/button';
   import ChevronDown from 'lucide-svelte/icons/chevron-down';
+  import ChevronLeft from 'lucide-svelte/icons/chevron-left';
+  import ChevronRight from 'lucide-svelte/icons/chevron-right';
   import * as DropdownMenu from '$lib/elements/ui/dropdown-menu';
   import DataTableCheckbox from './data-table-checkbox.svelte';
   import { ArrowDown, ArrowUp, Plus } from 'lucide-svelte';
@@ -28,6 +30,7 @@
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import { page } from '$app/stores';
+  import * as Pagination from '$lib/elements/ui/pagination';
 
   onMount(async () => await getData());
 
@@ -181,7 +184,7 @@
     />
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild let:builder>
-        <Button builders={[builder]} class="ml-auto" variant="secondary">
+        <Button builders={[builder]} class="ml-auto shadow-custom" variant="secondary">
           Spalten
           <ChevronDown class="ml-2 h-4 w-4" />
         </Button>
@@ -257,28 +260,62 @@
       </Table.Body>
     </Table.Root>
   </div>
-  <div class="flex items-center justify-end space-x-4 py-4">
-    <div class="flex-1 text-sm text-muted-foreground">
+  <div class="flex justify-center items-center py-4 relative">
+    <div class=" text-sm text-muted-foreground absolute left-0 items-center">
       {Object.keys($selectedDataIds).length} von{' '}
       {$rows.length} Zeile(n) ausgewählt.
     </div>
-    <Button
-      disabled={!$hasPreviousPage}
-      on:click={() => {
-        $pageIndex--;
-      }}
-      size="sm"
-      variant="secondary"
-      >Zurück
-    </Button>
-    <Button
-      disabled={!$hasNextPage}
-      on:click={() => {
-        $pageIndex++;
-      }}
-      size="sm"
-      variant="secondary"
-      >Weiter
-    </Button>
+    <div>
+      <Pagination.Root count={$totalElements} perPage={10} let:pages let:currentPage>
+        <Pagination.Content>
+          <Pagination.Item>
+            <Pagination.PrevButton
+              on:click={() => {
+                $pageIndex--;
+              }}
+              class="shadow-custom"
+            >
+              <ChevronLeft class="h-4 w-4" />
+              <span class="hidden sm:block">Zurück</span>
+            </Pagination.PrevButton>
+          </Pagination.Item>
+          {#each pages as page (page.key)}
+            {#if page.type === 'ellipsis'}
+              <Pagination.Item
+                on:click={() => {
+                  $pageIndex = page;
+                }}
+              >
+                <Pagination.Ellipsis />
+              </Pagination.Item>
+            {:else if page.value > 0}
+              <!--for some reason pages 0 and 1 are displayed if there are no elements in table-->
+              <Pagination.Item>
+                <Pagination.Link
+                  {page}
+                  class=" shadow-custom {currentPage === page.value ? 'border-2 border-foreground' : ''}"
+                  on:click={() => {
+                    $pageIndex = page.value - 1;
+                  }}
+                >
+                  {page.value}
+                </Pagination.Link>
+              </Pagination.Item>
+            {/if}
+          {/each}
+          <Pagination.Item>
+            <Pagination.NextButton
+              on:click={() => {
+                $pageIndex++;
+              }}
+              class="shadow-custom"
+            >
+              <span class="hidden sm:block">Weiter</span>
+              <ChevronRight class="h-4 w-4" />
+            </Pagination.NextButton>
+          </Pagination.Item>
+        </Pagination.Content>
+      </Pagination.Root>
+    </div>
   </div>
 </div>
