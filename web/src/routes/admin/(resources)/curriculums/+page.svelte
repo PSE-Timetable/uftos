@@ -52,11 +52,11 @@
         <div class="bg-white rounded-md w-36 h-16 flex flex-col justify-items-center m-1">
           <div class="text-center m-1">{lessonCount.subject?.name}</div>
           <div class="flex-row flex justify-center">
-            <button on:click={() => (lessonCount.count ? lessonCount.count-- : (lessonCount.count = 0))}
+            <button type="button" on:click={() => (lessonCount.count ? lessonCount.count-- : (lessonCount.count = 0))}
               ><CircleMinus />
             </button>
             <div class="mx-3">{lessonCount.count}</div>
-            <button on:click={() => (lessonCount.count ? lessonCount.count++ : (lessonCount.count = 1))}
+            <button type="button" on:click={() => (lessonCount.count ? lessonCount.count++ : (lessonCount.count = 1))}
               ><CirclePlus />
             </button>
           </div>
