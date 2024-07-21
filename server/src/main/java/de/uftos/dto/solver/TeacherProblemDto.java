@@ -13,6 +13,11 @@ public record TeacherProblemDto(
     List<String> subjectIds
 ) implements ResourceProblemDto {
   @Override
+  public String getId() {
+    return id;
+  }
+
+  @Override
   public ResourceType getType() {
     return ResourceType.TEACHER;
   }

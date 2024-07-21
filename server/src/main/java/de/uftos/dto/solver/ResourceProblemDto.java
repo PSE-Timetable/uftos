@@ -7,6 +7,13 @@ import de.uftos.dto.ResourceType;
  */
 public interface ResourceProblemDto {
   /**
+   * Gets the uuid of the resource.
+   *
+   * @return the uuid of the resource.
+   */
+  String getId();
+
+  /**
    * Gets the type of the resource.
    *
    * @return the type of the resource.

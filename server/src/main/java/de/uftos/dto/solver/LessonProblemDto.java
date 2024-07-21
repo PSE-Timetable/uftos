@@ -15,6 +15,11 @@ public record LessonProblemDto(
     String roomId
 ) implements ResourceProblemDto {
   @Override
+  public String getId() {
+    return id;
+  }
+
+  @Override
   public ResourceType getType() {
     return ResourceType.LESSON;
   }

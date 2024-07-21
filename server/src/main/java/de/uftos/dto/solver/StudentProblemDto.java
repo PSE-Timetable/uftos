@@ -12,6 +12,11 @@ public record StudentProblemDto(
     List<String> studentGroupIds
 ) implements ResourceProblemDto {
   @Override
+  public String getId() {
+    return id;
+  }
+
+  @Override
   public ResourceType getType() {
     return ResourceType.STUDENT;
   }
