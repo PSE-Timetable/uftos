@@ -98,7 +98,7 @@
             "content" : {
               "*/*" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/PageConstraintInstance"
+                  "$ref" : "#/components/schemas/ConstraintInstancesResponseDto"
                 }
               }
             },
@@ -186,7 +186,7 @@
             "content" : {
               "*/*" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/ConstraintInstance"
+                  "$ref" : "#/components/schemas/ConstraintInstancesResponseDto"
                 }
               }
             },
@@ -419,10 +419,10 @@
         "operationId" : "getGrades",
         "parameters" : [ {
           "in" : "query",
-          "name" : "pageable",
+          "name" : "sort",
           "required" : true,
           "schema" : {
-            "$ref" : "#/components/schemas/Pageable"
+            "$ref" : "#/components/schemas/Sort"
           }
         }, {
           "in" : "query",
@@ -437,7 +437,10 @@
             "content" : {
               "*/*" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/PageGradeResponseDto"
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/GradeResponseDto"
+                  }
                 }
               }
             },
@@ -1343,10 +1346,10 @@
         "operationId" : "getSubjects",
         "parameters" : [ {
           "in" : "query",
-          "name" : "pageable",
+          "name" : "sort",
           "required" : true,
           "schema" : {
-            "$ref" : "#/components/schemas/Pageable"
+            "$ref" : "#/components/schemas/Sort"
           }
         }, {
           "in" : "query",
@@ -1361,7 +1364,10 @@
             "content" : {
               "*/*" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/PageSubject"
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Subject"
+                  }
                 }
               }
             },
@@ -1479,10 +1485,10 @@
         "operationId" : "getTags",
         "parameters" : [ {
           "in" : "query",
-          "name" : "pageable",
+          "name" : "sort",
           "required" : true,
           "schema" : {
-            "$ref" : "#/components/schemas/Pageable"
+            "$ref" : "#/components/schemas/Sort"
           }
         }, {
           "in" : "query",
@@ -1497,7 +1503,10 @@
             "content" : {
               "*/*" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/PageTag"
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Tag"
+                  }
                 }
               }
             },
@@ -2103,6 +2112,18 @@
           }
         }
       },
+      "ConstraintArgumentDisplayName" : {
+        "required" : [ "displayName", "id" ],
+        "type" : "object",
+        "properties" : {
+          "displayName" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          }
+        }
+      },
       "ConstraintInstance" : {
         "required" : [ "arguments", "id", "signature", "type" ],
         "type" : "object",
@@ -2141,6 +2162,24 @@
           }
         }
       },
+      "ConstraintInstancesResponseDto" : {
+        "required" : [ "constraintInstances", "displayNames" ],
+        "type" : "object",
+        "properties" : {
+          "constraintInstances" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ConstraintInstance"
+            }
+          },
+          "displayNames" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ConstraintArgumentDisplayName"
+            }
+          }
+        }
+      },
       "ConstraintParameter" : {
         "required" : [ "id", "parameterName", "parameterType" ],
         "type" : "object",
@@ -2153,7 +2192,7 @@
           },
           "parameterType" : {
             "type" : "string",
-            "enum" : [ "GRADE", "LESSON", "ROOM", "STUDENT", "STUDENT_GROUP", "SUBJECT", "TAG", "TEACHER", "TIMESLOT" ]
+            "enum" : [ "GRADE", "LESSON", "ROOM", "STUDENT", "STUDENT_GROUP", "SUBJECT", "TAG", "TEACHER", "TIMESLOT", "NUMBER", "TIMETABLE" ]
           }
         }
       },
@@ -2418,55 +2457,6 @@
           }
         }
       },
-      "PageConstraintInstance" : {
-        "type" : "object",
-        "properties" : {
-          "content" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/ConstraintInstance"
-            }
-          },
-          "empty" : {
-            "type" : "boolean"
-          },
-          "first" : {
-            "type" : "boolean"
-          },
-          "last" : {
-            "type" : "boolean"
-          },
-          "number" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "numberOfElements" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "pageable" : {
-            "$ref" : "#/components/schemas/PageableObject"
-          },
-          "size" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "sort" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/SortObject"
-            }
-          },
-          "totalElements" : {
-            "type" : "integer",
-            "format" : "int64"
-          },
-          "totalPages" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        }
-      },
       "PageConstraintSignature" : {
         "type" : "object",
         "properties" : {
@@ -2523,55 +2513,6 @@
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/CurriculumResponseDto"
-            }
-          },
-          "empty" : {
-            "type" : "boolean"
-          },
-          "first" : {
-            "type" : "boolean"
-          },
-          "last" : {
-            "type" : "boolean"
-          },
-          "number" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "numberOfElements" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "pageable" : {
-            "$ref" : "#/components/schemas/PageableObject"
-          },
-          "size" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "sort" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/SortObject"
-            }
-          },
-          "totalElements" : {
-            "type" : "integer",
-            "format" : "int64"
-          },
-          "totalPages" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        }
-      },
-      "PageGradeResponseDto" : {
-        "type" : "object",
-        "properties" : {
-          "content" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/GradeResponseDto"
             }
           },
           "empty" : {
@@ -2768,104 +2709,6 @@
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/StudentGroup"
-            }
-          },
-          "empty" : {
-            "type" : "boolean"
-          },
-          "first" : {
-            "type" : "boolean"
-          },
-          "last" : {
-            "type" : "boolean"
-          },
-          "number" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "numberOfElements" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "pageable" : {
-            "$ref" : "#/components/schemas/PageableObject"
-          },
-          "size" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "sort" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/SortObject"
-            }
-          },
-          "totalElements" : {
-            "type" : "integer",
-            "format" : "int64"
-          },
-          "totalPages" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        }
-      },
-      "PageSubject" : {
-        "type" : "object",
-        "properties" : {
-          "content" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/Subject"
-            }
-          },
-          "empty" : {
-            "type" : "boolean"
-          },
-          "first" : {
-            "type" : "boolean"
-          },
-          "last" : {
-            "type" : "boolean"
-          },
-          "number" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "numberOfElements" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "pageable" : {
-            "$ref" : "#/components/schemas/PageableObject"
-          },
-          "size" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "sort" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/SortObject"
-            }
-          },
-          "totalElements" : {
-            "type" : "integer",
-            "format" : "int64"
-          },
-          "totalPages" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        }
-      },
-      "PageTag" : {
-        "type" : "object",
-        "properties" : {
-          "content" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/Tag"
             }
           },
           "empty" : {
@@ -3186,6 +3029,17 @@
           "teacherCount" : {
             "type" : "integer",
             "format" : "int64"
+          }
+        }
+      },
+      "Sort" : {
+        "type" : "object",
+        "properties" : {
+          "sort" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
           }
         }
       },
