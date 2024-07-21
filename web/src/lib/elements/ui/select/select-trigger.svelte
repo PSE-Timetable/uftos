@@ -22,6 +22,6 @@
 >
   <slot {builder} />
   <div>
-    <ChevronDown class="h- w-6" />
+    <ChevronDown class="h- w-6 stroke-primary" />
   </div>
 </SelectPrimitive.Trigger>
