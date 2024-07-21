@@ -1,4 +1,4 @@
-package de.uftos.solver.timefold.domain;
+package de.uftos.repositories.solver.timefold.domain;
 
 import ai.timefold.solver.core.api.domain.solution.PlanningEntityCollectionProperty;
 import ai.timefold.solver.core.api.domain.solution.PlanningScore;
@@ -7,7 +7,7 @@ import ai.timefold.solver.core.api.domain.solution.ProblemFactCollectionProperty
 import ai.timefold.solver.core.api.domain.valuerange.ValueRangeProvider;
 import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
 import de.uftos.dto.ResourceType;
-import de.uftos.solver.timefold.constraints.constraintinstances.ConstraintInstanceTimefoldInstance;
+import de.uftos.repositories.solver.timefold.constraints.constraintinstances.ConstraintInstanceTimefoldInstance;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;

@@ -1,6 +1,6 @@
-package de.uftos.solver.timefold.constraints.constraintinstances;
+package de.uftos.repositories.solver.timefold.constraints.constraintinstances;
 
-import de.uftos.solver.timefold.domain.ResourceTimefoldInstance;
+import de.uftos.repositories.solver.timefold.domain.ResourceTimefoldInstance;
 import java.util.List;
 import java.util.function.Function;
 

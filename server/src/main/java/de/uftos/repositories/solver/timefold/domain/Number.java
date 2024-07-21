@@ -1,4 +1,4 @@
-package de.uftos.solver.timefold.domain;
+package de.uftos.repositories.solver.timefold.domain;
 
 import de.uftos.dto.ResourceType;
 import lombok.Getter;

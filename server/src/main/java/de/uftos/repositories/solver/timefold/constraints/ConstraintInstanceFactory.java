@@ -1,14 +1,14 @@
-package de.uftos.solver.timefold.constraints;
+package de.uftos.repositories.solver.timefold.constraints;
 
 import de.uftos.dto.solver.ConstraintInstanceDto;
 import de.uftos.dto.solver.ResourceProblemDto;
 import de.uftos.dto.solver.RewardPenalize;
-import de.uftos.solver.timefold.constraints.constraintinstances.ConstraintInstanceHardPenalize;
-import de.uftos.solver.timefold.constraints.constraintinstances.ConstraintInstanceHardReward;
-import de.uftos.solver.timefold.constraints.constraintinstances.ConstraintInstanceSoftPenalize;
-import de.uftos.solver.timefold.constraints.constraintinstances.ConstraintInstanceSoftReward;
-import de.uftos.solver.timefold.constraints.constraintinstances.ConstraintInstanceTimefoldInstance;
-import de.uftos.solver.timefold.domain.ResourceTimefoldInstance;
+import de.uftos.repositories.solver.timefold.constraints.constraintinstances.ConstraintInstanceHardPenalize;
+import de.uftos.repositories.solver.timefold.constraints.constraintinstances.ConstraintInstanceHardReward;
+import de.uftos.repositories.solver.timefold.constraints.constraintinstances.ConstraintInstanceSoftPenalize;
+import de.uftos.repositories.solver.timefold.constraints.constraintinstances.ConstraintInstanceSoftReward;
+import de.uftos.repositories.solver.timefold.constraints.constraintinstances.ConstraintInstanceTimefoldInstance;
+import de.uftos.repositories.solver.timefold.domain.ResourceTimefoldInstance;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,8 +50,10 @@ public class ConstraintInstanceFactory {
     }
 
     return switch (rewardPenalize) {
-      case HARD_PENALIZE -> new ConstraintInstanceHardPenalize(params, definition.evaluationFunction());
-      case SOFT_PENALIZE -> new ConstraintInstanceSoftPenalize(params, definition.evaluationFunction());
+      case HARD_PENALIZE ->
+          new ConstraintInstanceHardPenalize(params, definition.evaluationFunction());
+      case SOFT_PENALIZE ->
+          new ConstraintInstanceSoftPenalize(params, definition.evaluationFunction());
       case HARD_REWARD -> new ConstraintInstanceHardReward(params, definition.evaluationFunction());
       case SOFT_REWARD -> new ConstraintInstanceSoftReward(params, definition.evaluationFunction());
     };

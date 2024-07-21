@@ -1,8 +1,8 @@
-package de.uftos.solver.timefold.solver;
+package de.uftos.repositories.solver.timefold.solver;
 
 import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
 import ai.timefold.solver.core.api.score.calculator.EasyScoreCalculator;
-import de.uftos.solver.timefold.domain.TimetableSolutionTimefoldInstance;
+import de.uftos.repositories.solver.timefold.domain.TimetableSolutionTimefoldInstance;
 
 public class ScoreCalculator
     implements EasyScoreCalculator<TimetableSolutionTimefoldInstance, HardSoftScore> {

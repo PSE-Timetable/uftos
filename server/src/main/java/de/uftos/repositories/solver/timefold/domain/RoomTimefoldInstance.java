@@ -1,4 +1,4 @@
-package de.uftos.solver.timefold.domain;
+package de.uftos.repositories.solver.timefold.domain;
 
 import ai.timefold.solver.core.api.domain.entity.PlanningEntity;
 import ai.timefold.solver.core.api.domain.lookup.PlanningId;
@@ -11,27 +11,26 @@ import java.util.List;
 import lombok.Getter;
 
 /**
- * This class models a teacher that can be used by the Timefold solver.
+ * This class models a room that can be used by the Timefold solver.
  */
 @PlanningEntity
 @Getter
-@JsonIdentityInfo(scope = TeacherTimefoldInstance.class,
+@JsonIdentityInfo(scope = RoomTimefoldInstance.class,
     generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class TeacherTimefoldInstance implements ResourceTimefoldInstance {
+public class RoomTimefoldInstance implements ResourceTimefoldInstance {
 
   @PlanningId
   private final String id;
   private final List<TagTimefoldInstance> providedTagsList = new ArrayList<>();
-  private final List<SubjectTimefoldInstance> subjectList = new ArrayList<>();
-  @InverseRelationShadowVariable(sourceVariableName = "teacher")
+  @InverseRelationShadowVariable(sourceVariableName = "room")
   public List<LessonTimefoldInstance> lessonList;
 
-  public TeacherTimefoldInstance(String id) {
+  public RoomTimefoldInstance(String id) {
     this.id = id;
   }
 
   @Override
   public ResourceType getResourceType() {
-    return ResourceType.TEACHER;
+    return ResourceType.ROOM;
   }
 }

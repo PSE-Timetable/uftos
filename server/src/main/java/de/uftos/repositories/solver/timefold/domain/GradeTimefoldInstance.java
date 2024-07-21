@@ -1,4 +1,4 @@
-package de.uftos.solver.timefold.domain;
+package de.uftos.repositories.solver.timefold.domain;
 
 import ai.timefold.solver.core.api.domain.lookup.PlanningId;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
@@ -9,24 +9,23 @@ import java.util.List;
 import lombok.Getter;
 
 /**
- * This class models a student that can be used by the Timefold solver.
+ * This class models a grade that can be used by the Timefold solver.
  */
 @Getter
-@JsonIdentityInfo(scope = StudentGroupTimefoldInstance.class,
+@JsonIdentityInfo(scope = GradeTimefoldInstance.class,
     generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class StudentTimefoldInstance implements ResourceTimefoldInstance {
-
+public class GradeTimefoldInstance implements ResourceTimefoldInstance {
   @PlanningId
   private final String id;
   private final List<TagTimefoldInstance> providedTagsList = new ArrayList<>();
   private final List<StudentGroupTimefoldInstance> studentGroupList = new ArrayList<>();
 
-  public StudentTimefoldInstance(String id) {
+  public GradeTimefoldInstance(String id) {
     this.id = id;
   }
 
   @Override
   public ResourceType getResourceType() {
-    return ResourceType.STUDENT;
+    return ResourceType.GRADE;
   }
 }
