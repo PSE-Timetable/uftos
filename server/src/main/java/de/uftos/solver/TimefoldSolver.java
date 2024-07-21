@@ -7,13 +7,26 @@ import ai.timefold.solver.core.config.solver.SolverConfig;
 import ai.timefold.solver.core.config.solver.termination.TerminationConfig;
 import ai.timefold.solver.core.impl.solver.DefaultSolverFactory;
 import de.uftos.dto.solver.ConstraintInstanceDto;
+import de.uftos.dto.solver.GradeProblemDto;
 import de.uftos.dto.solver.LessonProblemDto;
+import de.uftos.dto.solver.RoomProblemDto;
+import de.uftos.dto.solver.StudentGroupProblemDto;
+import de.uftos.dto.solver.StudentProblemDto;
+import de.uftos.dto.solver.SubjectProblemDto;
+import de.uftos.dto.solver.TagProblemDto;
+import de.uftos.dto.solver.TeacherProblemDto;
+import de.uftos.dto.solver.TimeslotProblemDto;
 import de.uftos.dto.solver.TimetableProblemDto;
 import de.uftos.dto.solver.TimetableSolutionDto;
 import de.uftos.dto.ucdl.ConstraintDefinitionDto;
 import de.uftos.repositories.solver.SolverRepository;
+import de.uftos.solver.timefold.constraints.ConstraintDefinitionFactory;
+import de.uftos.solver.timefold.constraints.ConstraintDefinitionTimefoldInstance;
+import de.uftos.solver.timefold.constraints.ConstraintInstanceFactory;
+import de.uftos.solver.timefold.constraints.constraintinstances.ConstraintInstanceTimefoldInstance;
 import de.uftos.solver.timefold.domain.GradeTimefoldInstance;
 import de.uftos.solver.timefold.domain.LessonTimefoldInstance;
+import de.uftos.solver.timefold.domain.ResourceTimefoldInstance;
 import de.uftos.solver.timefold.domain.RoomTimefoldInstance;
 import de.uftos.solver.timefold.domain.StudentGroupTimefoldInstance;
 import de.uftos.solver.timefold.domain.StudentTimefoldInstance;
@@ -22,7 +35,6 @@ import de.uftos.solver.timefold.domain.TagTimefoldInstance;
 import de.uftos.solver.timefold.domain.TeacherTimefoldInstance;
 import de.uftos.solver.timefold.domain.TimeslotTimefoldInstance;
 import de.uftos.solver.timefold.domain.TimetableSolutionTimefoldInstance;
-import de.uftos.solver.timefold.domain.constraintinstances.ConstraintInstanceTimefoldInstance;
 import de.uftos.solver.timefold.solver.ConstraintProviderTimefoldInstance;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,107 +56,88 @@ public class TimefoldSolver implements SolverRepository {
   TimetableSolutionTimefoldInstance getSolutionInstanceFromTimetableInstance(
       TimetableProblemDto timetable) {
     //todo: build entire  problem instance from TimetableProblemDto
-    List<GradeTimefoldInstance> grades = new ArrayList<>();
-    List<RoomTimefoldInstance> rooms = new ArrayList<>();
-    List<StudentGroupTimefoldInstance> studentGroups = new ArrayList<>();
-    List<StudentTimefoldInstance> students = new ArrayList<>();
-    List<SubjectTimefoldInstance> subjects = new ArrayList<>();
-    List<TeacherTimefoldInstance> teachers = new ArrayList<>();
-    List<TimeslotTimefoldInstance> timeslots = new ArrayList<>();
-    List<TagTimefoldInstance> tags = new ArrayList<>();
-    List<LessonTimefoldInstance> lessons = new ArrayList<>();
+    HashMap<String, GradeTimefoldInstance> grades = new HashMap<>();
+    HashMap<String, RoomTimefoldInstance> rooms = new HashMap<>();
+    HashMap<String, StudentGroupTimefoldInstance> studentGroups = new HashMap<>();
+    HashMap<String, StudentTimefoldInstance> students = new HashMap<>();
+    HashMap<String, SubjectTimefoldInstance> subjects = new HashMap<>();
+    HashMap<String, TeacherTimefoldInstance> teachers = new HashMap<>();
+    HashMap<String, TimeslotTimefoldInstance> timeslots = new HashMap<>();
+    HashMap<String, TagTimefoldInstance> tags = new HashMap<>();
+    HashMap<String, LessonTimefoldInstance> lessons = new HashMap<>();
     List<ConstraintInstanceTimefoldInstance> constraintInstances = new ArrayList<>();
 
-    /*
-    for (Grade g : timetable.grades()) {
-      grades.add(new GradeTimefoldInstance(g.id()));
+    TimetableSolutionTimefoldInstance solution = new TimetableSolutionTimefoldInstance();
+    HashMap<String, ResourceTimefoldInstance> resources = new HashMap<>();
+    resources.put("this", solution);
+
+    HashMap<String, ConstraintDefinitionTimefoldInstance> definitions = new HashMap<>();
+
+    for (ConstraintDefinitionDto definition : timetable.definitions()) {
+      definitions.put(definition.name(), ConstraintDefinitionFactory.getConstraintDefinition(definition));
     }
 
-    for (Room r : timetable.rooms()) {
-      rooms.add(new RoomTimefoldInstance(r.id()));
-    }
 
-    for (StudentGroup sg : timetable.studentGroups()) {
-      StudentGroupTimefoldInstance studentGroup =
-          new StudentGroupTimefoldInstance(sg.id(), grades.get(sg.gradeId()));
-      grades.get(sg.gradeId()).getStudentGroupList().add(studentGroup);
-      studentGroups.add(studentGroup);
+    for (GradeProblemDto grade : timetable.grades()) {
+      grades.put(grade.id(), null);
     }
+    solution.getGrades().addAll(grades.values());
+    resources.putAll(grades);
 
-    for (Student s : timetable.students()) {
-      StudentTimefoldInstance student = new StudentTimefoldInstance(s.id());
-      for (int i : s.studentGroupIdList()) {
-        student.getStudentGroupList().add(studentGroups.get(i));
-        studentGroups.get(i).getStudentList().add(student);
-      }
-      students.add(student);
+    for (RoomProblemDto room : timetable.rooms()) {
+      rooms.put(room.id(), null);
     }
+    solution.getRooms().addAll(rooms.values());
+    resources.putAll(rooms);
 
-    for (Subject s : timetable.subjects()) {
-      subjects.add(new SubjectTimefoldInstance(s.id()));
+    for (StudentGroupProblemDto studentGroup : timetable.studentGroups()) {
+      studentGroups.put(studentGroup.id(), null);
     }
+    solution.getStudentGroups().addAll(studentGroups.values());
+    resources.putAll(studentGroups);
 
-    for (Teacher t : timetable.teachers()) {
-      TeacherTimefoldInstance teacher = new TeacherTimefoldInstance(t.id());
-      for (int i : t.subjectIdList()) {
-        teacher.getSubjectList().add(subjects.get(i));
-        subjects.get(i).getTeacherList().add(teacher);
-      }
-      teachers.add(teacher);
+    for (StudentProblemDto student : timetable.students()) {
+      students.put(student.id(), null);
     }
+    solution.getStudents().addAll(students.values());
+    resources.putAll(students);
 
-    for (Timeslot t : timetable.timeslots()) {
-      timeslots.add(new TimeslotTimefoldInstance(t.id(), t.dayOfWeek(), t.slot()));
+    for (SubjectProblemDto subject : timetable.subjects()) {
+      subjects.put(subject.id(), null);
     }
+    solution.getSubjects().addAll(subjects.values());
+    resources.putAll(subjects);
 
-    for (Lesson l : timetable.lessons()) {
-      lessons.add(new LessonTimefoldInstance(l.id(), l.index(), subjects.get(l.subjectId()),
-          studentGroups.get(l.studentGroupId())));
+    for (TeacherProblemDto teacher : timetable.teachers()) {
+      teachers.put(teacher.id(), null);
     }
+    solution.getTeachers().addAll(teachers.values());
+    resources.putAll(teachers);
 
-    for (Tag t : timetable.tags()) {
-      TagTimefoldInstance tag = new TagTimefoldInstance(t.id());
-      for (Student s : timetable.students()) {
-        if (s.providedTagsIdList().contains(t.id())) {
-          tag.getStudentList().add(students.get(s.id()));
-        }
-      }
-      for (StudentGroup sg : timetable.studentGroups()) {
-        if (sg.providedTagsIdList().contains(t.id())) {
-          tag.getStudentGroupList().add(studentGroups.get(sg.id()));
-        }
-      }
-      for (Teacher teacher : timetable.teachers()) {
-        if (teacher.providedTagsIdList().contains(t.id())) {
-          tag.getTeacherList().add(teachers.get(teacher.id()));
-        }
-      }
-      for (Room r : timetable.rooms()) {
-        if (r.providedTagsIdList().contains(t.id())) {
-          tag.getRoomList().add(rooms.get(r.id()));
-        }
-      }
-      for (Subject s : timetable.subjects()) {
-        if (s.providedTagsIdList().contains(t.id())) {
-          tag.getSubjectList().add(subjects.get(s.id()));
-        }
-      }
-      for (Grade g : timetable.grades()) {
-        if (g.providedTagsIdList().contains(t.id())) {
-          tag.getGradeList().add(grades.get(g.id()));
-        }
-      }
-      for (Timeslot timeslot : timetable.timeslots()) {
-        if (timeslot.providedTagsIdList().contains(t.id())) {
-          tag.getTimeslotList().add(timeslots.get(timeslot.id()));
-        }
-      }
-      tags.add(new TagTimefoldInstance(t.id()));
+    for (TimeslotProblemDto timeslot : timetable.timeslots()) {
+      timeslots.put(timeslot.id(), null);
     }
-     */
+    solution.getTimeslots().addAll(timeslots.values());
+    resources.putAll(timeslots);
 
-    return new TimetableSolutionTimefoldInstance(grades, rooms, studentGroups, students, subjects,
-        teachers, timeslots, tags, lessons, constraintInstances);
+    for (LessonProblemDto lesson : timetable.lessons()) {
+      lessons.put(lesson.id(), null);
+    }
+    solution.getLessons().addAll(lessons.values());
+    resources.putAll(lessons);
+
+    for (TagProblemDto tag : timetable.tags()) {
+      tags.put(tag.id(), null);
+    }
+    solution.getTags().addAll(tags.values());
+    resources.putAll(tags);
+
+    for (ConstraintInstanceDto instance : timetable.instances()) {
+      constraintInstances.add(ConstraintInstanceFactory.getConstraintInstance(instance, definitions, resources));
+    }
+    solution.getConstraintInstances().addAll(constraintInstances);
+
+    return solution;
   }
 
   TimetableSolutionDto getTimetableInstanceFromSolutionInstance(
