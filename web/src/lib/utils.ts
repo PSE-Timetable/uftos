@@ -32,7 +32,7 @@ export enum Links {
   ROOM,
   STUDENT_GROUP,
   GRADE,
-  CURRICULUM
+  CURRICULUM,
 }
 
 export enum Icons {
