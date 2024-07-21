@@ -1,4 +1,4 @@
-package de.uftos.solver.timefold.domain.constraintinstances;
+package de.uftos.solver.timefold.constraints.constraintinstances;
 
 /**
  * This interface models a constraint instance, which can be used by the Timefold solver.

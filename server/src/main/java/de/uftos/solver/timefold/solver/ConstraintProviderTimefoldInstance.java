@@ -4,10 +4,10 @@ import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
 import ai.timefold.solver.core.api.score.stream.Constraint;
 import ai.timefold.solver.core.api.score.stream.ConstraintFactory;
 import ai.timefold.solver.core.api.score.stream.ConstraintProvider;
-import de.uftos.solver.timefold.domain.constraintinstances.ConstraintInstanceHardPenalize;
-import de.uftos.solver.timefold.domain.constraintinstances.ConstraintInstanceHardReward;
-import de.uftos.solver.timefold.domain.constraintinstances.ConstraintInstanceSoftPenalize;
-import de.uftos.solver.timefold.domain.constraintinstances.ConstraintInstanceSoftReward;
+import de.uftos.solver.timefold.constraints.constraintinstances.ConstraintInstanceHardPenalize;
+import de.uftos.solver.timefold.constraints.constraintinstances.ConstraintInstanceHardReward;
+import de.uftos.solver.timefold.constraints.constraintinstances.ConstraintInstanceSoftPenalize;
+import de.uftos.solver.timefold.constraints.constraintinstances.ConstraintInstanceSoftReward;
 import java.util.ArrayList;
 import java.util.List;
 
