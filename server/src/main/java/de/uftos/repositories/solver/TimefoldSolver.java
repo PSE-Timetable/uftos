@@ -20,7 +20,6 @@ import de.uftos.dto.solver.TimeslotProblemDto;
 import de.uftos.dto.solver.TimetableProblemDto;
 import de.uftos.dto.solver.TimetableSolutionDto;
 import de.uftos.dto.ucdl.ConstraintDefinitionDto;
-import de.uftos.repositories.solver.SolverRepository;
 import de.uftos.repositories.solver.timefold.constraints.ConstraintDefinitionFactory;
 import de.uftos.repositories.solver.timefold.constraints.ConstraintDefinitionTimefoldInstance;
 import de.uftos.repositories.solver.timefold.constraints.ConstraintInstanceFactory;
@@ -56,7 +55,6 @@ public class TimefoldSolver implements SolverRepository {
 
   TimetableSolutionTimefoldInstance getSolutionInstanceFromTimetableInstance(
       TimetableProblemDto timetable) {
-    //todo: build entire  problem instance from TimetableProblemDto
     HashMap<String, GradeTimefoldInstance> grades = new HashMap<>();
     HashMap<String, RoomTimefoldInstance> rooms = new HashMap<>();
     HashMap<String, StudentGroupTimefoldInstance> studentGroups = new HashMap<>();
