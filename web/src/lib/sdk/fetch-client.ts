@@ -69,18 +69,13 @@ export type ConstraintInstance = {
     signature: ConstraintSignature;
     "type": Type;
 };
-export type PageConstraintInstance = {
-    content?: ConstraintInstance[];
-    empty?: boolean;
-    first?: boolean;
-    last?: boolean;
-    "number"?: number;
-    numberOfElements?: number;
-    pageable?: PageableObject;
-    size?: number;
-    sort?: SortObject[];
-    totalElements?: number;
-    totalPages?: number;
+export type ConstraintArgumentDisplayName = {
+    displayName: string;
+    id: string;
+};
+export type ConstraintInstancesResponseDto = {
+    constraintInstances: ConstraintInstance[];
+    displayNames: ConstraintArgumentDisplayName[];
 };
 export type ConstraintInstanceRequestDto = {
     arguments: {
@@ -141,18 +136,8 @@ export type ParsingResponse = {
     message?: string;
     success?: boolean;
 };
-export type PageGradeResponseDto = {
-    content?: GradeResponseDto[];
-    empty?: boolean;
-    first?: boolean;
-    last?: boolean;
-    "number"?: number;
-    numberOfElements?: number;
-    pageable?: PageableObject;
-    size?: number;
-    sort?: SortObject[];
-    totalElements?: number;
-    totalPages?: number;
+export type Sort = {
+    sort?: string[];
 };
 export type GradeRequestDto = {
     name: string;
@@ -326,36 +311,10 @@ export type StudentRequestDto = {
     lastName: string;
     tagIds: string[];
 };
-export type PageSubject = {
-    content?: Subject[];
-    empty?: boolean;
-    first?: boolean;
-    last?: boolean;
-    "number"?: number;
-    numberOfElements?: number;
-    pageable?: PageableObject;
-    size?: number;
-    sort?: SortObject[];
-    totalElements?: number;
-    totalPages?: number;
-};
 export type SubjectRequestDto = {
     color?: string;
     name: string;
     tagIds: string[];
-};
-export type PageTag = {
-    content?: Tag[];
-    empty?: boolean;
-    first?: boolean;
-    last?: boolean;
-    "number"?: number;
-    numberOfElements?: number;
-    pageable?: PageableObject;
-    size?: number;
-    sort?: SortObject[];
-    totalElements?: number;
-    totalPages?: number;
 };
 export type TagRequestDto = {
     tagName: string;
@@ -440,7 +399,7 @@ export function getConstraintInstances(signatureId: string, pageable: Pageable, 
 } = {}, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
-        data: PageConstraintInstance;
+        data: ConstraintInstancesResponseDto;
     }>(`/constraints/${encodeURIComponent(signatureId)}/instances${QS.query(QS.explode({
         pageable,
         argument
@@ -468,7 +427,7 @@ export function deleteConstraintInstance(signatureId: string, id: string, opts?:
 export function getConstraintInstanceById(signatureId: string, id: string, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
-        data: ConstraintInstance;
+        data: ConstraintInstancesResponseDto;
     }>(`/constraints/${encodeURIComponent(signatureId)}/instances/${encodeURIComponent(id)}`, {
         ...opts
     }));
@@ -548,14 +507,14 @@ export function setUcdlFile(body: {
         body
     })));
 }
-export function getGrades(pageable: Pageable, { name }: {
+export function getGrades(sort: Sort, { name }: {
     name?: string;
 } = {}, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
-        data: PageGradeResponseDto;
+        data: GradeResponseDto[];
     }>(`/grades${QS.query(QS.explode({
-        pageable,
+        sort,
         name
     }))}`, {
         ...opts
@@ -855,14 +814,14 @@ export function updateStudent(id: string, studentRequestDto: StudentRequestDto, 
         body: studentRequestDto
     })));
 }
-export function getSubjects(pageable: Pageable, { name }: {
+export function getSubjects(sort: Sort, { name }: {
     name?: string;
 } = {}, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
-        data: PageSubject;
+        data: Subject[];
     }>(`/subjects${QS.query(QS.explode({
-        pageable,
+        sort,
         name
     }))}`, {
         ...opts
@@ -902,14 +861,14 @@ export function updateSubject(id: string, subjectRequestDto: SubjectRequestDto, 
         body: subjectRequestDto
     })));
 }
-export function getTags(pageable: Pageable, { name }: {
+export function getTags(sort: Sort, { name }: {
     name?: string;
 } = {}, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
-        data: PageTag;
+        data: Tag[];
     }>(`/tags${QS.query(QS.explode({
-        pageable,
+        sort,
         name
     }))}`, {
         ...opts
@@ -1108,7 +1067,9 @@ export enum ParameterType {
     Subject = "SUBJECT",
     Tag = "TAG",
     Teacher = "TEACHER",
-    Timeslot = "TIMESLOT"
+    Timeslot = "TIMESLOT",
+    Number = "NUMBER",
+    Timetable = "TIMETABLE"
 }
 export enum Type {
     SoftReward = "SOFT_REWARD",
