@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Card from '../../lib/components/ui/card/card.svelte';
+  import Card from '$lib/components/ui/card/card.svelte';
   import { Icons } from '$lib/utils';
   import LinkBar from '$lib/components/ui/link-bar/link-bar.svelte';
   import DataTable, { type DataItem } from '$lib/elements/ui/dataTable/data-table.svelte';
