@@ -22,7 +22,7 @@ public class StudentGroupTimefoldInstance implements ResourceTimefoldInstance {
   private final String id;
   private final List<TagTimefoldInstance> providedTagsList = new ArrayList<>();
   private final List<StudentTimefoldInstance> studentList = new ArrayList<>();
-  private final List<StudentTimefoldInstance> lessonList = new ArrayList<>();
+  private final List<LessonTimefoldInstance> lessonList = new ArrayList<>();
   private GradeTimefoldInstance grade;
 
   public StudentGroupTimefoldInstance(String id) {

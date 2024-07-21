@@ -20,7 +20,7 @@ public class SubjectTimefoldInstance implements ResourceTimefoldInstance {
   private final String id;
   private final List<TagTimefoldInstance> providedTagsList = new ArrayList<>();
   private final List<TeacherTimefoldInstance> teacherList = new ArrayList<>();
-  private final List<StudentTimefoldInstance> lessonList = new ArrayList<>();
+  private final List<LessonTimefoldInstance> lessonList = new ArrayList<>();
 
   public SubjectTimefoldInstance(String id) {
     this.id = id;
