@@ -25,20 +25,10 @@ export const WorkingHours = [
   '17:00',
 ] as const;
 
-export enum Links {
-  STUDENT,
-  TEACHER,
-  CLASS,
-  ROOM,
-  STUDENT_GROUP,
-  GRADE,
-  CURRICULUM,
-}
-
 export enum Icons {
   STUDENT,
   TEACHER,
-  CLASS,
+  GRADE,
   ROOM,
   CONSTRAINT,
 }

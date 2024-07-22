@@ -27,17 +27,9 @@
     { value: 'general_settings', label: 'Allgemeine Einstell.', url: '/admin/settings' },
   ];
 
-  let stats: ServerStatisticsResponseDto;
-
   onMount(async () => {
     pageLoaded = true;
-    stats = await loadStats();
   });
-
-  async function loadStats() {
-    const response = await getServerStats();
-    return response;
-  }
 
   async function loadPage(index: number, sortString: string, filter: string) {
     let pageable: Pageable = { page: index, size: 10, sort: [sortString] };
@@ -103,15 +95,15 @@
     </Select.Root>
   </div>
 
-  {#if stats}
-    <div class="w-full flex flex-row gap-14 justify-between mb-6">
-      <Card text="Schüler" icon={Icons.STUDENT} number={stats.classCount} />
-      <Card text="Lehrer" icon={Icons.TEACHER} number={stats.teacherCount} />
-      <Card text="Stufen" icon={Icons.CLASS} number={stats.teacherCount} />
-      <Card text="Räume" icon={Icons.ROOM} number={stats.roomCount} />
-      <Card text="Constraints" icon={Icons.CONSTRAINT} number={stats.classCount} />
-    </div>
-  {/if}
+  <div class="w-full flex flex-row gap-14 justify-between mb-6">
+    {#await getServerStats() then stats}
+      <Card text="Schüler" icon={Icons.STUDENT} number={stats.classCount} url="/admin/students" />
+      <Card text="Lehrer" icon={Icons.TEACHER} number={stats.teacherCount} url="/admin/teachers" />
+      <Card text="Stufen" icon={Icons.GRADE} number={stats.teacherCount} url="/admin/grades" />
+      <Card text="Räume" icon={Icons.ROOM} number={stats.roomCount} url="/admin/rooms" />
+      <Card text="Constraints" icon={Icons.CONSTRAINT} number={stats.classCount} url="/admin/constraints" />
+    {/await}
+  </div>
   {#if pageLoaded}
     <DataTable {columnNames} {keys} {loadPage} {deleteEntry} />
   {/if}

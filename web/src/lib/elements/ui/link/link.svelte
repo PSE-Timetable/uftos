@@ -1,22 +1,18 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import { Button } from '../button';
+  import { page } from '$app/stores';
 
   export let text: string;
   export let url: string;
   let active: boolean = false;
 
-  onMount(() => {
-    active = window.location.pathname === url;
-  });
+  $: active = $page.url.pathname === url;
 </script>
 
-<Button
-  on:click={() => {
-    window.location.href = url;
-  }}
+<a
+  href={url}
   class="{active
     ? 'bg-white text-primary'
     : 'text-white'}  text-lg px-6 py-4 hover:bg-accent hover:text-white hover:text rounded-full font-normal"
-  >{text}</Button
 >
+  {text}
+</a>
