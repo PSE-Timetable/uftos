@@ -26,7 +26,7 @@
     { value: 'general_settings', label: 'Allgemeine Einstell.', url: '/admin/settings' },
   ];
 
-  onMount(async () => {
+  onMount(() => {
     pageLoaded = true;
   });
 
