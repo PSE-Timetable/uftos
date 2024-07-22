@@ -47,7 +47,7 @@ public class CurriculumService {
    * @return the page of the entries fitting the parameters.
    */
   public Page<CurriculumResponseDto> get(Pageable pageable, Optional<String> name) {
-    //TODO filter for grades
+    //currently no filter for grades
     Specification<Curriculum> spec = new SpecificationBuilder<Curriculum>()
         .optionalOrEquals(name, "name").build();
     List<CurriculumResponseDto> curricula = this.repository.findAll(spec, pageable).stream()

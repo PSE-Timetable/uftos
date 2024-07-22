@@ -60,7 +60,7 @@ class CurriculumTest {
         .statusCode(200)
         .body("id", notNullValue())
         .body("name", equalTo(FIRST_GRADE_NAME))
-        .log().ifValidationFails()
+        .log().ifValidationFails(LogDetail.BODY)
         .extract()
         .body().jsonPath().getString("id");
 
