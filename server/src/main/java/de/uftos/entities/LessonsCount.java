@@ -25,13 +25,14 @@ public class LessonsCount {
   @ManyToOne
   @JoinColumn(name = "subjects_id", nullable = false)
   private Subject subject;
+
   private Integer count;
 
   /**
    * Creates a new lesson count.
    *
    * @param subjectId the id of the subject.
-   * @param count     the number of timeslots this subject will be hold per week.
+   * @param count     the number of timeslots this subject will be held per week.
    */
   public LessonsCount(String subjectId, int count) {
     this.subject = new Subject(subjectId);
