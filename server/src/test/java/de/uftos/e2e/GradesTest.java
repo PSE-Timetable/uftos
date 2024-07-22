@@ -1,9 +1,9 @@
 package de.uftos.e2e;
 
 import static de.uftos.utils.JsonGenerator.generateGradeJson;
-import static de.uftos.utils.JsonGenerator.generatePageJson;
 import static de.uftos.utils.JsonGenerator.generateTagJson;
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
@@ -87,42 +87,42 @@ class GradesTest {
   }
 
   @Test
-  void getAllGrades() throws JSONException {
+  void getAllGrades() {
     given().contentType(ContentType.JSON)
-        .body(generatePageJson(0, 10, Collections.emptyList()))
+        .body("")
         .when()
         .get("/grades")
         .then()
         .statusCode(200)
-        .body("totalElements", equalTo(2))
-        .log().ifValidationFails();
+        .body("size()", equalTo(2))
+        .log().all();
   }
 
   @Test
-  void getGradesWithTag() throws JSONException {
+  void getGradesWithTag() {
     given().contentType(ContentType.JSON)
-        .body(generatePageJson(0, 10, Collections.emptyList()))
+        .body("")
         .param("tags", List.of(tagId))
         .when()
         .get("/grades")
         .then()
         .statusCode(200)
-        .body("totalElements", equalTo(1))
-        .body("content[0].id", equalTo(secondGrade))
+        .body("size()", equalTo(1))
+        .body("id", contains(secondGrade))
         .log().ifValidationFails();
   }
 
   @Test
-  void getGradesWithName() throws JSONException {
+  void getGradesWithName() {
     given().contentType(ContentType.JSON)
-        .body(generatePageJson(0, 10, Collections.emptyList()))
+        .body("")
         .param("name", FIRST_GRADE_NAME)
         .when()
         .get("/grades")
         .then()
         .statusCode(200)
-        .body("totalElements", equalTo(1))
-        .body("content[0].id", equalTo(firstGrade))
+        .body("size()", equalTo(1))
+        .body("id", contains(firstGrade))
         .log().ifValidationFails();
   }
 }

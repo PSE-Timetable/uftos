@@ -20,9 +20,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -50,22 +48,20 @@ public class GradeService {
   /**
    * Gets a page of entries of the grade table.
    *
-   * @param pageable contains the parameters for the page.
-   * @param name     the name filter.
-   * @param tags     the tags filter.
+   * @param sort contains the sort parameters.
+   * @param name the name filter.
+   * @param tags the tags filter.
    * @return the page of the entries fitting the parameters.
    */
-  public Page<GradeResponseDto> get(Pageable pageable, Optional<String> name,
+  public List<GradeResponseDto> get(Sort sort, Optional<String> name,
                                     Optional<String[]> tags) {
     Specification<Grade> spec = new SpecificationBuilder<Grade>()
         .optionalOrEquals(name, "name")
         .optionalAndJoinIn(tags, "tags", "id")
         .build();
 
-    Page<Grade> grades = this.repository.findAll(spec, pageable);
-    List<GradeResponseDto> response = grades.map(this::mapResponseDto).stream().toList();
-
-    return new PageImpl<>(response, pageable, response.size());
+    List<Grade> grades = this.repository.findAll(spec, sort);
+    return grades.stream().map(this::mapResponseDto).toList();
   }
 
   /**
