@@ -440,9 +440,7 @@ public class SolverRepositoryImpl implements SolverRepository {
   }
 
   @Override
-  public Future<TimetableSolutionDto> solve(TimetableProblemDto timetable,
-                                            HashMap<String, ConstraintDefinitionDto> constaintDefinitions,
-                                            List<ConstraintInstanceDto> constraintInstances)
+  public Future<TimetableSolutionDto> solve(TimetableProblemDto timetable)
       throws IllegalArgumentException {
     Callable<TimetableSolutionDto> solveTimetable = () -> {
       TimetableSolutionTimefoldInstance solution =
