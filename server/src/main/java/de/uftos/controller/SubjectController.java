@@ -3,10 +3,10 @@ package de.uftos.controller;
 import de.uftos.dto.SubjectRequestDto;
 import de.uftos.entities.Subject;
 import de.uftos.services.SubjectService;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -49,15 +49,15 @@ public class SubjectController {
 
   /**
    * Maps the HTTP GET request for a set of subjects from the database to the
-   * {@link SubjectService#get(Pageable, Optional) get} function of the subject service.
+   * {@link SubjectService#get(Sort, Optional) get} function of the subject service.
    *
-   * @param pageable contains the parameters for the page.
-   * @param name     the name filter.
+   * @param sort contains the sort parameters.
+   * @param name the name filter.
    * @return the page of subjects fitting the parameters.
    */
   @GetMapping()
-  public Page<Subject> getSubjects(Pageable pageable, Optional<String> name) {
-    return this.subjectService.get(pageable, name);
+  public List<Subject> getSubjects(Sort sort, Optional<String> name) {
+    return this.subjectService.get(sort, name);
   }
 
   /**

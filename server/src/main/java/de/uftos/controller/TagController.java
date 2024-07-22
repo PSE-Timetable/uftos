@@ -3,10 +3,10 @@ package de.uftos.controller;
 import de.uftos.dto.TagRequestDto;
 import de.uftos.entities.Tag;
 import de.uftos.services.TagService;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -49,15 +49,15 @@ public class TagController {
 
   /**
    * Maps the HTTP GET request for a set of tags from the database to the
-   * {@link TagService#get(Pageable, Optional) get} function of the tag service.
+   * {@link TagService#get(Sort, Optional) get} function of the tag service.
    *
-   * @param pageable contains the parameters for the page.
-   * @param name     the name filter.
+   * @param sort contains the sort parameters.
+   * @param name the name filter.
    * @return the page of tags fitting the parameters.
    */
   @GetMapping()
-  public Page<Tag> getTags(Pageable pageable, Optional<String> name) {
-    return this.tagsService.get(pageable, name);
+  public List<Tag> getTags(Sort sort, Optional<String> name) {
+    return this.tagsService.get(sort, name);
   }
 
   /**

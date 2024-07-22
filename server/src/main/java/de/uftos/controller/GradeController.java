@@ -7,8 +7,7 @@ import de.uftos.services.GradeService;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,15 +50,15 @@ public class GradeController {
 
   /**
    * Maps the HTTP GET request for a set of grades from the database, to the
-   * {@link GradeService#get(Pageable, Optional) get} function of the grade service.
+   * {@link GradeService#get(Sort, Optional) get} function of the grade service.
    *
-   * @param pageable contains the parameters for the page.
-   * @param name     the name filter.
+   * @param sort contains the sort parameters.
+   * @param name the name filter.
    * @return the page of grades fitting the parameters.
    */
   @GetMapping()
-  public Page<GradeResponseDto> getGrades(Pageable pageable, Optional<String> name) {
-    return this.gradeService.get(pageable, name);
+  public List<GradeResponseDto> getGrades(Sort sort, Optional<String> name) {
+    return this.gradeService.get(sort, name);
   }
 
   /**

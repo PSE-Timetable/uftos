@@ -1,6 +1,6 @@
 <script lang="ts">
   import DataTable, { type DataItem } from '$lib/elements/ui/dataTable/data-table.svelte';
-  import { deleteTag, getTags, type Pageable, type PageTag } from '$lib/sdk/fetch-client';
+  import { deleteTag, getTags, type Sort } from '$lib/sdk/fetch-client';
   import { error } from '@sveltejs/kit';
   import { onMount } from 'svelte';
 
@@ -11,22 +11,19 @@
   onMount(() => (pageLoaded = true));
 
   async function loadPage(index: number, sortString: string, filter: string) {
-    let pageable: Pageable = { page: index, size: 10, sort: [sortString] };
+    let sort: Sort = { sort: [sortString] };
     try {
-      const result: PageTag = await getTags(pageable, {
+      const result = await getTags(sort, {
         name: filter,
       });
-      let dataItems: DataItem[] = result.content
-        ? result.content.map(
-            (tag): DataItem => ({
-              id: tag.id,
-              name: tag.name,
-            }),
-          )
-        : [];
+      let dataItems: DataItem[] = result.map((tag) => ({
+        id: tag.id,
+        name: tag.name,
+      }));
+
       return {
         data: dataItems,
-        totalElements: Number(result.totalElements),
+        totalElements: result.length,
       };
     } catch {
       error(400, { message: 'Could not fetch page' });
