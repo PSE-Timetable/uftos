@@ -1,6 +1,13 @@
+<script context="module" lang="ts">
+  export type DataItem = {
+    id: string;
+
+    [key: string]: string | string[] | number;
+  };
+</script>
+
 <script lang="ts">
   import { createTable, Render, Subscribe, createRender } from 'svelte-headless-table';
-  import { writable } from 'svelte/store';
   import * as Table from '$lib/elements/ui/table';
   import DataTableActions from './data-table-actions.svelte';
   import {
@@ -9,46 +16,56 @@
     addTableFilter,
     addHiddenColumns,
     addSelectedRows,
+    type SortKey,
   } from 'svelte-headless-table/plugins';
   import { Button } from '$lib/elements/ui/button';
-  import ArrowUpDown from 'lucide-svelte/icons/arrow-up-down';
   import ChevronDown from 'lucide-svelte/icons/chevron-down';
-  import * as Input from '$lib/elements/ui/input';
+  import ChevronLeft from 'lucide-svelte/icons/chevron-left';
+  import ChevronRight from 'lucide-svelte/icons/chevron-right';
   import * as DropdownMenu from '$lib/elements/ui/dropdown-menu';
   import DataTableCheckbox from './data-table-checkbox.svelte';
+  import { ArrowDown, ArrowUp } from 'lucide-svelte';
+  import { Input } from '$lib/elements/ui/input';
+  import { writable, type Writable } from 'svelte/store';
+  import { onMount } from 'svelte';
+  import * as Pagination from '$lib/elements/ui/pagination';
 
-  interface DataItem {
-    id: string;
+  onMount(async () => await getData());
 
-    [key: string]: string | string[] | number;
-  }
-
-  export let data: DataItem[];
+  let tableData: Writable<DataItem[]> = writable([]);
   export let columnNames;
+  export let keys;
+  export let totalElements: Writable<number> = writable(0);
+  export let loadPage: (
+    index: number,
+    toSort: string,
+    filter: string,
+  ) => Promise<{
+    data: DataItem[];
+    totalElements: number;
+  }>;
+  export let deleteEntry: (id: string) => Promise<void>;
 
-  const table = createTable(writable(data), {
-    page: addPagination(),
-    sort: addSortBy(),
-    filter: addTableFilter({
-      fn: ({ filterValue, value }) => value.toLowerCase().includes(filterValue.toLowerCase()),
-    }),
+  const table = createTable(tableData, {
+    page: addPagination({ serverSide: true, serverItemCount: totalElements, initialPageSize: 10 }), //TODO: change page size, 10 only for testing
+    sort: addSortBy({ serverSide: true }),
+    filter: addTableFilter({ serverSide: true }),
     hide: addHiddenColumns(),
     select: addSelectedRows(),
   });
 
-  let idKey = Object.keys(data[0])[0];
-  console.log(idKey);
   let columns = table.createColumns([
     table.column({
       //first column only contains the checkboxes.
       accessor: (item) => {
-        return item[idKey]; //'item' is of type 'unknown' error dont know how to fix
+        return item[keys[0]];
       },
       id: 'id',
       header: (_, { pluginStates }) => {
         const { allPageRowsSelected } = pluginStates.select;
         return createRender(DataTableCheckbox, {
           checked: allPageRowsSelected,
+          white: true,
         });
       },
       cell: ({ row }, { pluginStates }) => {
@@ -57,6 +74,7 @@
 
         return createRender(DataTableCheckbox, {
           checked: isSelected,
+          white: false,
         });
       },
       plugins: {
@@ -67,14 +85,14 @@
     }),
   ]);
   for (const [i, columnName] of columnNames.entries()) {
-    let currentKey = Object.keys(data[0])[i + 1];
     columns = columns.concat(
       table.createColumns([
         table.column({
           accessor: (item: DataItem) => {
-            return item[currentKey];
+            return item[keys[i + 1]];
           },
           header: columnName,
+          id: keys[i + 1],
         }),
       ]),
     );
@@ -84,12 +102,12 @@
     table.createColumns([
       table.column({
         accessor: (item) => {
-          return item[idKey];
+          return item[keys[0]];
         },
         header: '',
         id: 'actions',
         cell: ({ value }) => {
-          return createRender(DataTableActions, { id: value.toString() });
+          return createRender(DataTableActions, { id: value.toString(), deleteEntry, getData });
         },
         plugins: {
           sort: {
@@ -100,12 +118,20 @@
     ]),
   );
 
-  const { headerRows, pageRows, tableAttrs, tableBodyAttrs, pluginStates, flatColumns, rows } =
-    table.createViewModel(columns);
+  let tableOptions = {
+    rowDataId: (item: { [x: string]: any }, index: number) => {
+      return item ? item['id'] : index;
+    },
+  };
+  const { headerRows, pageRows, tableAttrs, tableBodyAttrs, pluginStates, flatColumns, rows } = table.createViewModel(
+    columns,
+    tableOptions,
+  );
   const { hasNextPage, hasPreviousPage, pageIndex } = pluginStates.page;
   const { filterValue } = pluginStates.filter;
   const { hiddenColumnIds } = pluginStates.hide;
-  const { selectedDataIds } = pluginStates.select;
+  const { selectedDataIds, allPageRowsSelected } = pluginStates.select;
+  const { sortKeys } = pluginStates.sort;
 
   const ids = flatColumns.map((col) => col.id);
   let hideForId = Object.fromEntries(ids.map((id) => [id, true]));
@@ -114,20 +140,54 @@
     .filter(([, hide]) => !hide)
     .map(([id]) => id);
 
-  const hidableCols = ['status', 'email', 'amount'];
+  const hidableCols = keys.slice(1);
+
+  async function getData() {
+    let sortKey: SortKey = $sortKeys[0];
+    let sortString;
+    sortString = sortKey ? `${sortKey.id},${sortKey.order}` : '';
+    let result = await loadPage($pageIndex, sortString, $filterValue);
+    tableData.set(result.data);
+    totalElements.set(result.totalElements);
+  }
+
+  async function onDeleteKey(e: KeyboardEvent) {
+    if (e.code !== 'Delete') {
+      return;
+    }
+    let promises: Promise<void>[] = [];
+    Object.keys($selectedDataIds).forEach((row) => {
+      promises.push(deleteEntry(row));
+    });
+    await Promise.all(promises);
+    $allPageRowsSelected = false;
+    await getData();
+  }
+
+  $: (async () => {
+    $filterValue;
+    $pageIndex;
+    await getData();
+  })();
 </script>
 
+<svelte:window on:keydown={onDeleteKey} />
 <div>
   <div class="flex items-center py-4">
-    <Input bind:value={$filterValue} class="max-w-sm" placeholder="Suche..." type="text" />
+    <Input
+      bind:value={$filterValue}
+      class="max-w-sm rounded-none border-0 border-b-4 border-foreground focus-visible:ring-0 focus-visible:border-b-4"
+      placeholder="Suche..."
+      type="text"
+    />
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild let:builder>
-        <Button builders={[builder]} class="ml-auto" variant="outline">
-          Filter
+        <Button builders={[builder]} class="ml-auto shadow-custom" variant="secondary">
+          Spalten
           <ChevronDown class="ml-2 h-4 w-4" />
         </Button>
       </DropdownMenu.Trigger>
-      <DropdownMenu.Content>
+      <DropdownMenu.Content class="text-primary">
         {#each flatColumns as col}
           {#if hidableCols.includes(col.id)}
             <DropdownMenu.CheckboxItem bind:checked={hideForId[col.id]}>
@@ -138,19 +198,29 @@
       </DropdownMenu.Content>
     </DropdownMenu.Root>
   </div>
-  <div class="rounded-md border">
+  <div>
     <Table.Root {...$tableAttrs}>
-      <Table.Header>
+      <Table.Header class="bg-foreground">
         {#each $headerRows as headerRow}
           <Subscribe rowAttrs={headerRow.attrs()}>
             <Table.Row>
               {#each headerRow.cells as cell (cell.id)}
                 <Subscribe attrs={cell.attrs()} let:attrs props={cell.props()} let:props>
-                  <Table.Head {...attrs} class="[&:has([role=checkbox])]:pl-3">
+                  <Table.Head {...attrs} class="[&:has([role=checkbox])]:pl-4">
                     {#if cell.id !== 'actions' && cell.id !== 'id'}
-                      <Button variant="ghost" on:click={props.sort.toggle}>
+                      <Button
+                        variant="ghost"
+                        on:click={(event) => {
+                          props.sort.toggle(event);
+                          getData();
+                        }}
+                        class="text-white"
+                      >
                         <Render of={cell.render()} />
-                        <ArrowUpDown class={'ml-2 h-4 w-4'} />
+                        <div class="flex ml-2">
+                          <ArrowUp class="h-4 w-4 {props.sort.order === 'asc' ? 'text-accent' : ''}" />
+                          <ArrowDown class="ml-[-4px] h-4 w-4 {props.sort.order === 'desc' ? 'text-accent' : ''}" />
+                        </div>
                       </Button>
                     {:else}
                       <Render of={cell.render()} />
@@ -179,16 +249,62 @@
       </Table.Body>
     </Table.Root>
   </div>
-  <div class="flex items-center justify-end space-x-4 py-4">
-    <div class="flex-1 text-sm text-muted-foreground">
+  <div class="flex justify-center items-center py-4 relative">
+    <div class=" text-sm text-muted-foreground absolute left-0 items-center">
       {Object.keys($selectedDataIds).length} von{' '}
       {$rows.length} Zeile(n) ausgewählt.
     </div>
-    <Button disabled={!$hasPreviousPage} on:click={() => ($pageIndex = $pageIndex - 1)} size="sm" variant="outline"
-      >Zurück
-    </Button>
-    <Button disabled={!$hasNextPage} on:click={() => ($pageIndex = $pageIndex + 1)} size="sm" variant="outline"
-      >Weiter
-    </Button>
+    <div>
+      <Pagination.Root count={$totalElements} perPage={10} let:pages let:currentPage>
+        <Pagination.Content>
+          <Pagination.Item>
+            <Pagination.PrevButton
+              on:click={() => {
+                $pageIndex--;
+              }}
+              class="shadow-custom"
+            >
+              <ChevronLeft class="h-4 w-4" />
+              <span class="hidden sm:block">Zurück</span>
+            </Pagination.PrevButton>
+          </Pagination.Item>
+          {#each pages as page (page.key)}
+            {#if page.type === 'ellipsis'}
+              <Pagination.Item
+                on:click={() => {
+                  $pageIndex = page;
+                }}
+              >
+                <Pagination.Ellipsis />
+              </Pagination.Item>
+            {:else if page.value > 0}
+              <!--for some reason pages 0 and 1 are displayed if there are no elements in table-->
+              <Pagination.Item>
+                <Pagination.Link
+                  {page}
+                  class=" shadow-custom {currentPage === page.value ? 'border-2 border-foreground' : ''}"
+                  on:click={() => {
+                    $pageIndex = page.value - 1;
+                  }}
+                >
+                  {page.value}
+                </Pagination.Link>
+              </Pagination.Item>
+            {/if}
+          {/each}
+          <Pagination.Item>
+            <Pagination.NextButton
+              on:click={() => {
+                $pageIndex++;
+              }}
+              class="shadow-custom"
+            >
+              <span class="hidden sm:block">Weiter</span>
+              <ChevronRight class="h-4 w-4" />
+            </Pagination.NextButton>
+          </Pagination.Item>
+        </Pagination.Content>
+      </Pagination.Root>
+    </div>
   </div>
 </div>

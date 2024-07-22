@@ -1,6 +1,6 @@
 package de.uftos.services;
 
-import de.uftos.dto.parser.ParsingResponse;
+import de.uftos.dto.ucdl.ParsingResponse;
 import de.uftos.repositories.ucdl.UcdlRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

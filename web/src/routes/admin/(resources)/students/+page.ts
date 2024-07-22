@@ -3,7 +3,7 @@ import type { PageLoad } from './$types';
 export const load = (() => {
   return {
     meta: {
-      title: 'Students',
+      title: 'Schüler',
     },
   };
 }) satisfies PageLoad;

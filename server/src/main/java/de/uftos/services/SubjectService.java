@@ -3,10 +3,12 @@ package de.uftos.services;
 import de.uftos.dto.SubjectRequestDto;
 import de.uftos.entities.Subject;
 import de.uftos.repositories.database.SubjectRepository;
+import de.uftos.utils.SpecificationBuilder;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -31,12 +33,16 @@ public class SubjectService {
   /**
    * Gets a page of entries of the subject table.
    *
-   * @param pageable contains the parameters for the page.
+   * @param sort contains the sort parameters.
    * @param name the name filter.
    * @return the page of the entries fitting the parameters.
    */
-  public Page<Subject> get(Pageable pageable, Optional<String> name) {
-    return this.repository.findAll(pageable);
+  public List<Subject> get(Sort sort, Optional<String> name) {
+    Specification<Subject> specification = new SpecificationBuilder<Subject>()
+        .optionalOrEquals(name, "name")
+        .build();
+
+    return this.repository.findAll(specification, sort);
   }
 
   /**
