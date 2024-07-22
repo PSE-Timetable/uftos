@@ -244,6 +244,13 @@
           "schema" : {
             "$ref" : "#/components/schemas/Pageable"
           }
+        }, {
+          "in" : "query",
+          "name" : "name",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          }
         } ],
         "responses" : {
           "200" : {
@@ -2163,19 +2170,25 @@
         }
       },
       "ConstraintInstancesResponseDto" : {
-        "required" : [ "constraintInstances", "displayNames" ],
+        "required" : [ "constraintInstances", "displayNames", "parameters" ],
         "type" : "object",
         "properties" : {
           "constraintInstances" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/components/schemas/ConstraintInstance"
+              "$ref" : "#/components/schemas/SlimInstance"
             }
           },
           "displayNames" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/ConstraintArgumentDisplayName"
+            }
+          },
+          "parameters" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ConstraintParameter"
             }
           }
         }
@@ -2218,8 +2231,29 @@
           }
         }
       },
+      "Curriculum" : {
+        "required" : [ "name" ],
+        "type" : "object",
+        "properties" : {
+          "grade" : {
+            "$ref" : "#/components/schemas/Grade"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "lessonsCounts" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/LessonsCount"
+            }
+          },
+          "name" : {
+            "type" : "string"
+          }
+        }
+      },
       "CurriculumRequestDto" : {
-        "required" : [ "gradeId", "lessonsCounts" ],
+        "required" : [ "gradeId", "lessonsCounts", "name" ],
         "type" : "object",
         "properties" : {
           "gradeId" : {
@@ -2230,6 +2264,9 @@
             "items" : {
               "$ref" : "#/components/schemas/LessonsCountRequestDto"
             }
+          },
+          "name" : {
+            "type" : "string"
           }
         }
       },
@@ -2257,6 +2294,12 @@
       "Grade" : {
         "type" : "object",
         "properties" : {
+          "curricula" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Curriculum"
+            }
+          },
           "id" : {
             "type" : "string"
           },
@@ -2278,13 +2321,13 @@
         }
       },
       "GradeRequestDto" : {
-        "required" : [ "name", "studentGroupsIds", "tagIds" ],
+        "required" : [ "name", "studentGroupIds", "tagIds" ],
         "type" : "object",
         "properties" : {
           "name" : {
             "type" : "string"
           },
-          "studentGroupsIds" : {
+          "studentGroupIds" : {
             "type" : "array",
             "items" : {
               "type" : "string"
@@ -3029,6 +3072,37 @@
           "teacherCount" : {
             "type" : "integer",
             "format" : "int64"
+          }
+        }
+      },
+      "SlimArgument" : {
+        "required" : [ "id", "value" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "value" : {
+            "type" : "string"
+          }
+        }
+      },
+      "SlimInstance" : {
+        "required" : [ "arguments", "id", "type" ],
+        "type" : "object",
+        "properties" : {
+          "arguments" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SlimArgument"
+            }
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string",
+            "enum" : [ "SOFT_REWARD", "HARD_REWARD", "SOFT_PENALIZE", "HARD_PENALIZE" ]
           }
         }
       },
