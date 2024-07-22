@@ -3,13 +3,7 @@
   import { Icons } from '$lib/utils';
   import LinkBar from '$lib/components/ui/link-bar/link-bar.svelte';
   import DataTable, { type DataItem } from '$lib/elements/ui/dataTable/data-table.svelte';
-  import {
-    deleteTeacher,
-    getServerStats,
-    getTeachers,
-    type Pageable,
-    type PageTeacher,
-  } from '$lib/sdk/fetch-client';
+  import { deleteTeacher, getServerStats, getTeachers, type Pageable, type PageTeacher } from '$lib/sdk/fetch-client';
   import { error } from '@sveltejs/kit';
   import { onMount } from 'svelte';
   import * as Select from '$lib/elements/ui/select';
