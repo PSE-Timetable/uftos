@@ -77,8 +77,10 @@ const config = {
       fontFamily: {
         sans: [...fontFamily.sans],
       },
+      boxShadow: {
+        custom: '0px 5px 4px 0px rgba(43, 110, 137, 0.5)',
+      },
     },
   },
 };
-
 export default config;

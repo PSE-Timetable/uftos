@@ -1,9 +1,9 @@
 package de.uftos.repositories.solver;
 
-import de.uftos.dto.parser.ConstraintDefinitionDto;
 import de.uftos.dto.solver.ConstraintInstanceDto;
 import de.uftos.dto.solver.TimetableProblemDto;
 import de.uftos.dto.solver.TimetableSolutionDto;
+import de.uftos.dto.ucdl.ConstraintDefinitionDto;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Future;

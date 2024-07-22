@@ -1,6 +1,6 @@
 package de.uftos.controller;
 
-import de.uftos.dto.parser.ParsingResponse;
+import de.uftos.dto.ucdl.ParsingResponse;
 import de.uftos.services.UcdlEditorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
