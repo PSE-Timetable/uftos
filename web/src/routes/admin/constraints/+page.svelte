@@ -106,18 +106,17 @@
     try {
       console.log('test');
       let result = await getConstraintInstances(constraintSignatureId, pageable, { argument: filter });
-      let dataItems: DataItem[] = result.content
-        ? result.content.map((instance) => {
-            let item: DataItem = { id: instance.id };
-            for (let i = 0; i < instance.arguments.length; i++) {
-              item[`name${i}`] = String(instance.arguments[i].value);
-            }
-            return item;
-          })
-        : [];
+      let dataItems: DataItem[] = result.constraintInstances.map((instance) => {
+        let item: DataItem = { id: instance.id };
+        for (let i = 0; i < instance.arguments.length; i++) {
+          item[`name${i}`] = String(instance.arguments[i].value);
+          console.log(instance.arguments[i].value);
+        }
+        return item;
+      });
       return {
         data: dataItems,
-        totalElements: Number(result.totalElements),
+        totalElements: Number(dataItems.length),
       };
     } catch {
       error(400, { message: 'Could not fetch page' });

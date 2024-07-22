@@ -2,10 +2,23 @@ package de.uftos.controller;
 
 import de.uftos.dto.ConstraintInstanceRequestDto;
 import de.uftos.dto.ConstraintInstancesResponseDto;
+import de.uftos.dto.ResourceType;
+import de.uftos.dto.solver.RewardPenalize;
+import de.uftos.entities.ConstraintArgument;
 import de.uftos.entities.ConstraintInstance;
+import de.uftos.entities.ConstraintParameter;
 import de.uftos.entities.ConstraintSignature;
+import de.uftos.entities.StudentGroup;
+import de.uftos.entities.Teacher;
+import de.uftos.repositories.database.ConstraintInstanceRepository;
+import de.uftos.repositories.database.ConstraintSignatureRepository;
+import de.uftos.repositories.database.StudentGroupRepository;
+import de.uftos.repositories.database.TeacherRepository;
 import de.uftos.services.ConstraintInstanceService;
 import de.uftos.services.ConstraintSignatureService;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -27,6 +40,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class ConstraintController {
   private final ConstraintSignatureService constraintSignatureService;
   private final ConstraintInstanceService constraintInstanceService;
+  private final ConstraintSignatureRepository constraintSignatureRepository;
+  private final ConstraintInstanceRepository constraintInstanceRepository;
+  private final TeacherRepository teacherRepository;
+  private final StudentGroupRepository studentGroupRepository;
 
 
 
@@ -38,9 +55,17 @@ public class ConstraintController {
    */
   @Autowired
   public ConstraintController(ConstraintSignatureService constraintSignatureService,
-                              ConstraintInstanceService constraintInstanceService) {
+                              ConstraintInstanceService constraintInstanceService,
+                              ConstraintSignatureRepository constraintSignatureRepository,
+                              TeacherRepository teacherRepository,
+                              ConstraintInstanceRepository constraintInstanceRepository,
+                              StudentGroupRepository studentGroupRepository) {
     this.constraintSignatureService = constraintSignatureService;
     this.constraintInstanceService = constraintInstanceService;
+    this.constraintSignatureRepository = constraintSignatureRepository;
+    this.constraintInstanceRepository = constraintInstanceRepository;
+    this.teacherRepository = teacherRepository;
+    this.studentGroupRepository = studentGroupRepository;
 
   }
 
@@ -56,6 +81,57 @@ public class ConstraintController {
   @GetMapping()
   public Page<ConstraintSignature> getConstraintSignatures(Pageable pageable,
                                                            Optional<String> name) {
+    constraintSignatureRepository.deleteAll();
+    constraintInstanceRepository.deleteAll();
+    teacherRepository.deleteAll();
+    studentGroupRepository.deleteAll();
+
+    Teacher teacher = new Teacher();
+    teacher.setFirstName("Max");
+    teacher.setFirstName("Musterman");
+    teacher = teacherRepository.save(teacher);
+
+    StudentGroup studentGroup = new StudentGroup();
+    studentGroup.setName("Ethik");
+    studentGroup = studentGroupRepository.save(studentGroup);
+
+    ConstraintParameter constraintParameter = new ConstraintParameter();
+    constraintParameter.setParameterType(ResourceType.TEACHER);
+    constraintParameter.setParameterName("lehrer1");
+
+    ConstraintParameter constraintParameter2 = new ConstraintParameter();
+    constraintParameter2.setParameterType(ResourceType.STUDENT_GROUP);
+    constraintParameter2.setParameterName("gruppe1");
+
+    ConstraintArgument constraintArgument = new ConstraintArgument();
+    constraintArgument.setConstraintParameter(constraintParameter);
+    constraintArgument.setValue(teacher.getId());
+
+    ConstraintArgument constraintArgument2 = new ConstraintArgument();
+    constraintArgument2.setConstraintParameter(constraintParameter2);
+    constraintArgument2.setValue(studentGroup.getId());
+
+    ConstraintInstance constraintInstance = new ConstraintInstance();
+    constraintInstance.setType(RewardPenalize.HARD_PENALIZE);
+
+    ConstraintSignature constraintSignature = new ConstraintSignature();
+    constraintSignature.setName("lehrer_gruppe");
+    constraintSignature.setDescription("Lehrer X unterrichtet Gruppe Y");
+    constraintSignature.setDefaultType(RewardPenalize.HARD_PENALIZE);
+
+    constraintInstance = constraintInstanceRepository.save(constraintInstance);
+    constraintSignature = constraintSignatureRepository.save(constraintSignature);
+
+    constraintSignature.setParameters(
+        new ArrayList<>(List.of(constraintParameter, constraintParameter2)));
+    constraintSignature.setInstances(new ArrayList<>(List.of(constraintInstance)));
+    constraintSignature = constraintSignatureRepository.save(constraintSignature);
+
+    constraintInstance.setArguments(
+        new ArrayList<>(List.of(constraintArgument, constraintArgument2)));
+    constraintInstance.setSignature(constraintSignature);
+    constraintInstance = constraintInstanceRepository.save(constraintInstance);
+
     return this.constraintSignatureService.get(pageable, name);
   }
 
