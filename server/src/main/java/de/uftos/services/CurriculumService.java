@@ -3,10 +3,19 @@ package de.uftos.services;
 
 import de.uftos.dto.CurriculumRequestDto;
 import de.uftos.dto.CurriculumResponseDto;
+import de.uftos.dto.GradeResponseDto;
+import de.uftos.entities.Curriculum;
+import de.uftos.entities.Grade;
 import de.uftos.repositories.database.CurriculumRepository;
+import de.uftos.repositories.database.GradeRepository;
+import de.uftos.utils.SpecificationBuilder;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -17,6 +26,7 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class CurriculumService {
   private final CurriculumRepository repository;
+  private final GradeRepository gradeRepository;
 
   /**
    * Creates a curriculum service.
@@ -24,18 +34,26 @@ public class CurriculumService {
    * @param repository the repository for accessing the curriculum table.
    */
   @Autowired
-  public CurriculumService(CurriculumRepository repository) {
+  public CurriculumService(CurriculumRepository repository, GradeRepository gradeRepository) {
     this.repository = repository;
+    this.gradeRepository = gradeRepository;
   }
 
   /**
    * Gets a page of entries of the curriculum table.
    *
+   * @param name the name filter
    * @param pageable contains the parameters for the page.
    * @return the page of the entries fitting the parameters.
    */
-  public Page<CurriculumResponseDto> get(Pageable pageable) {
-    return null;
+  public Page<CurriculumResponseDto> get(Pageable pageable, Optional<String> name) {
+    //currently no filter for grades
+    Specification<Curriculum> spec = new SpecificationBuilder<Curriculum>()
+        .optionalOrEquals(name, "name").build();
+    List<CurriculumResponseDto> curricula = this.repository.findAll(spec, pageable).stream()
+        .map(CurriculumResponseDto::new).toList();
+
+    return new PageImpl<>(curricula);
   }
 
   /**
@@ -46,7 +64,9 @@ public class CurriculumService {
    * @throws ResponseStatusException is thrown if the ID doesn't have a corresponding curriculum.
    */
   public CurriculumResponseDto getById(String id) {
-    return null;
+    Curriculum curriculum = this.repository.findById(id)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+    return new CurriculumResponseDto(curriculum);
   }
 
   /**
@@ -58,7 +78,15 @@ public class CurriculumService {
    *                                 is already present in the database.
    */
   public CurriculumResponseDto create(CurriculumRequestDto curriculum) {
-    return null;
+    Grade grade = gradeRepository.findById(curriculum.gradeId())
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+    return this.mapResponseDto(this.repository.save(curriculum.map(grade)));
+  }
+
+  private CurriculumResponseDto mapResponseDto(Curriculum curriculum) {
+    return new CurriculumResponseDto(curriculum.getId(), curriculum.getName(),
+        GradeResponseDto.createResponseDtoFromGrade(curriculum.getGrade()),
+        curriculum.getLessonsCounts());
   }
 
   /**
@@ -69,7 +97,9 @@ public class CurriculumService {
    * @return the updated grade.
    */
   public CurriculumResponseDto update(String id, CurriculumRequestDto curriculumRequest) {
-    return null;
+    Curriculum curriculum = curriculumRequest.map(null);
+    curriculum.setId(id);
+    return new CurriculumResponseDto(this.repository.save(curriculum));
   }
 
   /**

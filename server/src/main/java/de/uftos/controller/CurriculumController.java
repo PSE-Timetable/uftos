@@ -4,6 +4,7 @@ package de.uftos.controller;
 import de.uftos.dto.CurriculumRequestDto;
 import de.uftos.dto.CurriculumResponseDto;
 import de.uftos.services.CurriculumService;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -50,14 +51,15 @@ public class CurriculumController {
 
   /**
    * Maps the HTTP GET request for a set of curriculums from the database, to the
-   * {@link CurriculumService#get(Pageable) get} function of the curriculum service.
+   * {@link CurriculumService#get(Pageable, Optional) get} function of the curriculum service.
    *
+   * @param name the name filter
    * @param pageable contains the parameters for the page.
    * @return the page of curriculums fitting the parameters.
    */
   @GetMapping()
-  public Page<CurriculumResponseDto> getCurriculums(Pageable pageable) {
-    return this.curriculumService.get(pageable);
+  public Page<CurriculumResponseDto> getCurriculums(Pageable pageable, Optional<String> name) {
+    return this.curriculumService.get(pageable, name);
   }
 
   /**
