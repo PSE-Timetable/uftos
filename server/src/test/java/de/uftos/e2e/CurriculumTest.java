@@ -135,6 +135,12 @@ class CurriculumTest {
         .delete("/grades/{id}", secondGradeId)
         .then()
         .statusCode(200);
+
+    given().contentType(ContentType.JSON)
+        .when()
+        .delete("/subjects/{id}", subjectId)
+        .then()
+        .statusCode(200);
   }
 
   @Test
