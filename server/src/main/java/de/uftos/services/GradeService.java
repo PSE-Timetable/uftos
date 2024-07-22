@@ -7,14 +7,14 @@ import de.uftos.entities.Grade;
 import de.uftos.entities.Student;
 import de.uftos.entities.StudentGroup;
 import de.uftos.repositories.database.GradeRepository;
+import de.uftos.utils.SpecificationBuilder;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -39,16 +39,17 @@ public class GradeService {
   /**
    * Gets a page of entries of the grade table.
    *
-   * @param pageable contains the parameters for the page.
-   * @param name     the name filter.
+   * @param sort contains the sort parameters.
+   * @param name the name filter.
    * @return the page of the entries fitting the parameters.
    */
-  public Page<GradeResponseDto> get(Pageable pageable, Optional<String> name) {
-    Page<Grade> grades = this.repository.findAll(pageable);
-    List<GradeResponseDto> response =
-        grades.map(this::mapResponseDto).stream().toList();
+  public List<GradeResponseDto> get(Sort sort, Optional<String> name) {
+    Specification<Grade> specification = new SpecificationBuilder<Grade>()
+        .optionalOrEquals(name, "name")
+        .build();
+    List<Grade> grades = this.repository.findAll(specification, sort);
 
-    return new PageImpl<>(response, pageable, response.size());
+    return grades.stream().map(this::mapResponseDto).toList();
   }
 
   /**
