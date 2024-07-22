@@ -528,15 +528,17 @@ export function setUcdlFile(body: {
         body
     })));
 }
-export function getGrades(sort: Sort, { name }: {
+export function getGrades(sort: Sort, { name, tags }: {
     name?: string;
+    tags?: string[];
 } = {}, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
         data: GradeResponseDto[];
     }>(`/grades${QS.query(QS.explode({
         sort,
-        name
+        name,
+        tags
     }))}`, {
         ...opts
     }));
@@ -578,7 +580,7 @@ export function updateGrade(id: string, gradeRequestDto: GradeRequestDto, opts?:
 export function getGradeLessons(id: string, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
-        data: LessonResponseDto[];
+        data: LessonResponseDto;
     }>(`/grades/${encodeURIComponent(id)}/lessons`, {
         ...opts
     }));
@@ -683,7 +685,7 @@ export function updateRoom(id: string, roomRequestDto: RoomRequestDto, opts?: Oa
 export function getRoomLessons(id: string, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
-        data: LessonResponseDto[];
+        data: LessonResponseDto;
     }>(`/rooms/${encodeURIComponent(id)}/lessons`, {
         ...opts
     }));
