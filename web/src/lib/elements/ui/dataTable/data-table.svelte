@@ -35,16 +35,18 @@
   let tableData: Writable<DataItem[]> = writable([]);
   export let columnNames;
   export let keys;
-  export let totalElements: Writable<number> = writable(0);
+  let totalElements: Writable<number> = writable(0);
   export let loadPage: (
     index: number,
     toSort: string,
     filter: string,
+    additionalId?: string,
   ) => Promise<{
     data: DataItem[];
     totalElements: number;
   }>;
   export let deleteEntry: (id: string) => Promise<void>;
+  export let additionalId: string = '';
 
   const table = createTable(tableData, {
     page: addPagination({ serverSide: true, serverItemCount: totalElements, initialPageSize: 10 }), //TODO: change page size, 10 only for testing
@@ -146,7 +148,7 @@
     let sortKey: SortKey = $sortKeys[0];
     let sortString;
     sortString = sortKey ? `${sortKey.id},${sortKey.order}` : '';
-    let result = await loadPage($pageIndex, sortString, $filterValue);
+    let result = await loadPage($pageIndex, sortString, $filterValue, additionalId);
     tableData.set(result.data);
     totalElements.set(result.totalElements);
   }
