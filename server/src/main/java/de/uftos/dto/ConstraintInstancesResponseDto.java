@@ -20,7 +20,7 @@ public record ConstraintInstancesResponseDto(@NotNull List<SlimInstance> constra
                                              @NotNull List<ConstraintParameter> parameters) {
 
   /**
-   * Create a new ConstraintInstancesResponseDto instance with the standard entities
+   * Creates a new ConstraintInstancesResponseDto instance with the standard entities
    * and converts it internally to the slim entities.
    *
    * @param constraintInstances the instances of the constraint
