@@ -16,7 +16,6 @@ import de.uftos.repositories.database.StudentGroupRepository;
 import de.uftos.repositories.database.TeacherRepository;
 import de.uftos.services.ConstraintInstanceService;
 import de.uftos.services.ConstraintSignatureService;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -44,7 +43,6 @@ public class ConstraintController {
   private final ConstraintInstanceRepository constraintInstanceRepository;
   private final TeacherRepository teacherRepository;
   private final StudentGroupRepository studentGroupRepository;
-
 
 
   /**
