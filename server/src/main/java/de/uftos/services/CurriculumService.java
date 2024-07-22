@@ -51,7 +51,7 @@ public class CurriculumService {
     Specification<Curriculum> spec = new SpecificationBuilder<Curriculum>()
         .optionalOrEquals(name, "name").build();
     List<CurriculumResponseDto> curricula = this.repository.findAll(spec, pageable).stream()
-        .map(CurriculumResponseDto::createResponseDtoFromCurriculum).toList();
+        .map(CurriculumResponseDto::new).toList();
 
     return new PageImpl<>(curricula);
   }
@@ -66,7 +66,7 @@ public class CurriculumService {
   public CurriculumResponseDto getById(String id) {
     Curriculum curriculum = this.repository.findById(id)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
-    return CurriculumResponseDto.createResponseDtoFromCurriculum(curriculum);
+    return new CurriculumResponseDto(curriculum);
   }
 
   /**
@@ -99,7 +99,7 @@ public class CurriculumService {
   public CurriculumResponseDto update(String id, CurriculumRequestDto curriculumRequest) {
     Curriculum curriculum = curriculumRequest.map(null);
     curriculum.setId(id);
-    return CurriculumResponseDto.createResponseDtoFromCurriculum(this.repository.save(curriculum));
+    return new CurriculumResponseDto(this.repository.save(curriculum));
   }
 
   /**

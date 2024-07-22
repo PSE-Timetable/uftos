@@ -27,10 +27,10 @@ public record CurriculumResponseDto(@NotEmpty String id, @NotEmpty String name,
    *                   in the CurriculumResponseDto.
    * @return the CurriculumResponseDto containing information about the Curriculum.
    */
-  public static CurriculumResponseDto createResponseDtoFromCurriculum(Curriculum curriculum) {
-    GradeResponseDto gradeResponseDto =
-        GradeResponseDto.createResponseDtoFromGrade(curriculum.getGrade());
-    return new CurriculumResponseDto(curriculum.getId(), curriculum.getName(), gradeResponseDto,
+  public CurriculumResponseDto(Curriculum curriculum) {
+    this(curriculum.getId(), curriculum.getName(),
+        GradeResponseDto.createResponseDtoFromGrade(curriculum.getGrade()),
         curriculum.getLessonsCounts());
   }
 }
+
