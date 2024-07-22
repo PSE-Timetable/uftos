@@ -4,8 +4,6 @@ import de.uftos.dto.LessonResponseDto;
 import de.uftos.dto.RoomRequestDto;
 import de.uftos.entities.Lesson;
 import de.uftos.entities.Room;
-import de.uftos.entities.Student;
-import de.uftos.entities.Teacher;
 import de.uftos.repositories.database.RoomRepository;
 import de.uftos.repositories.database.ServerRepository;
 import de.uftos.utils.SpecificationBuilder;
@@ -52,7 +50,7 @@ public class RoomService {
   public Page<Room> get(Pageable pageable, Optional<String> name,
                         Optional<String> buildingName, Optional<Integer> capacity,
                         Optional<String[]> tags) {
-    //TODO currently no capacity filter
+    //currently no capacity filter
     Specification<Room> spec = new SpecificationBuilder<Room>()
         .optionalOrEquals(name, "name")
         .optionalOrEquals(buildingName, "buildingName")
