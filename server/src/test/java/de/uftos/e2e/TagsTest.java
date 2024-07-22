@@ -3,6 +3,7 @@ package de.uftos.e2e;
 import static de.uftos.utils.JsonGenerator.generatePageJson;
 import static de.uftos.utils.JsonGenerator.generateTagJson;
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
@@ -70,7 +71,7 @@ class TagsTest {
         .get("/tags")
         .then()
         .statusCode(200)
-        .body("totalElements", equalTo(2))
+        .body("size()", equalTo(2))
         .log().ifValidationFails();
   }
 
@@ -83,8 +84,8 @@ class TagsTest {
         .get("/tags")
         .then()
         .statusCode(200)
-        .body("totalElements", equalTo(1))
-        .body("content[0].id", equalTo(tagId1))
+        .body("size()", equalTo(1))
+        .body("id", contains(tagId1))
         .log().ifValidationFails();
 
   }

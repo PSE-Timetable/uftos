@@ -25,6 +25,14 @@ export const WorkingHours = [
   '17:00',
 ] as const;
 
+export enum Icons {
+  STUDENT,
+  TEACHER,
+  GRADE,
+  ROOM,
+  CONSTRAINT,
+}
+
 export enum WeekDay {
   MONDAY = 'Montag',
   TUESDAY = 'Dienstag',
