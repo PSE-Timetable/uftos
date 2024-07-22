@@ -1,6 +1,5 @@
 package de.uftos.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import de.uftos.entities.Curriculum;
 import de.uftos.entities.Grade;
 import jakarta.validation.constraints.NotEmpty;

@@ -8,11 +8,14 @@ import de.uftos.entities.Curriculum;
 import de.uftos.entities.Grade;
 import de.uftos.repositories.database.CurriculumRepository;
 import de.uftos.repositories.database.GradeRepository;
+import de.uftos.utils.SpecificationBuilder;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -39,12 +42,15 @@ public class CurriculumService {
   /**
    * Gets a page of entries of the curriculum table.
    *
+   * @param name the name filter
    * @param pageable contains the parameters for the page.
    * @return the page of the entries fitting the parameters.
    */
-  public Page<CurriculumResponseDto> get(Pageable pageable) {
-    //TODO filter for grades?
-    List<CurriculumResponseDto> curricula = this.repository.findAll(pageable).stream()
+  public Page<CurriculumResponseDto> get(Pageable pageable, Optional<String> name) {
+    //TODO filter for grades
+    Specification<Curriculum> spec = new SpecificationBuilder<Curriculum>()
+        .optionalOrEquals(name, "name").build();
+    List<CurriculumResponseDto> curricula = this.repository.findAll(spec, pageable).stream()
         .map(CurriculumResponseDto::createResponseDtoFromCurriculum).toList();
 
     return new PageImpl<>(curricula);

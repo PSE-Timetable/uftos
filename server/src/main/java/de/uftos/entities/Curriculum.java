@@ -35,7 +35,7 @@ public class Curriculum {
   @JoinColumn(name = "grades_id", nullable = false)
   private Grade grade;
 
-  @OneToMany(cascade = CascadeType.REMOVE)
+  @OneToMany(cascade = CascadeType.ALL)
   private List<LessonsCount> lessonsCounts;
 
   /**

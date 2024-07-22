@@ -11,7 +11,6 @@ import static org.hamcrest.Matchers.notNullValue;
 import de.uftos.dto.LessonsCountRequestDto;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.http.ContentType;
-import java.sql.SQLOutput;
 import java.util.Collections;
 import java.util.List;
 import org.json.JSONException;
@@ -19,7 +18,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class CurriculumTest {
+class CurriculumTest {
   private static final String FIRST_CURRICULUM_NAME = "5 / SS24";
   private static final String SECOND_CURRICULUM_NAME = "7 / SS24";
 
@@ -84,6 +83,7 @@ public class CurriculumTest {
         .when()
         .post("/curriculum")
         .then()
+        .log().ifValidationFails(LogDetail.BODY)
         .statusCode(200)
         .body("id", notNullValue())
         .body("grade.id", equalTo(firstGradeId))
@@ -95,12 +95,9 @@ public class CurriculumTest {
 
     LessonsCountRequestDto lessonsCount = new LessonsCountRequestDto(subjectId, 3);
 
-    System.out.println(generateCurriculumJson(secondGradeId, SECOND_CURRICULUM_NAME,
-        List.of(lessonsCount)));
-
     secondCurriculum = given().contentType(ContentType.JSON)
         .body(generateCurriculumJson(secondGradeId, SECOND_CURRICULUM_NAME,
-            List.of(lessonsCount)))//TODO problem with lessonsCountRequestDto creation
+            List.of(lessonsCount)))
         .when()
         .post("/curriculum")
         .then()
