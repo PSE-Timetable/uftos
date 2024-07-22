@@ -15,9 +15,17 @@ import java.util.List;
  * @param displayNames        the display names of the arguments of the constraint instances
  */
 public record ConstraintInstancesResponseDto(@NotNull List<SlimInstance> constraintInstances,
-                                             @NotNull List<ConstraintArgumentDisplayName> displayNames,
+                                             @NotNull
+                                             List<ConstraintArgumentDisplayName> displayNames,
                                              @NotNull List<ConstraintParameter> parameters) {
 
+  /**
+   * Create a new ConstraintInstancesResponseDto instance with the standard entities
+   * and converts it internally to the slim entities.
+   *
+   * @param constraintInstances the instances of the constraint
+   * @param displayNames        the display names for the arguments
+   */
   public ConstraintInstancesResponseDto(List<ConstraintInstance> constraintInstances,
                                         List<ConstraintArgumentDisplayName> displayNames) {
     this(constraintInstances.stream().map(SlimInstance::new).toList(),
@@ -25,6 +33,13 @@ public record ConstraintInstancesResponseDto(@NotNull List<SlimInstance> constra
         constraintInstances.getFirst().getSignature().getParameters());
   }
 
+  /**
+   * An object that contains only the useful data of a constraint instance for the response DTO.
+   *
+   * @param id        the id of the instance
+   * @param type      the reward type
+   * @param arguments the arguments (also slim) of the instance
+   */
   public record SlimInstance(@NotEmpty String id, @NotNull RewardPenalize type,
                              @NotNull List<SlimArgument> arguments) {
     private SlimInstance(ConstraintInstance constraintInstance) {
