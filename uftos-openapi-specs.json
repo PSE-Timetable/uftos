@@ -244,6 +244,13 @@
           "schema" : {
             "$ref" : "#/components/schemas/Pageable"
           }
+        }, {
+          "in" : "query",
+          "name" : "name",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          }
         } ],
         "responses" : {
           "200" : {
@@ -414,174 +421,6 @@
         "tags" : [ "ucdl-editor-controller" ]
       }
     },
-    "/grades" : {
-      "get" : {
-        "operationId" : "getGrades",
-        "parameters" : [ {
-          "in" : "query",
-          "name" : "sort",
-          "required" : true,
-          "schema" : {
-            "$ref" : "#/components/schemas/Sort"
-          }
-        }, {
-          "in" : "query",
-          "name" : "name",
-          "required" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "content" : {
-              "*/*" : {
-                "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/GradeResponseDto"
-                  }
-                }
-              }
-            },
-            "description" : "OK"
-          }
-        },
-        "tags" : [ "grade-controller" ]
-      },
-      "post" : {
-        "operationId" : "createGrade",
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/GradeRequestDto"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "content" : {
-              "*/*" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/GradeResponseDto"
-                }
-              }
-            },
-            "description" : "OK"
-          }
-        },
-        "tags" : [ "grade-controller" ]
-      }
-    },
-    "/grades/{id}" : {
-      "delete" : {
-        "operationId" : "deleteGrade",
-        "parameters" : [ {
-          "in" : "path",
-          "name" : "id",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK"
-          }
-        },
-        "tags" : [ "grade-controller" ]
-      },
-      "get" : {
-        "operationId" : "getGrade",
-        "parameters" : [ {
-          "in" : "path",
-          "name" : "id",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "content" : {
-              "*/*" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/GradeResponseDto"
-                }
-              }
-            },
-            "description" : "OK"
-          }
-        },
-        "tags" : [ "grade-controller" ]
-      },
-      "put" : {
-        "operationId" : "updateGrade",
-        "parameters" : [ {
-          "in" : "path",
-          "name" : "id",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/GradeRequestDto"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "content" : {
-              "*/*" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/GradeResponseDto"
-                }
-              }
-            },
-            "description" : "OK"
-          }
-        },
-        "tags" : [ "grade-controller" ]
-      }
-    },
-    "/grades/{id}/lessons" : {
-      "get" : {
-        "operationId" : "getGradeLessons",
-        "parameters" : [ {
-          "in" : "path",
-          "name" : "id",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "content" : {
-              "*/*" : {
-                "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/LessonResponseDto"
-                  }
-                }
-              }
-            },
-            "description" : "OK"
-          }
-        },
-        "tags" : [ "grade-controller" ]
-      }
-    },
     "/lessons" : {
       "get" : {
         "operationId" : "getLessons",
@@ -709,196 +548,6 @@
           }
         },
         "tags" : [ "lesson-controller" ]
-      }
-    },
-    "/rooms" : {
-      "get" : {
-        "operationId" : "getRooms",
-        "parameters" : [ {
-          "in" : "query",
-          "name" : "pageable",
-          "required" : true,
-          "schema" : {
-            "$ref" : "#/components/schemas/Pageable"
-          }
-        }, {
-          "in" : "query",
-          "name" : "name",
-          "required" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "in" : "query",
-          "name" : "buildingName",
-          "required" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "in" : "query",
-          "name" : "capacity",
-          "required" : false,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        }, {
-          "in" : "query",
-          "name" : "tags",
-          "required" : false,
-          "schema" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "content" : {
-              "*/*" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/PageRoom"
-                }
-              }
-            },
-            "description" : "OK"
-          }
-        },
-        "tags" : [ "room-controller" ]
-      },
-      "post" : {
-        "operationId" : "createRoom",
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/RoomRequestDto"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "content" : {
-              "*/*" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Room"
-                }
-              }
-            },
-            "description" : "OK"
-          }
-        },
-        "tags" : [ "room-controller" ]
-      }
-    },
-    "/rooms/{id}" : {
-      "delete" : {
-        "operationId" : "deleteRoom",
-        "parameters" : [ {
-          "in" : "path",
-          "name" : "id",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK"
-          }
-        },
-        "tags" : [ "room-controller" ]
-      },
-      "get" : {
-        "operationId" : "getRoom",
-        "parameters" : [ {
-          "in" : "path",
-          "name" : "id",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "content" : {
-              "*/*" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Room"
-                }
-              }
-            },
-            "description" : "OK"
-          }
-        },
-        "tags" : [ "room-controller" ]
-      },
-      "put" : {
-        "operationId" : "updateRoom",
-        "parameters" : [ {
-          "in" : "path",
-          "name" : "id",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/RoomRequestDto"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "content" : {
-              "*/*" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Room"
-                }
-              }
-            },
-            "description" : "OK"
-          }
-        },
-        "tags" : [ "room-controller" ]
-      }
-    },
-    "/rooms/{id}/lessons" : {
-      "get" : {
-        "operationId" : "getRoomLessons",
-        "parameters" : [ {
-          "in" : "path",
-          "name" : "id",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "content" : {
-              "*/*" : {
-                "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/LessonResponseDto"
-                  }
-                }
-              }
-            },
-            "description" : "OK"
-          }
-        },
-        "tags" : [ "room-controller" ]
       }
     },
     "/server/statistics" : {
@@ -2218,8 +1867,29 @@
           }
         }
       },
+      "Curriculum" : {
+        "required" : [ "name" ],
+        "type" : "object",
+        "properties" : {
+          "grade" : {
+            "$ref" : "#/components/schemas/Grade"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "lessonsCounts" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/LessonsCount"
+            }
+          },
+          "name" : {
+            "type" : "string"
+          }
+        }
+      },
       "CurriculumRequestDto" : {
-        "required" : [ "gradeId", "lessonsCounts" ],
+        "required" : [ "gradeId", "lessonsCounts", "name" ],
         "type" : "object",
         "properties" : {
           "gradeId" : {
@@ -2230,6 +1900,9 @@
             "items" : {
               "$ref" : "#/components/schemas/LessonsCountRequestDto"
             }
+          },
+          "name" : {
+            "type" : "string"
           }
         }
       },
@@ -2257,6 +1930,12 @@
       "Grade" : {
         "type" : "object",
         "properties" : {
+          "curricula" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Curriculum"
+            }
+          },
           "id" : {
             "type" : "string"
           },
@@ -2273,27 +1952,6 @@
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/Tag"
-            }
-          }
-        }
-      },
-      "GradeRequestDto" : {
-        "required" : [ "name", "studentGroupsIds", "tagIds" ],
-        "type" : "object",
-        "properties" : {
-          "name" : {
-            "type" : "string"
-          },
-          "studentGroupsIds" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          },
-          "tagIds" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
             }
           }
         }
@@ -2562,55 +2220,6 @@
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/LessonResponseDto"
-            }
-          },
-          "empty" : {
-            "type" : "boolean"
-          },
-          "first" : {
-            "type" : "boolean"
-          },
-          "last" : {
-            "type" : "boolean"
-          },
-          "number" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "numberOfElements" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "pageable" : {
-            "$ref" : "#/components/schemas/PageableObject"
-          },
-          "size" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "sort" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/SortObject"
-            }
-          },
-          "totalElements" : {
-            "type" : "integer",
-            "format" : "int64"
-          },
-          "totalPages" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        }
-      },
-      "PageRoom" : {
-        "type" : "object",
-        "properties" : {
-          "content" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/Room"
             }
           },
           "empty" : {
@@ -2980,28 +2589,6 @@
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/Tag"
-            }
-          }
-        }
-      },
-      "RoomRequestDto" : {
-        "required" : [ "buildingName", "capacity", "name", "tagIds" ],
-        "type" : "object",
-        "properties" : {
-          "buildingName" : {
-            "type" : "string"
-          },
-          "capacity" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "name" : {
-            "type" : "string"
-          },
-          "tagIds" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
             }
           }
         }
