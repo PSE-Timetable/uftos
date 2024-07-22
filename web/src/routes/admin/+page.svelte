@@ -9,7 +9,6 @@
     getTeachers,
     type Pageable,
     type PageTeacher,
-    type ServerStatisticsResponseDto,
   } from '$lib/sdk/fetch-client';
   import { error } from '@sveltejs/kit';
   import { onMount } from 'svelte';

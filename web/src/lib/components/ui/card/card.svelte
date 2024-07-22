@@ -1,5 +1,4 @@
 <script lang="ts">
-  import Button from '$lib/elements/ui/button/button.svelte';
   import { Icons } from '$lib/utils';
   import { BriefcaseBusiness, User, Users, Braces, House, Pencil } from 'lucide-svelte';
 
