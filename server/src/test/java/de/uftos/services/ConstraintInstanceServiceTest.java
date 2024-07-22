@@ -131,11 +131,10 @@ public class ConstraintInstanceServiceTest {
         constraintInstanceService.getById("test constraint", "123");
     assertNotNull(constraintInstanceResponse);
     assertEquals(1, constraintInstanceResponse.constraintInstances().size());
-    ConstraintInstance constraintInstance1 =
+    ConstraintInstancesResponseDto.SlimInstance constraintInstance1 =
         constraintInstanceResponse.constraintInstances().getFirst();
-    assertEquals("123", constraintInstance1.getId());
-    assertEquals("test constraint", constraintInstance1.getSignature().getName());
-    assertFalse(constraintInstance1.getArguments().isEmpty());
+    assertEquals("123", constraintInstance1.id());
+    assertFalse(constraintInstance1.arguments().isEmpty());
   }
 
   @Test
