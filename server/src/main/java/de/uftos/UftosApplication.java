@@ -53,11 +53,11 @@ public class UftosApplication {
       System.out.println("clearing all relations");
       serverRepository.deleteAll();
       gradeRepository.deleteAll();
+      teacherRepository.deleteAll();
       subjectRepository.deleteAll();
       roomRepository.deleteAll();
       studentGroupRepository.deleteAll();
       studentRepository.deleteAll();
-      teacherRepository.deleteAll();
       curriculumRepository.deleteAll();
       tagRepository.deleteAll();
       timeslotRepository.deleteAll();

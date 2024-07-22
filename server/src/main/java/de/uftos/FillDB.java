@@ -20,7 +20,6 @@ import de.uftos.repositories.database.TeacherRepository;
 import de.uftos.repositories.database.TimeslotRepository;
 import java.util.ArrayList;
 import java.util.List;
-import org.springframework.data.domain.Pageable;
 
 public class FillDB {
 
@@ -65,19 +64,15 @@ public class FillDB {
     System.out.println("created curriculum");
      */
 
-    List<Tag> tags = tagRepository.findAll();
-
-    List<Grade> grades = new ArrayList<>(gradeRepository.findAll(Pageable.ofSize(10)).toList());
-    List<StudentGroup> studentGroups =
-        new ArrayList<>(studentGroupRepository.findAll(Pageable.ofSize(10)).toList());
-    for (StudentGroup studentGroup : studentGroups) {
+    List<Grade> grades = gradeRepository.findAll();
+    for (StudentGroup studentGroup : studentGroupRepository.findAll()) {
       int index = (int) (Math.random() * grades.size());
       grades.get(index).getStudentGroups().add(studentGroup);
     }
     gradeRepository.saveAll(grades);
     System.out.println("created grade - student group mapping");
 
-    List<StudentGroup> groups = studentGroupRepository.findAll(Pageable.ofSize(10)).toList();
+    List<StudentGroup> groups = studentGroupRepository.findAll();
     for (Student student : studentRepository.findAll()) {
       groups.get((int) (Math.random() * groups.size())).getStudents().add(student);
     }

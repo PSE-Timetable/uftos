@@ -1,6 +1,7 @@
 package de.uftos.entities;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -27,13 +28,13 @@ public class Grade {
 
   private String name;
 
-  @ManyToMany
+  @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(name = "grades_student_groups",
       joinColumns = @JoinColumn(name = "grades_id"),
       inverseJoinColumns = @JoinColumn(name = "student_groups_id"))
   private List<StudentGroup> studentGroups;
 
-  @ManyToMany
+  @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(name = "grades_tags",
       joinColumns = @JoinColumn(name = "grades_id"),
       inverseJoinColumns = @JoinColumn(name = "tags_id"))
