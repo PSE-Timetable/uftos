@@ -52,15 +52,18 @@ public class StudentGroupController {
 
   /**
    * Maps the HTTP GET request for a set of student groups from the database, to the
-   * {@link StudentGroupService#get(Pageable, Optional)  get} function of the student group service.
+   * {@link StudentGroupService#get(Pageable, Optional, Optional)  get}
+   * function of the student group service.
    *
    * @param pageable contains the parameters for the page.
    * @param name     the name filter.
+   * @param tags     the tags filter.
    * @return the page of student groups fitting the parameters.
    */
   @GetMapping()
-  public Page<StudentGroup> getStudentGroups(Pageable pageable, Optional<String> name) {
-    return this.studentGroupService.get(pageable, name);
+  public Page<StudentGroup> getStudentGroups(Pageable pageable, Optional<String> name,
+                                             Optional<String[]> tags) {
+    return this.studentGroupService.get(pageable, name, tags);
   }
 
   /**
@@ -81,10 +84,10 @@ public class StudentGroupController {
    * function of the student group service.
    *
    * @param id the ID of the student group.
-   * @return information about the lessons that the student group attends.
+   * @return a LessonResponseDto with information about the lessons that the student group attends.
    */
   @GetMapping("/{id}/lessons")
-  public List<LessonResponseDto> getStudentGroupLessons(@PathVariable String id) {
+  public LessonResponseDto getStudentGroupLessons(@PathVariable String id) {
     return this.studentGroupService.getLessonsById(id);
   }
 
@@ -98,7 +101,7 @@ public class StudentGroupController {
    */
   @PostMapping("/{id}/students")
   public StudentGroup addStudentsToStudentGroup(@PathVariable String id,
-                                                  @RequestBody List<String> studentIds) {
+                                                @RequestBody List<String> studentIds) {
     return this.studentGroupService.addStudents(id, studentIds);
   }
 
