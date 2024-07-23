@@ -982,6 +982,16 @@
           "schema" : {
             "type" : "string"
           }
+        }, {
+          "in" : "query",
+          "name" : "tags",
+          "required" : false,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
         } ],
         "responses" : {
           "200" : {
@@ -1117,10 +1127,7 @@
             "content" : {
               "*/*" : {
                 "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/LessonResponseDto"
-                  }
+                  "$ref" : "#/components/schemas/LessonResponseDto"
                 }
               }
             },
@@ -2131,7 +2138,7 @@
         }
       },
       "ConstraintInstance" : {
-        "required" : [ "arguments", "id", "signature", "type" ],
+        "required" : [ "arguments", "id", "type" ],
         "type" : "object",
         "properties" : {
           "arguments" : {
@@ -2142,9 +2149,6 @@
           },
           "id" : {
             "type" : "string"
-          },
-          "signature" : {
-            "$ref" : "#/components/schemas/ConstraintSignature"
           },
           "type" : {
             "type" : "string",
@@ -2293,11 +2297,8 @@
       "Grade" : {
         "type" : "object",
         "properties" : {
-          "curricula" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/Curriculum"
-            }
+          "curriculum" : {
+            "$ref" : "#/components/schemas/Curriculum"
           },
           "id" : {
             "type" : "string"
@@ -2344,6 +2345,9 @@
         "required" : [ "id", "name", "studentGroupIds", "studentIds", "tags" ],
         "type" : "object",
         "properties" : {
+          "curriculumId" : {
+            "type" : "string"
+          },
           "id" : {
             "type" : "string"
           },
