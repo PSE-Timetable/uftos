@@ -145,15 +145,6 @@ public class GradeService {
   }
 
   private GradeResponseDto mapResponseDto(Grade grade) {
-    Set<String> studentIds = new HashSet<>();
-
-    for (StudentGroup group : grade.getStudentGroups()) {
-      studentIds.addAll(group.getStudents().stream().map(Student::getId).toList());
-    }
-
-    return new GradeResponseDto(grade.getId(), grade.getName(),
-        grade.getStudentGroups().stream().map(StudentGroup::getId).toList(),
-        studentIds.stream().toList(),
-        grade.getTags());
+    return GradeResponseDto.createResponseDtoFromGrade(grade);
   }
 }

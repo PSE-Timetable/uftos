@@ -52,7 +52,7 @@ class CurriculumTest {
         .body().jsonPath().getString("id");
 
     firstGradeId = given().contentType(ContentType.JSON)
-        .body(generateGradeJson(FIRST_GRADE_NAME, Collections.emptyList(),
+        .body(generateGradeJson(FIRST_GRADE_NAME, null, Collections.emptyList(),
             Collections.emptyList()))
         .when()
         .post("/grades")
@@ -65,7 +65,7 @@ class CurriculumTest {
         .body().jsonPath().getString("id");
 
     secondGradeId = given().contentType(ContentType.JSON)
-        .body(generateGradeJson(SECOND_GRADE_NAME, Collections.emptyList(),
+        .body(generateGradeJson(SECOND_GRADE_NAME, null, Collections.emptyList(),
             Collections.emptyList()))
         .when()
         .post("/grades")
