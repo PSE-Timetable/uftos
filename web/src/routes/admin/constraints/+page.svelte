@@ -143,18 +143,23 @@
   }
 </script>
 
-{#await getConstraints() then { constraints }}
-  {#await getResources() then { teachers, grades, subjects, constraintSignature }}
-    {#each constraints || [] as constraint}
-      {console.log(constraint)}
-      <ConstraintSignatureComp {teachers} {grades} {subjects} constraintSignature={constraint} />
-      <DataTable
-        columnNames={createColumnNames(constraint)}
-        keys={createKeys(constraint)}
-        loadPage={getInstancesPage}
-        deleteEntry={deleteInstance}
-        additionalId={constraint.name}
-      />
-    {/each}
+<div class="p-4">
+  {#await getConstraints() then { constraints }}
+    {#await getResources() then { teachers, grades, subjects, constraintSignature }}
+      {#each constraints || [] as constraint}
+        <div class="flex flex-row w-full gap-8">
+          <ConstraintSignatureComp {teachers} {grades} {subjects} constraintSignature={constraint} />
+          <div class="w-full">
+            <DataTable
+              columnNames={createColumnNames(constraint)}
+              keys={createKeys(constraint)}
+              loadPage={getInstancesPage}
+              deleteEntry={deleteInstance}
+              additionalId={constraint.name}
+            />
+          </div>
+        </div>
+      {/each}
+    {/await}
   {/await}
-{/await}
+</div>

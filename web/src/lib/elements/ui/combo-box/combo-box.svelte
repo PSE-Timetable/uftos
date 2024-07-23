@@ -49,7 +49,7 @@
     <Button
       aria-expanded={open}
       builders={[builder]}
-      class="w-[200px] justify-between"
+      class="w-[200px] justify-between bg-white"
       role="combobox"
       variant="outline"
     >

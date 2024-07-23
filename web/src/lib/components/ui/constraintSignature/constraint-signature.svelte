@@ -109,7 +109,7 @@
 
   {#await initData() then}
     {#each constraintSignature.parameters as parameter (parameter.id)}
-      <div class="flex flex-row items-center justify-around w-full gap-8">
+      <div class="flex flex-row items-center justify-between w-full gap-8">
         <p>{parameter.parameterName}</p>
 
         <div class="text-primary">

@@ -189,7 +189,7 @@
     />
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild let:builder>
-        <Button builders={[builder]} class="ml-auto shadow-custom" variant="secondary">
+        <Button builders={[builder]} class="ml-auto shadow-custom text-primary bg-white" variant="secondary">
           Spalten
           <ChevronDown class="ml-2 h-4 w-4" />
         </Button>
