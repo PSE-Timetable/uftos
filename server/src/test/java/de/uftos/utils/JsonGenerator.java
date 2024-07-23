@@ -20,7 +20,8 @@ public class JsonGenerator {
    * @return The requested JSON
    * @throws JSONException If something is malformed.
    */
-  public static String generateGradeJson(String name, List<String> studentGroups,
+  public static String generateGradeJson(String name, String curriculumId,
+                                         List<String> studentGroups,
                                          List<String> tags)
       throws JSONException {
     JSONArray tagIds = new JSONArray();
@@ -30,6 +31,7 @@ public class JsonGenerator {
     studentGroups.forEach(studentGroupIds::put);
     return new JSONObject()
         .put("name", name)
+        .put("curriculumId", curriculumId)
         .put("studentGroupIds", studentGroupIds)
         .put("tagIds", tagIds)
         .toString();

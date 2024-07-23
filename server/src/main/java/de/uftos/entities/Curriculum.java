@@ -7,8 +7,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotEmpty;
 import java.util.List;
 import java.util.Objects;
@@ -30,8 +30,7 @@ public class Curriculum {
   @NotEmpty
   private String name;
 
-  //multiple curricula from different years can exist for the same grade
-  @ManyToOne
+  @OneToOne
   @JoinColumn(name = "grades_id", nullable = false)
   private Grade grade;
 
