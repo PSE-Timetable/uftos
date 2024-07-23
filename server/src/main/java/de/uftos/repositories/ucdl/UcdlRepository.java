@@ -33,6 +33,13 @@ public interface UcdlRepository {
   ParsingResponse parseFile();
 
   /**
+   * Attempts to parse the given input and returns whether parsing was successful or not.
+   *
+   * @return a ParsingResponse containing information about whether parsing was successful or not.
+   */
+  ParsingResponse parseString(String input);
+
+  /**
    * Parses the UCDL-file and returns all constraint definitions contained by the file.
    *
    * @return a HashMap which allows for finding constraint definitions by their name.
