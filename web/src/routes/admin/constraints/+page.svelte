@@ -109,8 +109,9 @@
       let dataItems: DataItem[] = result.constraintInstances.map((instance) => {
         let item: DataItem = { id: instance.id };
         for (let i = 0; i < instance.arguments.length; i++) {
-          item[`name${i}`] = String(instance.arguments[i].value);
-          console.log(instance.arguments[i].value);
+          item[`name${i}`] = String(
+            result.displayNames.find((item) => item.id === instance.arguments[i].value)?.displayName,
+          );
         }
         return item;
       });

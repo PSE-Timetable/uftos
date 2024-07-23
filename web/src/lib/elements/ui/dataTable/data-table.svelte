@@ -109,7 +109,12 @@
         header: '',
         id: 'actions',
         cell: ({ value }) => {
-          return createRender(DataTableActions, { id: value.toString(), deleteEntry, getData });
+          return createRender(DataTableActions, {
+            id: value.toString(),
+            deleteEntry,
+            getData,
+            editAvailable: additionalId === '',
+          });
         },
         plugins: {
           sort: {
@@ -129,7 +134,7 @@
     columns,
     tableOptions,
   );
-  const { hasNextPage, hasPreviousPage, pageIndex } = pluginStates.page;
+  const { pageIndex } = pluginStates.page;
   const { filterValue } = pluginStates.filter;
   const { hiddenColumnIds } = pluginStates.hide;
   const { selectedDataIds, allPageRowsSelected } = pluginStates.select;

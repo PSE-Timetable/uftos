@@ -8,6 +8,7 @@
   export let id: string;
   export let deleteEntry: (id: string) => Promise<void>;
   export let getData: () => Promise<void>;
+  export let editAvailable: boolean;
 </script>
 
 <DropdownMenu.Root>
@@ -22,7 +23,9 @@
       <DropdownMenu.Label>Aktionen</DropdownMenu.Label>
       <DropdownMenu.Item on:click={() => navigator.clipboard.writeText(id)}>ID kopieren</DropdownMenu.Item>
     </DropdownMenu.Group>
-    <DropdownMenu.Item on:click={() => goto(`${$page.url}/${id}`)}>Editieren</DropdownMenu.Item>
+    {#if editAvailable}
+      <DropdownMenu.Item on:click={() => goto(`${$page.url}/${id}`)}>Editieren</DropdownMenu.Item>
+    {/if}
     <DropdownMenu.Separator />
     <DropdownMenu.Item
       on:click={async () => {
