@@ -1,4 +1,3 @@
-import type { DataItem } from '$lib/elements/ui/dataTable/data-table.svelte';
 import {
   deleteRoom,
   deleteStudent,
@@ -17,6 +16,12 @@ import {
   type Sort,
 } from '$lib/sdk/fetch-client';
 import { error } from '@sveltejs/kit';
+
+export type DataItem = {
+  id: string;
+
+  [key: string]: string | string[] | number;
+};
 
 export async function loadStudentPage(index: number, sortString: string, filter: string) {
   const pageable: Pageable = { page: index, size: 10, sort: [sortString] };
