@@ -47,7 +47,24 @@ public class UcdlRepositoryImpl implements UcdlRepository {
   @Override
   public ParsingResponse parseFile() {
     try {
-      this.currentDefinitions = UcdlParser.getDefinitions(this.getUcdl());
+      return parseString(this.getUcdl(), true);
+    } catch (BadRequestException e) {
+      return new ParsingResponse(false, e.getMessage());
+    }
+  }
+
+  @Override
+  public ParsingResponse parseString(String input) {
+    return parseString(input, false);
+  }
+
+  private ParsingResponse parseString(String input, boolean doesSafeDefinitions) {
+    try {
+      if (doesSafeDefinitions) {
+        this.currentDefinitions = UcdlParser.getDefinitions(input);
+      } else {
+        UcdlParser.getDefinitions(input);
+      }
     } catch (ParseException | IOException e) {
       return new ParsingResponse(false, e.getMessage());
     }
