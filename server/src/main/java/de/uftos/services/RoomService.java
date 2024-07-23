@@ -2,13 +2,18 @@ package de.uftos.services;
 
 import de.uftos.dto.LessonResponseDto;
 import de.uftos.dto.RoomRequestDto;
+import de.uftos.entities.Lesson;
 import de.uftos.entities.Room;
 import de.uftos.repositories.database.RoomRepository;
+import de.uftos.repositories.database.ServerRepository;
+import de.uftos.utils.SpecificationBuilder;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -19,6 +24,7 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class RoomService {
   private final RoomRepository repository;
+  private final ServerRepository serverRepository;
 
   /**
    * Creates a lesson service.
@@ -26,8 +32,9 @@ public class RoomService {
    * @param repository the repository for accessing the lesson table.
    */
   @Autowired
-  public RoomService(RoomRepository repository) {
+  public RoomService(RoomRepository repository, ServerRepository serverRepository) {
     this.repository = repository;
+    this.serverRepository = serverRepository;
   }
 
   /**
@@ -43,7 +50,13 @@ public class RoomService {
   public Page<Room> get(Pageable pageable, Optional<String> name,
                         Optional<String> buildingName, Optional<Integer> capacity,
                         Optional<String[]> tags) {
-    return this.repository.findAll(pageable);
+    //currently no capacity filter
+    Specification<Room> spec = new SpecificationBuilder<Room>()
+        .optionalOrEquals(name, "name")
+        .optionalOrEquals(buildingName, "buildingName")
+        .optionalAndJoinIn(tags, "tags", "id")
+        .build();
+    return this.repository.findAll(spec, pageable);
   }
 
   /**
@@ -66,10 +79,12 @@ public class RoomService {
    * @return a list of objects each containing information about a lesson.
    * @throws ResponseStatusException is thrown if the ID doesn't have a corresponding room.
    */
-  public List<LessonResponseDto> getLessonsById(String id) {
+  public LessonResponseDto getLessonsById(String id) {
     Room room = this.getById(id);
-    // TODO
-    return null;
+    List<Lesson> lessons = new ArrayList<>(room.getLessons());
+    lessons.removeIf(lesson -> !lesson.getYear().equals(
+        serverRepository.findAll().getFirst().getCurrentYear()));
+    return LessonResponseDto.createResponseDtoFromLessons(lessons);
   }
 
   /**

@@ -3,9 +3,8 @@ package de.uftos.services;
 import de.uftos.dto.TimeslotRequestDto;
 import de.uftos.entities.Timeslot;
 import de.uftos.repositories.database.TimeslotRepository;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -30,11 +29,10 @@ public class TimeslotService {
   /**
    * Gets a page of entries of the timeslot table.
    *
-   * @param pageable contains the parameters for the page.
-   * @return the page of entries fitting the parameters.
+   * @return all timeslots.
    */
-  public Page<Timeslot> get(Pageable pageable) {
-    return this.repository.findAll(pageable);
+  public List<Timeslot> get() {
+    return this.repository.findAll();
   }
 
   /**

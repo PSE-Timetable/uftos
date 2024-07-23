@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { DataItem } from '$lib/elements/ui/dataTable/data-table.svelte';
   import DataTable from '$lib/elements/ui/dataTable/data-table.svelte';
-  import { deleteSubject, getSubjects, type Pageable, type PageSubject } from '$lib/sdk/fetch-client';
+  import { deleteSubject, getSubjects, type Sort } from '$lib/sdk/fetch-client';
   import { error } from '@sveltejs/kit';
   import { onMount } from 'svelte';
 
@@ -12,23 +12,22 @@
   onMount(() => (pageLoaded = true));
 
   async function loadPage(index: number, sortString: string, filter: string) {
-    let pageable: Pageable = { page: index, size: 10, sort: [sortString] };
+    let sort: Sort = { sort: [sortString] };
     try {
-      const result: PageSubject = await getSubjects(pageable, {
+      const result = await getSubjects(sort, {
         name: filter,
       });
-      let dataItems: DataItem[] = result.content
-        ? result.content.map(
-            (subject): DataItem => ({
-              id: subject.id,
-              name: subject.name,
-              tags: subject.tags.map((tag) => tag.name),
-            }),
-          )
-        : [];
+      let dataItems: DataItem[] = result.map(
+        (subject): DataItem => ({
+          id: subject.id,
+          name: subject.name,
+          tags: subject.tags.map((tag) => tag.name),
+        }),
+      );
+
       return {
         data: dataItems,
-        totalElements: Number(result.totalElements),
+        totalElements: result.length,
       };
     } catch {
       error(400, { message: 'Could not fetch page' });

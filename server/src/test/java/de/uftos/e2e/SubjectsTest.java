@@ -1,13 +1,11 @@
 package de.uftos.e2e;
 
-import static de.uftos.utils.JsonGenerator.generatePageJson;
 import static de.uftos.utils.JsonGenerator.generateSubjectJson;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
 import io.restassured.http.ContentType;
-import java.util.Collections;
 import org.json.JSONException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -66,26 +64,24 @@ class SubjectsTest {
   @Test
   void getAllSubjects() throws JSONException {
     given().contentType(ContentType.JSON)
-        .body(generatePageJson(0, 10, Collections.emptyList()))
         .when()
         .get("/subjects")
         .then()
         .statusCode(200)
-        .body("totalElements", equalTo(2))
+        .body("size()", equalTo(2))
         .log().ifValidationFails();
   }
 
   @Test
   void getSubjectsWithName() throws JSONException {
     given().contentType(ContentType.JSON)
-        .body(generatePageJson(0, 10, Collections.emptyList()))
         .param("name", "ct 1")
         .when()
         .get("/subjects")
         .then()
         .statusCode(200)
-        .body("totalElements", equalTo(1))
-        .body("content[0].id", equalTo(subject1Id))
+        .body("size()", equalTo(1))
+        .body("[0].id", equalTo(subject1Id))
         .log().ifValidationFails();
   }
 }

@@ -4,7 +4,6 @@ import de.uftos.dto.LessonResponseDto;
 import de.uftos.dto.RoomRequestDto;
 import de.uftos.entities.Room;
 import de.uftos.services.RoomService;
-import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -88,7 +87,7 @@ public class RoomController {
    * @return information about the lessons that get taught in the room.
    */
   @GetMapping("/{id}/lessons")
-  public List<LessonResponseDto> getRoomLessons(@PathVariable String id) {
+  public LessonResponseDto getRoomLessons(@PathVariable String id) {
     return this.roomService.getLessonsById(id);
   }
 
