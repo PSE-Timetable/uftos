@@ -7,7 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import java.util.List;
 import java.util.Objects;
 import lombok.Data;
@@ -28,8 +28,8 @@ public class Grade {
 
   private String name;
 
-  @OneToMany(mappedBy = "grade")
-  private List<Curriculum> curricula;
+  @OneToOne(mappedBy = "grade")
+  private Curriculum curriculum;
 
   @ManyToMany
   @JoinTable(name = "grades_student_groups",

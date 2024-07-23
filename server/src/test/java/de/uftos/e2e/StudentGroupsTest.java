@@ -62,7 +62,7 @@ public class StudentGroupsTest {
 
 
     gradeId = given().contentType(ContentType.JSON)
-        .body(generateGradeJson(GRADE_NAME, Collections.emptyList(), Collections.emptyList()))
+        .body(generateGradeJson(GRADE_NAME, null, Collections.emptyList(), Collections.emptyList()))
         .when()
         .post("/grades")
         .then()

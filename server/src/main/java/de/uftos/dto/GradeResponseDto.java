@@ -15,12 +15,13 @@ import java.util.Set;
  *
  * @param id              the ID of the grade.
  * @param name            the name of the grade.
+ * @param curriculumId    the ID of the curriculum of the grade.
  * @param studentGroupIds the IDs of the student groups that are a part of the grade.
  * @param studentIds      the IDs of the students that are a part of the grade.
  * @param tags            the tags associated with the grade.
  */
 public record GradeResponseDto(@NotEmpty String id, @NotEmpty String name,
-                               @NotNull List<String> studentGroupIds,
+                               String curriculumId, @NotNull List<String> studentGroupIds,
                                @NotNull List<String> studentIds, @NotNull List<Tag> tags) {
 
   /**
@@ -32,11 +33,19 @@ public record GradeResponseDto(@NotEmpty String id, @NotEmpty String name,
   public static GradeResponseDto createResponseDtoFromGrade(Grade grade) {
     Set<String> studentGroupIds = new HashSet<>();
     Set<String> studentIds = new HashSet<>();
+    String curriculumId;
+    if (grade.getCurriculum() == null) {
+      curriculumId = "";
+    } else {
+      curriculumId = grade.getCurriculum().getId();
+    }
+
     for (StudentGroup studentGroup : grade.getStudentGroups()) {
       studentGroupIds.add(studentGroup.getId());
       studentGroup.getStudents().stream().map(Student::getId).forEach(studentIds::add);
     }
-    return new GradeResponseDto(grade.getId(), grade.getName(), studentGroupIds.stream().toList(),
+    return new GradeResponseDto(grade.getId(), grade.getName(), curriculumId,
+        studentGroupIds.stream().toList(),
         studentIds.stream().toList(), grade.getTags());
   }
 }
