@@ -1,8 +1,7 @@
 <script lang="ts">
-  let begin: string = '7:45';
-  let end: string = '8:30';
-  let index: string = '1.';
-  export { begin, end, index };
+  export let begin: string;
+  export let end: string;
+  export let index: string;
 </script>
 
 <div class="flex flex-col w-min items-center gap-0.5 col-[1]">
@@ -10,7 +9,7 @@
     <p>{begin}</p>
   </div>
 
-  <div class="flex flex-row gap-2 items-center">
+  <div class="flex flex-row gap-2 items-center pr-6">
     <p>{index}</p>
     <div>
       <!-- Vertical lines -->
@@ -21,7 +20,6 @@
         <rect fill="#2B6E89" height="6" rx="0.5" width="1" x="0.5" y="33" />
       </svg>
     </div>
-    <p class="invisible">{index}</p>
   </div>
 
   <div class="flex w-max">

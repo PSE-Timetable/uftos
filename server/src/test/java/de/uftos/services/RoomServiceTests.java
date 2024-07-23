@@ -1,5 +1,6 @@
 package de.uftos.services;
 
+
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -17,8 +18,8 @@ import de.uftos.entities.StudentGroup;
 import de.uftos.entities.Subject;
 import de.uftos.entities.Teacher;
 import de.uftos.entities.TimetableMetadata;
+import de.uftos.repositories.database.RoomRepository;
 import de.uftos.repositories.database.ServerRepository;
-import de.uftos.repositories.database.TeacherRepository;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -34,21 +35,18 @@ import org.mockito.quality.Strictness;
 @SuppressWarnings("checkstyle:MissingJavadocType")
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-public class TeacherServiceTests {
-
+public class RoomServiceTests {
   @Mock
-  private TeacherRepository teacherRepository;
+  private RoomRepository roomRepository;
 
   @Mock
   private ServerRepository serverRepository;
 
   @InjectMocks
-  private TeacherService teacherService;
+  private RoomService roomService;
 
-  private Room room1;
-  private Room room2;
 
-  private static void assertResultArraysSizes(LessonResponseDto result, int teachers, int lessons,
+  private static void assertResulArraysSizes(LessonResponseDto result, int teachers, int lessons,
                                              int rooms, int grades) {
     assertAll("Testing whether the sizes of the arrays are correct",
         () -> assertEquals(teachers, result.teachers().size()),
@@ -60,19 +58,18 @@ public class TeacherServiceTests {
 
   @BeforeEach
   void setUp() {
-    Teacher teacher1 = new Teacher("Max", "Mustermann", "MM",
-        List.of("1", "2", "3"), List.of("1", "2", "3"));
-    teacher1.setId("123");
+    Room room1 = new Room("100", "10.10", 10, List.of("T1", "T2", "T3"));
+    room1.setId("123");
 
-    Teacher teacher2 = new Teacher("Alex", "Mustermann", "MA",
-        List.of("1", "2", "3"), List.of("1", "2", "3"));
-    teacher2.setId("456");
-    teacher2.setLessons(Collections.emptyList());
+    Room room2 = new Room("101", "11.11", 50, List.of("3", "4", "5"));
+    room2.setId("456");
+    room2.setLessons(Collections.emptyList());
 
     Student student1 = new Student("123");
     Student student2 = new Student("345");
     Student student3 = new Student("153");
     Student student4 = new Student("325");
+
 
     StudentGroup studentGroup1 = new StudentGroup("654");
     studentGroup1.setStudents(List.of(student1, student2));
@@ -89,42 +86,41 @@ public class TeacherServiceTests {
     Subject subject = new Subject();
     subject.setId("789");
 
-    room1 = new Room("534");
-    room2 = new Room("574");
+    Teacher teacher1 = new Teacher("123");
 
     Lesson lesson1 = createLesson(teacher1, room1, studentGroup1, "2024", subject);
     Lesson lesson2 = createLesson(teacher1, room1, studentGroup1, "2022", subject);
-    Lesson lesson3 = createLesson(teacher1, room2, studentGroup2, "2024", subject);
+    Lesson lesson3 = createLesson(teacher1, room1, studentGroup2, "2024", subject);
 
-    teacher1.setLessons(List.of(lesson1, lesson2, lesson3));
-    teacher1.setSubjects(List.of(subject));
+    room1.setLessons(List.of(lesson1, lesson2, lesson3));
 
     Server server =
         new Server(new TimetableMetadata(45, "7:45", new Break[] {}), "2024");
     when(serverRepository.findAll()).thenReturn(List.of(server));
-    when(teacherRepository.findById("123")).thenReturn(Optional.of(teacher1));
-    when(teacherRepository.findById("456")).thenReturn(Optional.of(teacher2));
+    when(roomRepository.findById("123")).thenReturn(Optional.of(room1));
+    when(roomRepository.findById("456")).thenReturn(Optional.of(room2));
   }
 
   @Test
   void emptyLessons() {
-    assertDoesNotThrow(() -> teacherService.getLessonsById("456"));
-    LessonResponseDto result = teacherService.getLessonsById("456");
-    assertResultArraysSizes(result, 0, 0, 0, 0);
+    assertDoesNotThrow(() -> roomService.getLessonsById("456"));
+    LessonResponseDto result = roomService.getLessonsById("456");
+    assertResulArraysSizes(result, 0, 0, 0, 0);
   }
 
   @Test
   void lessonsById() {
-    LessonResponseDto result = teacherService.getLessonsById("123");
-    assertResultArraysSizes(result, 1, 2, 2, 1);
+    Room room1 = roomRepository.findById("123").orElseThrow();
+
+    LessonResponseDto result = roomService.getLessonsById("123");
+    assertResulArraysSizes(result, 1, 2, 1, 1);
     assertAll("Testing whether the sizes of the arrays are correct",
         () -> assertEquals(2, result.grades().getFirst().studentGroupIds().size()),
         () -> assertEquals(4, result.grades().getFirst().studentIds().size())
     );
 
     assertAll("Testing whether all the rooms are there",
-        () -> assertTrue(result.rooms().contains(room1)),
-        () -> assertTrue(result.rooms().contains(room2))
+        () -> assertTrue(result.rooms().contains(room1))
     );
 
     assertAll("Testing whether all the student groups are there",
@@ -149,4 +145,5 @@ public class TeacherServiceTests {
     lesson.setSubject(subject);
     return lesson;
   }
+
 }

@@ -56,6 +56,7 @@ public record LessonResponseDto(@NotNull List<BulkLesson> lessons,
       rooms.add(lesson.getRoom());
       subjects.add(lesson.getSubject());
     }
+
     grades.stream().map(GradeResponseDto::createResponseDtoFromGrade)
         .forEach(gradeResponseDtos::add);
 

@@ -1,7 +1,7 @@
 package de.uftos.e2e;
 
 import static de.uftos.utils.JsonGenerator.generatePageJson;
-import static de.uftos.utils.JsonGenerator.generateStudentJson;
+import static de.uftos.utils.JsonGenerator.generateRoomJson;
 import static de.uftos.utils.JsonGenerator.generateTagJson;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
@@ -15,20 +15,22 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-class StudentsTest {
+class RoomsTest {
 
-  private static final String FIRST_STUDENT_FIRST_NAME = "Karen";
-  private static final String FIRST_STUDENT_LAST_NAME = "Musterman";
-  private static final String SECOND_STUDENT_FIRST_NAME = "Jason";
-  private static final String SECOND_STUDENT_LAST_NAME = "Musterman";
-  private static final String TAG_NAME = "Sehbehinderung";
+  private static final String FIRST_ROOM_NAME = "100";
+  private static final String FIRST_ROOM_BUILDING = "10.10";
+  private static final int FIRST_ROOM_CAPACITY = 30;
+  private static final String SECOND_ROOM_NAME = "101";
+  private static final String SECOND_BUILDING_NAME = "11.11";
+  private static final int SECOND_ROOM_CAPACITY = 50;
+  private static final String TAG_NAME = "Rollstuhl geeignet";
 
-  static String firstStudent;
-  static String secondStudent;
+  static String firstRoomId;
+  static String secondRoomId;
   static String tagId;
 
   @BeforeAll
-  static void createTestStudents() throws JSONException {
+  static void createTestRooms() throws JSONException {
     tagId = given().contentType(ContentType.JSON)
         .body(generateTagJson(TAG_NAME))
         .when()
@@ -41,46 +43,49 @@ class StudentsTest {
         .extract()
         .body().jsonPath().getString("id");
 
-    secondStudent = given().contentType(ContentType.JSON)
-        .body(generateStudentJson(SECOND_STUDENT_FIRST_NAME, SECOND_STUDENT_LAST_NAME,
-            List.of(tagId)))
+    firstRoomId = given().contentType(ContentType.JSON)
+        .body(generateRoomJson(FIRST_ROOM_NAME, FIRST_ROOM_BUILDING, FIRST_ROOM_CAPACITY,
+            Collections.emptyList()))
         .when()
-        .post("/students")
+        .post("/rooms")
         .then()
         .statusCode(200)
         .body("id", notNullValue())
-        .body("firstName", equalTo(SECOND_STUDENT_FIRST_NAME))
-        .body("lastName", equalTo(SECOND_STUDENT_LAST_NAME))
+        .body("name", equalTo(FIRST_ROOM_NAME))
+        .body("buildingName", equalTo(FIRST_ROOM_BUILDING))
+        .body("capacity", equalTo(FIRST_ROOM_CAPACITY))
         .log().ifValidationFails()
         .extract()
         .body().jsonPath().getString("id");
 
-    firstStudent = given().contentType(ContentType.JSON)
-        .body(generateStudentJson(FIRST_STUDENT_FIRST_NAME, FIRST_STUDENT_LAST_NAME,
-            Collections.emptyList()))
+    secondRoomId = given().contentType(ContentType.JSON)
+        .body(generateRoomJson(SECOND_ROOM_NAME, SECOND_BUILDING_NAME, SECOND_ROOM_CAPACITY,
+            List.of(tagId)))
         .when()
-        .post("/students")
+        .post("/rooms")
         .then()
         .statusCode(200)
         .body("id", notNullValue())
-        .body("firstName", equalTo(FIRST_STUDENT_FIRST_NAME))
-        .body("lastName", equalTo(FIRST_STUDENT_LAST_NAME))
+        .body("name", equalTo(SECOND_ROOM_NAME))
+        .body("buildingName", equalTo(SECOND_BUILDING_NAME))
+        .body("capacity", equalTo(SECOND_ROOM_CAPACITY))
         .log().ifValidationFails()
         .extract()
         .body().jsonPath().getString("id");
+
   }
 
   @AfterAll
-  static void deleteCreatedStudents() {
+  static void deleteCreatedEntities() {
     given().contentType(ContentType.JSON)
         .when()
-        .delete("/students/{id}", firstStudent)
+        .delete("/rooms/{id}", firstRoomId)
         .then()
         .statusCode(200);
 
     given().contentType(ContentType.JSON)
         .when()
-        .delete("/students/{id}", secondStudent)
+        .delete("/rooms/{id}", secondRoomId)
         .then()
         .statusCode(200);
 
@@ -92,11 +97,11 @@ class StudentsTest {
   }
 
   @Test
-  void getAllStudents() throws JSONException {
+  void getAllRooms() throws JSONException {
     given().contentType(ContentType.JSON)
         .body(generatePageJson(0, 10, Collections.emptyList()))
         .when()
-        .get("/students")
+        .get("/rooms")
         .then()
         .statusCode(200)
         .body("totalElements", equalTo(2))
@@ -104,30 +109,44 @@ class StudentsTest {
   }
 
   @Test
-  void getStudentsWithTag() throws JSONException {
+  void getRoomsWithTag() throws JSONException {
     given().contentType(ContentType.JSON)
         .body(generatePageJson(0, 10, Collections.emptyList()))
         .param("tags", List.of(tagId))
         .when()
-        .get("/students")
+        .get("/rooms")
         .then()
         .statusCode(200)
         .body("totalElements", equalTo(1))
-        .body("content[0].id", equalTo(secondStudent))
+        .body("content[0].id", equalTo(secondRoomId))
         .log().ifValidationFails();
   }
 
   @Test
-  void getStudentsWithName() throws JSONException {
+  void getRoomsWithName() throws JSONException {
     given().contentType(ContentType.JSON)
         .body(generatePageJson(0, 10, Collections.emptyList()))
-        .param("firstName", FIRST_STUDENT_FIRST_NAME)
+        .param("name", FIRST_ROOM_NAME)
         .when()
-        .get("/students")
+        .get("/rooms")
         .then()
         .statusCode(200)
         .body("totalElements", equalTo(1))
-        .body("content[0].id", equalTo(firstStudent))
+        .body("content[0].id", equalTo(firstRoomId))
+        .log().ifValidationFails();
+  }
+
+  @Test
+  void getRoomsWithBuildingName() throws JSONException {
+    given().contentType(ContentType.JSON)
+        .body(generatePageJson(0, 10, Collections.emptyList()))
+        .param("buildingName", FIRST_ROOM_BUILDING)
+        .when()
+        .get("/rooms")
+        .then()
+        .statusCode(200)
+        .body("totalElements", equalTo(1))
+        .body("content[0].id", equalTo(firstRoomId))
         .log().ifValidationFails();
 
   }

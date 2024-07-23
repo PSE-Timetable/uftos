@@ -3,13 +3,18 @@ package de.uftos.services;
 import de.uftos.dto.LessonResponseDto;
 import de.uftos.dto.StudentAndGroup;
 import de.uftos.dto.StudentGroupRequestDto;
+import de.uftos.entities.Lesson;
 import de.uftos.entities.StudentGroup;
+import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.StudentGroupRepository;
+import de.uftos.utils.SpecificationBuilder;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -20,6 +25,7 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class StudentGroupService {
   private final StudentGroupRepository repository;
+  private final ServerRepository serverRepository;
 
   /**
    * Creates a student group service.
@@ -27,8 +33,9 @@ public class StudentGroupService {
    * @param repository the repository for accessing the student group table.
    */
   @Autowired
-  public StudentGroupService(StudentGroupRepository repository) {
+  public StudentGroupService(StudentGroupRepository repository, ServerRepository serverRepository) {
     this.repository = repository;
+    this.serverRepository = serverRepository;
   }
 
   /**
@@ -36,11 +43,17 @@ public class StudentGroupService {
    *
    * @param pageable contains the parameters for the page.
    * @param name     the name filter.
+   * @param tags     the tags filter.
    * @return the page of the entries fitting the parameters.
    */
-  public Page<StudentGroup> get(Pageable pageable, Optional<String> name) {
-    return this.repository.findAll(pageable);
+  public Page<StudentGroup> get(Pageable pageable, Optional<String> name, Optional<String[]> tags) {
+    Specification<StudentGroup> spec = new SpecificationBuilder<StudentGroup>()
+        .optionalOrEquals(name, "name")
+        .optionalAndJoinIn(tags, "tags", "id")
+        .build();
+    return this.repository.findAll(spec, pageable);
   }
+
 
   /**
    * Gets a student group from their ID.
@@ -50,22 +63,23 @@ public class StudentGroupService {
    * @throws ResponseStatusException is thrown if the ID doesn't have a corresponding student group.
    */
   public StudentGroup getById(String id) {
-    Optional<StudentGroup> group = this.repository.findById(id);
-
-    return group.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+    Optional<StudentGroup> studentGroup = this.repository.findById(id);
+    return studentGroup.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
   }
 
   /**
    * Gets the information about the lessons that the student group attends.
    *
    * @param id the ID of the student group.
-   * @return a list of objects each containing information about a lesson.
+   * @return a LessonResponseDto containing information about the lessons.
    * @throws ResponseStatusException is thrown if the ID doesn't have a corresponding student group.
    */
-  public List<LessonResponseDto> getLessonsById(String id) {
-    StudentGroup studentGroup = this.getById(id);
-    // TODO
-    return null;
+  public LessonResponseDto getLessonsById(String id) {
+    StudentGroup studentGroup = getById(id);
+    List<Lesson> lessons = new ArrayList<>(studentGroup.getLessons());
+    lessons.removeIf(lesson -> !lesson.getYear().equals(
+        serverRepository.findAll().getFirst().getCurrentYear()));
+    return LessonResponseDto.createResponseDtoFromLessons(lessons);
   }
 
   /**
@@ -90,7 +104,6 @@ public class StudentGroupService {
   public StudentGroup update(String id, StudentGroupRequestDto groupRequest) {
     StudentGroup group = groupRequest.map();
     group.setId(id);
-
     return this.repository.save(group);
   }
 

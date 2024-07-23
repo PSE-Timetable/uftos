@@ -50,15 +50,17 @@ public class GradeController {
 
   /**
    * Maps the HTTP GET request for a set of grades from the database, to the
-   * {@link GradeService#get(Sort, Optional) get} function of the grade service.
+   * {@link GradeService#get(Sort, Optional, Optional) get} function of the grade service.
    *
    * @param sort contains the sort parameters.
    * @param name the name filter.
+   * @param tags the tags filter.
    * @return the page of grades fitting the parameters.
    */
   @GetMapping()
-  public List<GradeResponseDto> getGrades(Sort sort, Optional<String> name) {
-    return this.gradeService.get(sort, name);
+  public List<GradeResponseDto> getGrades(Sort sort, Optional<String> name,
+                                          Optional<String[]> tags) {
+    return this.gradeService.get(sort, name, tags);
   }
 
   /**
@@ -81,7 +83,7 @@ public class GradeController {
    * @return information about the lessons that are taught in the grade.
    */
   @GetMapping("/{id}/lessons")
-  public List<LessonResponseDto> getGradeLessons(@PathVariable String id) {
+  public LessonResponseDto getGradeLessons(@PathVariable String id) {
     return this.gradeService.getLessonsById(id);
   }
 

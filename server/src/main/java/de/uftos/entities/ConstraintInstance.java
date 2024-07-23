@@ -1,5 +1,6 @@
 package de.uftos.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.uftos.dto.solver.RewardPenalize;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -29,6 +30,7 @@ public class ConstraintInstance {
 
   @NotNull
   @ManyToOne
+  @JsonIgnore
   private ConstraintSignature signature;
 
   @NotNull

@@ -58,6 +58,30 @@ export type PageConstraintSignature = {
     totalElements?: number;
     totalPages?: number;
 };
+export type SlimArgument = {
+    id: string;
+    value: string;
+};
+export type SlimInstance = {
+    arguments: SlimArgument[];
+    id: string;
+    "type": Type;
+};
+export type ConstraintArgumentDisplayName = {
+    displayName: string;
+    id: string;
+};
+export type ConstraintInstancesResponseDto = {
+    constraintInstances: SlimInstance[];
+    displayNames: ConstraintArgumentDisplayName[];
+    parameters: ConstraintParameter[];
+};
+export type ConstraintInstanceRequestDto = {
+    arguments: {
+        [key: string]: string;
+    };
+    "type"?: Type;
+};
 export type ConstraintArgument = {
     constraintParameter: ConstraintParameter;
     id: string;
@@ -66,28 +90,14 @@ export type ConstraintArgument = {
 export type ConstraintInstance = {
     arguments: ConstraintArgument[];
     id: string;
-    signature: ConstraintSignature;
     "type": Type;
-};
-export type ConstraintArgumentDisplayName = {
-    displayName: string;
-    id: string;
-};
-export type ConstraintInstancesResponseDto = {
-    constraintInstances: ConstraintInstance[];
-    displayNames: ConstraintArgumentDisplayName[];
-};
-export type ConstraintInstanceRequestDto = {
-    arguments: {
-        [key: string]: string;
-    };
-    "type"?: Type;
 };
 export type Tag = {
     id: string;
     name: string;
 };
 export type GradeResponseDto = {
+    curriculumId?: string;
     id: string;
     name: string;
     studentGroupIds: string[];
@@ -131,6 +141,7 @@ export type LessonsCountRequestDto = {
 export type CurriculumRequestDto = {
     gradeId: string;
     lessonsCounts: LessonsCountRequestDto[];
+    name: string;
 };
 export type ParsingResponse = {
     message?: string;
@@ -141,7 +152,7 @@ export type Sort = {
 };
 export type GradeRequestDto = {
     name: string;
-    studentGroupsIds: string[];
+    studentGroupIds: string[];
     tagIds: string[];
 };
 export type Timeslot = {
@@ -208,7 +219,14 @@ export type LessonRequestDto = {
     timeslotId: string;
     timetableId: string;
 };
+export type Curriculum = {
+    grade?: Grade;
+    id?: string;
+    lessonsCounts?: LessonsCount[];
+    name: string;
+};
 export type Grade = {
+    curriculum?: Curriculum;
     id?: string;
     name?: string;
     studentGroups?: StudentGroup[];
@@ -339,19 +357,6 @@ export type TeacherRequestDto = {
     subjectIds: string[];
     tagIds: string[];
 };
-export type PageTimeslot = {
-    content?: Timeslot[];
-    empty?: boolean;
-    first?: boolean;
-    last?: boolean;
-    "number"?: number;
-    numberOfElements?: number;
-    pageable?: PageableObject;
-    size?: number;
-    sort?: SortObject[];
-    totalElements?: number;
-    totalPages?: number;
-};
 export type TimeslotRequestDto = {
     day: Day;
     slot: number;
@@ -443,12 +448,15 @@ export function updateConstraintInstanceById(signatureId: string, id: string, re
         method: "PUT"
     }));
 }
-export function getCurriculums(pageable: Pageable, opts?: Oazapfts.RequestOpts) {
+export function getCurriculums(pageable: Pageable, { name }: {
+    name?: string;
+} = {}, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
         data: PageCurriculumResponseDto;
     }>(`/curriculum${QS.query(QS.explode({
-        pageable
+        pageable,
+        name
     }))}`, {
         ...opts
     }));
@@ -507,15 +515,17 @@ export function setUcdlFile(body: {
         body
     })));
 }
-export function getGrades(sort: Sort, { name }: {
+export function getGrades(sort: Sort, { name, tags }: {
     name?: string;
+    tags?: string[];
 } = {}, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
         data: GradeResponseDto[];
     }>(`/grades${QS.query(QS.explode({
         sort,
-        name
+        name,
+        tags
     }))}`, {
         ...opts
     }));
@@ -557,7 +567,7 @@ export function updateGrade(id: string, gradeRequestDto: GradeRequestDto, opts?:
 export function getGradeLessons(id: string, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
-        data: LessonResponseDto[];
+        data: LessonResponseDto;
     }>(`/grades/${encodeURIComponent(id)}/lessons`, {
         ...opts
     }));
@@ -662,7 +672,7 @@ export function updateRoom(id: string, roomRequestDto: RoomRequestDto, opts?: Oa
 export function getRoomLessons(id: string, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
-        data: LessonResponseDto[];
+        data: LessonResponseDto;
     }>(`/rooms/${encodeURIComponent(id)}/lessons`, {
         ...opts
     }));
@@ -691,15 +701,17 @@ export function setTimetableMetadata(timetableMetadata: TimetableMetadata, opts?
         method: "PUT"
     }));
 }
-export function getStudentGroups(pageable: Pageable, { name }: {
+export function getStudentGroups(pageable: Pageable, { name, tags }: {
     name?: string;
+    tags?: string[];
 } = {}, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
         data: PageStudentGroup;
     }>(`/student-groups${QS.query(QS.explode({
         pageable,
-        name
+        name,
+        tags
     }))}`, {
         ...opts
     }));
@@ -741,7 +753,7 @@ export function updateStudentGroup(id: string, studentGroupRequestDto: StudentGr
 export function getStudentGroupLessons(id: string, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
-        data: LessonResponseDto[];
+        data: LessonResponseDto;
     }>(`/student-groups/${encodeURIComponent(id)}/lessons`, {
         ...opts
     }));
@@ -971,13 +983,11 @@ export function getTeacherLessons(id: string, opts?: Oazapfts.RequestOpts) {
         ...opts
     }));
 }
-export function getTimeslots(pageable: Pageable, opts?: Oazapfts.RequestOpts) {
+export function getTimeslots(opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
-        data: PageTimeslot;
-    }>(`/timeslots${QS.query(QS.explode({
-        pageable
-    }))}`, {
+        data: Timeslot[];
+    }>("/timeslots", {
         ...opts
     }));
 }

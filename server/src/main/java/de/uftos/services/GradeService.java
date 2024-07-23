@@ -1,17 +1,24 @@
 package de.uftos.services;
 
+
 import de.uftos.dto.GradeRequestDto;
 import de.uftos.dto.GradeResponseDto;
 import de.uftos.dto.LessonResponseDto;
 import de.uftos.entities.Grade;
+import de.uftos.entities.Lesson;
 import de.uftos.entities.Student;
 import de.uftos.entities.StudentGroup;
 import de.uftos.repositories.database.GradeRepository;
+import de.uftos.repositories.database.ServerRepository;
 import de.uftos.utils.SpecificationBuilder;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
@@ -25,6 +32,7 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class GradeService {
   private final GradeRepository repository;
+  private final ServerRepository serverRepository;
 
   /**
    * Creates a grade service.
@@ -32,8 +40,9 @@ public class GradeService {
    * @param repository the repository for accessing the grade table.
    */
   @Autowired
-  public GradeService(GradeRepository repository) {
+  public GradeService(GradeRepository repository, ServerRepository serverRepository) {
     this.repository = repository;
+    this.serverRepository = serverRepository;
   }
 
   /**
@@ -41,14 +50,17 @@ public class GradeService {
    *
    * @param sort contains the sort parameters.
    * @param name the name filter.
+   * @param tags the tags filter.
    * @return the page of the entries fitting the parameters.
    */
-  public List<GradeResponseDto> get(Sort sort, Optional<String> name) {
-    Specification<Grade> specification = new SpecificationBuilder<Grade>()
+  public List<GradeResponseDto> get(Sort sort, Optional<String> name,
+                                    Optional<String[]> tags) {
+    Specification<Grade> spec = new SpecificationBuilder<Grade>()
         .optionalOrEquals(name, "name")
+        .optionalAndJoinIn(tags, "tags", "id")
         .build();
-    List<Grade> grades = this.repository.findAll(specification, sort);
 
+    List<Grade> grades = this.repository.findAll(spec, sort);
     return grades.stream().map(this::mapResponseDto).toList();
   }
 
@@ -73,12 +85,22 @@ public class GradeService {
    * @return a list of objects each containing information about a lesson.
    * @throws ResponseStatusException is thrown if the ID doesn't have a corresponding grade.
    */
-  public List<LessonResponseDto> getLessonsById(String id) {
+  public LessonResponseDto getLessonsById(String id) {
     Grade grade = this.repository.findById(id)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
 
-    // TODO
-    return null;
+    Stream<StudentGroup> studentGroupStream =
+        Stream.of(grade.getStudentGroups()).flatMap(Collection::stream);
+    // A lesson cannot have multiple student groups attending it => no duplicates
+    // getLessons returns null if there is no lesson
+    List<Lesson> lessons = studentGroupStream.map(StudentGroup::getLessons).filter(Objects::nonNull)
+        .flatMap(Collection::stream).collect(Collectors.toList());
+
+
+    lessons.removeIf(lesson -> !lesson.getYear().equals(
+        serverRepository.findAll().getFirst().getCurrentYear()));
+
+    return LessonResponseDto.createResponseDtoFromLessons(lessons);
   }
 
   /**
@@ -123,15 +145,6 @@ public class GradeService {
   }
 
   private GradeResponseDto mapResponseDto(Grade grade) {
-    Set<String> studentIds = new HashSet<>();
-
-    for (StudentGroup group : grade.getStudentGroups()) {
-      studentIds.addAll(group.getStudents().stream().map(Student::getId).toList());
-    }
-
-    return new GradeResponseDto(grade.getId(), grade.getName(),
-        grade.getStudentGroups().stream().map(StudentGroup::getId).toList(),
-        studentIds.stream().toList(),
-        grade.getTags());
+    return GradeResponseDto.createResponseDtoFromGrade(grade);
   }
 }

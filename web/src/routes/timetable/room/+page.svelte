@@ -1,11 +1,10 @@
 <script lang="ts">
-  import * as Select from '$lib/elements/ui/select';
-  import * as Tabs from '$lib/elements/ui/tabs/index';
+  import { goto } from '$app/navigation';
+  import type { Color } from '$lib/components/lesson/lesson';
+  import { getTimetableMatrix, mergeLessons } from '$lib/components/timetable/timetable';
   import Timetable from '$lib/components/timetable/timetable.svelte';
   import { Day, getTeacherLessons, getTimeslots } from '$lib/sdk/fetch-client';
-  import { goto } from '$app/navigation';
-  import { getTimetableMatrix, mergeLessons } from '$lib/components/timetable/timetable';
-  import type { Color } from '$lib/components/lesson/lesson';
+  import { Tabs, Select } from 'bits-ui';
 
   const classes = [
     { value: '5A', label: '5A' },
@@ -27,6 +26,7 @@
 
   const getLessons = async () => {
     const response = await getTeacherLessons('');
+    // const response: LessonResponseDto = { lessons: [] };
     const timeslots = await getTimeslots();
     const maxSlot = Math.max(...timeslots.map((timeslot) => timeslot.slot));
 
@@ -34,15 +34,12 @@
 
     for (const lesson of response.lessons) {
       const subject = response.subjects.find((subject) => subject.id === lesson.subjectId)!;
-      const room = response.rooms.find((room) => room.id === lesson.roomId)!;
+      const teacher = response.teachers.find((teacher) => teacher.id === lesson.teacherId)!;
 
       result[lesson.timeslot.slot][dayOrder[lesson.timeslot.day]] = {
         title: { text: subject.name, onClick: async () => goto(`/admin/subjects/${subject.id}`) },
-        bottomLeft: { text: '5a' },
-        bottomRight: {
-          text: `${room.buildingName} - ${room.name}`,
-          onClick: async () => goto(`/admin/rooms/${room.id}`),
-        },
+        bottomLeft: { text: teacher.acronym, onClick: async () => goto(`/admin/teachers/${teacher.id}`) },
+        bottomRight: { text: '5a' },
         color: subject.color as Color | undefined,
         lessonId: lesson.id,
         length: 1,

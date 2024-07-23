@@ -244,6 +244,13 @@
           "schema" : {
             "$ref" : "#/components/schemas/Pageable"
           }
+        }, {
+          "in" : "query",
+          "name" : "name",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          }
         } ],
         "responses" : {
           "200" : {
@@ -431,6 +438,16 @@
           "schema" : {
             "type" : "string"
           }
+        }, {
+          "in" : "query",
+          "name" : "tags",
+          "required" : false,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
         } ],
         "responses" : {
           "200" : {
@@ -569,10 +586,7 @@
             "content" : {
               "*/*" : {
                 "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/LessonResponseDto"
-                  }
+                  "$ref" : "#/components/schemas/LessonResponseDto"
                 }
               }
             },
@@ -888,10 +902,7 @@
             "content" : {
               "*/*" : {
                 "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/LessonResponseDto"
-                  }
+                  "$ref" : "#/components/schemas/LessonResponseDto"
                 }
               }
             },
@@ -970,6 +981,16 @@
           "required" : false,
           "schema" : {
             "type" : "string"
+          }
+        }, {
+          "in" : "query",
+          "name" : "tags",
+          "required" : false,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
           }
         } ],
         "responses" : {
@@ -1106,10 +1127,7 @@
             "content" : {
               "*/*" : {
                 "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/LessonResponseDto"
-                  }
+                  "$ref" : "#/components/schemas/LessonResponseDto"
                 }
               }
             },
@@ -1818,20 +1836,15 @@
     "/timeslots" : {
       "get" : {
         "operationId" : "getTimeslots",
-        "parameters" : [ {
-          "in" : "query",
-          "name" : "pageable",
-          "required" : true,
-          "schema" : {
-            "$ref" : "#/components/schemas/Pageable"
-          }
-        } ],
         "responses" : {
           "200" : {
             "content" : {
               "*/*" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/PageTimeslot"
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Timeslot"
+                  }
                 }
               }
             },
@@ -2125,7 +2138,7 @@
         }
       },
       "ConstraintInstance" : {
-        "required" : [ "arguments", "id", "signature", "type" ],
+        "required" : [ "arguments", "id", "type" ],
         "type" : "object",
         "properties" : {
           "arguments" : {
@@ -2136,9 +2149,6 @@
           },
           "id" : {
             "type" : "string"
-          },
-          "signature" : {
-            "$ref" : "#/components/schemas/ConstraintSignature"
           },
           "type" : {
             "type" : "string",
@@ -2163,19 +2173,25 @@
         }
       },
       "ConstraintInstancesResponseDto" : {
-        "required" : [ "constraintInstances", "displayNames" ],
+        "required" : [ "constraintInstances", "displayNames", "parameters" ],
         "type" : "object",
         "properties" : {
           "constraintInstances" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/components/schemas/ConstraintInstance"
+              "$ref" : "#/components/schemas/SlimInstance"
             }
           },
           "displayNames" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/ConstraintArgumentDisplayName"
+            }
+          },
+          "parameters" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ConstraintParameter"
             }
           }
         }
@@ -2218,8 +2234,29 @@
           }
         }
       },
+      "Curriculum" : {
+        "required" : [ "name" ],
+        "type" : "object",
+        "properties" : {
+          "grade" : {
+            "$ref" : "#/components/schemas/Grade"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "lessonsCounts" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/LessonsCount"
+            }
+          },
+          "name" : {
+            "type" : "string"
+          }
+        }
+      },
       "CurriculumRequestDto" : {
-        "required" : [ "gradeId", "lessonsCounts" ],
+        "required" : [ "gradeId", "lessonsCounts", "name" ],
         "type" : "object",
         "properties" : {
           "gradeId" : {
@@ -2230,6 +2267,9 @@
             "items" : {
               "$ref" : "#/components/schemas/LessonsCountRequestDto"
             }
+          },
+          "name" : {
+            "type" : "string"
           }
         }
       },
@@ -2257,6 +2297,9 @@
       "Grade" : {
         "type" : "object",
         "properties" : {
+          "curriculum" : {
+            "$ref" : "#/components/schemas/Curriculum"
+          },
           "id" : {
             "type" : "string"
           },
@@ -2278,13 +2321,13 @@
         }
       },
       "GradeRequestDto" : {
-        "required" : [ "name", "studentGroupsIds", "tagIds" ],
+        "required" : [ "name", "studentGroupIds", "tagIds" ],
         "type" : "object",
         "properties" : {
           "name" : {
             "type" : "string"
           },
-          "studentGroupsIds" : {
+          "studentGroupIds" : {
             "type" : "array",
             "items" : {
               "type" : "string"
@@ -2302,6 +2345,9 @@
         "required" : [ "id", "name", "studentGroupIds", "studentIds", "tags" ],
         "type" : "object",
         "properties" : {
+          "curriculumId" : {
+            "type" : "string"
+          },
           "id" : {
             "type" : "string"
           },
@@ -2800,55 +2846,6 @@
           }
         }
       },
-      "PageTimeslot" : {
-        "type" : "object",
-        "properties" : {
-          "content" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/Timeslot"
-            }
-          },
-          "empty" : {
-            "type" : "boolean"
-          },
-          "first" : {
-            "type" : "boolean"
-          },
-          "last" : {
-            "type" : "boolean"
-          },
-          "number" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "numberOfElements" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "pageable" : {
-            "$ref" : "#/components/schemas/PageableObject"
-          },
-          "size" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "sort" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/SortObject"
-            }
-          },
-          "totalElements" : {
-            "type" : "integer",
-            "format" : "int64"
-          },
-          "totalPages" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        }
-      },
       "PageTimetable" : {
         "type" : "object",
         "properties" : {
@@ -3029,6 +3026,37 @@
           "teacherCount" : {
             "type" : "integer",
             "format" : "int64"
+          }
+        }
+      },
+      "SlimArgument" : {
+        "required" : [ "id", "value" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "value" : {
+            "type" : "string"
+          }
+        }
+      },
+      "SlimInstance" : {
+        "required" : [ "arguments", "id", "type" ],
+        "type" : "object",
+        "properties" : {
+          "arguments" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SlimArgument"
+            }
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string",
+            "enum" : [ "SOFT_REWARD", "HARD_REWARD", "SOFT_PENALIZE", "HARD_PENALIZE" ]
           }
         }
       },

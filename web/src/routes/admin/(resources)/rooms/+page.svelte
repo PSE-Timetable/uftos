@@ -5,7 +5,7 @@
   import { onMount } from 'svelte';
 
   let columnNames = ['Name', 'Gebäude', 'Kapazität', 'Tags'];
-  let keys = ['id', 'Name', 'buildingName', 'capacity', 'tags'];
+  let keys = ['id', 'name', 'buildingName', 'capacity', 'tags'];
   let pageLoaded = false;
 
   onMount(() => (pageLoaded = true));
