@@ -1,53 +1,28 @@
 <script lang="ts">
-  import DataTable, { type DataItem } from '$lib/elements/ui/dataTable/data-table.svelte';
-  import { deleteStudent, getStudents, type Pageable, type PageStudent } from '$lib/sdk/fetch-client';
-  import { error } from '@sveltejs/kit';
+  import { Button } from '$lib/elements/ui/button';
+  import DataTable from '$lib/elements/ui/dataTable/data-table.svelte';
+  import { createStudent, type StudentRequestDto } from '$lib/sdk/fetch-client';
+  import { deleteStudentEntry, loadStudentPage } from '$lib/utils/resources';
   import { onMount } from 'svelte';
 
   let columnNames = ['Vorname', 'Nachname', 'Tags'];
   let keys = ['id', 'firstName', 'lastName', 'tags'];
   let pageLoaded = false;
-
   onMount(() => (pageLoaded = true));
 
-  async function loadPage(index: number, sortString: string, filter: string) {
-    let pageable: Pageable = { page: index, size: 10, sort: [sortString] };
-    try {
-      const result: PageStudent = await getStudents(pageable, {
-        firstName: filter,
-        lastName: filter,
-      });
-      let dataItems: DataItem[] = result.content
-        ? result.content.map(
-            (student): DataItem => ({
-              id: student.id,
-              firstName: student.firstName,
-              lastName: student.lastName,
-              tags: student.tags.map((tag) => tag.name),
-            }),
-          )
-        : [];
-      return {
-        data: dataItems,
-        totalElements: Number(result.totalElements),
-      };
-    } catch {
-      error(400, { message: 'Could not fetch page' });
-    }
-  }
-
-  async function deleteEntry(id: string) {
-    try {
-      await deleteStudent(id);
-    } catch {
-      error(400, { message: `could not delete student with id ${id}` });
-    }
-  }
+  let mmNumber = 0;
+  const create = async () => {
+    let student: StudentRequestDto = { firstName: 'Max' + mmNumber, lastName: 'Mustermann', tagIds: [] };
+    await createStudent(student);
+    mmNumber++;
+  };
 </script>
 
 <div class="p-10 w-full">
   <!--Avoids warning that fetch calls should be in onMount or load function, there must be a better solution-->
   {#if pageLoaded}
-    <DataTable {columnNames} {keys} {loadPage} {deleteEntry} />
+    <DataTable {columnNames} {keys} loadPage={loadStudentPage} deleteEntry={deleteStudentEntry} />
   {/if}
 </div>
+
+<Button on:click={create}>Add</Button>
