@@ -48,7 +48,7 @@ public class FillDB {
     System.out.println("created student groups");
     createTeachers(teacherRepository, 4);
     System.out.println("created teachers");
-    createTags(tagRepository, 2);
+    createTags(tagRepository, 5);
     System.out.println("created tags");
     createTimeslots(timeslotRepository, 6);
     System.out.println("created timeslots");
@@ -85,6 +85,27 @@ public class FillDB {
     }
     System.out.println("created teacher - subject mapping");
 
+    List<Student> students = studentRepository.findAll();
+    List<Subject> subjects = subjectRepository.findAll();
+    List<Teacher> teachers = teacherRepository.findAll();
+    List<Room> rooms = roomRepository.findAll();
+    for (Tag tag : tagRepository.findAll()) {
+      Student student = students.get((int) (Math.random() * students.size()));
+      Subject subject = subjects.get((int) (Math.random() * subjects.size()));
+      Teacher teacher = teachers.get((int) (Math.random() * teachers.size()));
+      Room room = rooms.get((int) (Math.random() * rooms.size()));
+
+      student.getTags().add(tag);
+      subject.getTags().add(tag);
+      teacher.getTags().add(tag);
+      room.getTags().add(tag);
+    }
+    studentRepository.saveAll(students);
+    subjectRepository.saveAll(subjects);
+    teacherRepository.saveAll(teachers);
+    roomRepository.saveAll(rooms);
+    System.out.println("created tag mapping");
+
     System.out.println("DB filled");
   }
 
@@ -103,7 +124,7 @@ public class FillDB {
   public static void createRooms(RoomRepository repo, int amount, int buildings, int baseCapacity,
                                  int capacityVariety) {
     for (int index = 0; index < amount; index++) {
-      repo.save(new Room("Room-" + index, "" + (int) (Math.random() * buildings),
+      repo.save(new Room("Room-" + index, "Building-" + (int) (Math.random() * buildings),
           baseCapacity + (int) (Math.random() * capacityVariety), new ArrayList<>()));
     }
   }
