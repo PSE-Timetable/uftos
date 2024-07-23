@@ -17,7 +17,7 @@ import lombok.Setter;
 public class LessonTimefoldInstance implements ResourceTimefoldInstance {
 
   @PlanningId
-  private final String id;
+  private String id;
   private int index;
   @JsonIdentityReference
   @PlanningVariable
@@ -32,6 +32,10 @@ public class LessonTimefoldInstance implements ResourceTimefoldInstance {
   @JsonIdentityReference
   @PlanningVariable
   private RoomTimefoldInstance room;
+
+  public LessonTimefoldInstance() {
+
+  }
 
   /**
    * Creates a new LessonTimefoldInstance.
