@@ -21,7 +21,7 @@ import java.util.Set;
  * @param tags            the tags associated with the grade.
  */
 public record GradeResponseDto(@NotEmpty String id, @NotEmpty String name,
-                               String curriculumId, @NotNull List<String> studentGroupIds,
+                               @NotNull String curriculumId, @NotNull List<String> studentGroupIds,
                                @NotNull List<String> studentIds, @NotNull List<Tag> tags) {
 
   /**
