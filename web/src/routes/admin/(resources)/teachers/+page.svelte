@@ -25,6 +25,7 @@
               firstName: teacher.firstName,
               lastName: teacher.lastName,
               acronym: teacher.acronym,
+              subjects: teacher.subjects.map((subject) => subject.name),
               tags: teacher.tags.map((tag) => tag.name),
             }),
           )
