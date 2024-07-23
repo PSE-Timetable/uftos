@@ -4,6 +4,7 @@ import de.uftos.dto.LessonRequestDto;
 import de.uftos.dto.LessonResponseDto;
 import de.uftos.entities.Lesson;
 import de.uftos.services.LessonService;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -47,16 +48,29 @@ public class LessonController {
     return this.lessonsService.create(lesson);
   }
 
+//  /**
+//   * Maps the HTTP GET request for a set of lessons from the database to the
+//   * {@link LessonService#get(Pageable, Optional) get} function of the lesson service.
+//   *
+//   * @param pageable contains the parameters for the page.
+//   * @return the page of lessons fitting the parameters.
+//   */
+//  @GetMapping()
+//  public Page<LessonResponseDto> getLessons(Pageable pageable, Optional<String> timetableId) {
+//    return this.lessonsService.get(pageable, timetableId);
+//  }
+
   /**
    * Maps the HTTP GET request for a set of lessons from the database to the
-   * {@link LessonService#get(Pageable) get} function of the lesson service.
+   * {@link LessonService#get(Pageable, Optional) get} function of the lesson service.
    *
-   * @param pageable contains the parameters for the page.
+   * @param timetableId the timetable filter
+   * @param pageable    contains the parameters for the page.
    * @return the page of lessons fitting the parameters.
    */
   @GetMapping()
-  public Page<LessonResponseDto> getLessons(Pageable pageable) {
-    return this.lessonsService.get(pageable);
+  public Page<Lesson> getLessons(Pageable pageable, Optional<String> timetableId) {
+    return this.lessonsService.get(pageable, timetableId);
   }
 
   /**
