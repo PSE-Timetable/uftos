@@ -34,7 +34,7 @@ public class StudentGroupsTest {
 
 
   @BeforeAll
-  static void createTestStudents() throws JSONException {
+  static void createTestStudentGroups() throws JSONException {
     tagId = given().contentType(ContentType.JSON)
         .body(generateTagJson(TAG_NAME))
         .when()
@@ -60,11 +60,9 @@ public class StudentGroupsTest {
         .extract()
         .body().jsonPath().getString("id");
 
-    System.out.println(
-        generateStudentJson(STUDENT_FIRST_NAME, STUDENT_LAST_NAME, Collections.emptyList()));
 
     gradeId = given().contentType(ContentType.JSON)
-        .body(generateGradeJson(GRADE_NAME, Collections.emptyList(), Collections.emptyList()))
+        .body(generateGradeJson(GRADE_NAME, null, Collections.emptyList(), Collections.emptyList()))
         .when()
         .post("/grades")
         .then()
@@ -75,8 +73,6 @@ public class StudentGroupsTest {
         .extract()
         .body().jsonPath().getString("id");
 
-    System.out.println(generateStudentGroupJson(FIRST_STUDENT_GROUP_NAME, List.of(studentId),
-        Collections.emptyList(), Collections.emptyList()));
 
     firstStudentGroup = given().contentType(ContentType.JSON)
         .body(generateStudentGroupJson(FIRST_STUDENT_GROUP_NAME, Collections.emptyList(),
@@ -121,6 +117,18 @@ public class StudentGroupsTest {
 
     given().contentType(ContentType.JSON)
         .when()
+        .delete("/students/{id}", studentId)
+        .then()
+        .statusCode(200);
+
+    given().contentType(ContentType.JSON)
+        .when()
+        .delete("/grades/{id}", gradeId)
+        .then()
+        .statusCode(200);
+
+    given().contentType(ContentType.JSON)
+        .when()
         .delete("/tags/{id}", tagId)
         .then()
         .statusCode(200);
@@ -139,7 +147,7 @@ public class StudentGroupsTest {
   }
 
   @Test
-  void getStudentsWithTag() throws JSONException {
+  void getStudentGroupsWithTag() throws JSONException {
     given().contentType(ContentType.JSON)
         .body(generatePageJson(0, 10, Collections.emptyList()))
         .param("tags", List.of(tagId))
@@ -153,7 +161,7 @@ public class StudentGroupsTest {
   }
 
   @Test
-  void getStudentsWithName() throws JSONException {
+  void getStudentGroupsWithName() throws JSONException {
     given().contentType(ContentType.JSON)
         .body(generatePageJson(0, 10, Collections.emptyList()))
         .param("name", FIRST_STUDENT_GROUP_NAME)

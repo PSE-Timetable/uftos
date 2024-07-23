@@ -90,7 +90,6 @@ export type ConstraintArgument = {
 export type ConstraintInstance = {
     arguments: ConstraintArgument[];
     id: string;
-    signature: ConstraintSignature;
     "type": Type;
 };
 export type Tag = {
@@ -98,6 +97,7 @@ export type Tag = {
     name: string;
 };
 export type GradeResponseDto = {
+    curriculumId?: string;
     id: string;
     name: string;
     studentGroupIds: string[];
@@ -226,7 +226,7 @@ export type Curriculum = {
     name: string;
 };
 export type Grade = {
-    curricula?: Curriculum[];
+    curriculum?: Curriculum;
     id?: string;
     name?: string;
     studentGroups?: StudentGroup[];
@@ -701,15 +701,17 @@ export function setTimetableMetadata(timetableMetadata: TimetableMetadata, opts?
         method: "PUT"
     }));
 }
-export function getStudentGroups(pageable: Pageable, { name }: {
+export function getStudentGroups(pageable: Pageable, { name, tags }: {
     name?: string;
+    tags?: string[];
 } = {}, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
         data: PageStudentGroup;
     }>(`/student-groups${QS.query(QS.explode({
         pageable,
-        name
+        name,
+        tags
     }))}`, {
         ...opts
     }));
@@ -751,7 +753,7 @@ export function updateStudentGroup(id: string, studentGroupRequestDto: StudentGr
 export function getStudentGroupLessons(id: string, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
-        data: LessonResponseDto[];
+        data: LessonResponseDto;
     }>(`/student-groups/${encodeURIComponent(id)}/lessons`, {
         ...opts
     }));
