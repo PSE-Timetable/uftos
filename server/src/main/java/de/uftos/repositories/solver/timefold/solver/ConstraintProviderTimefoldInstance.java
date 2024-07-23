@@ -39,21 +39,21 @@ public class ConstraintProviderTimefoldInstance implements ConstraintProvider {
     return constraintFactory.forEach(ConstraintInstanceSoftPenalize.class)
         .filter(ConstraintInstanceSoftPenalize::evaluate)
         .penalize(HardSoftScore.ONE_SOFT)
-        .asConstraint("hard-penalize");
+        .asConstraint("soft-penalize");
   }
 
   private Constraint hardReward(ConstraintFactory constraintFactory) {
     return constraintFactory.forEach(ConstraintInstanceHardReward.class)
         .filter(ConstraintInstanceHardReward::evaluate)
         .reward(HardSoftScore.ONE_HARD)
-        .asConstraint("hard-penalize");
+        .asConstraint("hard-reward");
   }
 
   private Constraint softReward(ConstraintFactory constraintFactory) {
     return constraintFactory.forEach(ConstraintInstanceSoftReward.class)
         .filter(ConstraintInstanceSoftReward::evaluate)
         .reward(HardSoftScore.ONE_SOFT)
-        .asConstraint("hard-penalize");
+        .asConstraint("soft-reward");
   }
 
 

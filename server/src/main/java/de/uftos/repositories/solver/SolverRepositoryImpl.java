@@ -171,7 +171,7 @@ public class SolverRepositoryImpl implements SolverRepository {
       for (String studentGroupId : student.studentGroupIds()) {
         StudentGroupTimefoldInstance studentGroup = studentGroups.get(studentGroupId);
         if (!timefoldInstance.getStudentGroupList().contains(studentGroup)
-            || !studentGroup.getStudentList().contains(studentGroup)) {
+            || !studentGroup.getStudentList().contains(timefoldInstance)) {
           throw new IllegalStateException();
         }
       }
