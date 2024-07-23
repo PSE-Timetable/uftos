@@ -97,7 +97,7 @@ export type Tag = {
     name: string;
 };
 export type GradeResponseDto = {
-    curriculumId?: string;
+    curriculumId: string;
     id: string;
     name: string;
     studentGroupIds: string[];
@@ -496,10 +496,7 @@ export function updateCurriculum(id: string, curriculumRequestDto: CurriculumReq
     })));
 }
 export function getUcdlFile(opts?: Oazapfts.RequestOpts) {
-    return oazapfts.ok(oazapfts.fetchJson<{
-        status: 200;
-        data: Blob;
-    }>("/editor", {
+    return oazapfts.ok(oazapfts.fetchText("/editor", {
         ...opts
     }));
 }
@@ -510,6 +507,18 @@ export function setUcdlFile(body: {
         status: 200;
         data: ParsingResponse;
     }>("/editor", oazapfts.json({
+        ...opts,
+        method: "PUT",
+        body
+    })));
+}
+export function validate(body: {
+    file?: Blob;
+}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.ok(oazapfts.fetchJson<{
+        status: 200;
+        data: ParsingResponse;
+    }>("/editor/validate", oazapfts.json({
         ...opts,
         method: "PUT",
         body
