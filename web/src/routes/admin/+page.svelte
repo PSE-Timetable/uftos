@@ -2,11 +2,12 @@
   import Card from '$lib/components/ui/card/card.svelte';
   import { Icons } from '$lib/utils';
   import LinkBar from '$lib/components/ui/link-bar/link-bar.svelte';
-  import DataTable, { type DataItem } from '$lib/elements/ui/dataTable/data-table.svelte';
+  import DataTable from '$lib/elements/ui/dataTable/data-table.svelte';
   import { deleteTeacher, getServerStats, getTeachers, type Pageable, type PageTeacher } from '$lib/sdk/fetch-client';
   import { error } from '@sveltejs/kit';
   import { onMount } from 'svelte';
   import * as Select from '$lib/elements/ui/select';
+  import type { DataItem } from '$lib/utils/resources';
 
   let columnNames = ['Vorname', 'Nachname', 'Akronym', 'Fächer', 'Tags'];
   let keys = ['id', 'firstName', 'lastName', 'acronym', 'subjects', 'tags'];
