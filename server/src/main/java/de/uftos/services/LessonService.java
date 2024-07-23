@@ -3,13 +3,17 @@ package de.uftos.services;
 import de.uftos.dto.LessonRequestDto;
 import de.uftos.dto.LessonResponseDto;
 import de.uftos.entities.Lesson;
+import de.uftos.entities.Student;
 import de.uftos.repositories.database.LessonRepository;
+import de.uftos.utils.SpecificationBuilder;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -31,18 +35,30 @@ public class LessonService {
     this.repository = repository;
   }
 
+//  /**
+//   * Gets a page of entries of the lesson table.
+//   *
+//   * @param pageable contains the parameters for the page.
+//   * @return the page of entries fitting the parameters.
+//   */
+//  public Page<LessonResponseDto> get(Pageable pageable) {
+//    List<Lesson> lessons = this.repository.findAll(pageable).stream().toList();
+//
+//    return new PageImpl<>(List.of(LessonResponseDto.createResponseDtoFromLessons(lessons)));
+//  }
+
   /**
    * Gets a page of entries of the lesson table.
    *
-   * @param pageable contains the parameters for the page.
+   * @param timetableId the timetable filter
+   * @param pageable    contains the parameters for the page.
    * @return the page of entries fitting the parameters.
    */
-  public Page<LessonResponseDto> get(Pageable pageable) {
-    List<Lesson> lessons = this.repository.findAll(pageable).stream().toList();
-    //TODO filter out the lessons from another year?
-    //TODO use page or just send the response Dto itself?
-
-    return new PageImpl<>(List.of(LessonResponseDto.createResponseDtoFromLessons(lessons)));
+  public Page<Lesson> get(Pageable pageable, Optional<String> timetableId) {
+    Specification<Lesson> spec = new SpecificationBuilder<Lesson>()
+        .optionalOrEquals(timetableId, "timetable")
+        .build();
+    return this.repository.findAll(spec, pageable);
   }
 
   /**
