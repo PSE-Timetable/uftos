@@ -47,8 +47,9 @@
   },
   "type": "module",
   "dependencies": {
+    "@internationalized/date": "^3.5.5",
     "@oazapfts/runtime": "^1.0.3",
-    "bits-ui": "^0.21.10",
+    "bits-ui": "^0.21.12",
     "clsx": "^2.1.1",
     "lucide-svelte": "^0.408.0",
     "luxon": "^3.4.4",
