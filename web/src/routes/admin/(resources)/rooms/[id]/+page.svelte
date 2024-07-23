@@ -35,8 +35,14 @@
       error(400, { message: 'Could not update student' });
     }
   }
-
-  let tags: Tag[] = []; //TODO remove when tags api is available
 </script>
 
-<AddResource {descriptions} {values} {create} {update} createEntity={data.create} {tags} entityTags={room.tags} />
+<AddResource
+  {descriptions}
+  {values}
+  {create}
+  {update}
+  createEntity={data.create}
+  tags={data.tags}
+  entityTags={room.tags}
+/>

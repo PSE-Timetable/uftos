@@ -39,16 +39,14 @@
       error(400, { message: 'Could not update student' });
     }
   }
-
-  let tags: Tag[] = [
-    { id: 'tag1', name: 'name1' },
-    { id: 'tag2', name: 'name2' },
-    { id: 'tag3', name: 'name3' },
-    { id: 'tag4', name: 'name4' },
-    { id: 'tag5', name: 'name5' },
-    { id: 'tag6', name: 'name6' },
-    { id: 'tag7', name: 'name7' },
-  ]; //TODO get tags for the resource.
 </script>
 
-<AddResource {descriptions} {values} {create} {update} createEntity={data.create} {tags} entityTags={student.tags} />
+<AddResource
+  {descriptions}
+  {values}
+  {create}
+  {update}
+  createEntity={data.create}
+  tags={data.tags}
+  entityTags={student.tags}
+/>

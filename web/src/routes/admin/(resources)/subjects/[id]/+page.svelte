@@ -41,4 +41,12 @@
   let tags: Tag[] = [];
 </script>
 
-<AddResource {descriptions} {values} {create} {update} createEntity={data.create} {tags} entityTags={subject.tags} />
+<AddResource
+  {descriptions}
+  {values}
+  {create}
+  {update}
+  createEntity={data.create}
+  tags={data.tags}
+  entityTags={subject.tags}
+/>

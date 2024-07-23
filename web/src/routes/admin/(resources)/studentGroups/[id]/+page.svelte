@@ -41,8 +41,6 @@
       error(400, { message: 'Could not update student group' });
     }
   }
-
-  let tags: Tag[] = [];
 </script>
 
 <AddResource
@@ -51,6 +49,6 @@
   {create}
   {update}
   createEntity={data.create}
-  {tags}
+  tags={data.tags}
   entityTags={studentGroup.tags}
 />
