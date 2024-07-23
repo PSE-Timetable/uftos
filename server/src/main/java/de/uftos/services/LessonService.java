@@ -84,9 +84,10 @@ public class LessonService {
    */
   public Lesson create(LessonRequestDto lessonRequestDto) {
     Lesson lesson = lessonRequestDto.map();
-    if (this.repository.findById(lesson.getId()).isPresent()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-    }
+//    if (this.repository.findById(lesson.getId()).isPresent()) {
+//      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+//    }
+    //throws exception because lesson.getId() is null before it is saved
 
     return this.repository.save(lesson);
   }

@@ -64,6 +64,61 @@ public class JsonGenerator {
   }
 
   /**
+   * Generates the student JSON.
+   *
+   * @param firstName The first name of the student
+   * @param lastName  The last name of the student
+   * @param tags      The ids of the tags the student has
+   * @return The requested JSON
+   * @throws JSONException If something is malformed.
+   */
+  public static String generateTeacherJson(String firstName, String lastName, String acronym,
+                                           List<String> subjectIds, List<String> tags)
+      throws JSONException {
+    JSONArray tagsArray = new JSONArray();
+    tags.forEach(tagsArray::put);
+    JSONArray subjectsArray = new JSONArray();
+    subjectIds.forEach(subjectsArray::put);
+    return new JSONObject()
+        .put("firstName", firstName)
+        .put("lastName", lastName)
+        .put("acronym", acronym)
+        .put("subjectIds", subjectsArray)
+        .put("tagIds", tagsArray)
+        .toString();
+  }
+
+  /**
+   * Generates the grade JSON.
+   *
+   * @param index          The index of the lesson
+   * @param teacherId      The ID of the lesson's teacher
+   * @param studentGroupId The ID of the lesson's student group
+   * @param roomId         The ID of the lesson's room
+   * @param timeslotId     The ID of the lesson's timeslot
+   * @param subjectId      The ID of the lesson's subject
+   * @param timetableId    The ID of the timetable the lesson belongs to
+   * @param year           The year of the timetable the lesson belongs to
+   * @return The requested JSON
+   * @throws JSONException If something is malformed.
+   */
+  public static String generateLessonJson(int index, String teacherId, String studentGroupId,
+                                          String roomId, String timeslotId, String subjectId,
+                                          String timetableId, String year)
+      throws JSONException {
+    return new JSONObject()
+        .put("index", index)
+        .put("teacherId", teacherId)
+        .put("studentGroupId", studentGroupId)
+        .put("roomId", roomId)
+        .put("timeslotId", timeslotId)
+        .put("subjectId", subjectId)
+        .put("timetableId", timetableId)
+//        .put("year", year)    // year is currently hardcoded in lesson request dto
+        .toString();
+  }
+
+  /**
    * Generates the grade JSON.
    *
    * @param dto The lesson count DTO that should be transformed to a JSON
