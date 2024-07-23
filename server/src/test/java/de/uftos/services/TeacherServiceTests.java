@@ -31,6 +31,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
+@SuppressWarnings("checkstyle:MissingJavadocType")
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class TeacherServiceTests {
@@ -47,7 +48,7 @@ public class TeacherServiceTests {
   private Room room1;
   private Room room2;
 
-  private static void assertResulArraysSizes(LessonResponseDto result, int teachers, int lessons,
+  private static void assertResultArraysSizes(LessonResponseDto result, int teachers, int lessons,
                                              int rooms, int grades) {
     assertAll("Testing whether the sizes of the arrays are correct",
         () -> assertEquals(teachers, result.teachers().size()),
@@ -109,13 +110,13 @@ public class TeacherServiceTests {
   void emptyLessons() {
     assertDoesNotThrow(() -> teacherService.getLessonsById("456"));
     LessonResponseDto result = teacherService.getLessonsById("456");
-    assertResulArraysSizes(result, 0, 0, 0, 0);
+    assertResultArraysSizes(result, 0, 0, 0, 0);
   }
 
   @Test
   void lessonsById() {
     LessonResponseDto result = teacherService.getLessonsById("123");
-    assertResulArraysSizes(result, 1, 2, 2, 1);
+    assertResultArraysSizes(result, 1, 2, 2, 1);
     assertAll("Testing whether the sizes of the arrays are correct",
         () -> assertEquals(2, result.grades().getFirst().studentGroupIds().size()),
         () -> assertEquals(4, result.grades().getFirst().studentIds().size())
