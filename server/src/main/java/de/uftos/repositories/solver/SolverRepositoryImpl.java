@@ -292,6 +292,10 @@ public class SolverRepositoryImpl implements SolverRepository {
         if (!teachers.get(lesson.teacherId()).getLessonList().contains(timefoldInstance)) {
           throw new IllegalStateException();
         }
+      } else {
+        TeacherTimefoldInstance teacher = teachers.values().stream().toList().getFirst();
+        timefoldInstance.setTeacher(teacher);
+        teacher.getLessonList().add(timefoldInstance);
       }
 
       //checking timeslot for consistency
@@ -303,6 +307,10 @@ public class SolverRepositoryImpl implements SolverRepository {
         if (!timeslots.get(lesson.timeslotId()).getLessonList().contains(timefoldInstance)) {
           throw new IllegalStateException();
         }
+      } else {
+        TimeslotTimefoldInstance timeslot = timeslots.values().stream().toList().getFirst();
+        timefoldInstance.setTimeslot(timeslot);
+        timeslot.getLessonList().add(timefoldInstance);
       }
 
       //checking room for consistency
@@ -314,6 +322,10 @@ public class SolverRepositoryImpl implements SolverRepository {
         if (!rooms.get(lesson.roomId()).getLessonList().contains(timefoldInstance)) {
           throw new IllegalStateException();
         }
+      } else {
+        RoomTimefoldInstance room = rooms.values().stream().toList().getFirst();
+        timefoldInstance.setRoom(room);
+        room.getLessonList().add(timefoldInstance);
       }
     }
     solution.getLessons().addAll(lessons.values());
@@ -423,15 +435,28 @@ public class SolverRepositoryImpl implements SolverRepository {
     List<LessonProblemDto> lessons = new ArrayList<>();
 
     for (LessonTimefoldInstance lesson : solution.getLessons()) {
+      String teacherId = null;
+      if (lesson.getTeacher() != null) {
+        teacherId = lesson.getTeacher().getId();
+      }
+      String timeslotId = null;
+      if (lesson.getTimeslot() != null) {
+        timeslotId = lesson.getTimeslot().getId();
+      }
+      String roomId = null;
+      if (lesson.getRoom() != null) {
+        roomId = lesson.getRoom().getId();
+      }
       lessons.add(
           new LessonProblemDto(
               lesson.getId(),
               lesson.getIndex(),
-              lesson.getTeacher().getId(),
+              teacherId,
               lesson.getStudentGroup().getId(),
-              lesson.getTimeslot().getId(),
+              timeslotId,
               lesson.getSubject().getId(),
-              lesson.getRoom().getId())
+              roomId
+          )
       );
     }
 
@@ -461,9 +486,11 @@ public class SolverRepositoryImpl implements SolverRepository {
 
       Solver<TimetableSolutionTimefoldInstance> solver = factory.buildSolver();
 
-      solver.solve(solution);
+      TimetableSolutionTimefoldInstance solved = solver.solve(solution);
 
-      return getTimetableInstanceFromSolutionInstance(solution);
+      System.out.println(solved.getScore());
+
+      return getTimetableInstanceFromSolutionInstance(solved);
     };
 
     BlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<>(1);
