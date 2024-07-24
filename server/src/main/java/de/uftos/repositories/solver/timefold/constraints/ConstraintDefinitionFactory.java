@@ -625,18 +625,20 @@ public class ConstraintDefinitionFactory {
     }
 
     return (parameters -> set -> {
-      List<ResourceTimefoldInstance> parameterClone = new ArrayList<>(parameters);
+      ResourceTimefoldInstance thisPointer = parameters.getFirst();
       Set<ResourceTimefoldInstance> filteredSet = new HashSet<>();
       outerLoop:
       for (ResourceTimefoldInstance resource : set) {
-        parameterClone.set(0, resource); //replacing "this"-pointer
+        parameters.set(0, resource); //replacing "this"-pointer
         for (Function<List<ResourceTimefoldInstance>, Boolean> function : functions) {
-          if (!function.apply(parameterClone)) {
+          if (!function.apply(parameters)) {
             continue outerLoop;
           }
         }
         filteredSet.add(resource);
       }
+
+      parameters.set(0, thisPointer);
 
       return filteredSet;
     });
@@ -673,6 +675,7 @@ public class ConstraintDefinitionFactory {
   private static Function<List<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>> convertSet(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     return switch (ast.getToken()) {
+      //todo: implement changing "this"-pointer when applying attributes and filtering
       case RESOURCE_SET -> convertResourceSet(ast, params);
       case NUMBER_SET -> convertNumberSet(ast, params);
       default -> throw new IllegalStateException();
@@ -698,6 +701,7 @@ public class ConstraintDefinitionFactory {
         List<ResourceTimefoldInstance>,
         Function<Set<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>>
         >> modifiers = new ArrayList<>();
+    ResourceType thisType = params.get("this");
 
     for (AbstractSyntaxTreeDto modifier : set.modifiers()) {
       if (modifier.getToken() == UcdlToken.ATTRIBUTE) {
@@ -1061,12 +1065,18 @@ public class ConstraintDefinitionFactory {
       }
       index++;
     }
+    System.out.println(reference.value() + ";" + index);
     int finalIndex = index;
     ResourceType type = params.get(reference.value());
     return (parameters) -> {
       ResourceTimefoldInstance resource = parameters.get(finalIndex);
       if (resource.getResourceType() != type) {
-        throw new IllegalArgumentException();
+        for (ResourceTimefoldInstance resourceTimefoldInstance : parameters) {
+          System.out.println(resourceTimefoldInstance.getResourceType());
+        }
+        throw new IllegalArgumentException(
+            "Resource-type of resource " + resource + " doesn`t match expected resource type " +
+                type + "! (index: " + finalIndex + ")");
       }
       return resource;
     };
