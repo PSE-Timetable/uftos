@@ -5,14 +5,13 @@
     updateStudentGroup,
     type StudentGroup,
     type StudentGroupRequestDto,
-    type Tag,
   } from '$lib/sdk/fetch-client.js';
   import { error } from '@sveltejs/kit';
 
   export let data;
   let studentGroup: StudentGroup = data.studentGroup;
   let values: string[] = [studentGroup.name];
-  let descriptions: string[] = ['Name:', 'Tags:'];
+  let descriptions: string[] = ['Name:'];
 
   async function create(values: string[], tagIds: string[]) {
     let studentGroupRequestDto: StudentGroupRequestDto = {

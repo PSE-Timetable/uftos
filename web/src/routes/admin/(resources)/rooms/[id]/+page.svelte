@@ -6,7 +6,7 @@
   export let data;
   let room: Room = data.room;
   let values: string[] = [room.name, room.buildingName, String(room.capacity)];
-  let descriptions: string[] = ['Name:', 'Gebäudename:', 'Kapazität:', 'Tags:'];
+  let descriptions: string[] = ['Name:', 'Gebäudename:', 'Kapazität:'];
 
   async function create(values: string[], tagIds: string[]) {
     let roomRequestDto: RoomRequestDto = {

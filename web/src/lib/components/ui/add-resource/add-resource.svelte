@@ -10,49 +10,63 @@
   export let values: string[];
   export let createEntity: boolean;
   export let create: (values: string[], tagIds: string[], subjectIds?: string[]) => Promise<void>;
-  export let update: (values: string[], tagIds: string[]) => Promise<void>;
+  export let update: (values: string[], tagIds: string[], subjectIds?: string[]) => Promise<void>;
   export let tags: Tag[];
   export let entityTags: Tag[];
   export let subjects: Subject[] = [];
-  export let enitySubjects: Subject[] = [];
+  export let entitySubjectsIds: Set<string> = new Set();
   let selectedTagIds: string[] = tags.map((tag) => tag.id);
-  let selectedSubject: boolean[] = [];
+  let selectedSubjects = subjects.map((subject) => ({ id: subject.id, selected: entitySubjectsIds.has(subject.id) }));
 </script>
 
-<div class="flex flex-row">
+<div class="flex flex-col">
   <div class="m-7 text-xl flex flex-col font-bold">
-    {#each descriptions as description}
-      <div class="my-5 flex">{description}</div>
+    {#each descriptions as description, i}
+      <div class="flex flex-row items-baseline">
+        <div class="my-5 flex w-40">{description}</div>
+        <Input
+          bind:value={values[i]}
+          class="rounded-none border-0 border-b-4 border-foreground focus-visible:ring-0 focus-visible:border-b-4 text-lg font-normal flex max-w-80"
+        />
+      </div>
     {/each}
   </div>
-  <div class="mx-7 my-7 flex flex-col w-80">
-    {#each values as value}
-      <Input
-        bind:value
-        class="rounded-none border-0 border-b-4 border-foreground focus-visible:ring-0 focus-visible:border-b-4 text-lg font-normal mt-4 mb-3 flex"
-      />
-    {/each}
+  <div class="mx-7 flex flex-col">
     {#if subjects.length > 0}
-      <div class="flex flex-wrap bg-white rounded-md">
-        {#each subjects as subject}
-          <div class="flex items-center space-x-2 mx-1">
-            <Checkbox class="m-1" />
-            {subject.name}
-          </div>{/each}
+      <div class="flex flex-row mb-7">
+        <div class="my-5 flex w-40 text-xl font-bold">Fächer:</div>
+        <div class="flex flex-wrap bg-white rounded-md max-w-80">
+          {#each subjects as subject, i}
+            <div class="flex items-center space-x-2 mx-1">
+              <Checkbox class="m-1" bind:checked={selectedSubjects[i].selected} />
+              {subject.name}
+            </div>
+          {/each}
+        </div>
       </div>
     {/if}
-    <div class="max-w-sm mt-8 flex">
-      <TagsMultipleSelect {tags} {entityTags} bind:selectedTagIds />
+    {#if tags.length > 0}
+      <div class="flex flex-row items-baseline">
+        <div class=" flex w-40 text-xl font-bold">Tags:</div>
+        <div class="w-80 flex">
+          <TagsMultipleSelect {tags} {entityTags} bind:selectedTagIds />
+        </div>
+      </div>
+    {/if}
+    <div class="ml-40 mt-7 w-80 flex">
+      <Button
+        on:click={async () => {
+          let subjectIds = selectedSubjects.filter((subject) => subject.selected).map((subject) => subject.id);
+          createEntity
+            ? await create(values, selectedTagIds, subjectIds)
+            : await update(values, selectedTagIds, subjectIds);
+          await goto('./');
+        }}
+        class="max-w-52 bg-accent px-16 py-5 text-white flex"
+        variant="secondary"
+      >
+        Speichern
+      </Button>
     </div>
-    <Button
-      on:click={async () => {
-        createEntity ? await create(values, selectedTagIds) : await update(values, selectedTagIds);
-        await goto('./');
-      }}
-      class="max-w-52 px-10 mt-10 bg-accent text-white flex"
-      variant="secondary"
-    >
-      Speichern
-    </Button>
   </div>
 </div>

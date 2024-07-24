@@ -12,7 +12,7 @@
   export let data;
   let student: Student = data.student;
   let values: string[] = [student.firstName, student.lastName];
-  let descriptions: string[] = ['Vorname:', 'Nachname:', 'Tags:'];
+  let descriptions: string[] = ['Vorname:', 'Nachname:'];
 
   async function create(values: string[], tagIds: string[]) {
     let studentRequestDto: StudentRequestDto = {

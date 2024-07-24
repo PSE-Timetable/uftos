@@ -12,7 +12,7 @@
   export let data;
   let subject: Subject = data.subject;
   let values: string[] = [subject.name];
-  let descriptions: string[] = ['Name:', 'Tags:'];
+  let descriptions: string[] = ['Name:'];
 
   async function create(values: string[], tagIds: string[]) {
     let subjectRequestDto: SubjectRequestDto = {

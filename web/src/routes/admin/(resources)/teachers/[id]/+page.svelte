@@ -1,5 +1,6 @@
 <script lang="ts">
   import AddResource from '$lib/components/ui/add-resource/add-resource.svelte';
+  import WorkingHoursDayContainer from '$lib/components/working-hours/working-hours-day-container.svelte';
   import {
     createTeacher,
     updateTeacher,
@@ -11,16 +12,16 @@
 
   export let data;
   let teacher: Teacher = data.teacher;
-  let descriptions = ['Vorname:', 'Nachname:', 'Akronym:', 'Fächer:', 'Tags:'];
+  let descriptions = ['Vorname:', 'Nachname:', 'Akronym:'];
   let values: string[] = [teacher.firstName, teacher.lastName, teacher.acronym];
 
-  async function create(values: string[], tagIds: string[]) {
+  async function create(values: string[], tagIds: string[], subjectIds?: string[]) {
     let teacherRequestDto: TeacherRequestDto = {
       firstName: values[0],
       lastName: values[1],
       acronym: values[2],
-      subjectIds: teacher.subjects.map((subject) => subject.id),
-      tagIds: teacher.tags.map((tag) => tag.id),
+      subjectIds: subjectIds || [],
+      tagIds,
     };
     try {
       await createTeacher(teacherRequestDto);
@@ -29,13 +30,13 @@
     }
   }
 
-  async function update() {
+  async function update(values: string[], tagIds: string[], subjectIds?: string[]) {
     let teacherRequestDto: TeacherRequestDto = {
-      firstName: teacher.firstName,
-      lastName: teacher.lastName,
-      acronym: teacher.acronym,
-      subjectIds: teacher.subjects.map((subject) => subject.id),
-      tagIds: teacher.tags.map((tag) => tag.id),
+      firstName: values[0],
+      lastName: values[1],
+      acronym: values[2],
+      subjectIds: subjectIds || [],
+      tagIds,
     };
     try {
       await updateTeacher(teacher.id, teacherRequestDto);
@@ -47,14 +48,16 @@
   let tags: Tag[] = data.tags;
 </script>
 
-<AddResource
-  {descriptions}
-  {values}
-  {create}
-  {update}
-  createEntity={data.create}
-  tags={data.tags}
-  entityTags={teacher.tags}
-  subjects={data.subjects}
-  enitySubjects={teacher.subjects}
-/>
+<div class="flex flex-row justify-between">
+  <AddResource
+    {descriptions}
+    {values}
+    {create}
+    {update}
+    createEntity={data.create}
+    tags={data.tags}
+    entityTags={teacher.tags}
+    subjects={data.subjects}
+    entitySubjectsIds={new Set(teacher.subjects.map((subject) => subject.id))}
+  />
+</div>
