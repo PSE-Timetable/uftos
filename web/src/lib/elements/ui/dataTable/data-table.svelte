@@ -1,11 +1,3 @@
-<script context="module" lang="ts">
-  export type DataItem = {
-    id: string;
-
-    [key: string]: string | string[] | number;
-  };
-</script>
-
 <script lang="ts">
   import { createTable, Render, Subscribe, createRender } from 'svelte-headless-table';
   import * as Table from '$lib/elements/ui/table';
@@ -29,6 +21,7 @@
   import { writable, type Writable } from 'svelte/store';
   import { onMount } from 'svelte';
   import * as Pagination from '$lib/elements/ui/pagination';
+  import type { DataItem } from '$lib/utils/resources';
 
   onMount(async () => await getData());
 
@@ -233,9 +226,13 @@
         {/each}
       </Table.Header>
       <Table.Body {...$tableBodyAttrs}>
-        {#each $pageRows as row (row.id)}
+        {#each $pageRows as row (row.isData() ? row.dataId : row.id)}
           <Subscribe rowAttrs={row.attrs()} let:rowAttrs>
-            <Table.Row {...rowAttrs} {...rowAttrs} data-state={$selectedDataIds[row.id] && 'selected'}>
+            <Table.Row
+              {...rowAttrs}
+              {...rowAttrs}
+              data-state={(row.isData() ? $selectedDataIds[row.dataId] : $selectedDataIds[row.id]) && 'selected'}
+            >
               {#each row.cells as cell (cell.id)}
                 <Subscribe attrs={cell.attrs()} let:attrs>
                   <Table.Cell {...attrs}>
