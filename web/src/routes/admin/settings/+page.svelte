@@ -1,12 +1,13 @@
 <script lang="ts">
-  import { getTimetableMetadata, type TimetableMetadata } from '$lib/sdk/fetch-client';
+  import { getTimetableMetadata, setTimetableMetadata, type TimetableMetadata } from '$lib/sdk/fetch-client';
   import { CirclePlus, ChevronLeft, Trash2 } from 'lucide-svelte/icons';
-
   import { Input } from '$lib/elements/ui/input/index.js';
+  import { toast } from 'svelte-sonner';
   import { Button } from '$lib/elements/ui/button';
   import { page } from '$app/stores';
   import { goto } from '$app/navigation';
 
+  export let data;
   let changed: boolean = false;
 
   enum Type {
@@ -14,44 +15,27 @@
     PAUSE,
   }
 
-  let oldMetaData: TimetableMetadata = {
-    breaks: [
-      { afterSlot: 0, length: 5 },
-      { afterSlot: 1, length: 5 },
-      { afterSlot: 2, length: 20, long: true },
-      { afterSlot: 4, length: 20, long: true },
-      { afterSlot: 5, length: 5 },
-      { afterSlot: 6, length: 5 },
-      { afterSlot: 7, length: 5 },
-      { afterSlot: 8, length: 5 },
-      { afterSlot: 9, length: 5 },
-      { afterSlot: 10, length: 5 },
-      { afterSlot: 11, length: 5 },
-    ],
-    startTime: '07:45',
-    timeslotLength: 45,
-    timeslotsAmount: 12,
-  };
+  let metaData: TimetableMetadata = data.metadata;
 
-  let timeslotList: { from: string; to: string; relativeIndex: number; type: Type }[] = generateTimetable(oldMetaData);
+  let timeslotList: { from: string; to: string; relativeIndex: number; type: Type }[] = generateTimetable(metaData);
 
-  $: timeslotList = generateTimetable(oldMetaData);
+  $: timeslotList = generateTimetable(metaData);
 
   function addBreakAndUpdate(metadata: TimetableMetadata, afterSlot: number, length: number, long?: boolean) {
     metadata.breaks.push({ afterSlot, length, long });
     metadata.breaks.sort((a, b) => a.afterSlot - b.afterSlot);
-    oldMetaData = metadata;
+    metaData = metadata;
   }
 
   function removeBreakAndUpdate(metadata: TimetableMetadata, index: number) {
     metadata.breaks.splice(index, 1);
     metadata.breaks.sort((a, b) => a.afterSlot - b.afterSlot);
-    oldMetaData = metadata;
+    metaData = metadata;
   }
 
   function setPauseLength(metadata: TimetableMetadata, index: number, length: string) {
     metadata.breaks[index].length = parseInt(length, 10);
-    oldMetaData = metadata;
+    metaData = metadata;
   }
 
   function generateTimetable(metadata: TimetableMetadata) {
@@ -95,6 +79,13 @@
     return timeslotList;
   }
 
+  async function saveMetadata() {
+    await setTimetableMetadata(metaData);
+    toast.success('Erfolgreich', {
+      description: 'Die Einstellungen wurden erfolgreich gespeichert!',
+    });
+  }
+
   function convertTimeStringToDate(timeString: string): Date {
     const [hours, minutes] = timeString.split(':').map(Number);
     const date = new Date();
@@ -121,30 +112,30 @@
 
   function updateTimeslots(event) {
     const value = parseInt(event.target.value, 10);
-    if (value !== oldMetaData.timeslotsAmount) {
+    if (value !== metaData.timeslotsAmount) {
       changed = true;
-      oldMetaData.timeslotsAmount = value;
-      oldMetaData.breaks = oldMetaData.breaks.filter((b) => b.afterSlot < oldMetaData.timeslots);
+      metaData.timeslotsAmount = value;
+      metaData.breaks = metaData.breaks.filter((b) => b.afterSlot < metaData.timeslots);
     }
   }
 
   function updateStartTime(event) {
-    if (event.target.value !== oldMetaData.startTime) {
+    if (event.target.value !== metaData.startTime) {
       changed = true;
-      oldMetaData.startTime = event.target.value;
+      metaData.startTime = event.target.value;
     }
   }
 
   function updateTimeSlotLength(event) {
-    if (event.target.value !== oldMetaData.timeslotLength) {
-      oldMetaData.timeslotLength = parseInt(event.target.value);
+    if (event.target.value !== metaData.timeslotLength) {
+      metaData.timeslotLength = parseInt(event.target.value);
       changed = true;
     }
   }
 
   function hasTimeslotBreak(index: number): boolean {
-    for (let i = 0; i < oldMetaData.breaks.length; i++) {
-      const break1 = oldMetaData.breaks[i];
+    for (let i = 0; i < metaData.breaks.length; i++) {
+      const break1 = metaData.breaks[i];
       if (break1.afterSlot === index) {
         return true;
       }
@@ -175,7 +166,7 @@
         background="true"
         id="slot"
         type="number"
-        value={oldMetaData.timeslotsAmount}
+        value={metaData.timeslotsAmount}
         on:input={updateTimeslots}
         min="0"
         step="1"
@@ -186,7 +177,7 @@
         background="true"
         id="slot_length"
         type="number"
-        value={oldMetaData.timeslotLength}
+        value={metaData.timeslotLength}
         on:input={updateTimeSlotLength}
         min="0"
         step="1"
@@ -195,14 +186,14 @@
       <label for="start_time" class="font-bold">Anfangsuhrzeit:</label>
       <Input
         background="true"
-        value={oldMetaData.startTime}
+        value={metaData.startTime}
         on:input={updateStartTime}
         id="start_time"
         type="time"
         placeholder="07:45"
       />
       <div></div>
-      <Button class="bg-accent text-white py-8 col-span-2">Speichern</Button>
+      <Button class="bg-accent text-white py-8 col-span-2" on:click={saveMetadata}>Speichern</Button>
     </div>
     <div class="bg-white rounded-md p-8 gap-6 flex flex-col w-1/2 min-w-[fit-content]">
       <p class="font-bold text-lg">Timeslots</p>
@@ -215,7 +206,7 @@
             <button
               disabled={hasTimeslotBreak(timeslot.relativeIndex)}
               type="button"
-              on:click={() => addBreakAndUpdate(oldMetaData, timeslot.relativeIndex, 5, false)}
+              on:click={() => addBreakAndUpdate(metaData, timeslot.relativeIndex, 5, false)}
             >
               <div class="stroke-accent">
                 <CirclePlus class={hasTimeslotBreak(timeslot.relativeIndex) ? 'stroke-gray-400' : ''} />
@@ -230,14 +221,14 @@
               background="true"
               id="pause_length"
               type="number"
-              value={oldMetaData.breaks[timeslot.relativeIndex].length}
-              on:input={(e) => setPauseLength(oldMetaData, timeslot.relativeIndex, e.target.value)}
+              value={metaData.breaks[timeslot.relativeIndex].length}
+              on:input={(e) => setPauseLength(metaData, timeslot.relativeIndex, e.target.value)}
               min="0"
               step="1"
               placeholder="Länge"
               class="w-min"
             />
-            <button type="button" on:click={() => removeBreakAndUpdate(oldMetaData, timeslot.relativeIndex)}>
+            <button type="button" on:click={() => removeBreakAndUpdate(metaData, timeslot.relativeIndex)}>
               <Trash2 />
             </button>
           {/if}

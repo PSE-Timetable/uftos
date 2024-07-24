@@ -949,14 +949,16 @@
       },
       "put" : {
         "operationId" : "setTimetableMetadata",
-        "parameters" : [ {
-          "in" : "query",
-          "name" : "timetableMetadata",
-          "required" : true,
-          "schema" : {
-            "$ref" : "#/components/schemas/TimetableMetadata"
-          }
-        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/TimetableMetadata"
+              }
+            }
+          },
+          "required" : true
+        },
         "responses" : {
           "200" : {
             "description" : "OK"

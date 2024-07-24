@@ -695,12 +695,11 @@ export function getTimetableMetadata(opts?: Oazapfts.RequestOpts) {
     }));
 }
 export function setTimetableMetadata(timetableMetadata: TimetableMetadata, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.ok(oazapfts.fetchText(`/server/timetable-metadata${QS.query(QS.explode({
-        timetableMetadata
-    }))}`, {
+    return oazapfts.ok(oazapfts.fetchText("/server/timetable-metadata", oazapfts.json({
         ...opts,
-        method: "PUT"
-    }));
+        method: "PUT",
+        body: timetableMetadata
+    })));
 }
 export function getStudentGroups(pageable: Pageable, { name, tags }: {
     name?: string;

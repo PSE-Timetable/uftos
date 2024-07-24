@@ -37,7 +37,7 @@ public class UftosApplication {
               new TimetableMetadata(
                   45,
                   12,
-                  "7:45",
+                  "07:45",
                   new Break[] {
                       new Break(false, 0, 5),
                       new Break(false, 1, 5),
