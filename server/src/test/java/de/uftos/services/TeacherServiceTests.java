@@ -100,7 +100,7 @@ public class TeacherServiceTests {
     teacher1.setSubjects(List.of(subject));
 
     Server server =
-        new Server(new TimetableMetadata(45, "7:45", new Break[] {}), "2024");
+        new Server(new TimetableMetadata(45,  8,"7:45", new Break[] {}), "2024");
     when(serverRepository.findAll()).thenReturn(List.of(server));
     when(teacherRepository.findById("123")).thenReturn(Optional.of(teacher1));
     when(teacherRepository.findById("456")).thenReturn(Optional.of(teacher2));

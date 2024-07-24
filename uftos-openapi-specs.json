@@ -2342,7 +2342,7 @@
         }
       },
       "GradeResponseDto" : {
-        "required" : [ "id", "name", "studentGroupIds", "studentIds", "tags" ],
+        "required" : [ "curriculumId", "id", "name", "studentGroupIds", "studentIds", "tags" ],
         "type" : "object",
         "properties" : {
           "curriculumId" : {
@@ -3360,7 +3360,7 @@
         }
       },
       "TimetableMetadata" : {
-        "required" : [ "breaks", "startTime", "timeslotLength" ],
+        "required" : [ "breaks", "startTime", "timeslotLength", "timeslotsAmount" ],
         "type" : "object",
         "properties" : {
           "breaks" : {
@@ -3373,6 +3373,10 @@
             "type" : "string"
           },
           "timeslotLength" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "timeslotsAmount" : {
             "type" : "integer",
             "format" : "int32"
           }

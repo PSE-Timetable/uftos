@@ -97,7 +97,7 @@ export type Tag = {
     name: string;
 };
 export type GradeResponseDto = {
-    curriculumId?: string;
+    curriculumId: string;
     id: string;
     name: string;
     studentGroupIds: string[];
@@ -291,6 +291,7 @@ export type TimetableMetadata = {
     breaks: Break[];
     startTime: string;
     timeslotLength: number;
+    timeslotsAmount: number;
 };
 export type PageStudentGroup = {
     content?: StudentGroup[];
