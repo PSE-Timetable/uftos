@@ -1,8 +1,10 @@
 package de.uftos;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import de.uftos.dto.solver.ConstraintInstanceDto;
 import de.uftos.dto.solver.GradeProblemDto;
 import de.uftos.dto.solver.LessonProblemDto;
+import de.uftos.dto.solver.RewardPenalize;
 import de.uftos.dto.solver.RoomProblemDto;
 import de.uftos.dto.solver.StudentGroupProblemDto;
 import de.uftos.dto.solver.StudentProblemDto;
@@ -31,6 +33,9 @@ import de.uftos.repositories.database.TagRepository;
 import de.uftos.repositories.database.TeacherRepository;
 import de.uftos.repositories.database.TimeslotRepository;
 import de.uftos.repositories.solver.SolverRepositoryImpl;
+import de.uftos.repositories.ucdl.parser.PredefinedConstraint;
+import de.uftos.repositories.ucdl.parser.UcdlParser;
+import de.uftos.repositories.ucdl.parser.javacc.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -112,7 +117,8 @@ public class MainController {
                   studentGroup.getId(),
                   null,
                   subject.getId(),
-                  null));
+                  null
+              ));
         }
       }
     }
@@ -246,7 +252,7 @@ public class MainController {
       }
       List<String> lessonIds = new ArrayList<>();
       for (LessonProblemDto lesson : lessons) {
-        if (timeslot.getId().equals(lesson.teacherId())) {
+        if (timeslot.getId().equals(lesson.timeslotId())) {
           lessonIds.add(lesson.id());
         }
       }
@@ -254,6 +260,8 @@ public class MainController {
           new TimeslotProblemDto(timeslot.getId(), timeslot.getDay().ordinal(), timeslot.getSlot(),
               tagIds, lessonIds));
     }
+
+    List<ConstraintInstanceDto> instances = new ArrayList<>();
 
     TimetableProblemDto timetable =
         new TimetableProblemDto(
@@ -267,8 +275,10 @@ public class MainController {
             teachers,
             timeslots,
             getDefinitions(),
-            getInstances()
+            instances
         );
+
+    setInstances(timetable);
 
 
     solution = new SolverRepositoryImpl().solve(timetable);
@@ -291,14 +301,42 @@ public class MainController {
     return solution.get();
   }
 
-  //TODO
   private List<ConstraintDefinitionDto> getDefinitions() {
-    return new ArrayList<>();
+    StringBuilder stringBuilder = new StringBuilder();
+    for (PredefinedConstraint constraint : PredefinedConstraint.values()) {
+      stringBuilder.append(constraint.getCode());
+    }
+
+    try {
+      return UcdlParser.getDefinitions(stringBuilder.toString()).values().stream().toList();
+    } catch (JsonProcessingException | ParseException e) {
+      return new ArrayList<>();
+    }
   }
 
-  //TODO
-  private List<ConstraintInstanceDto> getInstances() {
-    return new ArrayList<>();
-  }
+  private void setInstances(TimetableProblemDto timetable) {
+    List<ConstraintInstanceDto> instances = timetable.instances();
 
+    instances.add(new ConstraintInstanceDto(PredefinedConstraint.TEACHER_COLLISION.getName(),
+        RewardPenalize.HARD_PENALIZE, new ArrayList<>()));
+    instances.add(new ConstraintInstanceDto(PredefinedConstraint.STUDENT_COLLISION.getName(),
+        RewardPenalize.HARD_PENALIZE, new ArrayList<>()));
+    instances.add(new ConstraintInstanceDto(PredefinedConstraint.ROOM_COLLISION.getName(),
+        RewardPenalize.HARD_PENALIZE, new ArrayList<>()));
+
+    List<TeacherProblemDto> teachers = timetable.teachers();
+    for (SubjectProblemDto subject : timetable.subjects()) {
+      for (StudentGroupProblemDto studentGroup : timetable.studentGroups()) {
+        instances.add(
+            new ConstraintInstanceDto(
+                PredefinedConstraint.TEACHER_TEACHES_GROUP.getName(),
+                RewardPenalize.HARD_REWARD,
+                new ArrayList<>(List.of(
+                    teachers.get((int) (Math.random() * teachers.size())),
+                    studentGroup,
+                    subject
+                ))));
+      }
+    }
+  }
 }
