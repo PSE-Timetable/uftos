@@ -116,14 +116,17 @@
           "schema" : {
             "type" : "string"
           }
-        }, {
-          "in" : "query",
-          "name" : "request",
-          "required" : true,
-          "schema" : {
-            "$ref" : "#/components/schemas/ConstraintInstanceRequestDto"
-          }
         } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ConstraintInstanceRequestDto"
+              }
+            }
+          },
+          "required" : true
+        },
         "responses" : {
           "200" : {
             "content" : {
@@ -211,14 +214,17 @@
           "schema" : {
             "type" : "string"
           }
-        }, {
-          "in" : "query",
-          "name" : "request",
-          "required" : true,
-          "schema" : {
-            "$ref" : "#/components/schemas/ConstraintInstanceRequestDto"
-          }
         } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ConstraintInstanceRequestDto"
+              }
+            }
+          },
+          "required" : true
+        },
         "responses" : {
           "200" : {
             "content" : {
@@ -983,14 +989,16 @@
       },
       "put" : {
         "operationId" : "setTimetableMetadata",
-        "parameters" : [ {
-          "in" : "query",
-          "name" : "timetableMetadata",
-          "required" : true,
-          "schema" : {
-            "$ref" : "#/components/schemas/TimetableMetadata"
-          }
-        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/TimetableMetadata"
+              }
+            }
+          },
+          "required" : true
+        },
         "responses" : {
           "200" : {
             "description" : "OK"

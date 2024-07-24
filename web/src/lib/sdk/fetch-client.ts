@@ -412,16 +412,15 @@ export function getConstraintInstances(signatureId: string, pageable: Pageable, 
         ...opts
     }));
 }
-export function createConstraintInstance(signatureId: string, request: ConstraintInstanceRequestDto, opts?: Oazapfts.RequestOpts) {
+export function createConstraintInstance(signatureId: string, constraintInstanceRequestDto: ConstraintInstanceRequestDto, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
         data: ConstraintInstance;
-    }>(`/constraints/${encodeURIComponent(signatureId)}/instances${QS.query(QS.explode({
-        request
-    }))}`, {
+    }>(`/constraints/${encodeURIComponent(signatureId)}/instances`, oazapfts.json({
         ...opts,
-        method: "POST"
-    }));
+        method: "POST",
+        body: constraintInstanceRequestDto
+    })));
 }
 export function deleteConstraintInstance(signatureId: string, id: string, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchText(`/constraints/${encodeURIComponent(signatureId)}/instances/${encodeURIComponent(id)}`, {
@@ -437,16 +436,15 @@ export function getConstraintInstanceById(signatureId: string, id: string, opts?
         ...opts
     }));
 }
-export function updateConstraintInstanceById(signatureId: string, id: string, request: ConstraintInstanceRequestDto, opts?: Oazapfts.RequestOpts) {
+export function updateConstraintInstanceById(signatureId: string, id: string, constraintInstanceRequestDto: ConstraintInstanceRequestDto, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
         data: ConstraintInstance;
-    }>(`/constraints/${encodeURIComponent(signatureId)}/instances/${encodeURIComponent(id)}${QS.query(QS.explode({
-        request
-    }))}`, {
+    }>(`/constraints/${encodeURIComponent(signatureId)}/instances/${encodeURIComponent(id)}`, oazapfts.json({
         ...opts,
-        method: "PUT"
-    }));
+        method: "PUT",
+        body: constraintInstanceRequestDto
+    })));
 }
 export function getCurriculums(pageable: Pageable, { name }: {
     name?: string;
@@ -703,12 +701,11 @@ export function getTimetableMetadata(opts?: Oazapfts.RequestOpts) {
     }));
 }
 export function setTimetableMetadata(timetableMetadata: TimetableMetadata, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.ok(oazapfts.fetchText(`/server/timetable-metadata${QS.query(QS.explode({
-        timetableMetadata
-    }))}`, {
+    return oazapfts.ok(oazapfts.fetchText("/server/timetable-metadata", oazapfts.json({
         ...opts,
-        method: "PUT"
-    }));
+        method: "PUT",
+        body: timetableMetadata
+    })));
 }
 export function getStudentGroups(pageable: Pageable, { name, tags }: {
     name?: string;
