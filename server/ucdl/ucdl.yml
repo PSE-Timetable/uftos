@@ -13,6 +13,7 @@ teacherCollision:
       }
     }
     return false
+
 studentCollision:
   description: "Students may not have multiple lessons at the same time."
   default_type: HARD_PENALIZE
@@ -28,18 +29,23 @@ studentCollision:
       }
     }
     return false
+
 roomCollision:
   description: "Rooms may not be occupied by multiple lessons at the same time."
   default_type: HARD_PENALIZE
   parameter:
   definition: >-
-    forall(room : this.rooms) {
-      exists(lesson1 : room.lessons) {
-        forall(lesson2 : room.lessons) {
-          lesson1 != lesson2 implies lesson1.timeslot != lesson2.timeslot
+    for(room : this.rooms) {
+      for(lesson1 : room.lessons) {
+        for(lesson2 : room.lessons) {
+          if (lesson1 != lesson2 && lesson1.timeslot == lesson2.timeslot) {
+            return true
+          }
         }
       }
     }
+    return false
+
 workingHours:
   description: "Teacher {teacher} does work during Timeslot {timeslot}."
   default_type: SOFT_PENALIZE
@@ -51,6 +57,7 @@ workingHours:
       return true
     }
     return false
+
 teacherTeachesGroup:
   description: "Teacher {teacher} teaches student group {group} in subject {subject}."
   default_type: SOFT_PENALIZE
@@ -62,6 +69,7 @@ teacherTeachesGroup:
     forall (lesson : group.lessons[this.subject == subject]) {
       lesson.teacher == teacher
     }
+
 subjectRoom:
   description: "Subject {subject} is only taught in rooms with tag {tag}."
   default_type: SOFT_PENALIZE
