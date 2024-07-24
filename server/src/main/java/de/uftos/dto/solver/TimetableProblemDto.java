@@ -1,5 +1,6 @@
 package de.uftos.dto.solver;
 
+import de.uftos.dto.ResourceType;
 import de.uftos.dto.ucdl.ConstraintDefinitionDto;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,7 @@ public record TimetableProblemDto(
     List<TimeslotProblemDto> timeslots,
     List<ConstraintDefinitionDto> definitions,
     List<ConstraintInstanceDto> instances
-) {
+) implements ResourceProblemDto {
   public List<ResourceProblemDto> getResources() {
     List<ResourceProblemDto> resources = new ArrayList<>();
 
@@ -32,7 +33,17 @@ public record TimetableProblemDto(
     resources.addAll(tags);
     resources.addAll(teachers);
     resources.addAll(timeslots);
-    
+
     return resources;
+  }
+
+  @Override
+  public String getId() {
+    return "this";
+  }
+
+  @Override
+  public ResourceType getType() {
+    return ResourceType.TIMETABLE;
   }
 }
