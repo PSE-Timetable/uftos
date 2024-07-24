@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 import de.uftos.dto.ConstraintInstanceRequestDto;
+import de.uftos.dto.ConstraintInstancesResponseDto;
 import de.uftos.dto.ResourceType;
 import de.uftos.dto.solver.RewardPenalize;
 import de.uftos.entities.ConstraintArgument;
@@ -82,7 +83,7 @@ public class ConstraintInstanceServiceTest {
 
     ConstraintArgument constraintArgument = new ConstraintArgument();
     constraintArgument.setId("789");
-    constraintArgument.setValue("qwerty");
+    constraintArgument.setValue("teacherId1");
     constraintArgument.setConstraintParameter(constraintParameter);
 
     constraintParameter.setConstraintArguments(List.of(constraintArgument));
@@ -126,12 +127,14 @@ public class ConstraintInstanceServiceTest {
 
   @Test
   void constrainInstanceById() {
-    ConstraintInstance constraintInstance =
+    ConstraintInstancesResponseDto constraintInstanceResponse =
         constraintInstanceService.getById("test constraint", "123");
-    assertNotNull(constraintInstance);
-    assertEquals("123", constraintInstance.getId());
-    assertEquals("test constraint", constraintInstance.getSignature().getName());
-    assertFalse(constraintInstance.getArguments().isEmpty());
+    assertNotNull(constraintInstanceResponse);
+    assertEquals(1, constraintInstanceResponse.constraintInstances().size());
+    ConstraintInstancesResponseDto.SlimInstance constraintInstance1 =
+        constraintInstanceResponse.constraintInstances().getFirst();
+    assertEquals("123", constraintInstance1.id());
+    assertFalse(constraintInstance1.arguments().isEmpty());
   }
 
   @Test

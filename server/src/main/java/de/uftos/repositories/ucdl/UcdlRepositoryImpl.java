@@ -1,9 +1,15 @@
 package de.uftos.repositories.ucdl;
 
-import de.uftos.dto.parser.ConstraintDefinitionDto;
-import de.uftos.dto.parser.ParsingResponse;
-import java.text.ParseException;
+import de.uftos.dto.ucdl.ConstraintDefinitionDto;
+import de.uftos.dto.ucdl.ParsingResponse;
+import de.uftos.repositories.ucdl.parser.UcdlParser;
+import de.uftos.repositories.ucdl.parser.javacc.ParseException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
+import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -11,24 +17,65 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public class UcdlRepositoryImpl implements UcdlRepository {
+  private static final Path UCDL_PATH = Paths.get("/app/ucdl/ucdl.yml");
+  private HashMap<String, ConstraintDefinitionDto> currentDefinitions = null;
 
   @Override
-  public String getUcdl() {
-    return "";
+  public String getUcdl() throws BadRequestException {
+    try {
+      Files.createFile(UCDL_PATH);
+    } catch (IOException e) {
+      throw new BadRequestException(e);
+    }
+    try {
+      return Files.readString(UCDL_PATH);
+    } catch (IOException e) {
+      throw new BadRequestException(e);
+    }
   }
 
   @Override
-  public void setUcdl(String ucdl) {
-
+  public void setUcdl(String ucdl) throws BadRequestException {
+    this.currentDefinitions = null;
+    try {
+      Files.writeString(UCDL_PATH, ucdl);
+    } catch (IOException e) {
+      throw new BadRequestException(e);
+    }
   }
 
   @Override
   public ParsingResponse parseFile() {
-    return null;
+    try {
+      return parseString(this.getUcdl(), true);
+    } catch (BadRequestException e) {
+      return new ParsingResponse(false, e.getMessage());
+    }
   }
 
   @Override
-  public HashMap<String, ConstraintDefinitionDto> getConstraints() throws ParseException {
-    return null;
+  public ParsingResponse parseString(String input) {
+    return parseString(input, false);
+  }
+
+  private ParsingResponse parseString(String input, boolean doesSafeDefinitions) {
+    try {
+      if (doesSafeDefinitions) {
+        this.currentDefinitions = UcdlParser.getDefinitions(input);
+      } else {
+        UcdlParser.getDefinitions(input);
+      }
+    } catch (ParseException | IOException e) {
+      return new ParsingResponse(false, e.getMessage());
+    }
+    return new ParsingResponse(true, "Parsing was successful!");
+  }
+
+  @Override
+  public HashMap<String, ConstraintDefinitionDto> getConstraints() {
+    if (this.currentDefinitions == null && !this.parseFile().success()) {
+      return null;
+    }
+    return this.currentDefinitions;
   }
 }

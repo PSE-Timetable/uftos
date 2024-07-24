@@ -2,9 +2,13 @@
   import DataTable, { type DataItem } from '$lib/elements/ui/dataTable/data-table.svelte';
   import { deleteRoom, getRooms, type Pageable, type PageRoom } from '$lib/sdk/fetch-client';
   import { error } from '@sveltejs/kit';
+  import { onMount } from 'svelte';
 
   let columnNames = ['Name', 'Gebäude', 'Kapazität', 'Tags'];
-  let keys = ['id', 'Name', 'buildingName', 'capacity', 'tags'];
+  let keys = ['id', 'name', 'buildingName', 'capacity', 'tags'];
+  let pageLoaded = false;
+
+  onMount(() => (pageLoaded = true));
 
   async function loadPage(index: number, sortString: string, filter: string) {
     let pageable: Pageable = { page: index, size: 10, sort: [sortString] };
@@ -45,5 +49,7 @@
 </script>
 
 <div class="mx-auto p-10 w-full">
-  <DataTable {columnNames} {keys} {loadPage} {deleteEntry} />
+  {#if pageLoaded}
+    <DataTable {columnNames} {keys} {loadPage} {deleteEntry} />
+  {/if}
 </div>

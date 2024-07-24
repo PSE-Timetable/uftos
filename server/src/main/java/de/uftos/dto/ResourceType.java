@@ -12,5 +12,7 @@ public enum ResourceType {
   SUBJECT,
   TAG,
   TEACHER,
-  TIMESLOT
+  TIMESLOT,
+  NUMBER,
+  TIMETABLE
 }

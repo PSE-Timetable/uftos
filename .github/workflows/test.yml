@@ -74,6 +74,7 @@ jobs:
           workdir: ./server
           checkstyle_config: ./server/checkstyle.xml
           level: error
+          filter_mode: nofilter
 
       - name: Run unit tests
         run: ./mvnw -Dtest='!de.uftos.e2e.**,!UftosApplicationTests' test

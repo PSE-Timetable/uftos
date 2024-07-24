@@ -5,6 +5,9 @@ import de.uftos.entities.TimetableMetadata;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
+/**
+ * A utility class which allows to transform java objects to and from JSON string.
+ */
 @Converter(autoApply = true)
 public class JsonbConverter implements AttributeConverter<TimetableMetadata, String> {
   private static final Gson GSON = new Gson();

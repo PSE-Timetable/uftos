@@ -26,6 +26,7 @@ public class ConstraintSignature {
 
   @NotEmpty
   private String description;
+ 
   @NotEmpty
   private RewardPenalize defaultType;
 
