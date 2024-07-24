@@ -58,9 +58,9 @@ public class UcdlRepositoryImpl implements UcdlRepository {
     return parseString(input, false);
   }
 
-  private ParsingResponse parseString(String input, boolean doesSafeDefinitions) {
+  private ParsingResponse parseString(String input, boolean doesSaveDefinitions) {
     try {
-      if (doesSafeDefinitions) {
+      if (doesSaveDefinitions) {
         this.currentDefinitions = UcdlParser.getDefinitions(input);
       } else {
         UcdlParser.getDefinitions(input);
