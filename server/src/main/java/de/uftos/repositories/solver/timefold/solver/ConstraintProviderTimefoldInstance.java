@@ -55,6 +55,4 @@ public class ConstraintProviderTimefoldInstance implements ConstraintProvider {
         .reward(HardSoftScore.ONE_SOFT)
         .asConstraint("soft-reward");
   }
-
-
 }

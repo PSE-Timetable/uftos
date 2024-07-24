@@ -35,6 +35,8 @@ public class ConstraintInstanceFactory {
 
     List<ResourceTimefoldInstance> params = new ArrayList<>();
 
+    params.add(resources.get("this"));
+
     for (ResourceProblemDto param : instance.parameters()) {
       ResourceTimefoldInstance resource = resources.get(param.getId());
       if (resource.getResourceType() != param.getType()) {
