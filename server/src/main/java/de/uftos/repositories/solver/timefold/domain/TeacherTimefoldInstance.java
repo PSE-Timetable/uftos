@@ -24,7 +24,7 @@ public class TeacherTimefoldInstance implements ResourceTimefoldInstance {
   private final List<TagTimefoldInstance> providedTagsList = new ArrayList<>();
   private final List<SubjectTimefoldInstance> subjectList = new ArrayList<>();
   @InverseRelationShadowVariable(sourceVariableName = "teacher")
-  public List<LessonTimefoldInstance> lessonList;
+  public List<LessonTimefoldInstance> lessonList = new ArrayList<>();
 
   public TeacherTimefoldInstance(String id) {
     this.id = id;

@@ -23,7 +23,7 @@ public class RoomTimefoldInstance implements ResourceTimefoldInstance {
   private final String id;
   private final List<TagTimefoldInstance> providedTagsList = new ArrayList<>();
   @InverseRelationShadowVariable(sourceVariableName = "room")
-  public List<LessonTimefoldInstance> lessonList;
+  public List<LessonTimefoldInstance> lessonList = new ArrayList<>();
 
   public RoomTimefoldInstance(String id) {
     this.id = id;

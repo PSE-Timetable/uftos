@@ -25,7 +25,7 @@ public class TimeslotTimefoldInstance implements ResourceTimefoldInstance {
   private final String id;
   private final List<TagTimefoldInstance> providedTagsList = new ArrayList<>();
   @InverseRelationShadowVariable(sourceVariableName = "timeslot")
-  public List<LessonTimefoldInstance> lessonList;
+  public List<LessonTimefoldInstance> lessonList = new ArrayList<>();
   private int dayOfWeek;
   private int slotId;
 
