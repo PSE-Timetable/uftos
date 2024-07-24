@@ -1,6 +1,6 @@
 <script lang="ts">
   import * as Select from '$lib/elements/ui/select';
-  import { Button } from '$lib/elements/ui/button/index';
+  import Button from '$lib/elements/ui/button/button.svelte';
   import { CirclePlus, CircleMinus } from 'lucide-svelte';
   import {
     createCurriculum,
@@ -8,8 +8,10 @@
     type CurriculumResponseDto,
     type GradeResponseDto,
     type CurriculumRequestDto,
+    updateCurriculum,
   } from '$lib/sdk/fetch-client';
   import type { Selected } from 'bits-ui';
+  import { error } from '@sveltejs/kit';
 
   export let data;
   const subjects = data.subjects;
@@ -20,12 +22,16 @@
   let selectedGrade: Selected<GradeResponseDto> = selectGrades[0];
   let curriculum: CurriculumResponseDto;
   let changed = false;
-  let lastSelected = selectedGrade;
 
   async function getCurriculumFromGrade() {
     changed = false;
-    if (selectedGrade && selectedGrade.value.curriculumId) {
-      curriculum = await getCurriculum(selectedGrade.value.curriculumId);
+    if (selectedGrade && selectedGrade.value.curriculumId !== '') {
+      try {
+        curriculum = await getCurriculum(selectedGrade.value.curriculumId);
+        selectedGrade.value.curriculumId = curriculum.id;
+      } catch {
+        error(400, { message: 'could not get curriculum' });
+      }
     } else {
       let CurriculumRequestDto: CurriculumRequestDto = {
         gradeId: selectedGrade.value.id,
@@ -45,15 +51,7 @@
     <Select.Root
       bind:selected={selectedGrade}
       onSelectedChange={async () => {
-        if (
-          changed &&
-          !confirm('Wenn Sie fortfahren, gehen Ihre Änderungen verloren. Möchten Sie wirklich fortfahren?')
-        ) {
-          selectedGrade = lastSelected;
-        } else {
-          await getCurriculumFromGrade();
-          lastSelected = selectedGrade;
-        }
+        await getCurriculumFromGrade();
       }}
     >
       <Select.Trigger class="w-[180px]">
@@ -81,7 +79,6 @@
                   type="button"
                   on:click={() => {
                     lessonCount.count ? lessonCount.count-- : (lessonCount.count = 0);
-                    changed = true;
                   }}
                   ><CircleMinus />
                 </button>
@@ -90,7 +87,6 @@
                   type="button"
                   on:click={() => {
                     lessonCount.count ? lessonCount.count++ : (lessonCount.count = 1);
-                    changed = true;
                   }}
                   ><CirclePlus />
                 </button>
@@ -100,8 +96,23 @@
         </div>
       </div>
       <div>
-        <Button class="ml-[10.5rem] px-20 py-6 bg-accent text-white" variant="secondary" on:click={() => {}}
-          >Speichern</Button
+        <Button
+          on:click={() => {
+            console.log(selectedGrade.value);
+            console.log(curriculum);
+            let test = {
+              gradeId: selectedGrade.value.id,
+              lessonsCounts: curriculum.lessonsCounts.map((lessonsCount) => ({
+                count: lessonsCount.count || 0,
+                subjectId: lessonsCount.subject ? lessonsCount.subject.id : '',
+              })),
+              name: selectedGrade.value.name,
+            };
+            console.log(test);
+            updateCurriculum(curriculum.id, test);
+          }}
+          class="ml-[10.5rem] px-20 py-6 bg-accent text-white"
+          variant="secondary">Speichern</Button
         >
       </div>
     {/await}
