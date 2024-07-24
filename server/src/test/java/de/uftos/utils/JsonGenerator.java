@@ -1,5 +1,6 @@
 package de.uftos.utils;
 
+import de.uftos.dto.LessonsCountRequestDto;
 import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -9,6 +10,92 @@ import org.json.JSONObject;
  * This class helps to generate the JSON needed for the E2E tests.
  */
 public class JsonGenerator {
+
+  /**
+   * Generates the grade JSON.
+   *
+   * @param name          The name of the grade
+   * @param studentGroups The ids of the student groups the grade contains
+   * @param tags          The ids of the tags the grade has
+   * @return The requested JSON
+   * @throws JSONException If something is malformed.
+   */
+  public static String generateGradeJson(String name, String curriculumId,
+                                         List<String> studentGroups,
+                                         List<String> tags)
+      throws JSONException {
+    JSONArray tagIds = new JSONArray();
+    tags.forEach(tagIds::put);
+
+    JSONArray studentGroupIds = new JSONArray();
+    studentGroups.forEach(studentGroupIds::put);
+    return new JSONObject()
+        .put("name", name)
+        .put("curriculumId", curriculumId)
+        .put("studentGroupIds", studentGroupIds)
+        .put("tagIds", tagIds)
+        .toString();
+  }
+
+  /**
+   * Generates the grade JSON.
+   *
+   * @param gradeId       The id of the curriculum's grade
+   * @param name          The name of the curriculum
+   * @param lessonsCounts The number of lessons for each subject
+   * @return The requested JSON
+   * @throws JSONException If something is malformed.
+   */
+  public static String generateCurriculumJson(String gradeId, String name,
+                                              List<LessonsCountRequestDto> lessonsCounts)
+      throws JSONException {
+    JSONArray jsonArray = new JSONArray();
+    for (LessonsCountRequestDto dto : lessonsCounts) {
+      JSONObject dtoJson = generateLessonsCountJson(dto);
+      jsonArray.put(dtoJson);
+    }
+    return new JSONObject()
+        .put("gradeId", gradeId)
+        .put("name", name)
+        .put("lessonsCounts", jsonArray)
+        .toString();
+  }
+
+  /**
+   * Generates the grade JSON.
+   *
+   * @param dto The lesson count DTO that should be transformed to a JSON
+   * @return The requested JSON
+   * @throws JSONException If something is malformed.
+   */
+  public static JSONObject generateLessonsCountJson(LessonsCountRequestDto dto)
+      throws JSONException {
+    return new JSONObject()
+        .put("subjectId", dto.subjectId())
+        .put("count", dto.count());
+  }
+
+  /**
+   * Generates the student JSON.
+   *
+   * @param name         The name of the room
+   * @param buildingName The name of the building the room is in
+   * @param capacity     The maximum number of people the room is suitable for
+   * @param tags         The ids of the tags the student has
+   * @return The requested JSON
+   * @throws JSONException If something is malformed.
+   */
+  public static String generateRoomJson(String name, String buildingName, int capacity,
+                                        List<String> tags) throws JSONException {
+    JSONArray jsonArray = new JSONArray();
+    tags.forEach(jsonArray::put);
+    return new JSONObject()
+        .put("name", name)
+        .put("buildingName", buildingName)
+        .put("capacity", capacity)
+        .put("tagIds", jsonArray)
+        .toString();
+  }
 
   /**
    * Generates the student JSON.
@@ -27,6 +114,37 @@ public class JsonGenerator {
         .put("firstName", firstName)
         .put("lastName", lastName)
         .put("tagIds", jsonArray)
+        .toString();
+  }
+
+  /**
+   * Generates the student JSON.
+   *
+   * @param name     The name of the student group
+   * @param students The ids of the students the student group contains
+   * @param grades   The ids of the grades the student group belongs to
+   * @param tags     The ids of the tags the student has
+   * @return The requested JSON
+   * @throws JSONException If something is malformed.
+   */
+  public static String generateStudentGroupJson(String name, List<String> students,
+                                                List<String> grades, List<String> tags)
+      throws JSONException {
+
+    JSONArray studentIds = new JSONArray();
+    students.forEach(studentIds::put);
+
+    JSONArray gradeIds = new JSONArray();
+    grades.forEach(gradeIds::put);
+
+    JSONArray tagIds = new JSONArray();
+    tags.forEach(tagIds::put);
+
+    return new JSONObject()
+        .put("name", name)
+        .put("studentIds", studentIds)
+        .put("gradeIds", gradeIds)
+        .put("tagIds", tagIds)
         .toString();
   }
 
