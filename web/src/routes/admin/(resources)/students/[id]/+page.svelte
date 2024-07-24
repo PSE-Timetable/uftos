@@ -1,12 +1,6 @@
 <script lang="ts">
   import AddResource from '$lib/components/ui/add-resource/add-resource.svelte';
-  import {
-    createStudent,
-    updateStudent,
-    type Student,
-    type StudentRequestDto,
-    type Tag,
-  } from '$lib/sdk/fetch-client.js';
+  import { createStudent, updateStudent, type Student, type StudentRequestDto } from '$lib/sdk/fetch-client.js';
   import { error } from '@sveltejs/kit';
 
   export let data;

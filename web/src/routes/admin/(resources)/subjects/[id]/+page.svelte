@@ -1,12 +1,6 @@
 <script lang="ts">
   import AddResource from '$lib/components/ui/add-resource/add-resource.svelte';
-  import {
-    createSubject,
-    updateSubject,
-    type Subject,
-    type SubjectRequestDto,
-    type Tag,
-  } from '$lib/sdk/fetch-client.js';
+  import { createSubject, updateSubject, type Subject, type SubjectRequestDto } from '$lib/sdk/fetch-client.js';
   import { error } from '@sveltejs/kit';
 
   export let data;
@@ -37,8 +31,6 @@
       error(400, { message: 'Could not update subject' });
     }
   }
-
-  let tags: Tag[] = [];
 </script>
 
 <AddResource

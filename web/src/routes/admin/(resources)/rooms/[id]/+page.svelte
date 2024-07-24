@@ -1,6 +1,6 @@
 <script lang="ts">
   import AddResource from '$lib/components/ui/add-resource/add-resource.svelte';
-  import { createRoom, updateRoom, type Room, type RoomRequestDto, type Tag } from '$lib/sdk/fetch-client.js';
+  import { createRoom, updateRoom, type Room, type RoomRequestDto } from '$lib/sdk/fetch-client.js';
   import { error } from '@sveltejs/kit';
 
   export let data;

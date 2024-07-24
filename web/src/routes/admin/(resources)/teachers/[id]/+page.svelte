@@ -1,13 +1,6 @@
 <script lang="ts">
   import AddResource from '$lib/components/ui/add-resource/add-resource.svelte';
-  import WorkingHoursDayContainer from '$lib/components/working-hours/working-hours-day-container.svelte';
-  import {
-    createTeacher,
-    updateTeacher,
-    type Tag,
-    type Teacher,
-    type TeacherRequestDto,
-  } from '$lib/sdk/fetch-client.js';
+  import { createTeacher, updateTeacher, type Teacher, type TeacherRequestDto } from '$lib/sdk/fetch-client.js';
   import { error } from '@sveltejs/kit';
 
   export let data;
@@ -44,8 +37,6 @@
       error(400, { message: 'Could not update tag' });
     }
   }
-
-  let tags: Tag[] = data.tags;
 </script>
 
 <div class="flex flex-row justify-between">
