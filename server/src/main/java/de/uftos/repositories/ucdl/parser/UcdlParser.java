@@ -79,7 +79,8 @@ public class UcdlParser {
     };
 
     LinkedHashMap<String, ResourceType> parameters = new LinkedHashMap<>();
-    
+    parameters.put("this", ResourceType.TIMETABLE);
+
     Iterator<Map.Entry<String, JsonNode>> iterator = constraintDefinition.get("parameter").fields();
     while (iterator.hasNext()) {
       Map.Entry<String, JsonNode> entry = iterator.next();
@@ -90,7 +91,6 @@ public class UcdlParser {
         }
       }
     }
-    parameters.put("this", ResourceType.TIMETABLE);
 
     AbstractSyntaxTreeDto definition =
         DefinitionParser.parseDefinition(constraintDefinition.get("definition").textValue(),

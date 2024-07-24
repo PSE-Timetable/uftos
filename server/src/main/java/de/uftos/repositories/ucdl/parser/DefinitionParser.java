@@ -37,9 +37,7 @@ public class DefinitionParser {
   public static AbstractSyntaxTreeDto parseDefinition(String definition,
                                                       LinkedHashMap<String, ResourceType> parameters)
       throws ParseException {
-    LinkedHashMap<String, ResourceType> params = new LinkedHashMap<>();
-    params.put("this", ResourceType.TIMETABLE);
-    params.putAll(parameters);
+    LinkedHashMap<String, ResourceType> params = new LinkedHashMap<>(parameters);
 
     SimpleNode root = SyntaxChecker.parseString(definition);
     return buildAst(root, params);
