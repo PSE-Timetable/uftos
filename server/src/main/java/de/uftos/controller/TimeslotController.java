@@ -3,10 +3,9 @@ package de.uftos.controller;
 import de.uftos.dto.TimeslotRequestDto;
 import de.uftos.entities.Timeslot;
 import de.uftos.services.TimeslotService;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -49,14 +48,14 @@ public class TimeslotController {
 
   /**
    * Maps the HTTP GET request for a set of timeslots from the database to the
-   * {@link TimeslotService#get(Pageable, Optional) get} function of the timeslot service.
+   * {@link TimeslotService#get(Optional) get} function of the timeslot service.
    *
-   * @param pageable contains the parameters for the page.
+   * @param tags the tags filter.
    * @return the page of timeslots fitting the parameters.
    */
   @GetMapping()
-  public Page<Timeslot> getTimeslots(Pageable pageable, Optional<String[]> tags) {
-    return this.timeslotsService.get(pageable, tags);
+  public List<Timeslot> getTimeslots(Optional<String[]> tags) {
+    return this.timeslotsService.get(tags);
   }
 
   /**

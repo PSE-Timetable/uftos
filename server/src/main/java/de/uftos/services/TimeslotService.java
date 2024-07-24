@@ -4,6 +4,7 @@ import de.uftos.dto.TimeslotRequestDto;
 import de.uftos.entities.Timeslot;
 import de.uftos.repositories.database.TimeslotRepository;
 import de.uftos.utils.SpecificationBuilder;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -31,18 +32,17 @@ public class TimeslotService {
   }
 
   /**
-   * Gets a page of entries of the timeslot table.
+   * Gets a list of entries of the timeslot table.
    *
    * @param tags      the tags filter.
-   * @param pageable contains the parameters for the page.
-   * @return the page of entries fitting the parameters.
+   * @return the list of entries fitting the parameters.
    */
-  public Page<Timeslot> get(Pageable pageable, Optional<String[]> tags) {
+  public List<Timeslot> get(Optional<String[]> tags) {
     Specification<Timeslot> spec = new SpecificationBuilder<Timeslot>()
         .optionalAndJoinIn(tags, "tags", "id")
         .build();
 
-    return this.repository.findAll(spec, pageable);
+    return this.repository.findAll(spec);
   }
 
   /**

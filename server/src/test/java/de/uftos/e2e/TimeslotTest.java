@@ -55,6 +55,7 @@ class TimeslotTest {
         .log().ifValidationFails()
         .extract()
         .body().jsonPath().getString("id");
+    
 
     secondTimeslot = given().contentType(ContentType.JSON)
         .body(
@@ -95,26 +96,24 @@ class TimeslotTest {
   @Test
   void getAllTimeslots() throws JSONException {
     given().contentType(ContentType.JSON)
-        .body(generatePageJson(0, 10, Collections.emptyList()))
         .when()
         .get("/timeslots")
         .then()
         .statusCode(200)
-        .body("totalElements", equalTo(2))
+        .body("size()", equalTo(2))
         .log().ifValidationFails();
   }
 
   @Test
   void getTimeslotsWithTag() throws JSONException {
     given().contentType(ContentType.JSON)
-        .body(generatePageJson(0, 10, Collections.emptyList()))
         .param("tags", List.of(tagId))
         .when()
         .get("/timeslots")
         .then()
         .statusCode(200)
-        .body("totalElements", equalTo(1))
-        .body("content[0].id", equalTo(secondTimeslot))
+        .body("size()", equalTo(1))
+        .body("[0].id", equalTo(secondTimeslot))
         .log().ifValidationFails();
   }
 
