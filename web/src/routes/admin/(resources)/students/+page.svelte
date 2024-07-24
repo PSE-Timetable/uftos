@@ -9,7 +9,7 @@
   onMount(() => (pageLoaded = true));
 </script>
 
-<div class="p-10 w-full">
+<div class="px-10 py-4 w-full">
   <!--Avoids warning that fetch calls should be in onMount or load function, there must be a better solution-->
   {#if pageLoaded}
     <DataTable {columnNames} {keys} loadPage={loadStudentPage} deleteEntry={deleteStudentEntry} />

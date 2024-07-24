@@ -376,7 +376,7 @@
         "responses" : {
           "200" : {
             "content" : {
-              "*/*" : {
+              "text/yaml" : {
                 "schema" : {
                   "type" : "string",
                   "format" : "binary"
@@ -390,6 +390,40 @@
       },
       "put" : {
         "operationId" : "setUcdlFile",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "file" : {
+                    "type" : "string",
+                    "format" : "binary"
+                  }
+                }
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ParsingResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "tags" : [ "ucdl-editor-controller" ]
+      }
+    },
+    "/editor/validate" : {
+      "put" : {
+        "operationId" : "validate",
         "requestBody" : {
           "content" : {
             "application/json" : {
@@ -2342,7 +2376,7 @@
         }
       },
       "GradeResponseDto" : {
-        "required" : [ "id", "name", "studentGroupIds", "studentIds", "tags" ],
+        "required" : [ "curriculumId", "id", "name", "studentGroupIds", "studentIds", "tags" ],
         "type" : "object",
         "properties" : {
           "curriculumId" : {
