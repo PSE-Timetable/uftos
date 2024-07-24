@@ -38,6 +38,33 @@ public class JsonGenerator {
   }
 
   /**
+   * Generates the teacher JSON.
+   *
+   * @param firstName  The first name of the teacher
+   * @param lastName   The last name of the teacher
+   * @param acronym    The acronym of the teacher
+   * @param subjectIds The IDs of the subjects the teacher can teach
+   * @param tags       The IDs of the tags the teacher has
+   * @return The requested JSON
+   * @throws JSONException If something is malformed.
+   */
+  public static String generateTeacherJson(String firstName, String lastName, String acronym,
+                                           List<String> subjectIds, List<String> tags)
+      throws JSONException {
+    JSONArray tagsArray = new JSONArray();
+    tags.forEach(tagsArray::put);
+    JSONArray subjectsArray = new JSONArray();
+    subjectIds.forEach(subjectsArray::put);
+    return new JSONObject()
+        .put("firstName", firstName)
+        .put("lastName", lastName)
+        .put("acronym", acronym)
+        .put("subjectIds", subjectsArray)
+        .put("tagIds", tagsArray)
+        .toString();
+  }
+
+  /**
    * Generates the grade JSON.
    *
    * @param gradeId       The id of the curriculum's grade
