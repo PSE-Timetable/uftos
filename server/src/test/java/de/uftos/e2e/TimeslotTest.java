@@ -1,7 +1,6 @@
 package de.uftos.e2e;
 
 import static de.uftos.utils.JsonGenerator.generatePageJson;
-import static de.uftos.utils.JsonGenerator.generateSubjectJson;
 import static de.uftos.utils.JsonGenerator.generateTagJson;
 import static de.uftos.utils.JsonGenerator.generateTimeslotJson;
 import static io.restassured.RestAssured.given;
@@ -17,7 +16,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class TimeslotTest {
+class TimeslotTest {
 
   private static final String TAG_NAME = "Vormittags";
   private static final Weekday FIRST_TIMESLOT_DAY = Weekday.TUESDAY;
@@ -30,7 +29,7 @@ public class TimeslotTest {
   static String tagId;
 
   @BeforeAll
-  static void createTestStudents() throws JSONException {
+  static void createTestTimeslots() throws JSONException {
     tagId = given().contentType(ContentType.JSON)
         .body(generateTagJson(TAG_NAME))
         .when()

@@ -39,7 +39,7 @@ public class JsonGenerator {
   }
 
   /**
-   * Generates the grade JSON.
+   * Generates the curriculum JSON.
    *
    * @param gradeId       The id of the curriculum's grade
    * @param name          The name of the curriculum
@@ -63,7 +63,7 @@ public class JsonGenerator {
   }
 
   /**
-   * Generates the grade JSON.
+   * Generates the lessons count JSON.
    *
    * @param dto The lesson count DTO that should be transformed to a JSON
    * @return The requested JSON
@@ -77,12 +77,12 @@ public class JsonGenerator {
   }
 
   /**
-   * Generates the student JSON.
+   * Generates the room JSON.
    *
    * @param name         The name of the room
    * @param buildingName The name of the building the room is in
    * @param capacity     The maximum number of people the room is suitable for
-   * @param tags         The ids of the tags the student has
+   * @param tags         The ids of the tags the room has
    * @return The requested JSON
    * @throws JSONException If something is malformed.
    */
@@ -119,7 +119,7 @@ public class JsonGenerator {
   }
 
   /**
-   * Generates the student JSON.
+   * Generates the student group JSON.
    *
    * @param name     The name of the student group
    * @param students The ids of the students the student group contains

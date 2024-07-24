@@ -1,7 +1,6 @@
 package de.uftos.services;
 
 import de.uftos.dto.TimeslotRequestDto;
-import de.uftos.entities.Student;
 import de.uftos.entities.Timeslot;
 import de.uftos.repositories.database.TimeslotRepository;
 import de.uftos.utils.SpecificationBuilder;
