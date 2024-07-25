@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,7 +28,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class ConstraintController {
   private final ConstraintSignatureService constraintSignatureService;
   private final ConstraintInstanceService constraintInstanceService;
-
 
 
   /**
@@ -83,6 +83,7 @@ public class ConstraintController {
    */
   @PostMapping("/{signatureId}/instances")
   public ConstraintInstance createConstraintInstance(@PathVariable String signatureId,
+                                                     @RequestBody()
                                                      ConstraintInstanceRequestDto request) {
     return this.constraintInstanceService.create(signatureId, request);
   }
@@ -132,6 +133,7 @@ public class ConstraintController {
   @PutMapping("/{signatureId}/instances/{id}")
   public ConstraintInstance updateConstraintInstanceById(@PathVariable String signatureId,
                                                          @PathVariable String id,
+                                                         @RequestBody
                                                          ConstraintInstanceRequestDto request) {
     return this.constraintInstanceService.update(signatureId, id, request);
   }
