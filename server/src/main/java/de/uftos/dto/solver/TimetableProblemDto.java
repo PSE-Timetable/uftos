@@ -21,6 +21,11 @@ public record TimetableProblemDto(
     List<ConstraintDefinitionDto> definitions,
     List<ConstraintInstanceDto> instances
 ) implements ResourceProblemDto {
+  /**
+   * Gets a List of all resources contained in this timetable.
+   *
+   * @return a List of all resources contained by this timetable.
+   */
   public List<ResourceProblemDto> getResources() {
     List<ResourceProblemDto> resources = new ArrayList<>();
 

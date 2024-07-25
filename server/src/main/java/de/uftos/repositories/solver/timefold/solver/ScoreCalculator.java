@@ -14,6 +14,9 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * This class implements a score-function for the timefold solver.
+ */
 public class ScoreCalculator
     implements EasyScoreCalculator<TimetableSolutionTimefoldInstance, HardSoftScore> {
 

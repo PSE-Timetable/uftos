@@ -106,6 +106,7 @@ public class ConstraintDefinitionFactory {
     };
   }
 
+  @SuppressWarnings("checkstyle:VariableDeclarationUsageDistance")
   private static Function<List<ResourceTimefoldInstance>, Optional<Boolean>> convertFor(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.FOR) {

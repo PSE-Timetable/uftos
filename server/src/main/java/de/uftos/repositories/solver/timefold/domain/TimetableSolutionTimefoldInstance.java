@@ -65,6 +65,12 @@ public class TimetableSolutionTimefoldInstance implements ResourceTimefoldInstan
     return "this";
   }
 
+  /**
+   * Gets a Hashmap of all resources contained in this timetable (including the timetable itself).
+   * The returned HashMap uses the Ids of the resources as keys for the resources themselves.
+   *
+   * @return a HashMap of all resources contained by this timetable.
+   */
   public HashMap<String, ResourceTimefoldInstance> getResources() {
     List<ResourceTimefoldInstance> resources = new ArrayList<>();
 

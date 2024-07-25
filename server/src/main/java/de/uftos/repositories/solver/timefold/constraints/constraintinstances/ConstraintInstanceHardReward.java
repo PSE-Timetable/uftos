@@ -18,6 +18,7 @@ public record ConstraintInstanceHardReward(
     List<ResourceTimefoldInstance> parameters,
     Function<List<ResourceTimefoldInstance>, Boolean> evaluationFunction
 ) implements ConstraintInstanceTimefoldInstance {
+  @Override
   public boolean evaluate(HashMap<String, ResourceTimefoldInstance> resources) {
     List<ResourceTimefoldInstance> params = new ArrayList<>();
     for (ResourceTimefoldInstance resource : parameters) {

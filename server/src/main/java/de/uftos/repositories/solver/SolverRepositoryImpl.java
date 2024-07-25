@@ -57,6 +57,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class SolverRepositoryImpl implements SolverRepository {
 
+  @SuppressWarnings("checkstyle:VariableDeclarationUsageDistance")
   TimetableSolutionTimefoldInstance getSolutionInstanceFromTimetableInstance(
       TimetableProblemDto timetable) {
     HashMap<String, GradeTimefoldInstance> grades = new HashMap<>();

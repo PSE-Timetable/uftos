@@ -2,6 +2,9 @@ package de.uftos.repositories.ucdl.parser;
 
 import lombok.Getter;
 
+/**
+ * This enum models predefined constraints which are ready-to-use.
+ */
 @Getter
 public enum PredefinedConstraint {
   TEACHER_COLLISION("teacherCollision",
@@ -14,7 +17,6 @@ public enum PredefinedConstraint {
               lesson2: Lesson
             definition: >-
               lesson1 != lesson2 && lesson1.timeslot == lesson2.timeslot && lesson1.teacher == lesson2.teacher
-                    
           """),
   STUDENT_COLLISION("studentCollision",
       """
@@ -25,8 +27,9 @@ public enum PredefinedConstraint {
               lesson1: Lesson
               lesson2: Lesson
             definition: >-
-              lesson1 != lesson2 && lesson1.timeslot == lesson2.timeslot && size(lesson1.studentGroup.students[lesson2.studentGroup.students]) > 0
-                    
+              lesson1 != lesson2
+              && lesson1.timeslot == lesson2.timeslot
+              && size(lesson1.studentGroup.students[lesson2.studentGroup.students]) > 0
           """
   ),
   ROOM_COLLISION("roomCollision",
@@ -39,45 +42,52 @@ public enum PredefinedConstraint {
               lesson2: Lesson
             definition: >-
               lesson1 != lesson2 && lesson1.timeslot == lesson2.timeslot && lesson1.room == lesson2.room
-                    
           """
   ),
   WORKING_HOURS("workingHours",
-      "workingHours:\n"
-          + "  description: \"Teacher {teacher} does work during Timeslot {timeslot}.\"\n"
-          + "  default_type: SOFT_PENALIZE\n"
-          + "  parameter:\n"
-          + "    teacher: Teacher\n"
-          + "    timeslot: Timeslot\n"
-          + "  definition: >-\n"
-          + "    if (timeslot in teacher.lessons.timeslot) {\n"
-          + "      return true\n"
-          + "    }\n"
-          + "    return false\n"),
+      """
+          workingHours:
+            description: "Teacher {teacher} does work during Timeslot {timeslot}."
+            default_type: SOFT_PENALIZE
+            parameter:
+              teacher: Teacher
+              timeslot: Timeslot
+            definition: >-
+              if (timeslot in teacher.lessons.timeslot) {
+                return true
+              }
+              return false
+          """
+  ),
   TEACHER_TEACHES_GROUP("teacherTeachesGroup",
-      "teacherTeachesGroup:\n"
-          +
-          "  description: \"Teacher {teacher} teaches student group {group} in subject {subject}.\"\n"
-          + "  default_type: SOFT_PENALIZE\n"
-          + "  parameter:\n"
-          + "    teacher: Teacher\n"
-          + "    group: Student-Group\n"
-          + "    subject: Subject\n"
-          + "  definition: >-\n"
-          + "    forall (lesson : group.lessons[this.subject == subject]) {\n"
-          + "      lesson.teacher == teacher\n"
-          + "    }\n"),
+      """
+          teacherTeachesGroup:
+            description: "Teacher {teacher} teaches student group {group} in subject {subject}."
+              default_type: SOFT_PENALIZE
+              parameter:
+                teacher: Teacher
+                group: Student-Group
+                subject: Subject
+              definition: >-
+                forall (lesson : group.lessons[this.subject == subject]) {
+                  lesson.teacher == teacher
+                }
+          """
+  ),
   SUBJECT_ROOM("subjectRoom",
-      "subjectRoom:\n"
-          + "  description: \"Subject {subject} is only taught in rooms with tag {tag}.\"\n"
-          + "  default_type: SOFT_PENALIZE\n"
-          + "  parameter:\n"
-          + "    subject: Subject\n"
-          + "    tag: Tag\n"
-          + "  definition: >-\n"
-          + "    forall (room : subject.lessons.room) {\n"
-          + "      tag in room.tags\n"
-          + "    }\n");
+      """
+          subjectRoom:
+            description: "Subject {subject} is only taught in rooms with tag {tag}."
+            default_type: SOFT_PENALIZE
+            parameter:
+              subject: Subject
+              tag: Tag
+            definition: >-
+              forall (room : subject.lessons.room) {
+                tag in room.tags
+              }
+          """
+  );
 
   private final String name;
   private final String code;
