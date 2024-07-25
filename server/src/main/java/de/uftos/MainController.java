@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import de.uftos.dto.solver.ConstraintInstanceDto;
 import de.uftos.dto.solver.GradeProblemDto;
 import de.uftos.dto.solver.LessonProblemDto;
+import de.uftos.dto.solver.ResourceProblemDto;
 import de.uftos.dto.solver.RewardPenalize;
 import de.uftos.dto.solver.RoomProblemDto;
 import de.uftos.dto.solver.StudentGroupProblemDto;
@@ -317,13 +318,19 @@ public class MainController {
   private void setInstances(TimetableProblemDto timetable) {
     List<ConstraintInstanceDto> instances = timetable.instances();
 
-    instances.add(new ConstraintInstanceDto(PredefinedConstraint.TEACHER_COLLISION.getName(),
-        RewardPenalize.HARD_PENALIZE, new ArrayList<>()));
-    instances.add(new ConstraintInstanceDto(PredefinedConstraint.STUDENT_COLLISION.getName(),
-        RewardPenalize.HARD_PENALIZE, new ArrayList<>()));
-    instances.add(new ConstraintInstanceDto(PredefinedConstraint.ROOM_COLLISION.getName(),
-        RewardPenalize.HARD_PENALIZE, new ArrayList<>()));
+    for (LessonProblemDto lesson1 : timetable.lessons()) {
+      for (LessonProblemDto lesson2 : timetable.lessons()) {
+        List<ResourceProblemDto> params = List.of(lesson1, lesson2);
+        instances.add(new ConstraintInstanceDto(PredefinedConstraint.TEACHER_COLLISION.getName(),
+            RewardPenalize.HARD_PENALIZE, params));
+        instances.add(new ConstraintInstanceDto(PredefinedConstraint.STUDENT_COLLISION.getName(),
+            RewardPenalize.HARD_PENALIZE, params));
+        instances.add(new ConstraintInstanceDto(PredefinedConstraint.ROOM_COLLISION.getName(),
+            RewardPenalize.HARD_PENALIZE, params));
+      }
+    }
 
+    int index = 0;
     List<TeacherProblemDto> teachers = timetable.teachers();
     for (SubjectProblemDto subject : timetable.subjects()) {
       for (StudentGroupProblemDto studentGroup : timetable.studentGroups()) {
@@ -332,7 +339,7 @@ public class MainController {
                 PredefinedConstraint.TEACHER_TEACHES_GROUP.getName(),
                 RewardPenalize.HARD_REWARD,
                 new ArrayList<>(List.of(
-                    teachers.get((int) (Math.random() * teachers.size())),
+                    teachers.get(index++ % teachers.size()),
                     studentGroup,
                     subject
                 ))));

@@ -5,53 +5,43 @@ import lombok.Getter;
 @Getter
 public enum PredefinedConstraint {
   TEACHER_COLLISION("teacherCollision",
-      "teacherCollision:\n"
-          + "  description: \"Teachers may not have multiple lessons at the same time.\"\n"
-          + "  default_type: HARD_PENALIZE\n"
-          + "  parameter:\n"
-          + "  definition: >-\n"
-          + "    for (teacher of this.teachers) {\n"
-          + "      for (lesson1 of teacher.lessons) {\n"
-          + "        for (lesson2 of teacher.lessons) {\n"
-          + "          if (lesson1 != lesson2 && lesson1.timeslot == lesson2.timeslot) {\n"
-          + "            return true\n"
-          + "          }\n"
-          + "        }\n"
-          + "      }\n"
-          + "    }\n"
-          + "    return false\n"),
+      """
+          teacherCollision:
+            description: "Teachers may not have multiple lessons at the same time."
+            default_type: HARD_PENALIZE
+            parameter:
+              lesson1: Lesson
+              lesson2: Lesson
+            definition: >-
+              lesson1 != lesson2 && lesson1.timeslot == lesson2.timeslot && lesson1.teacher == lesson2.teacher
+                    
+          """),
   STUDENT_COLLISION("studentCollision",
-      "studentCollision:\n"
-          + "  description: \"Students may not have multiple lessons at the same time.\"\n"
-          + "  default_type: HARD_PENALIZE\n"
-          + "  parameter:\n"
-          + "  definition: >-\n"
-          + "    for (student of this.students) {\n"
-          + "      for (lesson1 of student.studentGroups.lessons) {\n"
-          + "        for (lesson2 of student.studentGroups.lessons) {\n"
-          + "          if (lesson1 != lesson2 && lesson1.timeslot == lesson2.timeslot) {\n"
-          + "            return true\n"
-          + "          }\n"
-          + "        }\n"
-          + "      }\n"
-          + "    }\n"
-          + "    return false\n"),
+      """
+          studentCollision:
+            description: "Students may not have multiple lessons at the same time."
+            default_type: HARD_PENALIZE
+            parameter:
+              lesson1: Lesson
+              lesson2: Lesson
+            definition: >-
+              lesson1 != lesson2 && lesson1.timeslot == lesson2.timeslot && size(lesson1.studentGroup.students[lesson2.studentGroup.students]) > 0
+                    
+          """
+  ),
   ROOM_COLLISION("roomCollision",
-      "roomCollision:\n"
-          + "  description: \"Rooms may not be occupied by multiple lessons at the same time.\"\n"
-          + "  default_type: HARD_PENALIZE\n"
-          + "  parameter:\n"
-          + "  definition: >-\n"
-          + "    for(room : this.rooms) {\n"
-          + "      for(lesson1 : room.lessons) {\n"
-          + "        for(lesson2 : room.lessons) {\n"
-          + "          if (lesson1 != lesson2 && lesson1.timeslot == lesson2.timeslot) {\n"
-          + "            return true\n"
-          + "          }\n"
-          + "        }\n"
-          + "      }\n"
-          + "    }\n"
-          + "    return false\n"),
+      """
+          roomCollision:
+            description: "Rooms may not be occupied by multiple lessons at the same time."
+            default_type: HARD_PENALIZE
+            parameter:
+              lesson1: Lesson
+              lesson2: Lesson
+            definition: >-
+              lesson1 != lesson2 && lesson1.timeslot == lesson2.timeslot && lesson1.room == lesson2.room
+                    
+          """
+  ),
   WORKING_HOURS("workingHours",
       "workingHours:\n"
           + "  description: \"Teacher {teacher} does work during Timeslot {timeslot}.\"\n"

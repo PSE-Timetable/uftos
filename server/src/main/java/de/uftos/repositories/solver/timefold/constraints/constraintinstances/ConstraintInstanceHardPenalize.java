@@ -1,6 +1,8 @@
 package de.uftos.repositories.solver.timefold.constraints.constraintinstances;
 
+import de.uftos.dto.solver.RewardPenalize;
 import de.uftos.repositories.solver.timefold.domain.ResourceTimefoldInstance;
+import de.uftos.repositories.solver.timefold.domain.TimetableSolutionTimefoldInstance;
 import java.util.List;
 import java.util.function.Function;
 
@@ -15,7 +17,16 @@ public record ConstraintInstanceHardPenalize(
     List<ResourceTimefoldInstance> parameters,
     Function<List<ResourceTimefoldInstance>, Boolean> evaluationFunction
 ) implements ConstraintInstanceTimefoldInstance {
-  public boolean evaluate() {
-    return evaluationFunction.apply(parameters);
+  public boolean evaluate(TimetableSolutionTimefoldInstance timetable) {
+    try {
+      return evaluationFunction.apply(parameters);
+    } catch (NullPointerException e) {
+      return true;
+    }
+  }
+
+  @Override
+  public RewardPenalize rewardPenalize() {
+    return RewardPenalize.HARD_PENALIZE;
   }
 }

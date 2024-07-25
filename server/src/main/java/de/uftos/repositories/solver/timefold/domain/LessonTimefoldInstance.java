@@ -33,6 +33,7 @@ public class LessonTimefoldInstance implements ResourceTimefoldInstance {
   @PlanningVariable
   private RoomTimefoldInstance room;
 
+  //required by the timefold solver
   public LessonTimefoldInstance() {
 
   }

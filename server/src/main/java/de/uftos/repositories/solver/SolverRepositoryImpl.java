@@ -2,6 +2,10 @@ package de.uftos.repositories.solver;
 
 import ai.timefold.solver.core.api.solver.Solver;
 import ai.timefold.solver.core.api.solver.SolverFactory;
+import ai.timefold.solver.core.config.constructionheuristic.ConstructionHeuristicPhaseConfig;
+import ai.timefold.solver.core.config.constructionheuristic.ConstructionHeuristicType;
+import ai.timefold.solver.core.config.localsearch.LocalSearchPhaseConfig;
+import ai.timefold.solver.core.config.localsearch.decider.acceptor.LocalSearchAcceptorConfig;
 import ai.timefold.solver.core.config.score.director.ScoreDirectorFactoryConfig;
 import ai.timefold.solver.core.config.solver.SolverConfig;
 import ai.timefold.solver.core.config.solver.termination.TerminationConfig;
@@ -35,7 +39,7 @@ import de.uftos.repositories.solver.timefold.domain.TagTimefoldInstance;
 import de.uftos.repositories.solver.timefold.domain.TeacherTimefoldInstance;
 import de.uftos.repositories.solver.timefold.domain.TimeslotTimefoldInstance;
 import de.uftos.repositories.solver.timefold.domain.TimetableSolutionTimefoldInstance;
-import de.uftos.repositories.solver.timefold.solver.ConstraintProviderTimefoldInstance;
+import de.uftos.repositories.solver.timefold.solver.ScoreCalculator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -292,10 +296,6 @@ public class SolverRepositoryImpl implements SolverRepository {
         if (!teachers.get(lesson.teacherId()).getLessonList().contains(timefoldInstance)) {
           throw new IllegalStateException();
         }
-      } else {
-        TeacherTimefoldInstance teacher = teachers.values().stream().toList().getFirst();
-        timefoldInstance.setTeacher(teacher);
-        teacher.getLessonList().add(timefoldInstance);
       }
 
       //checking timeslot for consistency
@@ -307,10 +307,6 @@ public class SolverRepositoryImpl implements SolverRepository {
         if (!timeslots.get(lesson.timeslotId()).getLessonList().contains(timefoldInstance)) {
           throw new IllegalStateException();
         }
-      } else {
-        TimeslotTimefoldInstance timeslot = timeslots.values().stream().toList().getFirst();
-        timefoldInstance.setTimeslot(timeslot);
-        timeslot.getLessonList().add(timefoldInstance);
       }
 
       //checking room for consistency
@@ -322,10 +318,6 @@ public class SolverRepositoryImpl implements SolverRepository {
         if (!rooms.get(lesson.roomId()).getLessonList().contains(timefoldInstance)) {
           throw new IllegalStateException();
         }
-      } else {
-        RoomTimefoldInstance room = rooms.values().stream().toList().getFirst();
-        timefoldInstance.setRoom(room);
-        room.getLessonList().add(timefoldInstance);
       }
     }
     solution.getLessons().addAll(lessons.values());
@@ -471,15 +463,31 @@ public class SolverRepositoryImpl implements SolverRepository {
       TimetableSolutionTimefoldInstance solution =
           getSolutionInstanceFromTimetableInstance(timetable);
 
+
+      ConstructionHeuristicPhaseConfig constructionHeuristic =
+          new ConstructionHeuristicPhaseConfig();
+      constructionHeuristic.setConstructionHeuristicType(
+          ConstructionHeuristicType.FIRST_FIT);
+
+      LocalSearchPhaseConfig localSearch = new LocalSearchPhaseConfig();
+      localSearch.setAcceptorConfig(
+          new LocalSearchAcceptorConfig().withSimulatedAnnealingStartingTemperature(
+              "5hard/100soft"));
+
+
       SolverConfig solverConfig = new SolverConfig()
           .withTerminationConfig(new TerminationConfig()
-              .withMillisecondsSpentLimit(5000L))
+              .withMillisecondsSpentLimit(10000L))
           .withSolutionClass(TimetableSolutionTimefoldInstance.class)
           .withEntityClassList(
-              Arrays.stream(new Class<?>[] {LessonTimefoldInstance.class}).toList());
-      solverConfig.setScoreDirectorFactoryConfig(
-          new ScoreDirectorFactoryConfig().withConstraintProviderClass(
-              ConstraintProviderTimefoldInstance.class));
+              Arrays.stream(new Class<?>[] {LessonTimefoldInstance.class}).toList())
+          .withScoreDirectorFactory(new ScoreDirectorFactoryConfig()
+              .withEasyScoreCalculatorClass(ScoreCalculator.class))
+          .withPhases(
+              constructionHeuristic,
+              localSearch
+          );
+
 
       SolverFactory<TimetableSolutionTimefoldInstance> factory =
           new DefaultSolverFactory<>(solverConfig);
