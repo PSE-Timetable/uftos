@@ -2,7 +2,8 @@ package de.uftos.repositories.solver.timefold.constraints.constraintinstances;
 
 import de.uftos.dto.solver.RewardPenalize;
 import de.uftos.repositories.solver.timefold.domain.ResourceTimefoldInstance;
-import de.uftos.repositories.solver.timefold.domain.TimetableSolutionTimefoldInstance;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
 
@@ -17,9 +18,14 @@ public record ConstraintInstanceHardReward(
     List<ResourceTimefoldInstance> parameters,
     Function<List<ResourceTimefoldInstance>, Boolean> evaluationFunction
 ) implements ConstraintInstanceTimefoldInstance {
-  public boolean evaluate(TimetableSolutionTimefoldInstance timetable) {
+  public boolean evaluate(HashMap<String, ResourceTimefoldInstance> resources) {
+    //todo: find reason for null-values
+    List<ResourceTimefoldInstance> params = new ArrayList<>();
+    for (ResourceTimefoldInstance resource : parameters) {
+      params.add(resources.get(resource.getId()));
+    }
     try {
-      return evaluationFunction.apply(parameters);
+      return evaluationFunction.apply(params);
     } catch (NullPointerException e) {
       return false;
     }

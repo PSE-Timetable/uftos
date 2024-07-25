@@ -12,4 +12,11 @@ public interface ResourceTimefoldInstance {
    * @return the type of the resource.
    */
   ResourceType getResourceType();
+
+  /**
+   * Gets the type id the resource.
+   *
+   * @return the id of the resource.
+   */
+  String getId();
 }

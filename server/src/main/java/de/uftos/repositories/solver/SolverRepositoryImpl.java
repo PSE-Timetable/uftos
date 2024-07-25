@@ -296,6 +296,10 @@ public class SolverRepositoryImpl implements SolverRepository {
         if (!teachers.get(lesson.teacherId()).getLessonList().contains(timefoldInstance)) {
           throw new IllegalStateException();
         }
+      } else {
+        TeacherTimefoldInstance teacher = teachers.values().stream().toList().getFirst();
+        timefoldInstance.setTeacher(teacher);
+        teacher.getLessonList().add(timefoldInstance);
       }
 
       //checking timeslot for consistency
@@ -307,6 +311,10 @@ public class SolverRepositoryImpl implements SolverRepository {
         if (!timeslots.get(lesson.timeslotId()).getLessonList().contains(timefoldInstance)) {
           throw new IllegalStateException();
         }
+      } else {
+        TimeslotTimefoldInstance timeslot = timeslots.values().stream().toList().getFirst();
+        timefoldInstance.setTimeslot(timeslot);
+        timeslot.getLessonList().add(timefoldInstance);
       }
 
       //checking room for consistency
@@ -318,6 +326,10 @@ public class SolverRepositoryImpl implements SolverRepository {
         if (!rooms.get(lesson.roomId()).getLessonList().contains(timefoldInstance)) {
           throw new IllegalStateException();
         }
+      } else {
+        RoomTimefoldInstance room = rooms.values().stream().toList().getFirst();
+        timefoldInstance.setRoom(room);
+        room.getLessonList().add(timefoldInstance);
       }
     }
     solution.getLessons().addAll(lessons.values());
@@ -477,16 +489,12 @@ public class SolverRepositoryImpl implements SolverRepository {
 
       SolverConfig solverConfig = new SolverConfig()
           .withTerminationConfig(new TerminationConfig()
-              .withMillisecondsSpentLimit(10000L))
+              .withMillisecondsSpentLimit(60000L))
           .withSolutionClass(TimetableSolutionTimefoldInstance.class)
           .withEntityClassList(
               Arrays.stream(new Class<?>[] {LessonTimefoldInstance.class}).toList())
           .withScoreDirectorFactory(new ScoreDirectorFactoryConfig()
-              .withEasyScoreCalculatorClass(ScoreCalculator.class))
-          .withPhases(
-              constructionHeuristic,
-              localSearch
-          );
+              .withEasyScoreCalculatorClass(ScoreCalculator.class));
 
 
       SolverFactory<TimetableSolutionTimefoldInstance> factory =

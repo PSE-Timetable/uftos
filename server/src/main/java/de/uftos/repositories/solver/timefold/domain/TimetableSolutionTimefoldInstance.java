@@ -9,6 +9,7 @@ import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
 import de.uftos.dto.ResourceType;
 import de.uftos.repositories.solver.timefold.constraints.constraintinstances.ConstraintInstanceTimefoldInstance;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import lombok.Getter;
 
@@ -57,5 +58,33 @@ public class TimetableSolutionTimefoldInstance implements ResourceTimefoldInstan
   @Override
   public ResourceType getResourceType() {
     return ResourceType.TIMETABLE;
+  }
+
+  @Override
+  public String getId() {
+    return "this";
+  }
+
+  public HashMap<String, ResourceTimefoldInstance> getResources() {
+    List<ResourceTimefoldInstance> resources = new ArrayList<>();
+
+    resources.addAll(grades);
+    resources.addAll(rooms);
+    resources.addAll(studentGroups);
+    resources.addAll(students);
+    resources.addAll(subjects);
+    resources.addAll(teachers);
+    resources.addAll(timeslots);
+    resources.addAll(tags);
+    resources.addAll(lessons);
+
+    HashMap<String, ResourceTimefoldInstance> resourceMap = new HashMap<>();
+    resourceMap.put("this", this);
+
+    for (ResourceTimefoldInstance resource : resources) {
+      resourceMap.put(resource.getId(), resource);
+    }
+
+    return resourceMap;
   }
 }

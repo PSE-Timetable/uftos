@@ -21,9 +21,6 @@ public class ScoreCalculator
   public HardSoftScore calculateScore(
       TimetableSolutionTimefoldInstance timetableSolutionTimefoldInstance) {
 
-    int i = (int) (Math.random() * Integer.MAX_VALUE);
-    System.out.println("started " + i);
-
     List<ConstraintInstanceTimefoldInstance> constraints =
         timetableSolutionTimefoldInstance.getConstraintInstances();
 
@@ -46,7 +43,7 @@ public class ScoreCalculator
             int hard = 0;
             int soft = 0;
             for (ConstraintInstanceTimefoldInstance constraint : constraintList) {
-              if (constraint.evaluate(timetableSolutionTimefoldInstance)) {
+              if (constraint.evaluate(timetableSolutionTimefoldInstance.getResources())) {
                 switch (constraint.rewardPenalize()) {
                   case HARD_PENALIZE -> hard--;
                   case SOFT_PENALIZE -> soft--;
@@ -74,9 +71,6 @@ public class ScoreCalculator
       soft += score.softScore();
 
     }
-
-    System.out.println("finished " + i + " (" + hard + ";" + soft + ")");
-
     return HardSoftScore.of(hard, soft);
   }
 

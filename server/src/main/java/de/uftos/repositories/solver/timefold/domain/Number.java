@@ -18,4 +18,9 @@ public class Number implements ResourceTimefoldInstance {
   public ResourceType getResourceType() {
     return ResourceType.NUMBER;
   }
+
+  @Override
+  public String getId() {
+    return "number:" + value;
+  }
 }
