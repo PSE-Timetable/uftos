@@ -19,7 +19,6 @@ public record ConstraintInstanceHardReward(
     Function<List<ResourceTimefoldInstance>, Boolean> evaluationFunction
 ) implements ConstraintInstanceTimefoldInstance {
   public boolean evaluate(HashMap<String, ResourceTimefoldInstance> resources) {
-    //todo: find reason for null-values
     List<ResourceTimefoldInstance> params = new ArrayList<>();
     for (ResourceTimefoldInstance resource : parameters) {
       params.add(resources.get(resource.getId()));
