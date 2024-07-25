@@ -3,44 +3,36 @@
   import Button from '$lib/elements/ui/button/button.svelte';
   import { CirclePlus, CircleMinus } from 'lucide-svelte';
   import {
-    createCurriculum,
     getCurriculum,
     type CurriculumResponseDto,
-    type GradeResponseDto,
-    type CurriculumRequestDto,
     updateCurriculum,
+    type LessonsCount,
+    type GradeResponseDto,
   } from '$lib/sdk/fetch-client';
   import type { Selected } from 'bits-ui';
   import { error } from '@sveltejs/kit';
 
   export let data;
-  const subjects = data.subjects;
   let selectGrades = data.grades.map((grade) => ({
-    value: grade,
+    value: grade.id,
     label: grade.name,
   }));
-  let selectedGrade: Selected<GradeResponseDto> = selectGrades[0];
+  let selectedGradeId: Selected<string> = data.grades[0]
+    ? { value: data.grades[0].id, label: data.grades[0].name }
+    : { value: '', label: '' };
   let curriculum: CurriculumResponseDto;
-  let changed = false;
+  let lessonsCounts: LessonsCount[] = [];
+  let selectedGrade: GradeResponseDto | undefined = data.grades.find((grade) => grade.id === selectedGradeId.value);
 
   async function getCurriculumFromGrade() {
-    changed = false;
-    if (selectedGrade && selectedGrade.value.curriculumId !== '') {
+    selectedGrade = data.grades.find((grade) => grade.id === selectedGradeId.value);
+    if (selectedGrade) {
       try {
-        curriculum = await getCurriculum(selectedGrade.value.curriculumId);
-        selectedGrade.value.curriculumId = curriculum.id;
+        curriculum = await getCurriculum(selectedGrade.curriculumId);
+        lessonsCounts = curriculum.lessonsCounts;
       } catch {
         error(400, { message: 'could not get curriculum' });
       }
-    } else {
-      let CurriculumRequestDto: CurriculumRequestDto = {
-        gradeId: selectedGrade.value.id,
-        lessonsCounts: subjects.map((subject) => ({ count: 0, subjectId: subject.id })),
-        name: selectedGrade.value.name,
-      };
-      let result = await createCurriculum(CurriculumRequestDto);
-      selectedGrade.value.id = result.id;
-      curriculum = result;
     }
   }
 </script>
@@ -48,12 +40,7 @@
 <div class="flex flex-col">
   <div class="flex flex-row text-xl font-bold m-7 items-baseline">
     <div class="w-28 mr-7">Stufe:</div>
-    <Select.Root
-      bind:selected={selectedGrade}
-      onSelectedChange={async () => {
-        await getCurriculumFromGrade();
-      }}
-    >
+    <Select.Root bind:selected={selectedGradeId}>
       <Select.Trigger class="w-[180px]">
         <Select.Value placeholder="Stufe auswählen" />
       </Select.Trigger>
@@ -67,54 +54,55 @@
     </Select.Root>
   </div>
   {#if selectedGrade}
-    {#await getCurriculumFromGrade() then}
-      <div class="flex flex-row m-7 items-center">
-        <div class="w-28 text-xl font-bold mr-6">Anzahl an Stunden pro Fach:</div>
-        <div class="flex flex-wrap w-[54rem]">
-          {#each curriculum.lessonsCounts as lessonCount}
-            <div class="bg-white rounded-md w-36 h-16 flex flex-col justify-items-center m-1">
-              <div class="text-center m-1">{lessonCount.subject?.name}</div>
-              <div class="flex-row flex justify-center">
-                <button
-                  type="button"
-                  on:click={() => {
-                    lessonCount.count ? lessonCount.count-- : (lessonCount.count = 0);
-                  }}
-                  ><CircleMinus />
-                </button>
-                <div class="mx-3">{lessonCount.count}</div>
-                <button
-                  type="button"
-                  on:click={() => {
-                    lessonCount.count ? lessonCount.count++ : (lessonCount.count = 1);
-                  }}
-                  ><CirclePlus />
-                </button>
+    {#key selectedGradeId}
+      {#await getCurriculumFromGrade() then}
+        <div class="flex flex-row m-7 items-center">
+          <div class="w-28 text-xl font-bold mr-6">Anzahl an Stunden pro Fach:</div>
+          <div class="flex flex-wrap w-[54rem]">
+            {#each lessonsCounts as lessonCount}
+              <div class="bg-white rounded-md w-36 h-16 flex flex-col justify-items-center m-1">
+                <div class="text-center m-1">{lessonCount.subject?.name}</div>
+                <div class="flex-row flex justify-center">
+                  <button
+                    type="button"
+                    on:click={() => {
+                      lessonCount.count ? lessonCount.count-- : (lessonCount.count = 0);
+                    }}
+                    ><CircleMinus />
+                  </button>
+                  <div class="mx-3">{lessonCount.count}</div>
+                  <button
+                    type="button"
+                    on:click={() => {
+                      lessonCount.count ? lessonCount.count++ : (lessonCount.count = 1);
+                    }}
+                    ><CirclePlus />
+                  </button>
+                </div>
               </div>
-            </div>
-          {/each}
+            {/each}
+          </div>
         </div>
-      </div>
-      <div>
-        <Button
-          on:click={() => {
-            console.log(selectedGrade.value);
-            console.log(curriculum);
-            let test = {
-              gradeId: selectedGrade.value.id,
-              lessonsCounts: curriculum.lessonsCounts.map((lessonsCount) => ({
-                count: lessonsCount.count || 0,
-                subjectId: lessonsCount.subject ? lessonsCount.subject.id : '',
-              })),
-              name: selectedGrade.value.name,
-            };
-            console.log(test);
-            updateCurriculum(curriculum.id, test);
-          }}
-          class="ml-[10.5rem] px-20 py-6 bg-accent text-white"
-          variant="secondary">Speichern</Button
-        >
-      </div>
-    {/await}
+        <div>
+          <Button
+            on:click={async () => {
+              if (selectedGrade) {
+                let test = {
+                  gradeId: selectedGrade.id,
+                  lessonsCounts: curriculum.lessonsCounts.map((lessonsCount) => ({
+                    count: lessonsCount.count || 0,
+                    subjectId: lessonsCount.subject ? lessonsCount.subject.id : '',
+                  })),
+                  name: selectedGrade.name,
+                };
+                await updateCurriculum(curriculum.id, test);
+              }
+            }}
+            class="ml-[10.5rem] px-20 py-6 bg-accent text-white"
+            variant="secondary">Speichern</Button
+          >
+        </div>
+      {/await}
+    {/key}
   {/if}
 </div>

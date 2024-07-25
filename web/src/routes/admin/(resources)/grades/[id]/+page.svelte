@@ -1,6 +1,6 @@
 <script lang="ts">
   import AddResource from '$lib/components/ui/add-resource/add-resource.svelte';
-  import { createGrade, updateGrade, type Grade, type GradeRequestDto } from '$lib/sdk/fetch-client';
+  import { createGrade, updateGrade, type GradeRequestDto } from '$lib/sdk/fetch-client';
   import { error } from '@sveltejs/kit';
 
   export let data;
