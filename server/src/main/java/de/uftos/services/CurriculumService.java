@@ -42,7 +42,7 @@ public class CurriculumService {
   /**
    * Gets a page of entries of the curriculum table.
    *
-   * @param name the name filter
+   * @param name     the name filter
    * @param pageable contains the parameters for the page.
    * @return the page of the entries fitting the parameters.
    */
@@ -97,7 +97,9 @@ public class CurriculumService {
    * @return the updated grade.
    */
   public CurriculumResponseDto update(String id, CurriculumRequestDto curriculumRequest) {
-    Curriculum curriculum = curriculumRequest.map(null);
+    Grade grade = gradeRepository.findById(curriculumRequest.gradeId())
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+    Curriculum curriculum = curriculumRequest.map(grade);
     curriculum.setId(id);
     return new CurriculumResponseDto(this.repository.save(curriculum));
   }
