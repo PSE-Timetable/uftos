@@ -17,7 +17,7 @@ export const load = (async ({ params }) => {
     const tag = await getTag(params.id);
     return {
       tag,
-      create: true,
+      create: false,
       meta: {
         title: `Tag — ${tag.name}`,
       },
