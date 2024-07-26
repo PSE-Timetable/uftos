@@ -2,16 +2,7 @@ package de.uftos;
 
 import de.uftos.entities.Break;
 import de.uftos.entities.TimetableMetadata;
-import de.uftos.repositories.database.CurriculumRepository;
-import de.uftos.repositories.database.GradeRepository;
-import de.uftos.repositories.database.RoomRepository;
 import de.uftos.repositories.database.ServerRepository;
-import de.uftos.repositories.database.StudentGroupRepository;
-import de.uftos.repositories.database.StudentRepository;
-import de.uftos.repositories.database.SubjectRepository;
-import de.uftos.repositories.database.TagRepository;
-import de.uftos.repositories.database.TeacherRepository;
-import de.uftos.repositories.database.TimeslotRepository;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.servers.Server;
@@ -38,42 +29,8 @@ public class UftosApplication {
   }
 
   @Bean
-  ApplicationRunner init(ServerRepository serverRepository,
-                         GradeRepository gradeRepository,
-                         SubjectRepository subjectRepository,
-                         RoomRepository roomRepository,
-                         StudentGroupRepository studentGroupRepository,
-                         StudentRepository studentRepository,
-                         TeacherRepository teacherRepository,
-                         CurriculumRepository curriculumRepository,
-                         TagRepository tagRepository,
-                         TimeslotRepository timeslotRepository
-  ) {
+  ApplicationRunner init(ServerRepository serverRepository) {
     return (ApplicationArguments args) -> {
-      System.out.println("clearing all relations");
-      serverRepository.deleteAll();
-      gradeRepository.deleteAll();
-      teacherRepository.deleteAll();
-      subjectRepository.deleteAll();
-      roomRepository.deleteAll();
-      studentGroupRepository.deleteAll();
-      studentRepository.deleteAll();
-      curriculumRepository.deleteAll();
-      tagRepository.deleteAll();
-      timeslotRepository.deleteAll();
-      System.out.println("cleared all relations");
-
-      FillDB.fillDB(
-          gradeRepository,
-          subjectRepository,
-          roomRepository,
-          studentGroupRepository,
-          studentRepository,
-          teacherRepository,
-          curriculumRepository,
-          tagRepository,
-          timeslotRepository
-      );
       serverRepository.save(
           new de.uftos.entities.Server(new TimetableMetadata(45, "7:45", new Break[] {}), "2024"));
     };
