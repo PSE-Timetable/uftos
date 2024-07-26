@@ -90,7 +90,6 @@ export type ConstraintArgument = {
 export type ConstraintInstance = {
     arguments: ConstraintArgument[];
     id: string;
-    signature: ConstraintSignature;
     "type": Type;
 };
 export type Tag = {
@@ -98,6 +97,7 @@ export type Tag = {
     name: string;
 };
 export type GradeResponseDto = {
+    curriculumId: string;
     id: string;
     name: string;
     studentGroupIds: string[];
@@ -226,7 +226,7 @@ export type Curriculum = {
     name: string;
 };
 export type Grade = {
-    curricula?: Curriculum[];
+    curriculum?: Curriculum;
     id?: string;
     name?: string;
     studentGroups?: StudentGroup[];
@@ -412,16 +412,15 @@ export function getConstraintInstances(signatureId: string, pageable: Pageable, 
         ...opts
     }));
 }
-export function createConstraintInstance(signatureId: string, request: ConstraintInstanceRequestDto, opts?: Oazapfts.RequestOpts) {
+export function createConstraintInstance(signatureId: string, constraintInstanceRequestDto: ConstraintInstanceRequestDto, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
         data: ConstraintInstance;
-    }>(`/constraints/${encodeURIComponent(signatureId)}/instances${QS.query(QS.explode({
-        request
-    }))}`, {
+    }>(`/constraints/${encodeURIComponent(signatureId)}/instances`, oazapfts.json({
         ...opts,
-        method: "POST"
-    }));
+        method: "POST",
+        body: constraintInstanceRequestDto
+    })));
 }
 export function deleteConstraintInstance(signatureId: string, id: string, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchText(`/constraints/${encodeURIComponent(signatureId)}/instances/${encodeURIComponent(id)}`, {
@@ -437,16 +436,15 @@ export function getConstraintInstanceById(signatureId: string, id: string, opts?
         ...opts
     }));
 }
-export function updateConstraintInstanceById(signatureId: string, id: string, request: ConstraintInstanceRequestDto, opts?: Oazapfts.RequestOpts) {
+export function updateConstraintInstanceById(signatureId: string, id: string, constraintInstanceRequestDto: ConstraintInstanceRequestDto, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
         data: ConstraintInstance;
-    }>(`/constraints/${encodeURIComponent(signatureId)}/instances/${encodeURIComponent(id)}${QS.query(QS.explode({
-        request
-    }))}`, {
+    }>(`/constraints/${encodeURIComponent(signatureId)}/instances/${encodeURIComponent(id)}`, oazapfts.json({
         ...opts,
-        method: "PUT"
-    }));
+        method: "PUT",
+        body: constraintInstanceRequestDto
+    })));
 }
 export function getCurriculums(pageable: Pageable, { name }: {
     name?: string;
@@ -496,10 +494,7 @@ export function updateCurriculum(id: string, curriculumRequestDto: CurriculumReq
     })));
 }
 export function getUcdlFile(opts?: Oazapfts.RequestOpts) {
-    return oazapfts.ok(oazapfts.fetchJson<{
-        status: 200;
-        data: Blob;
-    }>("/editor", {
+    return oazapfts.ok(oazapfts.fetchText("/editor", {
         ...opts
     }));
 }
@@ -510,6 +505,18 @@ export function setUcdlFile(body: {
         status: 200;
         data: ParsingResponse;
     }>("/editor", oazapfts.json({
+        ...opts,
+        method: "PUT",
+        body
+    })));
+}
+export function validate(body: {
+    file?: Blob;
+}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.ok(oazapfts.fetchJson<{
+        status: 200;
+        data: ParsingResponse;
+    }>("/editor/validate", oazapfts.json({
         ...opts,
         method: "PUT",
         body
@@ -694,22 +701,23 @@ export function getTimetableMetadata(opts?: Oazapfts.RequestOpts) {
     }));
 }
 export function setTimetableMetadata(timetableMetadata: TimetableMetadata, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.ok(oazapfts.fetchText(`/server/timetable-metadata${QS.query(QS.explode({
-        timetableMetadata
-    }))}`, {
+    return oazapfts.ok(oazapfts.fetchText("/server/timetable-metadata", oazapfts.json({
         ...opts,
-        method: "PUT"
-    }));
+        method: "PUT",
+        body: timetableMetadata
+    })));
 }
-export function getStudentGroups(pageable: Pageable, { name }: {
+export function getStudentGroups(pageable: Pageable, { name, tags }: {
     name?: string;
+    tags?: string[];
 } = {}, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
         data: PageStudentGroup;
     }>(`/student-groups${QS.query(QS.explode({
         pageable,
-        name
+        name,
+        tags
     }))}`, {
         ...opts
     }));
@@ -751,7 +759,7 @@ export function updateStudentGroup(id: string, studentGroupRequestDto: StudentGr
 export function getStudentGroupLessons(id: string, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
-        data: LessonResponseDto[];
+        data: LessonResponseDto;
     }>(`/student-groups/${encodeURIComponent(id)}/lessons`, {
         ...opts
     }));

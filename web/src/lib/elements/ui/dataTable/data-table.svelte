@@ -1,11 +1,3 @@
-<script context="module" lang="ts">
-  export type DataItem = {
-    id: string;
-
-    [key: string]: string | string[] | number;
-  };
-</script>
-
 <script lang="ts">
   import { createTable, Render, Subscribe, createRender } from 'svelte-headless-table';
   import * as Table from '$lib/elements/ui/table';
@@ -24,11 +16,14 @@
   import ChevronRight from 'lucide-svelte/icons/chevron-right';
   import * as DropdownMenu from '$lib/elements/ui/dropdown-menu';
   import DataTableCheckbox from './data-table-checkbox.svelte';
-  import { ArrowDown, ArrowUp } from 'lucide-svelte';
+  import { ArrowDown, ArrowUp, Plus } from 'lucide-svelte';
   import { Input } from '$lib/elements/ui/input';
   import { writable, type Writable } from 'svelte/store';
   import { onMount } from 'svelte';
+  import { goto } from '$app/navigation';
+  import { page } from '$app/stores';
   import * as Pagination from '$lib/elements/ui/pagination';
+  import type { DataItem } from '$lib/utils/resources';
 
   onMount(async () => await getData());
 
@@ -204,6 +199,15 @@
         {/each}
       </DropdownMenu.Content>
     </DropdownMenu.Root>
+    <Button
+      class="ml-auto text-md"
+      variant="secondary"
+      on:click={async () => {
+        await goto(`${$page.url}/new`);
+      }}
+      >Hinzufügen
+      <Plus class="ml-3" />
+    </Button>
   </div>
   <div>
     <Table.Root {...$tableAttrs}>
@@ -240,9 +244,13 @@
         {/each}
       </Table.Header>
       <Table.Body {...$tableBodyAttrs}>
-        {#each $pageRows as row (row.id)}
+        {#each $pageRows as row (row.isData() ? row.dataId : row.id)}
           <Subscribe rowAttrs={row.attrs()} let:rowAttrs>
-            <Table.Row {...rowAttrs} {...rowAttrs} data-state={$selectedDataIds[row.id] && 'selected'}>
+            <Table.Row
+              {...rowAttrs}
+              {...rowAttrs}
+              data-state={(row.isData() ? $selectedDataIds[row.dataId] : $selectedDataIds[row.id]) && 'selected'}
+            >
               {#each row.cells as cell (cell.id)}
                 <Subscribe attrs={cell.attrs()} let:attrs>
                   <Table.Cell {...attrs}>

@@ -116,14 +116,17 @@
           "schema" : {
             "type" : "string"
           }
-        }, {
-          "in" : "query",
-          "name" : "request",
-          "required" : true,
-          "schema" : {
-            "$ref" : "#/components/schemas/ConstraintInstanceRequestDto"
-          }
         } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ConstraintInstanceRequestDto"
+              }
+            }
+          },
+          "required" : true
+        },
         "responses" : {
           "200" : {
             "content" : {
@@ -211,14 +214,17 @@
           "schema" : {
             "type" : "string"
           }
-        }, {
-          "in" : "query",
-          "name" : "request",
-          "required" : true,
-          "schema" : {
-            "$ref" : "#/components/schemas/ConstraintInstanceRequestDto"
-          }
         } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ConstraintInstanceRequestDto"
+              }
+            }
+          },
+          "required" : true
+        },
         "responses" : {
           "200" : {
             "content" : {
@@ -376,7 +382,7 @@
         "responses" : {
           "200" : {
             "content" : {
-              "*/*" : {
+              "text/yaml" : {
                 "schema" : {
                   "type" : "string",
                   "format" : "binary"
@@ -390,6 +396,40 @@
       },
       "put" : {
         "operationId" : "setUcdlFile",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "file" : {
+                    "type" : "string",
+                    "format" : "binary"
+                  }
+                }
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ParsingResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "tags" : [ "ucdl-editor-controller" ]
+      }
+    },
+    "/editor/validate" : {
+      "put" : {
+        "operationId" : "validate",
         "requestBody" : {
           "content" : {
             "application/json" : {
@@ -949,14 +989,16 @@
       },
       "put" : {
         "operationId" : "setTimetableMetadata",
-        "parameters" : [ {
-          "in" : "query",
-          "name" : "timetableMetadata",
-          "required" : true,
-          "schema" : {
-            "$ref" : "#/components/schemas/TimetableMetadata"
-          }
-        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/TimetableMetadata"
+              }
+            }
+          },
+          "required" : true
+        },
         "responses" : {
           "200" : {
             "description" : "OK"
@@ -981,6 +1023,16 @@
           "required" : false,
           "schema" : {
             "type" : "string"
+          }
+        }, {
+          "in" : "query",
+          "name" : "tags",
+          "required" : false,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
           }
         } ],
         "responses" : {
@@ -1117,10 +1169,7 @@
             "content" : {
               "*/*" : {
                 "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/LessonResponseDto"
-                  }
+                  "$ref" : "#/components/schemas/LessonResponseDto"
                 }
               }
             },
@@ -2131,7 +2180,7 @@
         }
       },
       "ConstraintInstance" : {
-        "required" : [ "arguments", "id", "signature", "type" ],
+        "required" : [ "arguments", "id", "type" ],
         "type" : "object",
         "properties" : {
           "arguments" : {
@@ -2142,9 +2191,6 @@
           },
           "id" : {
             "type" : "string"
-          },
-          "signature" : {
-            "$ref" : "#/components/schemas/ConstraintSignature"
           },
           "type" : {
             "type" : "string",
@@ -2293,11 +2339,8 @@
       "Grade" : {
         "type" : "object",
         "properties" : {
-          "curricula" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/Curriculum"
-            }
+          "curriculum" : {
+            "$ref" : "#/components/schemas/Curriculum"
           },
           "id" : {
             "type" : "string"
@@ -2341,9 +2384,12 @@
         }
       },
       "GradeResponseDto" : {
-        "required" : [ "id", "name", "studentGroupIds", "studentIds", "tags" ],
+        "required" : [ "curriculumId", "id", "name", "studentGroupIds", "studentIds", "tags" ],
         "type" : "object",
         "properties" : {
+          "curriculumId" : {
+            "type" : "string"
+          },
           "id" : {
             "type" : "string"
           },

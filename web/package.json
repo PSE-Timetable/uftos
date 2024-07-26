@@ -50,7 +50,7 @@
     "@oazapfts/runtime": "^1.0.3",
     "bits-ui": "^0.21.12",
     "clsx": "^2.1.1",
-    "lucide-svelte": "^0.408.0",
+    "lucide-svelte": "^0.411.0",
     "luxon": "^3.4.4",
     "cmdk-sv": "^0.0.17",
     "tailwind-merge": "^2.3.0",

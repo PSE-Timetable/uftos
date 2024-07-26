@@ -1,8 +1,6 @@
 <script lang="ts">
-  import type { DataItem } from '$lib/elements/ui/dataTable/data-table.svelte';
   import DataTable from '$lib/elements/ui/dataTable/data-table.svelte';
-  import { deleteSubject, getSubjects, type Sort } from '$lib/sdk/fetch-client';
-  import { error } from '@sveltejs/kit';
+  import { deleteSubjectEntry, loadSubjects } from '$lib/utils/resources';
   import { onMount } from 'svelte';
 
   let columnNames = ['Name', 'Tags'];
@@ -10,41 +8,10 @@
   let pageLoaded = false;
 
   onMount(() => (pageLoaded = true));
-
-  async function loadPage(index: number, sortString: string, filter: string) {
-    let sort: Sort = { sort: [sortString] };
-    try {
-      const result = await getSubjects(sort, {
-        name: filter,
-      });
-      let dataItems: DataItem[] = result.map(
-        (subject): DataItem => ({
-          id: subject.id,
-          name: subject.name,
-          tags: subject.tags.map((tag) => tag.name),
-        }),
-      );
-
-      return {
-        data: dataItems,
-        totalElements: result.length,
-      };
-    } catch {
-      error(400, { message: 'Could not fetch page' });
-    }
-  }
-
-  async function deleteEntry(id: string) {
-    try {
-      await deleteSubject(id);
-    } catch {
-      error(400, { message: `could not delete subject with id ${id}` });
-    }
-  }
 </script>
 
 <div class="p-10 w-full">
   {#if pageLoaded}
-    <DataTable {columnNames} {keys} {loadPage} {deleteEntry} />
+    <DataTable {columnNames} {keys} loadPage={loadSubjects} deleteEntry={deleteSubjectEntry} />
   {/if}
 </div>
