@@ -105,7 +105,7 @@
   <div class="flex justify-between mr-2 ml-2">
     <div class="flex gap-4">
       <Button on:click={() => onInsertTemplate()}>Template einfügen</Button>
-      <Button on:click={() => onValidate()}>Test</Button>
+      <Button on:click={() => onValidate()}>Code überprüfen</Button>
       <Button on:click={() => onSave()}>Speichern</Button>
     </div>
     <div class="flex gap-4">
