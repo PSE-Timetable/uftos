@@ -1,12 +1,14 @@
 <script lang="ts">
   import ConstraintSignatureComp from '$lib/components/ui/constraintSignature/constraint-signature.svelte';
-  import DataTable, { type DataItem } from '$lib/elements/ui/dataTable/data-table.svelte';
+  import DataTable from '$lib/elements/ui/dataTable/data-table.svelte';
   import {
     type ConstraintSignature,
+    deleteConstraintInstance,
     getConstraintInstances,
     getConstraintSignatures,
     type Pageable,
   } from '$lib/sdk/fetch-client';
+  import type { DataItem } from '$lib/utils/resources';
   import { error } from '@sveltejs/kit';
 
   const getConstraints = async () => {
@@ -49,11 +51,11 @@
     return constraint.parameters.map((parameter) => parameter.parameterName);
   }
 
-  async function deleteInstance(id: string) {
+  async function deleteInstance(id: string, signatureId?: string) {
     try {
-      await deleteInstance(id);
+      await deleteConstraintInstance(signatureId || '', id);
     } catch {
-      error(400, { message: `could not delete room with id ${id}` });
+      error(400, { message: `could not delete constraint instance with id ${id}` });
     }
   }
 </script>
@@ -70,6 +72,8 @@
             loadPage={getInstancesPage}
             deleteEntry={deleteInstance}
             additionalId={constraint.name}
+            sortable={false}
+            addButton={false}
           />
         </div>
       </div>

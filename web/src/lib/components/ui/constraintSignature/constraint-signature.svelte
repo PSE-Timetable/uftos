@@ -108,7 +108,6 @@
         ? data[parameter.parameterName][0].value
         : '';
     }
-    console.log(requestDto);
     await createConstraintInstance(constraintSignature.name, requestDto);
   }
 </script>

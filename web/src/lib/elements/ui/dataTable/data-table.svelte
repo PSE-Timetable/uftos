@@ -40,8 +40,10 @@
     data: DataItem[];
     totalElements: number;
   }>;
-  export let deleteEntry: (id: string) => Promise<void>;
+  export let deleteEntry: (id: string, additionalId?: string) => Promise<void>;
   export let additionalId: string = '';
+  export let sortable = true;
+  export let addButton = true;
 
   const table = createTable(tableData, {
     page: addPagination({ serverSide: true, serverItemCount: totalElements, initialPageSize: 10 }), //TODO: change page size, 10 only for testing
@@ -108,6 +110,7 @@
             id: value.toString(),
             deleteEntry,
             getData,
+            additionalId,
             editAvailable: additionalId === '',
           });
         },
@@ -159,7 +162,7 @@
     }
     let promises: Promise<void>[] = [];
     Object.keys($selectedDataIds).forEach((row) => {
-      promises.push(deleteEntry(row));
+      promises.push(deleteEntry(row, additionalId));
     });
     await Promise.all(promises);
     $allPageRowsSelected = false;
@@ -199,15 +202,17 @@
         {/each}
       </DropdownMenu.Content>
     </DropdownMenu.Root>
-    <Button
-      class="ml-auto text-md"
-      variant="secondary"
-      on:click={async () => {
-        await goto(`${$page.url}/new`);
-      }}
-      >Hinzufügen
-      <Plus class="ml-3" />
-    </Button>
+    {#if addButton}
+      <Button
+        class="ml-auto text-md"
+        variant="secondary"
+        on:click={async () => {
+          await goto(`${$page.url}/new`);
+        }}
+        >Hinzufügen
+        <Plus class="ml-3" />
+      </Button>
+    {/if}
   </div>
   <div>
     <Table.Root {...$tableAttrs}>
@@ -218,7 +223,7 @@
               {#each headerRow.cells as cell (cell.id)}
                 <Subscribe attrs={cell.attrs()} let:attrs props={cell.props()} let:props>
                   <Table.Head {...attrs} class="[&:has([role=checkbox])]:pl-4">
-                    {#if cell.id !== 'actions' && cell.id !== 'id'}
+                    {#if cell.id !== 'actions' && cell.id !== 'id' && sortable}
                       <Button
                         variant="ghost"
                         on:click={(event) => {
@@ -234,7 +239,9 @@
                         </div>
                       </Button>
                     {:else}
-                      <Render of={cell.render()} />
+                      <div class="text-white">
+                        <Render of={cell.render()} />
+                      </div>
                     {/if}
                   </Table.Head>
                 </Subscribe>
