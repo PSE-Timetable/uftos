@@ -144,8 +144,8 @@ export type CurriculumRequestDto = {
     name: string;
 };
 export type ParsingResponse = {
-    message?: string;
-    success?: boolean;
+    message: string;
+    success: boolean;
 };
 export type Sort = {
     sort?: string[];
@@ -498,8 +498,8 @@ export function getUcdlFile(opts?: Oazapfts.RequestOpts) {
         ...opts
     }));
 }
-export function setUcdlFile(body: {
-    file?: Blob;
+export function setUcdlFile(body?: {
+    file: Blob;
 }, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
@@ -510,13 +510,13 @@ export function setUcdlFile(body: {
         body
     })));
 }
-export function validate(body: {
-    file?: Blob;
+export function validateUcdlFile(body?: {
+    file: Blob;
 }, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
         data: ParsingResponse;
-    }>("/editor/validate", oazapfts.json({
+    }>("/editor/validate", oazapfts.multipart({
         ...opts,
         method: "PUT",
         body

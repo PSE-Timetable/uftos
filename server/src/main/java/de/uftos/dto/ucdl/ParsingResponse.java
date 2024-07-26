@@ -1,5 +1,8 @@
 package de.uftos.dto.ucdl;
 
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+
 /**
  * The response when attempting to parse a UCDL-file.
  *
@@ -7,7 +10,9 @@ package de.uftos.dto.ucdl;
  * @param message contains error information if parsing was unsuccessful.
  */
 public record ParsingResponse(
+    @NotNull
     boolean success,
+    @NotEmpty
     String message
 ) {
 }
