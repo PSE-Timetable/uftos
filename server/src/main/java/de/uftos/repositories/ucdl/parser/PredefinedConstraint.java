@@ -1,18 +1,32 @@
 package de.uftos.repositories.ucdl.parser;
 
 import de.uftos.dto.ResourceType;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
+
 
 /**
  * This enum models predefined constraints which are ready-to-use.
  */
+@SuppressWarnings("checkstyle:LineLength")
 @Getter
 public enum PredefinedConstraint {
+  EMPTY_CONSTRAINT("newConstraint",
+      """
+          newConstraint:
+            description: "Ein neuer Constraint, der immer zu false auswertet."
+            default_type: HARD_PENALIZE
+            parameter:
+            definition: >-
+              return false
+          """,
+      new ArrayList<>()
+  ),
   TEACHER_COLLISION("teacherCollision",
       """
           teacherCollision:
-            description: "Teachers may not have multiple lessons at the same time."
+            description: "Lehrer können nicht {lesson1} und {lesson2} unterrichten, sofern die Unterrichtseinheiten zeitgleich stattfinden."
             default_type: HARD_PENALIZE
             parameter:
               lesson1: Lesson
@@ -25,7 +39,7 @@ public enum PredefinedConstraint {
   STUDENT_COLLISION("studentCollision",
       """
           studentCollision:
-            description: "Students may not have multiple lessons at the same time."
+            description: "Schüler können nicht an {lesson1} und {lesson2} teilnehmen, sofern die Unterrichtseinheiten zeitgleich stattfinden."
             default_type: HARD_PENALIZE
             parameter:
               lesson1: Lesson
@@ -40,7 +54,7 @@ public enum PredefinedConstraint {
   ROOM_COLLISION("roomCollision",
       """
           roomCollision:
-            description: "Rooms may not be occupied by multiple lessons at the same time."
+            description: "{lesson1} und {lesson2} können nicht beide im gleichen Raum stattfinden, sofern die Unterrichtseinheiten zeitgleich stattfinden.""
             default_type: HARD_PENALIZE
             parameter:
               lesson1: Lesson
@@ -53,7 +67,7 @@ public enum PredefinedConstraint {
   WORKING_HOURS("workingHours",
       """
           workingHours:
-            description: "Teacher {teacher} does work during Timeslot {timeslot}."
+            description: "Lehrer {teacher} arbeitet zum Zeitpunkt {timeslot}."
             default_type: SOFT_PENALIZE
             parameter:
               teacher: Teacher
@@ -69,7 +83,7 @@ public enum PredefinedConstraint {
   TEACHER_TEACHES_GROUP("teacherTeachesGroup",
       """
           teacherTeachesGroup:
-            description: "Teacher {teacher} teaches student group {group} in subject {subject}."
+            description: "Lehrer {teacher} unterrichtet Schülergruppe {group} in Fach {subject}."
               default_type: SOFT_PENALIZE
               parameter:
                 teacher: Teacher
@@ -85,7 +99,7 @@ public enum PredefinedConstraint {
   SUBJECT_ROOM("subjectRoom",
       """
           subjectRoom:
-            description: "Subject {subject} is only taught in rooms with tag {tag}."
+            description: "Fach {subject} kann nur in Räumen mit Tag {tag} unterrichtet werden."
             default_type: SOFT_PENALIZE
             parameter:
               subject: Subject

@@ -51,7 +51,7 @@ public class UcdlEditorService {
    * @return a response whether parsing the file was successful or not.
    */
   public ParsingResponse setUcdl(MultipartFile file) {
-    //todo: set String of repository
+    //todo: set String of repository and perform consistency-check
     return ucdlRepository.parseFile();
   }
 
