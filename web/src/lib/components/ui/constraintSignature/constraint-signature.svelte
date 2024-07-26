@@ -1,6 +1,8 @@
 <script lang="ts">
   import {
+    type ConstraintInstanceRequestDto,
     type ConstraintSignature,
+    createConstraintInstance,
     getGrades,
     getRooms,
     getStudentGroups,
@@ -9,24 +11,20 @@
     getTags,
     getTeachers,
     getTimeslots,
-    type GradeResponseDto,
     type Pageable,
     ParameterType,
-    type Subject,
-    type Teacher,
+    type Sort,
   } from '$lib/sdk/fetch-client';
   import { Button } from '$lib/elements/ui/button';
   import ComboBox, { type ComboBoxItem } from '$lib/elements/ui/combo-box/combo-box.svelte';
 
   export let constraintSignature: ConstraintSignature;
-  export let teachers: Teacher[] | undefined;
-  export let grades: GradeResponseDto[] | undefined;
-  export let subjects: Subject[] | undefined;
 
   let data: Record<string, ComboBoxItem[]> = {};
 
   async function updateItems(value: string, name?: string, parameterType?: ParameterType) {
     const page: Pageable = { page: 0, size: 2 };
+    const sort: Sort = {};
     if (name === undefined) {
       name = constraintSignature.parameters.find(
         (parameter) => parameter.parameterType === parameterType!,
@@ -35,13 +33,13 @@
     try {
       switch (parameterType) {
         case ParameterType.Grade: {
-          const { content } = value ? await getGrades(page, { name: value }) : { content: grades };
-          data[name] = content?.map((grade) => ({ value: grade.id, label: grade.name ?? '' })) || [];
+          const grades = await getGrades(page, { name: value });
+          data[name] = grades.map((grade) => ({ value: grade.id, label: grade.name }));
           break;
         }
         case ParameterType.Subject: {
-          const { content } = value ? await getSubjects(page, { name: value }) : { content: subjects };
-          data[name] = content?.map((subject) => ({ value: subject.id, label: subject.name })) || [];
+          const subjects = await getSubjects(page, { name: value });
+          data[name] = subjects.map((subject) => ({ value: subject.id, label: subject.name }));
           break;
         }
         case ParameterType.Room: {
@@ -68,12 +66,12 @@
           break;
         }
         case ParameterType.Tag: {
-          const { content } = await getTags(page, { name: value });
-          data[name] = content?.map((tag) => ({ value: tag.id, label: tag.name })) || [];
+          const tags = await getTags(page, { name: value });
+          data[name] = tags.map((tag) => ({ value: tag.id, label: tag.name }));
           break;
         }
         case ParameterType.Teacher: {
-          const { content } = value ? await getTeachers(page, { firstName: value }) : { content: teachers };
+          const { content } = await getTeachers(page, { firstName: value });
           data[name] =
             content?.map((teacher) => ({
               value: teacher.id,
@@ -82,12 +80,11 @@
           break;
         }
         case ParameterType.Timeslot: {
-          const { content } = await getTimeslots(page);
-          data[name] =
-            content?.map((timeslot) => ({
-              value: timeslot.id,
-              label: `${timeslot.day}: ${timeslot.slot}`,
-            })) || [];
+          const timeslots = await getTimeslots();
+          data[name] = timeslots.map((timeslot) => ({
+            value: timeslot.id,
+            label: `${timeslot.day}: ${timeslot.slot}`,
+          }));
           break;
         }
       }
@@ -102,6 +99,18 @@
       ),
     );
   };
+
+  async function addInstance() {
+    let requestDto: ConstraintInstanceRequestDto = { arguments: {} };
+    console.log(data);
+    for (let parameter of constraintSignature.parameters) {
+      requestDto.arguments[parameter.parameterName] = data[parameter.parameterName][0]
+        ? data[parameter.parameterName][0].value
+        : '';
+    }
+    console.log(requestDto);
+    await createConstraintInstance(constraintSignature.name, requestDto);
+  }
 </script>
 
 <div class="flex flex-col gap-8 bg-primary w-fit p-6 rounded-md text-white">
@@ -154,5 +163,6 @@
     {/each}
   {/await}
 
-  <Button variant="outline" class="bg-accent border-0 text-md text-white py-6">Hinzufügen</Button>
+  <Button variant="outline" class="bg-accent border-0 text-md text-white py-6" on:click={addInstance}>Hinzufügen</Button
+  >
 </div>
