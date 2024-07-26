@@ -406,11 +406,11 @@
                     "type" : "string",
                     "format" : "binary"
                   }
-                }
+                },
+                "required" : [ "file" ]
               }
             }
-          },
-          "required" : true
+          }
         },
         "responses" : {
           "200" : {
@@ -429,10 +429,10 @@
     },
     "/editor/validate" : {
       "put" : {
-        "operationId" : "validate",
+        "operationId" : "validateUcdlFile",
         "requestBody" : {
           "content" : {
-            "application/json" : {
+            "multipart/form-data" : {
               "schema" : {
                 "type" : "object",
                 "properties" : {
@@ -440,11 +440,11 @@
                     "type" : "string",
                     "format" : "binary"
                   }
-                }
+                },
+                "required" : [ "file" ]
               }
             }
-          },
-          "required" : true
+          }
         },
         "responses" : {
           "200" : {
@@ -2988,6 +2988,7 @@
         }
       },
       "ParsingResponse" : {
+        "required" : [ "message", "success" ],
         "type" : "object",
         "properties" : {
           "message" : {

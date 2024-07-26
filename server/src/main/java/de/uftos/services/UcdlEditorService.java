@@ -66,7 +66,7 @@ public class UcdlEditorService {
       return new InputStreamResource(
           new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)));
     } catch (IOException e) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "UCDL file not be loaded");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "UCDL file could not be loaded");
     }
   }
 
