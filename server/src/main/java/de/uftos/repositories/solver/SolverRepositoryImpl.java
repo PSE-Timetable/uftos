@@ -13,7 +13,6 @@ import ai.timefold.solver.core.impl.solver.DefaultSolverFactory;
 import de.uftos.dto.solver.ConstraintInstanceDto;
 import de.uftos.dto.solver.GradeProblemDto;
 import de.uftos.dto.solver.LessonProblemDto;
-import de.uftos.dto.solver.ResourceProblemDto;
 import de.uftos.dto.solver.RoomProblemDto;
 import de.uftos.dto.solver.StudentGroupProblemDto;
 import de.uftos.dto.solver.StudentProblemDto;
@@ -58,369 +57,96 @@ import java.util.concurrent.TimeUnit;
 public class SolverRepositoryImpl implements SolverRepository {
 
   @SuppressWarnings("checkstyle:VariableDeclarationUsageDistance")
-  TimetableSolutionTimefoldInstance getSolutionInstanceFromTimetableInstance(
+  private TimetableSolutionTimefoldInstance getSolutionInstanceFromTimetableInstance(
       TimetableProblemDto timetable) {
-    HashMap<String, GradeTimefoldInstance> grades = new HashMap<>();
-    HashMap<String, RoomTimefoldInstance> rooms = new HashMap<>();
-    HashMap<String, StudentGroupTimefoldInstance> studentGroups = new HashMap<>();
-    HashMap<String, StudentTimefoldInstance> students = new HashMap<>();
-    HashMap<String, SubjectTimefoldInstance> subjects = new HashMap<>();
-    HashMap<String, TeacherTimefoldInstance> teachers = new HashMap<>();
-    HashMap<String, TimeslotTimefoldInstance> timeslots = new HashMap<>();
-    HashMap<String, TagTimefoldInstance> tags = new HashMap<>();
-    HashMap<String, LessonTimefoldInstance> lessons = new HashMap<>();
-    List<ConstraintInstanceTimefoldInstance> constraintInstances = new ArrayList<>();
+    //checking timetable for valid input
+    if (timetable.grades() == null
+        || timetable.rooms() == null
+        || timetable.subjects() == null
+        || timetable.students() == null
+        || timetable.studentGroups() == null
+        || timetable.teachers() == null
+        || timetable.timeslots() == null
+        || timetable.lessons() == null
+        || timetable.tags() == null
+        || timetable.definitions() == null
+        || timetable.instances() == null
+        || timetable.teachers().isEmpty()   //elements are required to be able
+        || timetable.rooms().isEmpty()      //to create lessons with non-null values
+        || timetable.timeslots().isEmpty()) {
+      throw new IllegalArgumentException();
+    }
+
+
+    //initializing all resources
+    HashMap<String, GradeTimefoldInstance> grades = getGrades(timetable);
+    HashMap<String, RoomTimefoldInstance> rooms = getRooms(timetable);
+    HashMap<String, StudentGroupTimefoldInstance> studentGroups = getStudentGroups(timetable);
+    HashMap<String, StudentTimefoldInstance> students = getStudents(timetable);
+    HashMap<String, SubjectTimefoldInstance> subjects = getSubjects(timetable);
+    HashMap<String, TeacherTimefoldInstance> teachers = getTeachers(timetable);
+    HashMap<String, TimeslotTimefoldInstance> timeslots = getTimeslots(timetable);
+    HashMap<String, TagTimefoldInstance> tags = getTags(timetable);
+    HashMap<String, LessonTimefoldInstance> lessons = getLessons(timetable);
 
     TimetableSolutionTimefoldInstance solution = new TimetableSolutionTimefoldInstance();
+
+
+    //defining and checking all relations between resources
+
+    createLessonRoomRelation(lessons, rooms, timetable);
+    createLessonSubjectRelation(lessons, subjects, timetable);
+    createLessonStudentGroupRelation(lessons, studentGroups, timetable);
+    createLessonTeacherRelation(lessons, teachers, timetable);
+    createLessonTimeslotRelation(lessons, timeslots, timetable);
+
+    createGradeTagRelation(grades, tags, timetable);
+    createRoomTagRelation(rooms, tags, timetable);
+    createStudentGroupTagRelation(studentGroups, tags, timetable);
+    createStudentTagRelation(students, tags, timetable);
+    createSubjectTagRelation(subjects, tags, timetable);
+    createTeacherTagRelation(teachers, tags, timetable);
+    createTimeslotTagRelation(timeslots, tags, timetable);
+
+    createGradeStudentGroupRelation(grades, studentGroups, timetable);
+    createStudentStudentGroupRelation(students, studentGroups, timetable);
+    createSubjectTeacherRelation(subjects, teachers, timetable);
+
+    //placing resources in solution instance
+
+    solution.getGrades().addAll(grades.values());
+    solution.getRooms().addAll(rooms.values());
+    solution.getStudentGroups().addAll(studentGroups.values());
+    solution.getStudents().addAll(students.values());
+    solution.getSubjects().addAll(subjects.values());
+    solution.getTeachers().addAll(teachers.values());
+    solution.getTimeslots().addAll(timeslots.values());
+    solution.getLessons().addAll(lessons.values());
+    solution.getTags().addAll(tags.values());
+
+
     HashMap<String, ResourceTimefoldInstance> resources = new HashMap<>();
+
     resources.put("this", solution);
+    resources.putAll(grades);
+    resources.putAll(rooms);
+    resources.putAll(studentGroups);
+    resources.putAll(students);
+    resources.putAll(subjects);
+    resources.putAll(teachers);
+    resources.putAll(timeslots);
+    resources.putAll(lessons);
+    resources.putAll(tags);
+
+    //resources are done, continuing with constraints
 
     HashMap<String, ConstraintDefinitionTimefoldInstance> definitions = new HashMap<>();
-
     for (ConstraintDefinitionDto definition : timetable.definitions()) {
       definitions.put(definition.name(),
           ConstraintDefinitionFactory.getConstraintDefinition(definition));
     }
 
-    //initializing all resources
-    for (ResourceProblemDto resource : timetable.getResources()) {
-      switch (resource.getType()) {
-        case GRADE -> grades.put(resource.id(), new GradeTimefoldInstance(resource.id()));
-        case LESSON -> lessons.put(resource.id(), new LessonTimefoldInstance(resource.id()));
-        case ROOM -> rooms.put(resource.id(), new RoomTimefoldInstance(resource.id()));
-        case STUDENT_GROUP ->
-            studentGroups.put(resource.id(), new StudentGroupTimefoldInstance(resource.id()));
-        case STUDENT -> students.put(resource.id(), new StudentTimefoldInstance(resource.id()));
-        case SUBJECT -> subjects.put(resource.id(), new SubjectTimefoldInstance(resource.id()));
-        case TAG -> tags.put(resource.id(), new TagTimefoldInstance(resource.id()));
-        case TEACHER -> teachers.put(resource.id(), new TeacherTimefoldInstance(resource.id()));
-        case TIMESLOT -> timeslots.put(resource.id(), new TimeslotTimefoldInstance(resource.id()));
-        default -> throw new IllegalStateException();
-      }
-    }
-
-    //connecting all resources as defined by the Dtos (and checking connection)
-
-    for (GradeProblemDto grade : timetable.grades()) {
-      GradeTimefoldInstance timefoldInstance = grades.get(grade.id());
-      for (String studentGroupId : grade.studentGroupIds()) {
-        StudentGroupTimefoldInstance studentGroup = studentGroups.get(studentGroupId);
-        if (studentGroup.getGrade() != null) {
-          throw new IllegalArgumentException();
-        }
-        studentGroup.setGrade(timefoldInstance);
-        timefoldInstance.getStudentGroupList().add(studentGroup);
-      }
-      for (String tagId : grade.tagIds()) {
-        TagTimefoldInstance tag = tags.get(tagId);
-        tag.getGradeList().add(timefoldInstance);
-        timefoldInstance.getProvidedTagsList().add(tag);
-      }
-    }
-    solution.getGrades().addAll(grades.values());
-    resources.putAll(grades);
-
-    for (RoomProblemDto room : timetable.rooms()) {
-      RoomTimefoldInstance timefoldInstance = rooms.get(room.id());
-      for (String lessonId : room.lessonIds()) {
-        LessonTimefoldInstance lesson = lessons.get(lessonId);
-        lesson.setRoom(timefoldInstance);
-        timefoldInstance.getLessonList().add(lesson);
-      }
-      for (String tagId : room.tagIds()) {
-        TagTimefoldInstance tag = tags.get(tagId);
-        tag.getRoomList().add(timefoldInstance);
-        timefoldInstance.getProvidedTagsList().add(tag);
-      }
-    }
-    solution.getRooms().addAll(rooms.values());
-    resources.putAll(rooms);
-
-    for (StudentGroupProblemDto studentGroup : timetable.studentGroups()) {
-      StudentGroupTimefoldInstance timefoldInstance = studentGroups.get(studentGroup.id());
-      for (String lessonId : studentGroup.lessonIds()) {
-        LessonTimefoldInstance lesson = lessons.get(lessonId);
-        if (lesson.getStudentGroup() != null) {
-          throw new IllegalArgumentException();
-        }
-        lesson.setStudentGroup(timefoldInstance);
-        timefoldInstance.getLessonList().add(lesson);
-      }
-      for (String studentId : studentGroup.studentIds()) {
-        StudentTimefoldInstance student = students.get(studentId);
-        student.getStudentGroupList().add(timefoldInstance);
-        timefoldInstance.getStudentList().add(student);
-      }
-      for (String tagId : studentGroup.tagIds()) {
-        TagTimefoldInstance tag = tags.get(tagId);
-        tag.getStudentGroupList().add(timefoldInstance);
-        timefoldInstance.getProvidedTagsList().add(tag);
-      }
-      if (timefoldInstance.getGrade() != grades.get(studentGroup.gradeId())
-          || !grades.get(studentGroup.gradeId()).getStudentGroupList().contains(timefoldInstance)) {
-        throw new IllegalStateException();
-      }
-    }
-    solution.getStudentGroups().addAll(studentGroups.values());
-    resources.putAll(studentGroups);
-
-    for (StudentProblemDto student : timetable.students()) {
-      StudentTimefoldInstance timefoldInstance = students.get(student.id());
-      if (student.studentGroupIds().size() != timefoldInstance.getStudentGroupList().size()) {
-        throw new IllegalArgumentException();
-      }
-      for (String studentGroupId : student.studentGroupIds()) {
-        StudentGroupTimefoldInstance studentGroup = studentGroups.get(studentGroupId);
-        if (!timefoldInstance.getStudentGroupList().contains(studentGroup)
-            || !studentGroup.getStudentList().contains(timefoldInstance)) {
-          throw new IllegalStateException();
-        }
-      }
-      for (String tagId : student.tagIds()) {
-        TagTimefoldInstance tag = tags.get(tagId);
-        tag.getStudentList().add(timefoldInstance);
-        timefoldInstance.getProvidedTagsList().add(tag);
-      }
-    }
-    solution.getStudents().addAll(students.values());
-    resources.putAll(students);
-
-    for (SubjectProblemDto subject : timetable.subjects()) {
-      SubjectTimefoldInstance timefoldInstance = subjects.get(subject.id());
-      for (String lessonId : subject.lessonIds()) {
-        LessonTimefoldInstance lesson = lessons.get(lessonId);
-        if (lesson.getSubject() != null) {
-          throw new IllegalArgumentException();
-        }
-        lesson.setSubject(timefoldInstance);
-        timefoldInstance.getLessonList().add(lesson);
-      }
-      for (String teacherId : subject.teacherIds()) {
-        TeacherTimefoldInstance teacher = teachers.get(teacherId);
-        teacher.getSubjectList().add(timefoldInstance);
-        timefoldInstance.getTeacherList().add(teacher);
-      }
-      for (String tagId : subject.tagIds()) {
-        TagTimefoldInstance tag = tags.get(tagId);
-        tag.getSubjectList().add(timefoldInstance);
-        timefoldInstance.getProvidedTagsList().add(tag);
-      }
-    }
-    solution.getSubjects().addAll(subjects.values());
-    resources.putAll(subjects);
-
-    for (TeacherProblemDto teacher : timetable.teachers()) {
-      TeacherTimefoldInstance timefoldInstance = teachers.get(teacher.id());
-      if (teacher.subjectIds().size() != timefoldInstance.getSubjectList().size()) {
-        throw new IllegalArgumentException();
-      }
-      for (String lessonId : teacher.lessonIds()) {
-        LessonTimefoldInstance lesson = lessons.get(lessonId);
-        if (lesson.getTeacher() != null) {
-          throw new IllegalArgumentException();
-        }
-        lesson.setTeacher(timefoldInstance);
-        timefoldInstance.getLessonList().add(lesson);
-      }
-      for (String subjectId : teacher.subjectIds()) {
-        SubjectTimefoldInstance subject = subjects.get(subjectId);
-        if (!timefoldInstance.getSubjectList().contains(subject)
-            || !subject.getTeacherList().contains(timefoldInstance)) {
-          throw new IllegalStateException();
-        }
-      }
-      for (String tagId : teacher.tagIds()) {
-        TagTimefoldInstance tag = tags.get(tagId);
-        tag.getTeacherList().add(timefoldInstance);
-        timefoldInstance.getProvidedTagsList().add(tag);
-      }
-    }
-    solution.getTeachers().addAll(teachers.values());
-    resources.putAll(teachers);
-
-    for (TimeslotProblemDto timeslot : timetable.timeslots()) {
-      TimeslotTimefoldInstance timefoldInstance = timeslots.get(timeslot.id());
-      timefoldInstance.setDayOfWeek(timeslot.day());
-      timefoldInstance.setSlotId(timeslot.slot());
-
-      for (String lessonId : timeslot.lessonIds()) {
-        LessonTimefoldInstance lesson = lessons.get(lessonId);
-        if (lesson.getTimeslot() != null) {
-          throw new IllegalArgumentException();
-        }
-        lesson.setTimeslot(timefoldInstance);
-        timefoldInstance.getLessonList().add(lesson);
-      }
-      for (String tagId : timeslot.tagIds()) {
-        TagTimefoldInstance tag = tags.get(tagId);
-        tag.getTimeslotList().add(timefoldInstance);
-        timefoldInstance.getProvidedTagsList().add(tag);
-      }
-    }
-    solution.getTimeslots().addAll(timeslots.values());
-    resources.putAll(timeslots);
-
-    for (LessonProblemDto lesson : timetable.lessons()) {
-      LessonTimefoldInstance timefoldInstance = lessons.get(lesson.id());
-      timefoldInstance.setIndex(lesson.index());
-
-      //checking subject for consistency
-      if (timefoldInstance.getSubject() == null
-          || lesson.subjectId() == null
-          || subjects.get(lesson.subjectId()) != timefoldInstance.getSubject()) {
-        throw new IllegalArgumentException();
-      }
-      if (!timefoldInstance.getSubject().getLessonList().contains(timefoldInstance)) {
-        throw new IllegalStateException();
-      }
-
-      //checking student group for consistency
-      if (timefoldInstance.getStudentGroup() == null
-          || lesson.studentGroupId() == null
-          || studentGroups.get(lesson.studentGroupId()) != timefoldInstance.getStudentGroup()) {
-        throw new IllegalArgumentException();
-      }
-      if (!timefoldInstance.getStudentGroup().getLessonList().contains(timefoldInstance)) {
-        throw new IllegalStateException();
-      }
-
-      //checking teacher for consistency
-      if (!(timefoldInstance.getTeacher() == null && lesson.teacherId() == null)) {
-        if (lesson.teacherId() == null
-            || teachers.get(lesson.teacherId()) != timefoldInstance.getTeacher()) {
-          throw new IllegalArgumentException();
-        }
-        if (!teachers.get(lesson.teacherId()).getLessonList().contains(timefoldInstance)) {
-          throw new IllegalStateException();
-        }
-      } else {
-        TeacherTimefoldInstance teacher = teachers.values().stream().toList().getFirst();
-        timefoldInstance.setTeacher(teacher);
-        teacher.getLessonList().add(timefoldInstance);
-      }
-
-      //checking timeslot for consistency
-      if (!(timefoldInstance.getTimeslot() == null && lesson.timeslotId() == null)) {
-        if (lesson.timeslotId() == null
-            || timeslots.get(lesson.timeslotId()) != timefoldInstance.getTimeslot()) {
-          throw new IllegalArgumentException();
-        }
-        if (!timeslots.get(lesson.timeslotId()).getLessonList().contains(timefoldInstance)) {
-          throw new IllegalStateException();
-        }
-      } else {
-        TimeslotTimefoldInstance timeslot = timeslots.values().stream().toList().getFirst();
-        timefoldInstance.setTimeslot(timeslot);
-        timeslot.getLessonList().add(timefoldInstance);
-      }
-
-      //checking room for consistency
-      if (!(timefoldInstance.getRoom() == null && lesson.roomId() == null)) {
-        if (lesson.roomId() == null
-            || rooms.get(lesson.roomId()) != timefoldInstance.getRoom()) {
-          throw new IllegalArgumentException();
-        }
-        if (!rooms.get(lesson.roomId()).getLessonList().contains(timefoldInstance)) {
-          throw new IllegalStateException();
-        }
-      } else {
-        RoomTimefoldInstance room = rooms.values().stream().toList().getFirst();
-        timefoldInstance.setRoom(room);
-        room.getLessonList().add(timefoldInstance);
-      }
-    }
-    solution.getLessons().addAll(lessons.values());
-    resources.putAll(lessons);
-
-    for (TagProblemDto tag : timetable.tags()) {
-      TagTimefoldInstance timefoldInstance = tags.get(tag.id());
-
-      //checking grades for consistency
-      if (tag.gradeIds().size() != timefoldInstance.getGradeList().size()) {
-        throw new IllegalArgumentException();
-      }
-      for (String gradeId : tag.gradeIds()) {
-        GradeTimefoldInstance grade = grades.get(gradeId);
-        if (!grade.getProvidedTagsList().contains(timefoldInstance)
-            || !timefoldInstance.getGradeList().contains(grade)) {
-          throw new IllegalStateException();
-        }
-      }
-
-      //checking rooms for consistency
-      if (tag.roomIds().size() != timefoldInstance.getRoomList().size()) {
-        throw new IllegalArgumentException();
-      }
-      for (String roomId : tag.roomIds()) {
-        RoomTimefoldInstance room = rooms.get(roomId);
-        if (!room.getProvidedTagsList().contains(timefoldInstance)
-            || !timefoldInstance.getRoomList().contains(room)) {
-          throw new IllegalStateException();
-        }
-      }
-
-      //checking students for consistency
-      if (tag.studentIds().size() != timefoldInstance.getStudentList().size()) {
-        throw new IllegalArgumentException();
-      }
-      for (String studentId : tag.studentIds()) {
-        StudentTimefoldInstance student = students.get(studentId);
-        if (!student.getProvidedTagsList().contains(timefoldInstance)
-            || !timefoldInstance.getStudentList().contains(student)) {
-          throw new IllegalStateException();
-        }
-      }
-
-      //checking student groups for consistency
-      if (tag.studentGroupIds().size() != timefoldInstance.getStudentGroupList().size()) {
-        throw new IllegalArgumentException();
-      }
-      for (String studentGroupId : tag.studentGroupIds()) {
-        StudentGroupTimefoldInstance studentGroup = studentGroups.get(studentGroupId);
-        if (!studentGroup.getProvidedTagsList().contains(timefoldInstance)
-            || !timefoldInstance.getStudentGroupList().contains(studentGroup)) {
-          throw new IllegalStateException();
-        }
-      }
-
-      //checking subjects for consistency
-      if (tag.subjectIds().size() != timefoldInstance.getSubjectList().size()) {
-        throw new IllegalArgumentException();
-      }
-      for (String subjectId : tag.subjectIds()) {
-        SubjectTimefoldInstance subject = subjects.get(subjectId);
-        if (!subject.getProvidedTagsList().contains(timefoldInstance)
-            || !timefoldInstance.getSubjectList().contains(subject)) {
-          throw new IllegalStateException();
-        }
-      }
-
-      //checking teachers for consistency
-      if (tag.teacherIds().size() != timefoldInstance.getTeacherList().size()) {
-        throw new IllegalArgumentException();
-      }
-      for (String teacherId : tag.teacherIds()) {
-        TeacherTimefoldInstance teacher = teachers.get(teacherId);
-        if (!teacher.getProvidedTagsList().contains(timefoldInstance)
-            || !timefoldInstance.getTeacherList().contains(teacher)) {
-          throw new IllegalStateException();
-        }
-      }
-
-      //checking timeslots for consistency
-      if (tag.timeslotIds().size() != timefoldInstance.getTimeslotList().size()) {
-        throw new IllegalArgumentException();
-      }
-      for (String timeslotId : tag.timeslotIds()) {
-        TimeslotTimefoldInstance timeslot = timeslots.get(timeslotId);
-        if (!timeslot.getProvidedTagsList().contains(timefoldInstance)
-            || !timefoldInstance.getTimeslotList().contains(timeslot)) {
-          throw new IllegalStateException();
-        }
-      }
-    }
-    solution.getTags().addAll(tags.values());
-    resources.putAll(tags);
+    List<ConstraintInstanceTimefoldInstance> constraintInstances = new ArrayList<>();
 
     for (ConstraintInstanceDto instance : timetable.instances()) {
       constraintInstances.add(
@@ -510,5 +236,658 @@ public class SolverRepositoryImpl implements SolverRepository {
     ExecutorService es = new ThreadPoolExecutor(1, 1, 1, TimeUnit.SECONDS, workQueue);
 
     return es.submit(solveTimetable);
+  }
+
+  private HashMap<String, GradeTimefoldInstance> getGrades(TimetableProblemDto timetable) {
+    HashMap<String, GradeTimefoldInstance> grades = new HashMap<>();
+
+    for (GradeProblemDto grade : timetable.grades()) {
+      grades.put(grade.id(), new GradeTimefoldInstance(grade.id()));
+    }
+    return grades;
+  }
+
+  private HashMap<String, RoomTimefoldInstance> getRooms(TimetableProblemDto timetable) {
+    HashMap<String, RoomTimefoldInstance> rooms = new HashMap<>();
+
+    for (RoomProblemDto room : timetable.rooms()) {
+      rooms.put(room.id(), new RoomTimefoldInstance(room.id()));
+    }
+    return rooms;
+  }
+
+  private HashMap<String, StudentGroupTimefoldInstance> getStudentGroups(
+      TimetableProblemDto timetable) {
+    HashMap<String, StudentGroupTimefoldInstance> studentGroups = new HashMap<>();
+
+    for (StudentGroupProblemDto studentGroup : timetable.studentGroups()) {
+      studentGroups.put(studentGroup.id(), new StudentGroupTimefoldInstance(studentGroup.id()));
+    }
+    return studentGroups;
+  }
+
+  private HashMap<String, StudentTimefoldInstance> getStudents(TimetableProblemDto timetable) {
+    HashMap<String, StudentTimefoldInstance> students = new HashMap<>();
+
+    for (StudentProblemDto student : timetable.students()) {
+      students.put(student.id(), new StudentTimefoldInstance(student.id()));
+    }
+    return students;
+  }
+
+  private HashMap<String, SubjectTimefoldInstance> getSubjects(TimetableProblemDto timetable) {
+    HashMap<String, SubjectTimefoldInstance> subjects = new HashMap<>();
+
+    for (SubjectProblemDto subject : timetable.subjects()) {
+      subjects.put(subject.id(), new SubjectTimefoldInstance(subject.id()));
+    }
+    return subjects;
+  }
+
+  private HashMap<String, TeacherTimefoldInstance> getTeachers(TimetableProblemDto timetable) {
+    HashMap<String, TeacherTimefoldInstance> teachers = new HashMap<>();
+
+    for (TeacherProblemDto teacher : timetable.teachers()) {
+      teachers.put(teacher.id(), new TeacherTimefoldInstance(teacher.id()));
+    }
+    return teachers;
+  }
+
+  private HashMap<String, TimeslotTimefoldInstance> getTimeslots(TimetableProblemDto timetable) {
+    HashMap<String, TimeslotTimefoldInstance> timeslots = new HashMap<>();
+
+    for (TimeslotProblemDto timeslot : timetable.timeslots()) {
+      TimeslotTimefoldInstance timefoldInstance = new TimeslotTimefoldInstance(timeslot.id());
+      timefoldInstance.setDayOfWeek(timeslot.day());
+      timefoldInstance.setSlotId(timeslot.slot());
+
+      timeslots.put(timeslot.id(), timefoldInstance);
+    }
+    return timeslots;
+  }
+
+  private HashMap<String, TagTimefoldInstance> getTags(TimetableProblemDto timetable) {
+    HashMap<String, TagTimefoldInstance> tags = new HashMap<>();
+
+    for (TagProblemDto tag : timetable.tags()) {
+      tags.put(tag.id(), new TagTimefoldInstance(tag.id()));
+    }
+    return tags;
+  }
+
+  private HashMap<String, LessonTimefoldInstance> getLessons(TimetableProblemDto timetable) {
+    HashMap<String, LessonTimefoldInstance> lessons = new HashMap<>();
+
+    for (LessonProblemDto lesson : timetable.lessons()) {
+      LessonTimefoldInstance timefoldInstance = new LessonTimefoldInstance(lesson.id());
+      timefoldInstance.setIndex(lesson.index());
+
+      lessons.put(lesson.id(), timefoldInstance);
+    }
+    return lessons;
+  }
+
+  private void createLessonStudentGroupRelation(
+      HashMap<String, LessonTimefoldInstance> lessons,
+      HashMap<String, StudentGroupTimefoldInstance> studentGroups,
+      TimetableProblemDto timetable) {
+
+    for (StudentGroupProblemDto studentGroup : timetable.studentGroups()) {
+      StudentGroupTimefoldInstance studentGroupTimefoldInstance =
+          studentGroups.get(studentGroup.id());
+      if (studentGroupTimefoldInstance == null) {
+        throw new IllegalStateException();
+      }
+      for (String lessonId : studentGroup.lessonIds()) {
+        LessonTimefoldInstance lesson = lessons.get(lessonId);
+        if (lesson == null || lesson.getStudentGroup() != null) {
+          throw new IllegalArgumentException();
+        }
+
+        lesson.setStudentGroup(studentGroupTimefoldInstance);
+        studentGroupTimefoldInstance.getLessonList().add(lesson);
+      }
+    }
+
+    for (LessonProblemDto lesson : timetable.lessons()) {
+      LessonTimefoldInstance lessonTimefoldInstance = lessons.get(lesson.id());
+      if (lessonTimefoldInstance == null) {
+        throw new IllegalStateException();
+      }
+      if (lessonTimefoldInstance.getStudentGroup() == null
+          || !lessonTimefoldInstance.getStudentGroup().getId().equals(lesson.studentGroupId())) {
+        throw new IllegalArgumentException();
+      }
+    }
+  }
+
+  private void createLessonSubjectRelation(
+      HashMap<String, LessonTimefoldInstance> lessons,
+      HashMap<String, SubjectTimefoldInstance> subjects,
+      TimetableProblemDto timetable) {
+
+    for (SubjectProblemDto subject : timetable.subjects()) {
+      SubjectTimefoldInstance subjectTimefoldInstance = subjects.get(subject.id());
+      if (subjectTimefoldInstance == null) {
+        throw new IllegalStateException();
+      }
+      for (String lessonId : subject.lessonIds()) {
+        LessonTimefoldInstance lesson = lessons.get(lessonId);
+        if (lesson == null || lesson.getStudentGroup() != null) {
+          throw new IllegalArgumentException();
+        }
+
+        lesson.setSubject(subjectTimefoldInstance);
+        subjectTimefoldInstance.getLessonList().add(lesson);
+      }
+    }
+
+    for (LessonProblemDto lesson : timetable.lessons()) {
+      LessonTimefoldInstance lessonTimefoldInstance = lessons.get(lesson.id());
+      if (lessonTimefoldInstance == null) {
+        throw new IllegalStateException();
+      }
+      if (lessonTimefoldInstance.getSubject() == null
+          || !lessonTimefoldInstance.getSubject().getId().equals(lesson.subjectId())) {
+        throw new IllegalArgumentException();
+      }
+    }
+  }
+
+  private void createLessonTimeslotRelation(
+      HashMap<String, LessonTimefoldInstance> lessons,
+      HashMap<String, TimeslotTimefoldInstance> timeslots,
+      TimetableProblemDto timetable) {
+
+    for (TimeslotProblemDto timeslot : timetable.timeslots()) {
+      TimeslotTimefoldInstance timeslotTimefoldInstance = timeslots.get(timeslot.id());
+      if (timeslotTimefoldInstance == null) {
+        throw new IllegalStateException();
+      }
+      for (String lessonId : timeslot.lessonIds()) {
+        LessonTimefoldInstance lesson = lessons.get(lessonId);
+        if (lesson == null || lesson.getStudentGroup() != null) {
+          throw new IllegalArgumentException();
+        }
+
+        lesson.setTimeslot(timeslotTimefoldInstance);
+        timeslotTimefoldInstance.getLessonList().add(lesson);
+      }
+    }
+
+    for (LessonProblemDto lesson : timetable.lessons()) {
+      LessonTimefoldInstance lessonTimefoldInstance = lessons.get(lesson.id());
+      if (lessonTimefoldInstance == null) {
+        throw new IllegalStateException();
+      }
+      if (lessonTimefoldInstance.getTimeslot() == null) {
+        if (lesson.timeslotId() != null) {
+          throw new IllegalArgumentException();
+        }
+
+        //setting timeslot to prevent null values
+        TimeslotTimefoldInstance timeslot = timeslots.values().iterator().next();
+        timeslot.getLessonList().add(lessonTimefoldInstance);
+        lessonTimefoldInstance.setTimeslot(timeslot);
+
+      } else if (!lessonTimefoldInstance.getTimeslot().getId().equals(lesson.timeslotId())) {
+        throw new IllegalArgumentException();
+      }
+    }
+  }
+
+  private void createLessonTeacherRelation(
+      HashMap<String, LessonTimefoldInstance> lessons,
+      HashMap<String, TeacherTimefoldInstance> teachers,
+      TimetableProblemDto timetable) {
+
+    for (TeacherProblemDto teacher : timetable.teachers()) {
+      TeacherTimefoldInstance teacherTimefoldInstance = teachers.get(teacher.id());
+      if (teacherTimefoldInstance == null) {
+        throw new IllegalStateException();
+      }
+      for (String lessonId : teacher.lessonIds()) {
+        LessonTimefoldInstance lesson = lessons.get(lessonId);
+        if (lesson == null || lesson.getStudentGroup() != null) {
+          throw new IllegalArgumentException();
+        }
+
+        lesson.setTeacher(teacherTimefoldInstance);
+        teacherTimefoldInstance.getLessonList().add(lesson);
+      }
+    }
+
+    for (LessonProblemDto lesson : timetable.lessons()) {
+      LessonTimefoldInstance lessonTimefoldInstance = lessons.get(lesson.id());
+      if (lessonTimefoldInstance == null) {
+        throw new IllegalStateException();
+      }
+      if (lessonTimefoldInstance.getTeacher() == null) {
+        if (lesson.teacherId() != null) {
+          throw new IllegalArgumentException();
+        }
+
+        //setting teacher to prevent null values
+        TeacherTimefoldInstance teacher = teachers.values().iterator().next();
+        teacher.getLessonList().add(lessonTimefoldInstance);
+        lessonTimefoldInstance.setTeacher(teacher);
+
+      } else if (!lessonTimefoldInstance.getTeacher().getId().equals(lesson.teacherId())) {
+        throw new IllegalArgumentException();
+      }
+    }
+  }
+
+  private void createLessonRoomRelation(
+      HashMap<String, LessonTimefoldInstance> lessons,
+      HashMap<String, RoomTimefoldInstance> rooms,
+      TimetableProblemDto timetable) {
+
+    for (RoomProblemDto room : timetable.rooms()) {
+      RoomTimefoldInstance roomTimefoldInstance = rooms.get(room.id());
+      if (roomTimefoldInstance == null) {
+        throw new IllegalStateException();
+      }
+      for (String lessonId : room.lessonIds()) {
+        LessonTimefoldInstance lesson = lessons.get(lessonId);
+        if (lesson == null || lesson.getStudentGroup() != null) {
+          throw new IllegalArgumentException();
+        }
+
+        lesson.setRoom(roomTimefoldInstance);
+        roomTimefoldInstance.getLessonList().add(lesson);
+      }
+    }
+
+    for (LessonProblemDto lesson : timetable.lessons()) {
+      LessonTimefoldInstance lessonTimefoldInstance = lessons.get(lesson.id());
+      if (lessonTimefoldInstance == null) {
+        throw new IllegalStateException();
+      }
+      if (lessonTimefoldInstance.getRoom() == null) {
+        if (lesson.roomId() != null) {
+          throw new IllegalArgumentException();
+        }
+
+        //setting room to prevent null values
+        RoomTimefoldInstance room = rooms.values().iterator().next();
+        room.getLessonList().add(lessonTimefoldInstance);
+        lessonTimefoldInstance.setRoom(room);
+
+      } else if (!lessonTimefoldInstance.getRoom().getId().equals(lesson.roomId())) {
+        throw new IllegalArgumentException();
+      }
+    }
+  }
+
+  private void createGradeTagRelation(
+      HashMap<String, GradeTimefoldInstance> grades,
+      HashMap<String, TagTimefoldInstance> tags,
+      TimetableProblemDto timetable) {
+
+    for (GradeProblemDto grade : timetable.grades()) {
+      GradeTimefoldInstance gradeTimefoldInstance = grades.get(grade.id());
+      if (gradeTimefoldInstance == null) {
+        throw new IllegalStateException();
+      }
+      for (String tagId : grade.tagIds()) {
+        TagTimefoldInstance tag = tags.get(tagId);
+        if (tag == null) {
+          throw new IllegalArgumentException();
+        }
+
+        tag.getGradeList().add(gradeTimefoldInstance);
+        gradeTimefoldInstance.getProvidedTagsList().add(tag);
+      }
+    }
+
+    for (TagProblemDto tag : timetable.tags()) {
+      TagTimefoldInstance tagTimefoldInstance = tags.get(tag.id());
+      if (tagTimefoldInstance == null) {
+        throw new IllegalStateException();
+      }
+      if (tag.gradeIds().size() != tagTimefoldInstance.getGradeList().size()) {
+        throw new IllegalArgumentException();
+      }
+      for (GradeTimefoldInstance grade : tagTimefoldInstance.getGradeList()) {
+        if (!tag.gradeIds().contains(grade.getId())) {
+          throw new IllegalArgumentException();
+        }
+      }
+    }
+  }
+
+  private void createRoomTagRelation(
+      HashMap<String, RoomTimefoldInstance> rooms,
+      HashMap<String, TagTimefoldInstance> tags,
+      TimetableProblemDto timetable) {
+
+    for (RoomProblemDto room : timetable.rooms()) {
+      RoomTimefoldInstance roomTimefoldInstance = rooms.get(room.id());
+      if (roomTimefoldInstance == null) {
+        throw new IllegalStateException();
+      }
+      for (String tagId : room.tagIds()) {
+        TagTimefoldInstance tag = tags.get(tagId);
+        if (tag == null) {
+          throw new IllegalArgumentException();
+        }
+
+        tag.getRoomList().add(roomTimefoldInstance);
+        roomTimefoldInstance.getProvidedTagsList().add(tag);
+      }
+    }
+
+    for (TagProblemDto tag : timetable.tags()) {
+      TagTimefoldInstance tagTimefoldInstance = tags.get(tag.id());
+      if (tagTimefoldInstance == null) {
+        throw new IllegalStateException();
+      }
+      if (tag.roomIds().size() != tagTimefoldInstance.getRoomList().size()) {
+        throw new IllegalArgumentException();
+      }
+      for (RoomTimefoldInstance room : tagTimefoldInstance.getRoomList()) {
+        if (!tag.roomIds().contains(room.getId())) {
+          throw new IllegalArgumentException();
+        }
+      }
+    }
+  }
+
+  private void createStudentGroupTagRelation(
+      HashMap<String, StudentGroupTimefoldInstance> studentGroups,
+      HashMap<String, TagTimefoldInstance> tags,
+      TimetableProblemDto timetable) {
+
+    for (StudentGroupProblemDto studentGroup : timetable.studentGroups()) {
+      StudentGroupTimefoldInstance studentGroupTimefoldInstance =
+          studentGroups.get(studentGroup.id());
+      if (studentGroupTimefoldInstance == null) {
+        throw new IllegalStateException();
+      }
+      for (String tagId : studentGroup.tagIds()) {
+        TagTimefoldInstance tag = tags.get(tagId);
+        if (tag == null) {
+          throw new IllegalArgumentException();
+        }
+
+        tag.getStudentGroupList().add(studentGroupTimefoldInstance);
+        studentGroupTimefoldInstance.getProvidedTagsList().add(tag);
+      }
+    }
+
+    for (TagProblemDto tag : timetable.tags()) {
+      TagTimefoldInstance tagTimefoldInstance = tags.get(tag.id());
+      if (tagTimefoldInstance == null) {
+        throw new IllegalStateException();
+      }
+      if (tag.studentGroupIds().size() != tagTimefoldInstance.getStudentGroupList().size()) {
+        throw new IllegalArgumentException();
+      }
+      for (StudentGroupTimefoldInstance studentGroup : tagTimefoldInstance.getStudentGroupList()) {
+        if (!tag.studentGroupIds().contains(studentGroup.getId())) {
+          throw new IllegalArgumentException();
+        }
+      }
+    }
+  }
+
+  private void createStudentTagRelation(
+      HashMap<String, StudentTimefoldInstance> students,
+      HashMap<String, TagTimefoldInstance> tags,
+      TimetableProblemDto timetable) {
+
+    for (StudentProblemDto student : timetable.students()) {
+      StudentTimefoldInstance studentTimefoldInstance = students.get(student.id());
+      if (studentTimefoldInstance == null) {
+        throw new IllegalStateException();
+      }
+      for (String tagId : student.tagIds()) {
+        TagTimefoldInstance tag = tags.get(tagId);
+        if (tag == null) {
+          throw new IllegalArgumentException();
+        }
+
+        tag.getStudentList().add(studentTimefoldInstance);
+        studentTimefoldInstance.getProvidedTagsList().add(tag);
+      }
+    }
+
+    for (TagProblemDto tag : timetable.tags()) {
+      TagTimefoldInstance tagTimefoldInstance = tags.get(tag.id());
+      if (tagTimefoldInstance == null) {
+        throw new IllegalStateException();
+      }
+      if (tag.studentIds().size() != tagTimefoldInstance.getStudentList().size()) {
+        throw new IllegalArgumentException();
+      }
+      for (StudentTimefoldInstance student : tagTimefoldInstance.getStudentList()) {
+        if (!tag.studentIds().contains(student.getId())) {
+          throw new IllegalArgumentException();
+        }
+      }
+    }
+  }
+
+  private void createSubjectTagRelation(
+      HashMap<String, SubjectTimefoldInstance> subjects,
+      HashMap<String, TagTimefoldInstance> tags,
+      TimetableProblemDto timetable) {
+
+    for (SubjectProblemDto subject : timetable.subjects()) {
+      SubjectTimefoldInstance subjectTimefoldInstance = subjects.get(subject.id());
+      if (subjectTimefoldInstance == null) {
+        throw new IllegalStateException();
+      }
+      for (String tagId : subject.tagIds()) {
+        TagTimefoldInstance tag = tags.get(tagId);
+        if (tag == null) {
+          throw new IllegalArgumentException();
+        }
+
+        tag.getSubjectList().add(subjectTimefoldInstance);
+        subjectTimefoldInstance.getProvidedTagsList().add(tag);
+      }
+    }
+
+    for (TagProblemDto tag : timetable.tags()) {
+      TagTimefoldInstance tagTimefoldInstance = tags.get(tag.id());
+      if (tagTimefoldInstance == null) {
+        throw new IllegalStateException();
+      }
+      if (tag.subjectIds().size() != tagTimefoldInstance.getSubjectList().size()) {
+        throw new IllegalArgumentException();
+      }
+      for (SubjectTimefoldInstance subject : tagTimefoldInstance.getSubjectList()) {
+        if (!tag.subjectIds().contains(subject.getId())) {
+          throw new IllegalArgumentException();
+        }
+      }
+    }
+  }
+
+  private void createTeacherTagRelation(
+      HashMap<String, TeacherTimefoldInstance> teachers,
+      HashMap<String, TagTimefoldInstance> tags,
+      TimetableProblemDto timetable) {
+
+    for (TeacherProblemDto teacher : timetable.teachers()) {
+      TeacherTimefoldInstance teacherTimefoldInstance = teachers.get(teacher.id());
+      if (teacherTimefoldInstance == null) {
+        throw new IllegalStateException();
+      }
+      for (String tagId : teacher.tagIds()) {
+        TagTimefoldInstance tag = tags.get(tagId);
+        if (tag == null) {
+          throw new IllegalArgumentException();
+        }
+
+        tag.getTeacherList().add(teacherTimefoldInstance);
+        teacherTimefoldInstance.getProvidedTagsList().add(tag);
+      }
+    }
+
+    for (TagProblemDto tag : timetable.tags()) {
+      TagTimefoldInstance tagTimefoldInstance = tags.get(tag.id());
+      if (tagTimefoldInstance == null) {
+        throw new IllegalStateException();
+      }
+      if (tag.teacherIds().size() != tagTimefoldInstance.getTeacherList().size()) {
+        throw new IllegalArgumentException();
+      }
+      for (TeacherTimefoldInstance teacher : tagTimefoldInstance.getTeacherList()) {
+        if (!tag.teacherIds().contains(teacher.getId())) {
+          throw new IllegalArgumentException();
+        }
+      }
+    }
+  }
+
+  private void createTimeslotTagRelation(
+      HashMap<String, TimeslotTimefoldInstance> timeslots,
+      HashMap<String, TagTimefoldInstance> tags,
+      TimetableProblemDto timetable) {
+
+    for (TimeslotProblemDto timeslot : timetable.timeslots()) {
+      TimeslotTimefoldInstance timeslotTimefoldInstance = timeslots.get(timeslot.id());
+      if (timeslotTimefoldInstance == null) {
+        throw new IllegalStateException();
+      }
+      for (String tagId : timeslot.tagIds()) {
+        TagTimefoldInstance tag = tags.get(tagId);
+        if (tag == null) {
+          throw new IllegalArgumentException();
+        }
+
+        tag.getTimeslotList().add(timeslotTimefoldInstance);
+        timeslotTimefoldInstance.getProvidedTagsList().add(tag);
+      }
+    }
+
+    for (TagProblemDto tag : timetable.tags()) {
+      TagTimefoldInstance tagTimefoldInstance = tags.get(tag.id());
+      if (tagTimefoldInstance == null) {
+        throw new IllegalStateException();
+      }
+      if (tag.timeslotIds().size() != tagTimefoldInstance.getTimeslotList().size()) {
+        throw new IllegalArgumentException();
+      }
+      for (TimeslotTimefoldInstance timeslot : tagTimefoldInstance.getTimeslotList()) {
+        if (!tag.timeslotIds().contains(timeslot.getId())) {
+          throw new IllegalArgumentException();
+        }
+      }
+    }
+  }
+
+  private void createGradeStudentGroupRelation(
+      HashMap<String, GradeTimefoldInstance> grades,
+      HashMap<String, StudentGroupTimefoldInstance> studentGroups,
+      TimetableProblemDto timetable) {
+
+    for (GradeProblemDto grade : timetable.grades()) {
+      GradeTimefoldInstance gradeTimefoldInstance =
+          grades.get(grade.id());
+      if (gradeTimefoldInstance == null) {
+        throw new IllegalStateException();
+      }
+      for (String studentGroupId : grade.studentGroupIds()) {
+        StudentGroupTimefoldInstance studentGroup = studentGroups.get(studentGroupId);
+        if (studentGroup == null || studentGroup.getGrade() != null) {
+          throw new IllegalArgumentException();
+        }
+
+        studentGroup.setGrade(gradeTimefoldInstance);
+        gradeTimefoldInstance.getStudentGroupList().add(studentGroup);
+      }
+    }
+
+    for (StudentGroupProblemDto studentGroup : timetable.studentGroups()) {
+      StudentGroupTimefoldInstance studentGroupTimefoldInstance =
+          studentGroups.get(studentGroup.id());
+      if (studentGroupTimefoldInstance == null) {
+        throw new IllegalStateException();
+      }
+      if (studentGroupTimefoldInstance.getGrade() == null
+          || !studentGroupTimefoldInstance.getGrade().getId().equals(studentGroup.gradeId())) {
+        throw new IllegalArgumentException();
+      }
+    }
+  }
+
+  private void createStudentStudentGroupRelation(
+      HashMap<String, StudentTimefoldInstance> students,
+      HashMap<String, StudentGroupTimefoldInstance> studentGroups,
+      TimetableProblemDto timetable) {
+
+    for (StudentProblemDto student : timetable.students()) {
+      StudentTimefoldInstance studentTimefoldInstance = students.get(student.id());
+      if (studentTimefoldInstance == null) {
+        throw new IllegalStateException();
+      }
+      for (String studentGroupId : student.studentGroupIds()) {
+        StudentGroupTimefoldInstance studentGroup = studentGroups.get(studentGroupId);
+        if (studentGroup == null) {
+          throw new IllegalArgumentException();
+        }
+
+        studentGroup.getStudentList().add(studentTimefoldInstance);
+        studentTimefoldInstance.getStudentGroupList().add(studentGroup);
+      }
+    }
+
+    for (StudentGroupProblemDto studentGroup : timetable.studentGroups()) {
+      StudentGroupTimefoldInstance studentGroupTimefoldInstance =
+          studentGroups.get(studentGroup.id());
+      if (studentGroupTimefoldInstance == null) {
+        throw new IllegalStateException();
+      }
+      if (studentGroup.studentIds().size()
+          != studentGroupTimefoldInstance.getStudentList().size()) {
+        throw new IllegalArgumentException();
+      }
+      for (StudentTimefoldInstance student : studentGroupTimefoldInstance.getStudentList()) {
+        if (!studentGroup.studentIds().contains(student.getId())) {
+          throw new IllegalArgumentException();
+        }
+      }
+    }
+  }
+
+  private void createSubjectTeacherRelation(
+      HashMap<String, SubjectTimefoldInstance> subjects,
+      HashMap<String, TeacherTimefoldInstance> teachers,
+      TimetableProblemDto timetable) {
+
+    for (SubjectProblemDto subject : timetable.subjects()) {
+      SubjectTimefoldInstance subjectTimefoldInstance = subjects.get(subject.id());
+      if (subjectTimefoldInstance == null) {
+        throw new IllegalStateException();
+      }
+      for (String teacherId : subject.teacherIds()) {
+        TeacherTimefoldInstance teacher = teachers.get(teacherId);
+        if (teacher == null) {
+          throw new IllegalArgumentException();
+        }
+
+        teacher.getSubjectList().add(subjectTimefoldInstance);
+        subjectTimefoldInstance.getTeacherList().add(teacher);
+      }
+    }
+
+    for (TeacherProblemDto teacher : timetable.teachers()) {
+      TeacherTimefoldInstance teacherTimefoldInstance = teachers.get(teacher.id());
+      if (teacherTimefoldInstance == null) {
+        throw new IllegalStateException();
+      }
+      if (teacher.subjectIds().size() != teacherTimefoldInstance.getSubjectList().size()) {
+        throw new IllegalArgumentException();
+      }
+      for (SubjectTimefoldInstance subject : teacherTimefoldInstance.getSubjectList()) {
+        if (!teacher.subjectIds().contains(subject.getId())) {
+          throw new IllegalArgumentException();
+        }
+      }
+    }
   }
 }
