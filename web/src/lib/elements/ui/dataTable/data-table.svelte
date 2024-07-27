@@ -44,9 +44,11 @@
   export let additionalId: string = '';
   export let sortable = true;
   export let addButton = true;
+  export let pageSize = 15;
+  $: serverSidePagination = $totalElements <= pageSize;
 
   const table = createTable(tableData, {
-    page: addPagination({ serverSide: true, serverItemCount: totalElements, initialPageSize: 10 }), //TODO: change page size, 10 only for testing
+    page: addPagination({ serverSide: true, serverItemCount: totalElements, initialPageSize: pageSize }),
     sort: addSortBy({ serverSide: true }),
     filter: addTableFilter({ serverSide: true }),
     hide: addHiddenColumns(),
@@ -152,8 +154,12 @@
     let sortString;
     sortString = sortKey ? `${sortKey.id},${sortKey.order}` : '';
     let result = await loadPage($pageIndex, sortString, $filterValue, additionalId);
-    tableData.set(result.data);
-    totalElements.set(result.totalElements);
+    if (serverSidePagination) {
+      tableData.set(result.data);
+      totalElements.set(result.totalElements);
+    } else {
+      tableData.set(result.data.slice($pageIndex * pageSize, $pageIndex * pageSize + pageSize));
+    }
   }
 
   async function onDeleteKey(e: KeyboardEvent) {
@@ -277,7 +283,7 @@
       {$rows.length} Zeile(n) ausgewählt.
     </div>
     <div>
-      <Pagination.Root count={$totalElements} perPage={10} let:pages let:currentPage>
+      <Pagination.Root count={$totalElements} perPage={pageSize} let:pages let:currentPage>
         <Pagination.Content>
           <Pagination.Item>
             <Pagination.PrevButton
