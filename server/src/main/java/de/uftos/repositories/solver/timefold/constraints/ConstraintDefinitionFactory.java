@@ -63,7 +63,7 @@ public class ConstraintDefinitionFactory {
     return new ConstraintDefinitionTimefoldInstance(name, defaultType, function);
   }
 
-  //The first parameter "List<ResourceTimefoldInstance" contains always the parameters given in the
+  //The first parameter "List<ResourceTimefoldInstance>" always contains the parameters given in the
   //constraint definition.
 
   private static Function<List<ResourceTimefoldInstance>, Boolean> convertCodeblock(
