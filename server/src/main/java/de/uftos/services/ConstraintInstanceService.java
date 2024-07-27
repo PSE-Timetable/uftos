@@ -100,6 +100,7 @@ public class ConstraintInstanceService {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
     }
 
+    List<ConstraintArgument> arguments = new ArrayList<>();
     for (ConstraintParameter parameter : signature.getParameters()) {
       Optional<ConstraintArgumentRequestDto> argument = request.arguments().stream()
           .filter(arg -> arg.parameterName().equals(parameter.getParameterName()))
@@ -116,12 +117,12 @@ public class ConstraintInstanceService {
             "%s with id %s could not be found".formatted(parameter.getParameterName(),
                 parameter.getId()));
       }
+      ConstraintArgument arg = argument.get().map();
+      arg.setConstraintParameter(parameter);
+      arguments.add(arg);
     }
 
     ConstraintInstance instance = new ConstraintInstance();
-    List<ConstraintArgument> arguments = request.arguments().stream()
-        .map(ConstraintArgumentRequestDto::map)
-        .toList();
     instance.setArguments(arguments);
     instance.setSignature(signature);
     instance.setType(request.type());
