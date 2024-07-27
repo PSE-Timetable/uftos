@@ -20,6 +20,10 @@
   import ComboBox, { type ComboBoxItem } from '$lib/elements/ui/combo-box/combo-box.svelte';
 
   export let constraintSignature: ConstraintSignature;
+  export let addInstance: (
+    constraintSignature: ConstraintSignature,
+    data: Record<string, ComboBoxItem[]>,
+  ) => Promise<void>;
 
   let data: Record<string, ComboBoxItem[]> = {};
 
@@ -100,24 +104,6 @@
       ),
     );
   };
-
-  async function addInstance() {
-    let argumentRequestDtos: ConstraintArgumentRequestDto[] = [];
-    console.log(data);
-    for (let parameter of constraintSignature.parameters) {
-      argumentRequestDtos.push({
-        argumentId: data[parameter.parameterName][0] ? data[parameter.parameterName][0].value : '',
-        parameterName: parameter.parameterName,
-      });
-    }
-    let requestDto: ConstraintInstanceRequestDto = {
-      arguments: argumentRequestDtos,
-      type: constraintSignature.defaultType,
-    };
-    console.log(constraintSignature.name);
-    console.log(requestDto);
-    await createConstraintInstance(constraintSignature.name, requestDto);
-  }
 </script>
 
 <div class="flex flex-col gap-8 bg-primary w-fit p-6 rounded-md text-white">
@@ -170,6 +156,11 @@
     {/each}
   {/await}
 
-  <Button variant="outline" class="bg-accent border-0 text-md text-white py-6" on:click={addInstance}>Hinzufügen</Button
+  <Button
+    variant="outline"
+    class="bg-accent border-0 text-md text-white py-6"
+    on:click={async () => {
+      addInstance(constraintSignature, data);
+    }}>Hinzufügen</Button
   >
 </div>
