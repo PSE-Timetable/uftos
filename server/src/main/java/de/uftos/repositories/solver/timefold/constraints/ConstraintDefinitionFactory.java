@@ -642,15 +642,19 @@ public class ConstraintDefinitionFactory {
     return (arguments -> set -> {
       ResourceTimefoldInstance thisPointer = arguments.getFirst();
       Set<ResourceTimefoldInstance> filteredSet = new HashSet<>();
-      outerLoop:
       for (ResourceTimefoldInstance resource : set) {
         arguments.set(0, resource); //replacing "this"-pointer
+
+        boolean skipResource = false;
         for (Function<List<ResourceTimefoldInstance>, Boolean> function : functions) {
           if (!function.apply(arguments)) {
-            continue outerLoop;
+            skipResource = true;
+            break;
           }
         }
-        filteredSet.add(resource);
+        if (!skipResource) {
+          filteredSet.add(resource);
+        }
       }
 
       arguments.set(0, thisPointer);
@@ -1088,9 +1092,6 @@ public class ConstraintDefinitionFactory {
     }
     int finalIndex = index;
 
-    return (arguments) -> {
-      ResourceTimefoldInstance resource = arguments.get(finalIndex);
-      return resource;
-    };
+    return (arguments) -> arguments.get(finalIndex);
   }
 }
