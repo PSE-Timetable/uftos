@@ -47,10 +47,11 @@ public class UcdlEditorService {
   /**
    * Sets the UCDL code and attempts to parse it.
    *
-   * @param file the file containing the new UCDL code.
+   * @param file  the file containing the new UCDL code.
+   * @param force whether inconsistencies should be ignored and the ucdl file forcefully updated.
    * @return a response whether parsing the file was successful or not.
    */
-  public ParsingResponse setUcdl(MultipartFile file) {
+  public ParsingResponse setUcdl(MultipartFile file, boolean force) {
     //todo: set String of repository
     return ucdlRepository.parseFile();
   }

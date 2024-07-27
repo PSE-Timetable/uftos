@@ -500,11 +500,15 @@ export function getUcdlFile(opts?: Oazapfts.RequestOpts) {
 }
 export function setUcdlFile(body?: {
     file: Blob;
-}, opts?: Oazapfts.RequestOpts) {
+}, { force }: {
+    force?: boolean;
+} = {}, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
         data: ParsingResponse;
-    }>("/editor", oazapfts.json({
+    }>(`/editor${QS.query(QS.explode({
+        force
+    }))}`, oazapfts.json({
         ...opts,
         method: "PUT",
         body
@@ -989,11 +993,15 @@ export function getTeacherLessons(id: string, opts?: Oazapfts.RequestOpts) {
         ...opts
     }));
 }
-export function getTimeslots(opts?: Oazapfts.RequestOpts) {
+export function getTimeslots({ tags }: {
+    tags?: string[];
+} = {}, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
         data: Timeslot[];
-    }>("/timeslots", {
+    }>(`/timeslots${QS.query(QS.explode({
+        tags
+    }))}`, {
         ...opts
     }));
 }
