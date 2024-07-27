@@ -41,7 +41,7 @@
   }>;
   export let deleteEntry: (id: string) => Promise<void>;
   export let pageSize = 15;
-  $: serverSidePagination = $totalElements <= pageSize;
+  $: serverSidePagination = $tableData.length <= pageSize;
 
   const table = createTable(tableData, {
     page: addPagination({ serverSide: true, serverItemCount: totalElements, initialPageSize: pageSize }),
