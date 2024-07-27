@@ -13,7 +13,7 @@
 
   export let data: ComboBoxItem[] = [];
 
-  let open = false;
+  let open:boolean = false;
   let value = '';
   let searchedValue: string;
   let selectedValue = 'Resource auswählen';

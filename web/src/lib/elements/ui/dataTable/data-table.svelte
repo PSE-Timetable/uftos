@@ -45,7 +45,8 @@
   export let sortable = true;
   export let addButton = true;
   export let pageSize = 15;
-  $: serverSidePagination = $totalElements <= pageSize;
+  let serverSidePagination:boolean = $tableData.length <= pageSize;
+  let allItems:DataItem[] = $tableData;
 
   const table = createTable(tableData, {
     page: addPagination({ serverSide: true, serverItemCount: totalElements, initialPageSize: pageSize }),
@@ -150,16 +151,17 @@
   const hidableCols = keys.slice(1);
 
   async function getData() {
-    let sortKey: SortKey = $sortKeys[0];
+    if (serverSidePagination) {
+      let sortKey: SortKey = $sortKeys[0];
     let sortString;
     sortString = sortKey ? `${sortKey.id},${sortKey.order}` : '';
     let result = await loadPage($pageIndex, sortString, $filterValue, additionalId);
-    if (serverSidePagination) {
-      tableData.set(result.data);
+      allItems = result.data;
+      
       totalElements.set(result.totalElements);
-    } else {
-      tableData.set(result.data.slice($pageIndex * pageSize, $pageIndex * pageSize + pageSize));
     }
+    tableData.set(allItems.slice($pageIndex * pageSize, $pageIndex * pageSize + pageSize));
+    serverSidePagination = allItems.length <= pageSize;
   }
 
   async function onDeleteKey(e: KeyboardEvent) {
@@ -212,9 +214,7 @@
       <Button
         class="ml-auto text-md"
         variant="secondary"
-        on:click={async () => {
-          await goto(`${$page.url}/new`);
-        }}
+        on:click={() => goto(`${$page.url}/new`)}
         >Hinzufügen
         <Plus class="ml-3" />
       </Button>

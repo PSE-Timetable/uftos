@@ -2,22 +2,11 @@ package de.uftos.controller;
 
 import de.uftos.dto.ConstraintInstanceRequestDto;
 import de.uftos.dto.ConstraintInstancesResponseDto;
-import de.uftos.dto.ResourceType;
-import de.uftos.dto.solver.RewardPenalize;
-import de.uftos.entities.ConstraintArgument;
 import de.uftos.entities.ConstraintInstance;
-import de.uftos.entities.ConstraintParameter;
 import de.uftos.entities.ConstraintSignature;
-import de.uftos.entities.StudentGroup;
-import de.uftos.entities.Teacher;
-import de.uftos.repositories.database.ConstraintInstanceRepository;
-import de.uftos.repositories.database.ConstraintSignatureRepository;
-import de.uftos.repositories.database.StudentGroupRepository;
-import de.uftos.repositories.database.TeacherRepository;
 import de.uftos.services.ConstraintInstanceService;
 import de.uftos.services.ConstraintSignatureService;
-import java.util.ArrayList;
-import java.util.List;
+
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -40,10 +29,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class ConstraintController {
   private final ConstraintSignatureService constraintSignatureService;
   private final ConstraintInstanceService constraintInstanceService;
-  private final ConstraintSignatureRepository constraintSignatureRepository;
-  private final ConstraintInstanceRepository constraintInstanceRepository;
-  private final TeacherRepository teacherRepository;
-  private final StudentGroupRepository studentGroupRepository;
 
   /**
    * Creates the constraint controller.
@@ -53,18 +38,9 @@ public class ConstraintController {
    */
   @Autowired
   public ConstraintController(ConstraintSignatureService constraintSignatureService,
-                              ConstraintInstanceService constraintInstanceService,
-                              ConstraintSignatureRepository constraintSignatureRepository,
-                              TeacherRepository teacherRepository,
-                              ConstraintInstanceRepository constraintInstanceRepository,
-                              StudentGroupRepository studentGroupRepository) {
+                              ConstraintInstanceService constraintInstanceService) {
     this.constraintSignatureService = constraintSignatureService;
     this.constraintInstanceService = constraintInstanceService;
-    this.constraintSignatureRepository = constraintSignatureRepository;
-    this.constraintInstanceRepository = constraintInstanceRepository;
-    this.teacherRepository = teacherRepository;
-    this.studentGroupRepository = studentGroupRepository;
-
   }
 
   /**

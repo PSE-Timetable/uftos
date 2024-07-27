@@ -18,7 +18,7 @@
   import { error } from '@sveltejs/kit';
   import { ChevronLeft } from 'lucide-svelte';
 
-  let reloadTable = {};
+  let reloadTable = false;
 
   const getConstraints = async () => {
     return {
@@ -27,7 +27,7 @@
   };
 
   async function getInstancesPage(pageIndex: number, toSort: string, filter: string, constraintSignatureId?: string) {
-    let pageable: Pageable = { page: pageIndex, size: 5, sort: [toSort] };
+    let pageable: Pageable = { page: pageIndex, size: 50, sort: [toSort] };
     if (!constraintSignatureId) {
       throw error(400, { message: 'Could not fetch page' });
     }
@@ -36,15 +36,14 @@
       let dataItems: DataItem[] = result.constraintInstances.map((instance) => {
         let item: DataItem = { id: instance.id };
         for (let i = 0; i < instance.arguments.length; i++) {
-          item[`name${i}`] = String(
-            result.displayNames.find((item) => item.id === instance.arguments[i].value)?.displayName,
-          );
+          item[`name${i}`] =
+            result.displayNames.find((item) => item.id === instance.arguments[i].value)?.displayName ?? '';
         }
         return item;
       });
       return {
         data: dataItems,
-        totalElements: Number(dataItems.length),
+        totalElements: dataItems.length,
       };
     } catch {
       error(400, { message: 'Could not fetch page' });
@@ -72,7 +71,7 @@
     let argumentRequestDtos: ConstraintArgumentRequestDto[] = [];
     for (let parameter of constraintSignature.parameters) {
       argumentRequestDtos.push({
-        argumentId: data[parameter.parameterName][0] ? data[parameter.parameterName][0].value : '',
+        argumentId: data[parameter.parameterName][0]?.value ?? '',
         parameterName: parameter.parameterName,
       });
     }
@@ -81,19 +80,12 @@
       type: constraintSignature.defaultType,
     };
     await createConstraintInstance(constraintSignature.name, requestDto);
-    reloadTable = {}; //each {} is unique, thus reloading component
+    reloadTable = !reloadTable;
   }
 </script>
 
 <div class="flex flex-row justify-start bg-foreground md:p-4 text-white">
-  <Button
-    on:click={async () => {
-      await goto('./');
-    }}
-    variant="secondary"
-    size="icon"
-    class="rounded-full bg-accent mr-6"
-  >
+  <Button on:click={() => goto('./')} variant="secondary" size="icon" class="rounded-full bg-accent mr-6">
     <ChevronLeft class="h-5 w-5 text-white" />
   </Button>
   <h1 class="font-bold text-xl mt-1">Constraints ändern</h1>

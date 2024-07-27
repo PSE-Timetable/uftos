@@ -11,6 +11,7 @@
     getTimeslots,
     type Pageable,
     ParameterType,
+    type Sort,
   } from '$lib/sdk/fetch-client';
   import { Button } from '$lib/elements/ui/button';
   import ComboBox, { type ComboBoxItem } from '$lib/elements/ui/combo-box/combo-box.svelte';
@@ -23,22 +24,18 @@
 
   let data: Record<string, ComboBoxItem[]> = {};
 
-  async function updateItems(value: string, name?: string, parameterType?: ParameterType) {
-    const page: Pageable = { page: 0, size: 2 };
-    if (name === undefined) {
-      name = constraintSignature.parameters.find(
-        (parameter) => parameter.parameterType === parameterType!,
-      )!.parameterName!;
-    }
+  async function updateItems(value: string, name: string, parameterType: ParameterType) {
+    const page: Pageable = { page: 0, size: 40 };
+    const sort: Sort = { sort: ['name,asc'] };
     try {
       switch (parameterType) {
         case ParameterType.Grade: {
-          const grades = await getGrades(page, { name: value });
+          const grades = await getGrades(sort, { name: value });
           data[name] = grades.map((grade) => ({ value: grade.id, label: grade.name }));
           break;
         }
         case ParameterType.Subject: {
-          const subjects = await getSubjects(page, { name: value });
+          const subjects = await getSubjects(sort, { name: value });
           data[name] = subjects.map((subject) => ({ value: subject.id, label: subject.name }));
           break;
         }
@@ -66,7 +63,7 @@
           break;
         }
         case ParameterType.Tag: {
-          const tags = await getTags(page, { name: value });
+          const tags = await getTags(sort, { name: value });
           data[name] = tags.map((tag) => ({ value: tag.id, label: tag.name }));
           break;
         }
@@ -113,37 +110,37 @@
           {#if parameter.parameterType === ParameterType.Teacher}
             <ComboBox
               onSearch={(value) => updateItems(value, parameter.parameterName, parameter.parameterType)}
-              data={data[parameter.parameterName || '']}
+              data={data[parameter.parameterName]}
             />
           {:else if parameter.parameterType === ParameterType.Room}
             <ComboBox
               onSearch={(value) => updateItems(value, parameter.parameterName, parameter.parameterType)}
-              data={data[parameter.parameterName || '']}
+              data={data[parameter.parameterName]}
             />
           {:else if parameter.parameterType === ParameterType.Grade}
             <ComboBox
               onSearch={(value) => updateItems(value, parameter.parameterName, parameter.parameterType)}
-              data={data[parameter.parameterName || '']}
+              data={data[parameter.parameterName]}
             />
           {:else if parameter.parameterType === ParameterType.Tag}
             <ComboBox
               onSearch={(value) => updateItems(value, parameter.parameterName, parameter.parameterType)}
-              data={data[parameter.parameterName || '']}
+              data={data[parameter.parameterName]}
             />
           {:else if parameter.parameterType === ParameterType.Timeslot}
             <ComboBox
               onSearch={(value) => updateItems(value, parameter.parameterName, parameter.parameterType)}
-              data={data[parameter.parameterName || '']}
+              data={data[parameter.parameterName]}
             />
           {:else if parameter.parameterType === ParameterType.StudentGroup}
             <ComboBox
               onSearch={(value) => updateItems(value, parameter.parameterName, parameter.parameterType)}
-              data={data[parameter.parameterName || '']}
+              data={data[parameter.parameterName]}
             />
           {:else if parameter.parameterType === ParameterType.Subject}
             <ComboBox
               onSearch={(value) => updateItems(value, parameter.parameterName, parameter.parameterType)}
-              data={data[parameter.parameterName || '']}
+              data={data[parameter.parameterName]}
             />
           {/if}
         </div>
@@ -154,8 +151,6 @@
   <Button
     variant="outline"
     class="bg-accent border-0 text-md text-white py-6"
-    on:click={async () => {
-      await addInstance(constraintSignature, data);
-    }}>Hinzufügen</Button
+    on:click={async () => addInstance(constraintSignature, data)}>Hinzufügen</Button
   >
 </div>

@@ -25,7 +25,7 @@
       <DropdownMenu.Item on:click={() => navigator.clipboard.writeText(id)}>ID kopieren</DropdownMenu.Item>
     </DropdownMenu.Group>
     {#if editAvailable}
-      <DropdownMenu.Item on:click={async () => await goto(`${$page.url}/${id}`)}>Editieren</DropdownMenu.Item>
+      <DropdownMenu.Item on:click={() => goto(`${$page.url}/${id}`)}>Editieren</DropdownMenu.Item>
     {/if}
     <DropdownMenu.Separator />
     <DropdownMenu.Item
