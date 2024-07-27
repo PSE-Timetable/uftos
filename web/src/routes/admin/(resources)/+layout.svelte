@@ -8,7 +8,7 @@
 <div class="flex flex-row justify-start bg-foreground md:p-4 text-white">
   <Button
     on:click={async () => {
-      await goto('/admin');
+      await goto('./');
     }}
     variant="secondary"
     size="icon"

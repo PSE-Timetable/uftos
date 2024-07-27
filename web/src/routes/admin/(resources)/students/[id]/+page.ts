@@ -1,14 +1,29 @@
-import { getStudent } from '$lib/sdk/fetch-client';
+import { getStudent, getTags, type Sort, type Student } from '$lib/sdk/fetch-client';
 import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
 
 export const load = (async ({ params }) => {
+  const sort: Sort = { sort: ['name,asc'] };
+  const tags = await getTags(sort);
+  if (params.id === 'new') {
+    const student: Student = { id: 'new', firstName: '', lastName: '', tags: [] };
+    return {
+      student,
+      tags,
+      create: true,
+      meta: {
+        title: 'Schüler — Hinzufügen',
+      },
+    };
+  }
   try {
     const student = await getStudent(params.id);
     return {
       student,
+      tags,
+      create: false,
       meta: {
-        title: `Student — ${student.firstName} ${student.lastName}`,
+        title: `Schüler — ${student.firstName} ${student.lastName}`,
       },
     };
   } catch {
