@@ -28,8 +28,8 @@
   }
 
   $: {
-    console.log("updating");
-    
+    console.log('updating');
+
     if (teachers.length > 0) {
       for (const teacher of teachers) {
         push(teacher.firstName + ' ' + teacher.lastName);
@@ -65,7 +65,7 @@
 <div class="flex flex-row items-center justify-around w-full gap-8">
   <p>{constraintParameter.parameterName}</p>
   <div class="text-primary">
-    <Combobox items={items}/>
+    <Combobox {items} />
 
     <Select.Root portal={null}>
       <Select.Trigger class="w-[10%] min-w-[200px]">

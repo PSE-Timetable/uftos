@@ -1,6 +1,5 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
-  import { page } from '$app/stores';
   import ConstraintSignatureComp from '$lib/components/ui/constraintSignature/constraint-signature.svelte';
   import { Button } from '$lib/elements/ui/button';
   import type { ComboBoxItem } from '$lib/elements/ui/combo-box/combo-box.svelte';

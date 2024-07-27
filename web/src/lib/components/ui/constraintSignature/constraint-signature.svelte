@@ -1,9 +1,6 @@
 <script lang="ts">
   import {
-    type ConstraintArgumentRequestDto,
-    type ConstraintInstanceRequestDto,
     type ConstraintSignature,
-    createConstraintInstance,
     getGrades,
     getRooms,
     getStudentGroups,
@@ -14,7 +11,6 @@
     getTimeslots,
     type Pageable,
     ParameterType,
-    type Sort,
   } from '$lib/sdk/fetch-client';
   import { Button } from '$lib/elements/ui/button';
   import ComboBox, { type ComboBoxItem } from '$lib/elements/ui/combo-box/combo-box.svelte';
@@ -29,7 +25,6 @@
 
   async function updateItems(value: string, name?: string, parameterType?: ParameterType) {
     const page: Pageable = { page: 0, size: 2 };
-    const sort: Sort = {};
     if (name === undefined) {
       name = constraintSignature.parameters.find(
         (parameter) => parameter.parameterType === parameterType!,
@@ -160,7 +155,7 @@
     variant="outline"
     class="bg-accent border-0 text-md text-white py-6"
     on:click={async () => {
-      addInstance(constraintSignature, data);
+      await addInstance(constraintSignature, data);
     }}>Hinzufügen</Button
   >
 </div>
