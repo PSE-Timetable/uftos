@@ -114,6 +114,7 @@
               additionalId={constraint.name}
               sortable={false}
               addButton={false}
+              pageSize={5}
             />
           </div>
         {/key}
