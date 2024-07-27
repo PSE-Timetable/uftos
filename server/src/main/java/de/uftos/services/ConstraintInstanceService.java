@@ -146,9 +146,14 @@ public class ConstraintInstanceService {
         .build();
 
     Page<ConstraintInstance> constraintInstances = this.repository.findAll(specification, pageable);
+    Optional<ConstraintSignature> signature = this.signatureRepository.findById(signatureId);
     List<ConstraintArgumentDisplayName> displayNames =
         processConstraintInstances(constraintInstances.getContent());
-    return new ConstraintInstancesResponseDto(constraintInstances.getContent(), displayNames);
+    return new ConstraintInstancesResponseDto(
+        constraintInstances.getContent(),
+        displayNames,
+        signature.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST))
+    );
   }
 
   /**
@@ -162,7 +167,12 @@ public class ConstraintInstanceService {
     ConstraintInstance constraintInstance = getInstanceById(signatureId, id);
     List<ConstraintArgumentDisplayName> displayNames =
         getDisplayNamesFromInstances(constraintInstance);
-    return new ConstraintInstancesResponseDto(List.of(constraintInstance), displayNames);
+    Optional<ConstraintSignature> signature = this.signatureRepository.findById(signatureId);
+    return new ConstraintInstancesResponseDto(
+        List.of(constraintInstance),
+        displayNames,
+        signature.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST))
+    );
   }
 
   /**
