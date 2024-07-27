@@ -23,8 +23,10 @@ export type DataItem = {
   [key: string]: string | string[] | number;
 };
 
+const pageSize = 15;
+
 export async function loadStudentPage(index: number, sortString: string, filter: string) {
-  const pageable: Pageable = { page: index, size: 10, sort: [sortString] };
+  const pageable: Pageable = { page: index, size: pageSize, sort: [sortString] };
   try {
     const result: PageStudent = await getStudents(pageable, {
       firstName: filter,
@@ -58,7 +60,7 @@ export async function deleteStudentEntry(id: string) {
 }
 
 export async function loadRoomPage(index: number, sortString: string, filter: string) {
-  const pageable: Pageable = { page: index, size: 10, sort: [sortString] };
+  const pageable: Pageable = { page: index, size: pageSize, sort: [sortString] };
   let result: PageRoom;
   try {
     result = await getRooms(pageable, {
@@ -153,7 +155,7 @@ export async function deleteTagEntry(id: string) {
 }
 
 export async function loadTeacherPage(index: number, sortString: string, filter: string) {
-  const pageable: Pageable = { page: index, size: 10, sort: [sortString] };
+  const pageable: Pageable = { page: index, size: pageSize, sort: [sortString] };
   try {
     const result: PageTeacher = await getTeachers(pageable, {
       firstName: filter,
