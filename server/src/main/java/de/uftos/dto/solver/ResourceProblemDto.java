@@ -11,7 +11,7 @@ public interface ResourceProblemDto {
    *
    * @return the uuid of the resource.
    */
-  String getId();
+  String id();
 
   /**
    * Gets the type of the resource.

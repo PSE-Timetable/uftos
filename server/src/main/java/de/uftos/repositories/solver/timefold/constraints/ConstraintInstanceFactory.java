@@ -38,7 +38,7 @@ public class ConstraintInstanceFactory {
     params.add(resources.get("this"));
 
     for (ResourceProblemDto param : instance.parameters()) {
-      ResourceTimefoldInstance resource = resources.get(param.getId());
+      ResourceTimefoldInstance resource = resources.get(param.id());
       if (resource.getResourceType() != param.getType()) {
         throw new IllegalArgumentException();
       }

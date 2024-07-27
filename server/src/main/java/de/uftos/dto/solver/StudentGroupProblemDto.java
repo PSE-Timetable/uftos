@@ -13,10 +13,6 @@ public record StudentGroupProblemDto(
     List<String> lessonIds,
     List<String> studentIds
 ) implements ResourceProblemDto {
-  @Override
-  public String getId() {
-    return id;
-  }
 
   @Override
   public ResourceType getType() {

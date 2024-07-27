@@ -14,10 +14,6 @@ public record LessonProblemDto(
     String subjectId,
     String roomId
 ) implements ResourceProblemDto {
-  @Override
-  public String getId() {
-    return id;
-  }
 
   @Override
   public ResourceType getType() {

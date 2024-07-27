@@ -85,20 +85,16 @@ public class SolverRepositoryImpl implements SolverRepository {
     //initializing all resources
     for (ResourceProblemDto resource : timetable.getResources()) {
       switch (resource.getType()) {
-        case GRADE -> grades.put(resource.getId(), new GradeTimefoldInstance(resource.getId()));
-        case LESSON -> lessons.put(resource.getId(), new LessonTimefoldInstance(resource.getId()));
-        case ROOM -> rooms.put(resource.getId(), new RoomTimefoldInstance(resource.getId()));
+        case GRADE -> grades.put(resource.id(), new GradeTimefoldInstance(resource.id()));
+        case LESSON -> lessons.put(resource.id(), new LessonTimefoldInstance(resource.id()));
+        case ROOM -> rooms.put(resource.id(), new RoomTimefoldInstance(resource.id()));
         case STUDENT_GROUP ->
-            studentGroups.put(resource.getId(), new StudentGroupTimefoldInstance(resource.getId()));
-        case STUDENT ->
-            students.put(resource.getId(), new StudentTimefoldInstance(resource.getId()));
-        case SUBJECT ->
-            subjects.put(resource.getId(), new SubjectTimefoldInstance(resource.getId()));
-        case TAG -> tags.put(resource.getId(), new TagTimefoldInstance(resource.getId()));
-        case TEACHER ->
-            teachers.put(resource.getId(), new TeacherTimefoldInstance(resource.getId()));
-        case TIMESLOT ->
-            timeslots.put(resource.getId(), new TimeslotTimefoldInstance(resource.getId()));
+            studentGroups.put(resource.id(), new StudentGroupTimefoldInstance(resource.id()));
+        case STUDENT -> students.put(resource.id(), new StudentTimefoldInstance(resource.id()));
+        case SUBJECT -> subjects.put(resource.id(), new SubjectTimefoldInstance(resource.id()));
+        case TAG -> tags.put(resource.id(), new TagTimefoldInstance(resource.id()));
+        case TEACHER -> teachers.put(resource.id(), new TeacherTimefoldInstance(resource.id()));
+        case TIMESLOT -> timeslots.put(resource.id(), new TimeslotTimefoldInstance(resource.id()));
         default -> throw new IllegalStateException();
       }
     }
@@ -337,7 +333,7 @@ public class SolverRepositoryImpl implements SolverRepository {
     resources.putAll(lessons);
 
     for (TagProblemDto tag : timetable.tags()) {
-      TagTimefoldInstance timefoldInstance = tags.get(tag.getId());
+      TagTimefoldInstance timefoldInstance = tags.get(tag.id());
 
       //checking grades for consistency
       if (tag.gradeIds().size() != timefoldInstance.getGradeList().size()) {

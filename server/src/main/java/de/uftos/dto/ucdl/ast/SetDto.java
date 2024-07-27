@@ -13,22 +13,4 @@ public record SetDto(UcdlToken token, ResourceType type, AbstractSyntaxTreeDto s
   public UcdlToken getToken() {
     return token;
   }
-
-  @Override
-  public String toString() {
-    StringBuilder stringBuilder = new StringBuilder();
-    stringBuilder.append(this.token);
-    stringBuilder.append("(");
-    stringBuilder.append(this.setName.toString());
-    stringBuilder.append(") {\n");
-
-    for (AbstractSyntaxTreeDto ast : this.modifiers) {
-      stringBuilder.append(ast.toString());
-      stringBuilder.append("\n");
-    }
-
-    stringBuilder.append("}");
-
-    return stringBuilder.toString();
-  }
 }

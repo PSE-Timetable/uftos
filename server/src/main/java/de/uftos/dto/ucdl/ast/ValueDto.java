@@ -10,12 +10,4 @@ public record ValueDto<T>(UcdlToken token, T value) implements AbstractSyntaxTre
   public UcdlToken getToken() {
     return token;
   }
-
-  @Override
-  public String toString() {
-    return this.token
-        + "("
-        + this.value
-        + ")";
-  }
 }

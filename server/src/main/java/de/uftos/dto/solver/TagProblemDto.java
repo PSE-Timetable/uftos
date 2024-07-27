@@ -16,10 +16,6 @@ public record TagProblemDto(
     List<String> teacherIds,
     List<String> timeslotIds
 ) implements ResourceProblemDto {
-  @Override
-  public String getId() {
-    return id;
-  }
 
   @Override
   public ResourceType getType() {

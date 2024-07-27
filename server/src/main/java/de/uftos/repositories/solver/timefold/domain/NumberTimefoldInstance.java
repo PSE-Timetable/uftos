@@ -6,11 +6,11 @@ import lombok.Getter;
 /**
  * This class models a number that can be used by the Timefold solver.
  */
-public class Number implements ResourceTimefoldInstance {
+public class NumberTimefoldInstance implements ResourceTimefoldInstance {
   @Getter
   private final int value;
 
-  public Number(int value) {
+  public NumberTimefoldInstance(int value) {
     this.value = value;
   }
 

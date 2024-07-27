@@ -23,32 +23,42 @@ public class TimetableSolutionTimefoldInstance implements ResourceTimefoldInstan
   @ProblemFactCollectionProperty
   @ValueRangeProvider
   private final List<GradeTimefoldInstance> grades = new ArrayList<>();
+
   @ProblemFactCollectionProperty
   @ValueRangeProvider
   private final List<RoomTimefoldInstance> rooms = new ArrayList<>();
+
   @ProblemFactCollectionProperty
   @ValueRangeProvider
   private final List<StudentGroupTimefoldInstance> studentGroups = new ArrayList<>();
+
   @ProblemFactCollectionProperty
   @ValueRangeProvider
   private final List<StudentTimefoldInstance> students = new ArrayList<>();
+
   @ProblemFactCollectionProperty
   @ValueRangeProvider
   private final List<SubjectTimefoldInstance> subjects = new ArrayList<>();
+
   @ProblemFactCollectionProperty
   @ValueRangeProvider
   private final List<TeacherTimefoldInstance> teachers = new ArrayList<>();
+
   @ProblemFactCollectionProperty
   @ValueRangeProvider
   private final List<TimeslotTimefoldInstance> timeslots = new ArrayList<>();
+
   @ProblemFactCollectionProperty
   @ValueRangeProvider
   private final List<TagTimefoldInstance> tags = new ArrayList<>();
+
   @PlanningEntityCollectionProperty
   private final List<LessonTimefoldInstance> lessons = new ArrayList<>();
+
   @ProblemFactCollectionProperty
   @ValueRangeProvider
   private final List<ConstraintInstanceTimefoldInstance> constraintInstances = new ArrayList<>();
+
   @PlanningScore
   private HardSoftScore score;
 
