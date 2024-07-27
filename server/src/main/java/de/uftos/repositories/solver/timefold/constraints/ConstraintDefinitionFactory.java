@@ -108,7 +108,10 @@ public class ConstraintDefinitionFactory {
   }
 
   @SuppressWarnings("checkstyle:VariableDeclarationUsageDistance")
-  private static Function<List<ResourceTimefoldInstance>, Optional<Boolean>> convertFor(
+  private static Function<
+      List<ResourceTimefoldInstance>,
+      Optional<Boolean>
+      > convertFor(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.FOR) {
       throw new IllegalStateException();
@@ -160,7 +163,10 @@ public class ConstraintDefinitionFactory {
     };
   }
 
-  private static Function<List<ResourceTimefoldInstance>, Optional<Boolean>> convertIf(
+  private static Function<
+      List<ResourceTimefoldInstance>,
+      Optional<Boolean>
+      > convertIf(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.IF) {
       throw new IllegalStateException();
@@ -209,7 +215,10 @@ public class ConstraintDefinitionFactory {
     };
   }
 
-  private static Function<List<ResourceTimefoldInstance>, Boolean> convertReturn(
+  private static Function<
+      List<ResourceTimefoldInstance>,
+      Boolean
+      > convertReturn(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.RETURN) {
       throw new IllegalStateException();
@@ -219,7 +228,10 @@ public class ConstraintDefinitionFactory {
     return (arguments) -> value;
   }
 
-  private static Function<List<ResourceTimefoldInstance>, Boolean> convertBool(
+  private static Function<
+      List<ResourceTimefoldInstance>,
+      Boolean
+      > convertBool(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     return switch (ast.getToken()) {
       case IMPLIES -> convertImplies(ast, params);
@@ -235,7 +247,10 @@ public class ConstraintDefinitionFactory {
     };
   }
 
-  private static Function<List<ResourceTimefoldInstance>, Boolean> convertAnd(
+  private static Function<
+      List<ResourceTimefoldInstance>,
+      Boolean
+      > convertAnd(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.AND) {
       throw new IllegalStateException();
@@ -258,7 +273,10 @@ public class ConstraintDefinitionFactory {
     };
   }
 
-  private static Function<List<ResourceTimefoldInstance>, Boolean> convertOr(
+  private static Function<
+      List<ResourceTimefoldInstance>,
+      Boolean
+      > convertOr(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.OR) {
       throw new IllegalStateException();
@@ -281,7 +299,10 @@ public class ConstraintDefinitionFactory {
     };
   }
 
-  private static Function<List<ResourceTimefoldInstance>, Boolean> convertNot(
+  private static Function<
+      List<ResourceTimefoldInstance>,
+      Boolean
+      > convertNot(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.NOT) {
       throw new IllegalStateException();
@@ -299,7 +320,10 @@ public class ConstraintDefinitionFactory {
     return (arguments) -> !bool.apply(arguments);
   }
 
-  private static Function<List<ResourceTimefoldInstance>, Boolean> convertImplies(
+  private static Function<
+      List<ResourceTimefoldInstance>,
+      Boolean
+      > convertImplies(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.IMPLIES) {
       throw new IllegalStateException();
@@ -319,7 +343,10 @@ public class ConstraintDefinitionFactory {
     return (arguments) -> !firstParameter.apply(arguments) || secondParameter.apply(arguments);
   }
 
-  private static Function<List<ResourceTimefoldInstance>, Boolean> convertForAll(
+  private static Function<
+      List<ResourceTimefoldInstance>,
+      Boolean
+      > convertForAll(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.FOR_ALL) {
       throw new IllegalStateException();
@@ -356,7 +383,10 @@ public class ConstraintDefinitionFactory {
     };
   }
 
-  private static Function<List<ResourceTimefoldInstance>, Boolean> convertExists(
+  private static Function<
+      List<ResourceTimefoldInstance>,
+      Boolean
+      > convertExists(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.EXISTS) {
       throw new IllegalStateException();
@@ -393,7 +423,10 @@ public class ConstraintDefinitionFactory {
     };
   }
 
-  private static Function<List<ResourceTimefoldInstance>, Boolean> convertBoolValue(
+  private static Function<
+      List<ResourceTimefoldInstance>,
+      Boolean
+      > convertBoolValue(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.BOOL_VALUE) {
       throw new IllegalStateException();
@@ -403,7 +436,10 @@ public class ConstraintDefinitionFactory {
     return (arguments) -> value;
   }
 
-  private static Function<List<ResourceTimefoldInstance>, Boolean> convertEquation(
+  private static Function<
+      List<ResourceTimefoldInstance>,
+      Boolean
+      > convertEquation(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     return switch (ast.getToken()) {
       case EQUALS -> convertEquals(ast, params);
@@ -416,7 +452,10 @@ public class ConstraintDefinitionFactory {
     };
   }
 
-  private static Function<List<ResourceTimefoldInstance>, Boolean> convertEquals(
+  private static Function<
+      List<ResourceTimefoldInstance>,
+      Boolean
+      > convertEquals(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.EQUALS) {
       throw new IllegalStateException();
@@ -442,7 +481,10 @@ public class ConstraintDefinitionFactory {
     };
   }
 
-  private static Function<List<ResourceTimefoldInstance>, Boolean> convertNotEquals(
+  private static Function<
+      List<ResourceTimefoldInstance>,
+      Boolean
+      > convertNotEquals(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.NOT_EQUALS) {
       throw new IllegalStateException();
@@ -468,7 +510,10 @@ public class ConstraintDefinitionFactory {
     };
   }
 
-  private static Function<List<ResourceTimefoldInstance>, Boolean> convertSmallerEquals(
+  private static Function<
+      List<ResourceTimefoldInstance>,
+      Boolean
+      > convertSmallerEquals(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.SMALLER_EQUALS) {
       throw new IllegalStateException();
@@ -496,7 +541,10 @@ public class ConstraintDefinitionFactory {
     };
   }
 
-  private static Function<List<ResourceTimefoldInstance>, Boolean> convertSmaller(
+  private static Function<
+      List<ResourceTimefoldInstance>,
+      Boolean
+      > convertSmaller(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.SMALLER) {
       throw new IllegalStateException();
@@ -524,7 +572,10 @@ public class ConstraintDefinitionFactory {
     };
   }
 
-  private static Function<List<ResourceTimefoldInstance>, Boolean> convertGreaterEquals(
+  private static Function<
+      List<ResourceTimefoldInstance>,
+      Boolean
+      > convertGreaterEquals(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.GREATER_EQUALS) {
       throw new IllegalStateException();
@@ -552,7 +603,10 @@ public class ConstraintDefinitionFactory {
     };
   }
 
-  private static Function<List<ResourceTimefoldInstance>, Boolean> convertGreater(
+  private static Function<
+      List<ResourceTimefoldInstance>,
+      Boolean
+      > convertGreater(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.GREATER) {
       throw new IllegalStateException();
@@ -580,7 +634,10 @@ public class ConstraintDefinitionFactory {
     };
   }
 
-  private static Function<List<ResourceTimefoldInstance>, Boolean> convertIn(
+  private static Function<
+      List<ResourceTimefoldInstance>,
+      Boolean
+      > convertIn(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.IN) {
       throw new IllegalStateException();
@@ -597,7 +654,10 @@ public class ConstraintDefinitionFactory {
     return (arguments) -> set.apply(arguments).contains(element.apply(arguments));
   }
 
-  private static Function<List<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>> convertOf(
+  private static Function<
+      List<ResourceTimefoldInstance>,
+      Set<ResourceTimefoldInstance>
+      > convertOf(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.OF) {
       throw new IllegalStateException();
@@ -663,7 +723,10 @@ public class ConstraintDefinitionFactory {
     });
   }
 
-  private static Function<List<ResourceTimefoldInstance>, Boolean> convertIsEmpty(
+  private static Function<
+      List<ResourceTimefoldInstance>,
+      Boolean
+      > convertIsEmpty(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.IS_EMPTY) {
       throw new IllegalStateException();
@@ -678,7 +741,10 @@ public class ConstraintDefinitionFactory {
     return (arguments) -> set.apply(arguments).isEmpty();
   }
 
-  private static Function<List<ResourceTimefoldInstance>, NumberTimefoldInstance> convertSize(
+  private static Function<
+      List<ResourceTimefoldInstance>,
+      NumberTimefoldInstance
+      > convertSize(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.SIZE) {
       throw new IllegalStateException();
@@ -693,7 +759,10 @@ public class ConstraintDefinitionFactory {
     return (arguments) -> new NumberTimefoldInstance(set.apply(arguments).size());
   }
 
-  private static Function<List<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>> convertSet(
+  private static Function<
+      List<ResourceTimefoldInstance>,
+      Set<ResourceTimefoldInstance>
+      > convertSet(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     return switch (ast.getToken()) {
       case RESOURCE_SET -> convertResourceSet(ast, params);
@@ -702,8 +771,10 @@ public class ConstraintDefinitionFactory {
     };
   }
 
-  private static Function<List<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>>
-  convertResourceSet(AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
+  private static Function<
+      List<ResourceTimefoldInstance>,
+      Set<ResourceTimefoldInstance>
+      > convertResourceSet(AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.RESOURCE_SET) {
       throw new IllegalStateException();
     }
@@ -744,8 +815,10 @@ public class ConstraintDefinitionFactory {
     };
   }
 
-  private static Function<List<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>>
-  convertNumberSet(AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
+  private static Function<
+      List<ResourceTimefoldInstance>,
+      Set<ResourceTimefoldInstance>
+      > convertNumberSet(AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.NUMBER_SET) {
       throw new IllegalStateException();
     }
@@ -1012,7 +1085,10 @@ public class ConstraintDefinitionFactory {
     };
   }
 
-  private static Function<List<ResourceTimefoldInstance>, ResourceTimefoldInstance> convertElement(
+  private static Function<
+      List<ResourceTimefoldInstance>,
+      ResourceTimefoldInstance
+      > convertElement(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() == UcdlToken.NUMBER || ast.getToken() == UcdlToken.SIZE) {
       Function<List<ResourceTimefoldInstance>, NumberTimefoldInstance> function =
@@ -1055,7 +1131,10 @@ public class ConstraintDefinitionFactory {
     };
   }
 
-  private static Function<List<ResourceTimefoldInstance>, NumberTimefoldInstance> convertNumberElement(
+  private static Function<
+      List<ResourceTimefoldInstance>,
+      NumberTimefoldInstance
+      > convertNumberElement(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     return switch (ast.getToken()) {
       case NUMBER -> convertNumber(ast, params);
@@ -1064,7 +1143,10 @@ public class ConstraintDefinitionFactory {
     };
   }
 
-  private static Function<List<ResourceTimefoldInstance>, NumberTimefoldInstance> convertNumber(
+  private static Function<
+      List<ResourceTimefoldInstance>,
+      NumberTimefoldInstance
+      > convertNumber(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.NUMBER) {
       throw new IllegalStateException();
@@ -1074,8 +1156,11 @@ public class ConstraintDefinitionFactory {
     return (arguments) -> new NumberTimefoldInstance(value.value());
   }
 
-  private static Function<List<ResourceTimefoldInstance>, ResourceTimefoldInstance>
-  convertValueReference(AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
+  private static Function<
+      List<ResourceTimefoldInstance>,
+      ResourceTimefoldInstance
+      > convertValueReference(AbstractSyntaxTreeDto ast,
+                              LinkedHashMap<String, ResourceType> params) {
     if (ast.getToken() != UcdlToken.VALUE_REFERENCE) {
       throw new IllegalStateException();
     }
