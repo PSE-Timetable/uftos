@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
+import de.uftos.dto.ConstraintArgumentRequestDto;
 import de.uftos.dto.ConstraintInstanceRequestDto;
 import de.uftos.dto.ConstraintInstancesResponseDto;
 import de.uftos.dto.ResourceType;
@@ -28,7 +29,6 @@ import de.uftos.repositories.database.TagRepository;
 import de.uftos.repositories.database.TeacherRepository;
 import de.uftos.repositories.database.TimeslotRepository;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -139,10 +139,10 @@ public class ConstraintInstanceServiceTest {
 
   @Test
   void nonExistentParameter() {
-    ConstraintInstanceRequestDto constraintInstanceRequestDto = new ConstraintInstanceRequestDto(
-        Map.of(
-            "teacher123", "teacherId2"
-        ), RewardPenalize.HARD_PENALIZE);
+    ConstraintArgumentRequestDto arg =
+        new ConstraintArgumentRequestDto("teacher123", "teacherId2");
+    ConstraintInstanceRequestDto constraintInstanceRequestDto =
+        new ConstraintInstanceRequestDto(List.of(arg), RewardPenalize.HARD_PENALIZE);
 
     assertThrows(ResponseStatusException.class,
         () -> constraintInstanceService.create("test constraint", constraintInstanceRequestDto));
@@ -150,11 +150,12 @@ public class ConstraintInstanceServiceTest {
 
   @Test
   void tooManyParameter() {
-    ConstraintInstanceRequestDto constraintInstanceRequestDto = new ConstraintInstanceRequestDto(
-        Map.of(
-            "teacher123", "teacherId1",
-            "teacher456", "teacherId1"
-        ), RewardPenalize.HARD_PENALIZE);
+    ConstraintArgumentRequestDto arg1 =
+        new ConstraintArgumentRequestDto("teacher123", "teacherId1");
+    ConstraintArgumentRequestDto arg2 =
+        new ConstraintArgumentRequestDto("teacher456", "teacherId1");
+    ConstraintInstanceRequestDto constraintInstanceRequestDto =
+        new ConstraintInstanceRequestDto(List.of(arg1, arg2), RewardPenalize.HARD_PENALIZE);
 
     assertThrows(ResponseStatusException.class,
         () -> constraintInstanceService.create("test constraint", constraintInstanceRequestDto));
@@ -162,10 +163,10 @@ public class ConstraintInstanceServiceTest {
 
   @Test
   void createConstraintInstance() {
-    ConstraintInstanceRequestDto constraintInstanceRequestDto = new ConstraintInstanceRequestDto(
-        Map.of(
-            "teacher123", "teacherId1"
-        ), RewardPenalize.HARD_PENALIZE);
+    ConstraintArgumentRequestDto arg =
+        new ConstraintArgumentRequestDto("teacher123", "teacherId1");
+    ConstraintInstanceRequestDto constraintInstanceRequestDto =
+        new ConstraintInstanceRequestDto(List.of(arg), RewardPenalize.HARD_PENALIZE);
 
     assertDoesNotThrow(
         () -> constraintInstanceService.create("test constraint", constraintInstanceRequestDto));

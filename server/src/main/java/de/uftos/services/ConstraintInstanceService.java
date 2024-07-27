@@ -1,6 +1,7 @@
 package de.uftos.services;
 
 import de.uftos.dto.ConstraintArgumentDisplayName;
+import de.uftos.dto.ConstraintArgumentRequestDto;
 import de.uftos.dto.ConstraintInstanceRequestDto;
 import de.uftos.dto.ConstraintInstancesResponseDto;
 import de.uftos.dto.ResourceType;
@@ -100,13 +101,16 @@ public class ConstraintInstanceService {
     }
 
     for (ConstraintParameter parameter : signature.getParameters()) {
-      String value = request.arguments().get(parameter.getParameterName());
-      if (value == null || value.isEmpty()) {
+      Optional<ConstraintArgumentRequestDto> argument = request.arguments().stream()
+          .filter(arg -> arg.parameterName().equals(parameter.getParameterName()))
+          .findFirst();
+      if (argument.isEmpty()) {
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
             "Parameter %s could not be found".formatted(parameter.getParameterName()));
       }
 
-      boolean exists = this.getResourceTypeMapping(value).get(parameter.getParameterType());
+      boolean exists = this.getResourceTypeMapping(argument.get().argumentId())
+          .get(parameter.getParameterType());
       if (!exists) {
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
             "%s with id %s could not be found".formatted(parameter.getParameterName(),
@@ -115,8 +119,9 @@ public class ConstraintInstanceService {
     }
 
     ConstraintInstance instance = new ConstraintInstance();
-    List<ConstraintArgument> arguments = request.arguments().entrySet().stream()
-        .map(item -> new ConstraintArgument(item.getKey(), item.getValue())).toList();
+    List<ConstraintArgument> arguments = request.arguments().stream()
+        .map(ConstraintArgumentRequestDto::map)
+        .toList();
     instance.setArguments(arguments);
     instance.setSignature(signature);
     instance.setType(request.type());
@@ -171,8 +176,9 @@ public class ConstraintInstanceService {
                                    ConstraintInstanceRequestDto request) {
     ConstraintInstance instance = this.getInstanceById(signatureId, id);
 
-    List<ConstraintArgument> arguments = request.arguments().entrySet().stream()
-        .map(item -> new ConstraintArgument(item.getKey(), item.getValue())).toList();
+    List<ConstraintArgument> arguments = request.arguments().stream()
+        .map(ConstraintArgumentRequestDto::map)
+        .toList();
 
     instance.setArguments(arguments);
     instance.setType(request.type());
