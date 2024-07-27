@@ -2,7 +2,7 @@ package de.uftos.repositories.solver.timefold.solver;
 
 import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
 import ai.timefold.solver.core.api.score.calculator.EasyScoreCalculator;
-import de.uftos.repositories.solver.timefold.constraints.constraintinstances.ConstraintInstanceTimefoldInstance;
+import de.uftos.repositories.solver.timefold.constraints.ConstraintInstanceTimefoldInstance;
 import de.uftos.repositories.solver.timefold.domain.TimetableSolutionTimefoldInstance;
 import java.util.ArrayList;
 import java.util.List;

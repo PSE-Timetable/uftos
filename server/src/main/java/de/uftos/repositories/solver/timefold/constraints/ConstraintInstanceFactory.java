@@ -3,11 +3,6 @@ package de.uftos.repositories.solver.timefold.constraints;
 import de.uftos.dto.solver.ConstraintInstanceDto;
 import de.uftos.dto.solver.ResourceProblemDto;
 import de.uftos.dto.solver.RewardPenalize;
-import de.uftos.repositories.solver.timefold.constraints.constraintinstances.ConstraintInstanceHardPenalize;
-import de.uftos.repositories.solver.timefold.constraints.constraintinstances.ConstraintInstanceHardReward;
-import de.uftos.repositories.solver.timefold.constraints.constraintinstances.ConstraintInstanceSoftPenalize;
-import de.uftos.repositories.solver.timefold.constraints.constraintinstances.ConstraintInstanceSoftReward;
-import de.uftos.repositories.solver.timefold.constraints.constraintinstances.ConstraintInstanceTimefoldInstance;
 import de.uftos.repositories.solver.timefold.domain.ResourceTimefoldInstance;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,31 +28,24 @@ public class ConstraintInstanceFactory {
 
     ConstraintDefinitionTimefoldInstance definition = definitions.get(instance.definitionName());
 
-    List<ResourceTimefoldInstance> params = new ArrayList<>();
+    List<ResourceTimefoldInstance> arguments = new ArrayList<>();
 
-    params.add(resources.get("this"));
+    arguments.add(resources.get("this"));
 
     for (ResourceProblemDto param : instance.parameters()) {
       ResourceTimefoldInstance resource = resources.get(param.id());
       if (resource.getResourceType() != param.getType()) {
         throw new IllegalArgumentException();
       }
-      params.add(resource);
+      arguments.add(resource);
     }
 
     RewardPenalize rewardPenalize = instance.type();
-
     if (rewardPenalize == null) {
       rewardPenalize = definition.defaultType();
     }
 
-    return switch (rewardPenalize) {
-      case HARD_PENALIZE ->
-          new ConstraintInstanceHardPenalize(params, definition.evaluationFunction());
-      case SOFT_PENALIZE ->
-          new ConstraintInstanceSoftPenalize(params, definition.evaluationFunction());
-      case HARD_REWARD -> new ConstraintInstanceHardReward(params, definition.evaluationFunction());
-      case SOFT_REWARD -> new ConstraintInstanceSoftReward(params, definition.evaluationFunction());
-    };
+    return new ConstraintInstanceTimefoldInstance(arguments, definition.evaluationFunction(),
+        rewardPenalize);
   }
 }

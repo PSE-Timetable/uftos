@@ -7,7 +7,7 @@ import ai.timefold.solver.core.api.domain.solution.ProblemFactCollectionProperty
 import ai.timefold.solver.core.api.domain.valuerange.ValueRangeProvider;
 import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
 import de.uftos.dto.ResourceType;
-import de.uftos.repositories.solver.timefold.constraints.constraintinstances.ConstraintInstanceTimefoldInstance;
+import de.uftos.repositories.solver.timefold.constraints.ConstraintInstanceTimefoldInstance;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

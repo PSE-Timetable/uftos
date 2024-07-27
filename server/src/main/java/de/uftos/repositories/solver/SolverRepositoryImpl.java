@@ -27,7 +27,7 @@ import de.uftos.dto.ucdl.ConstraintDefinitionDto;
 import de.uftos.repositories.solver.timefold.constraints.ConstraintDefinitionFactory;
 import de.uftos.repositories.solver.timefold.constraints.ConstraintDefinitionTimefoldInstance;
 import de.uftos.repositories.solver.timefold.constraints.ConstraintInstanceFactory;
-import de.uftos.repositories.solver.timefold.constraints.constraintinstances.ConstraintInstanceTimefoldInstance;
+import de.uftos.repositories.solver.timefold.constraints.ConstraintInstanceTimefoldInstance;
 import de.uftos.repositories.solver.timefold.domain.GradeTimefoldInstance;
 import de.uftos.repositories.solver.timefold.domain.LessonTimefoldInstance;
 import de.uftos.repositories.solver.timefold.domain.ResourceTimefoldInstance;
