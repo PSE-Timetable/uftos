@@ -1,5 +1,6 @@
 <script lang="ts">
   import {
+    type ConstraintArgumentRequestDto,
     type ConstraintInstanceRequestDto,
     type ConstraintSignature,
     createConstraintInstance,
@@ -101,13 +102,20 @@
   };
 
   async function addInstance() {
-    let requestDto: ConstraintInstanceRequestDto = { arguments: {} };
+    let argumentRequestDtos: ConstraintArgumentRequestDto[] = [];
     console.log(data);
     for (let parameter of constraintSignature.parameters) {
-      requestDto.arguments[parameter.parameterName] = data[parameter.parameterName][0]
-        ? data[parameter.parameterName][0].value
-        : '';
+      argumentRequestDtos.push({
+        argumentId: data[parameter.parameterName][0] ? data[parameter.parameterName][0].value : '',
+        parameterName: parameter.parameterName,
+      });
     }
+    let requestDto: ConstraintInstanceRequestDto = {
+      arguments: argumentRequestDtos,
+      type: constraintSignature.defaultType,
+    };
+    console.log(constraintSignature.name);
+    console.log(requestDto);
     await createConstraintInstance(constraintSignature.name, requestDto);
   }
 </script>
