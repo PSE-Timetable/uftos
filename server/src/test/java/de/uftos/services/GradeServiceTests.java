@@ -123,7 +123,7 @@ public class GradeServiceTests {
     studentGroup2.setGrades(List.of(grade1Mock));
 
     Break[] breaks = {};
-    Server server = new Server(new TimetableMetadata(45, 8,"8:00", breaks), "2024");
+    Server server = new Server(new TimetableMetadata(45, 8, "8:00", breaks), "2024");
     when(serverRepository.findAll()).thenReturn(List.of(server));
     when(gradeRepository.findById("123")).thenReturn(Optional.of(grade1Mock));
     when(gradeRepository.findById("456")).thenReturn(Optional.of(grade2Mock));

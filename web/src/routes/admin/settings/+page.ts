@@ -10,7 +10,7 @@ export const load = (async () => {
       meta: {
         title: 'Einstellungen',
       },
-  };
+    };
   } catch {
     error(400, { message: `Could not fetch the timetable metadata` });
   }

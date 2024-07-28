@@ -3,7 +3,7 @@
   import type { InputEvents } from './index.js';
   import { cn } from '$lib/utils.js';
 
-  type $$Props = HTMLInputAttributes;
+  type $$Props = HTMLInputAttributes & {background?: boolean};
   type $$Events = InputEvents;
 
   let className: $$Props['class'] = undefined;

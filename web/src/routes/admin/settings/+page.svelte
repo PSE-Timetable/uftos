@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getTimetableMetadata, setTimetableMetadata, type TimetableMetadata } from '$lib/sdk/fetch-client';
+  import { setTimetableMetadata, type TimetableMetadata } from '$lib/sdk/fetch-client';
   import { CirclePlus, ChevronLeft, Trash2 } from 'lucide-svelte/icons';
   import { Input } from '$lib/elements/ui/input/index.js';
   import { toast } from 'svelte-sonner';
@@ -33,8 +33,12 @@
     metaData = metadata;
   }
 
-  function setPauseLength(metadata: TimetableMetadata, index: number, length: string) {
-    metadata.breaks[index].length = parseInt(length, 10);
+  function setPauseLength(metadata: TimetableMetadata, index: number, event: Event) {
+    const target = event.target as HTMLInputElement;
+    if (!target || target.value === null) {
+      return;
+    }
+    metadata.breaks[index].length = Number.parseInt(target.value);
     metaData = metadata;
   }
 
@@ -62,7 +66,7 @@
       // Add a pause if it is scheduled after the current timeslot
       if (breakIndex < breaks.length && breaks[breakIndex].afterSlot === i) {
         const breakLength = breaks[breakIndex].length;
-        const breakEndTime = addMinutesToDate(currentStartTime, breaks[breakIndex].length);
+        const breakEndTime = addMinutesToDate(currentStartTime, breakLength);
 
         timeslotList.push({
           from: formatDateToTimeString(currentStartTime),
@@ -110,25 +114,39 @@
     return `${formattedHours}:${formattedMinutes}`;
   }
 
-  function updateTimeslots(event) {
-    const value = parseInt(event.target.value, 10);
+  function updateTimeslots(event: Event) {
+    const target = event.target as HTMLInputElement;
+    if (!target || target.value === null) {
+      return;
+    }
+
+    const value = Number.parseInt(target.value);
     if (value !== metaData.timeslotsAmount) {
       changed = true;
       metaData.timeslotsAmount = value;
-      metaData.breaks = metaData.breaks.filter((b) => b.afterSlot < metaData.timeslots);
+      metaData.breaks = metaData.breaks.filter((b) => b.afterSlot < metaData.timeslotsAmount);
     }
   }
 
-  function updateStartTime(event) {
-    if (event.target.value !== metaData.startTime) {
+  function updateStartTime(event: Event) {
+    const target = event.target as HTMLInputElement;
+    if (!target || target.value === null) {
+      return;
+    }
+    if (target.value !== metaData.startTime) {
       changed = true;
-      metaData.startTime = event.target.value;
+      metaData.startTime = target.value;
     }
   }
 
-  function updateTimeSlotLength(event) {
-    if (event.target.value !== metaData.timeslotLength) {
-      metaData.timeslotLength = parseInt(event.target.value);
+  function updateTimeSlotLength(event: Event) {
+    const target = event.target as HTMLInputElement;
+    if (!target || target.value === null) {
+      return;
+    }
+    const newLength: number = Number.parseInt(target.value);
+    if (newLength !== metaData.timeslotLength) {
+      metaData.timeslotLength = newLength;
       changed = true;
     }
   }
@@ -152,6 +170,7 @@
     variant="secondary"
     size="icon"
     class="rounded-full bg-accent mr-6"
+    disabled={changed}
   >
     <ChevronLeft class="h-5 w-5 text-white" />
   </Button>
@@ -162,7 +181,7 @@
   <div class="grid grid-cols-2 auto-rows-auto h-fit gap-4">
     <label for="slot" class="font-bold fit-content">Timeslots pro Tag:</label>
     <Input
-      background="true"
+      background={true}
       id="slot"
       type="number"
       value={metaData.timeslotsAmount}
@@ -173,7 +192,7 @@
     />
     <label for="slot_length" class="font-bold">Timeslots Länge:</label>
     <Input
-      background="true"
+      background={true}
       id="slot_length"
       type="number"
       value={metaData.timeslotLength}
@@ -184,7 +203,7 @@
     />
     <label for="start_time" class="font-bold">Anfangsuhrzeit:</label>
     <Input
-      background="true"
+      background={true}
       value={metaData.startTime}
       on:input={updateStartTime}
       id="start_time"
@@ -196,7 +215,7 @@
   </div>
   <div class="bg-white rounded-md p-8 gap-6 flex flex-col w-1/2 min-w-[fit-content]">
     <p class="font-bold text-lg">Timeslots</p>
-    {#each timeslotList as timeslot, i}
+    {#each timeslotList as timeslot}
       <div class="flex flex-row gap-2 items-center">
         {#if timeslot.type === Type.TIMESLOT}
           <p>
@@ -217,11 +236,11 @@
             Pause von {timeslot.from} bis {timeslot.to}
           </p>
           <Input
-            background="true"
+            background={true}
             id="pause_length"
             type="number"
             value={metaData.breaks[timeslot.relativeIndex].length}
-            on:input={(e) => setPauseLength(metaData, timeslot.relativeIndex, e.target.value)}
+            on:input={(e) => setPauseLength(metaData, timeslot.relativeIndex, e)}
             min="0"
             step="1"
             placeholder="Länge"
