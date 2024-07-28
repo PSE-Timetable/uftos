@@ -169,6 +169,9 @@ public class UcdlEditorService {
     List<ConstraintParameter> parameters = new ArrayList<>();
     for (Map.Entry<String, ResourceType> parameterEntry : definition.parameters()
         .sequencedEntrySet()) {
+      if (parameterEntry.getKey().equals("this")) {
+        continue;
+      }
       ConstraintParameter parameter = new ConstraintParameter();
       parameter.setParameterName(parameterEntry.getKey());
       parameter.setParameterType(parameterEntry.getValue());
@@ -176,17 +179,21 @@ public class UcdlEditorService {
     }
 
     ConstraintSignature signature = new ConstraintSignature();
-    signature.getParameters().addAll(parameters);
+    signature.setName(definition.name());
+    signature.setDescription(definition.description());
+    signature.setDefaultType(definition.defaultType());
+    signature.setParameters(parameters);
 
     constraintSignatureRepository.save(signature);
   }
 
   private void removeDeletedSignatures(List<ConstraintSignature> signatures,
                                        HashMap<String, ConstraintDefinitionDto> definitions) {
-    for (ConstraintSignature signature : signatures) {
+    for (int i = 0; i < signatures.size(); i++) {
+      ConstraintSignature signature = signatures.get(i);
       if (definitions.get(signature.getName()) == null) {
         constraintSignatureRepository.delete(signature);
-        signatures.remove(signature);
+        signatures.remove(i--);
       }
     }
   }
