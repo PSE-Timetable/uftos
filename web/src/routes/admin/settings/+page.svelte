@@ -158,82 +158,80 @@
   <h1 class="font-bold text-xl mt-1">{$page.data['meta']['title']}</h1>
 </div>
 
-{#await getTimetableMetadata() then metadata}
-  <div class="flex flex-row gap-8 p-4">
-    <div class="grid grid-cols-2 auto-rows-auto h-fit gap-4">
-      <label for="slot" class="font-bold fit-content">Timeslots pro Tag:</label>
-      <Input
-        background="true"
-        id="slot"
-        type="number"
-        value={metaData.timeslotsAmount}
-        on:input={updateTimeslots}
-        min="0"
-        step="1"
-        placeholder="Anzahl"
-      />
-      <label for="slot_length" class="font-bold">Timeslots Länge:</label>
-      <Input
-        background="true"
-        id="slot_length"
-        type="number"
-        value={metaData.timeslotLength}
-        on:input={updateTimeSlotLength}
-        min="0"
-        step="1"
-        placeholder="Länge"
-      />
-      <label for="start_time" class="font-bold">Anfangsuhrzeit:</label>
-      <Input
-        background="true"
-        value={metaData.startTime}
-        on:input={updateStartTime}
-        id="start_time"
-        type="time"
-        placeholder="07:45"
-      />
-      <div></div>
-      <Button class="bg-accent text-white py-8 col-span-2" on:click={saveMetadata}>Speichern</Button>
-    </div>
-    <div class="bg-white rounded-md p-8 gap-6 flex flex-col w-1/2 min-w-[fit-content]">
-      <p class="font-bold text-lg">Timeslots</p>
-      {#each timeslotList as timeslot, i}
-        <div class="flex flex-row gap-2 items-center">
-          {#if timeslot.type === Type.TIMESLOT}
-            <p>
-              {timeslot.relativeIndex + 1}. Stunde von {timeslot.from} bis {timeslot.to}
-            </p>
-            <button
-              disabled={hasTimeslotBreak(timeslot.relativeIndex)}
-              type="button"
-              on:click={() => addBreakAndUpdate(metaData, timeslot.relativeIndex, 5, false)}
-            >
-              <div class="stroke-accent">
-                <CirclePlus class={hasTimeslotBreak(timeslot.relativeIndex) ? 'stroke-gray-400' : ''} />
-              </div>
-            </button>
-          {:else}
-            <p class="invisible">...</p>
-            <p>
-              Pause von {timeslot.from} bis {timeslot.to}
-            </p>
-            <Input
-              background="true"
-              id="pause_length"
-              type="number"
-              value={metaData.breaks[timeslot.relativeIndex].length}
-              on:input={(e) => setPauseLength(metaData, timeslot.relativeIndex, e.target.value)}
-              min="0"
-              step="1"
-              placeholder="Länge"
-              class="w-min"
-            />
-            <button type="button" on:click={() => removeBreakAndUpdate(metaData, timeslot.relativeIndex)}>
-              <Trash2 />
-            </button>
-          {/if}
-        </div>
-      {/each}
-    </div>
+<div class="flex flex-row gap-8 p-4">
+  <div class="grid grid-cols-2 auto-rows-auto h-fit gap-4">
+    <label for="slot" class="font-bold fit-content">Timeslots pro Tag:</label>
+    <Input
+      background="true"
+      id="slot"
+      type="number"
+      value={metaData.timeslotsAmount}
+      on:input={updateTimeslots}
+      min="0"
+      step="1"
+      placeholder="Anzahl"
+    />
+    <label for="slot_length" class="font-bold">Timeslots Länge:</label>
+    <Input
+      background="true"
+      id="slot_length"
+      type="number"
+      value={metaData.timeslotLength}
+      on:input={updateTimeSlotLength}
+      min="0"
+      step="1"
+      placeholder="Länge"
+    />
+    <label for="start_time" class="font-bold">Anfangsuhrzeit:</label>
+    <Input
+      background="true"
+      value={metaData.startTime}
+      on:input={updateStartTime}
+      id="start_time"
+      type="time"
+      placeholder="07:45"
+    />
+    <div></div>
+    <Button class="bg-accent text-white py-8 col-span-2" on:click={saveMetadata}>Speichern</Button>
   </div>
-{/await}
+  <div class="bg-white rounded-md p-8 gap-6 flex flex-col w-1/2 min-w-[fit-content]">
+    <p class="font-bold text-lg">Timeslots</p>
+    {#each timeslotList as timeslot, i}
+      <div class="flex flex-row gap-2 items-center">
+        {#if timeslot.type === Type.TIMESLOT}
+          <p>
+            {timeslot.relativeIndex + 1}. Stunde von {timeslot.from} bis {timeslot.to}
+          </p>
+          <button
+            disabled={hasTimeslotBreak(timeslot.relativeIndex)}
+            type="button"
+            on:click={() => addBreakAndUpdate(metaData, timeslot.relativeIndex, 5, false)}
+          >
+            <div class="stroke-accent">
+              <CirclePlus class={hasTimeslotBreak(timeslot.relativeIndex) ? 'stroke-gray-400' : ''} />
+            </div>
+          </button>
+        {:else}
+          <p class="invisible">...</p>
+          <p>
+            Pause von {timeslot.from} bis {timeslot.to}
+          </p>
+          <Input
+            background="true"
+            id="pause_length"
+            type="number"
+            value={metaData.breaks[timeslot.relativeIndex].length}
+            on:input={(e) => setPauseLength(metaData, timeslot.relativeIndex, e.target.value)}
+            min="0"
+            step="1"
+            placeholder="Länge"
+            class="w-min"
+          />
+          <button type="button" on:click={() => removeBreakAndUpdate(metaData, timeslot.relativeIndex)}>
+            <Trash2 />
+          </button>
+        {/if}
+      </div>
+    {/each}
+  </div>
+</div>
