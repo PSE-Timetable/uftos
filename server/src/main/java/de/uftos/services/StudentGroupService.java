@@ -14,7 +14,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -39,7 +38,7 @@ public class StudentGroupService {
    */
   @Autowired
   public StudentGroupService(StudentGroupRepository repository, ServerRepository serverRepository,
-    StudentRepository studentRepository) {
+      StudentRepository studentRepository) {
     this.repository = repository;
     this.serverRepository = serverRepository;
     this.studentRepository = studentRepository;
@@ -124,8 +123,8 @@ public class StudentGroupService {
     StudentGroup studentGroup = getById(id);
     Set<Student> studentsInGroup = new HashSet<>(studentGroup.getStudents());
     studentsInGroup.addAll(studentIds.stream()
-      .map(studentId -> studentRepository.findById(studentId)
-      .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST))).toList());
+        .map(studentId -> studentRepository.findById(studentId)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST))).toList());
     studentGroup.setStudents(new ArrayList<Student>(studentsInGroup));
     return this.repository.save(studentGroup);
   }
@@ -139,7 +138,7 @@ public class StudentGroupService {
   public void removeStudents(String id, List<String> studentIds) {
     StudentGroup studentGroup = getById(id);
     List<Student> filteredStudents = studentGroup.getStudents().stream()
-    .filter(student -> !studentIds.contains(student.getId())).toList();
+        .filter(student -> !studentIds.contains(student.getId())).toList();
     studentGroup.setStudents(new ArrayList<Student>(filteredStudents)); //make list mutable
     this.repository.save(studentGroup);
   }
