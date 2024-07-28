@@ -4,6 +4,7 @@ import de.uftos.dto.TimeslotRequestDto;
 import de.uftos.entities.Timeslot;
 import de.uftos.services.TimeslotService;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,13 +48,14 @@ public class TimeslotController {
 
   /**
    * Maps the HTTP GET request for a set of timeslots from the database to the
-   * {@link TimeslotService#get() get} function of the timeslot service.
+   * {@link TimeslotService#get(Optional) get} function of the timeslot service.
    *
-   * @return all timeslots.
+   * @param tags the tags filter.
+   * @return the page of timeslots fitting the parameters.
    */
   @GetMapping()
-  public List<Timeslot> getTimeslots() {
-    return this.timeslotsService.get();
+  public List<Timeslot> getTimeslots(Optional<String[]> tags) {
+    return this.timeslotsService.get(tags);
   }
 
   /**
@@ -73,7 +75,7 @@ public class TimeslotController {
    * {@link TimeslotService#update(String, TimeslotRequestDto) update} function of the timeslot
    * service.
    *
-   * @param id       the ID of the timeslot which is to be updated.
+   * @param id      the ID of the timeslot which is to be updated.
    * @param timeslot the updated information of the timeslot.
    * @return the updated timeslot.
    */
