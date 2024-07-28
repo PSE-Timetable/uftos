@@ -1,10 +1,16 @@
 <script lang="ts">
   import { Button } from '$lib/elements/ui/button';
+  import ComboBox, { type ComboBoxItem } from '$lib/elements/ui/combo-box/combo-box.svelte';
   import DataTable from '$lib/elements/ui/dataTable/data-table.svelte';
   import {
     addStudentsToStudentGroup,
+    getGrades,
     getStudentGroup,
+    getStudents,
     removeStudentsFromStudentGroup,
+    type GradeResponseDto,
+    type Pageable,
+    type Student,
     type StudentGroup,
   } from '$lib/sdk/fetch-client.js';
   import { type DataItem } from '$lib/utils/resources.js';
@@ -12,7 +18,11 @@
 
   export let data;
   let studentGroups = data.studentGroups;
-  let reloadTable = {};
+  let students: Student[] = data.students || [];
+  let selectedStudent: ComboBoxItem;
+  let grades: GradeResponseDto[] = data.grades;
+  let selectedGrade: ComboBoxItem;
+  let reloadTable: boolean = false;
 
   let columnNames = ['Vorname', 'Nachname', 'Tags'];
   let keys = ['id', 'firstName', 'lastName', 'tags'];
@@ -42,7 +52,7 @@
 
   async function addStudentToGroup(studentGroup: StudentGroup, studentId: string) {
     await addStudentsToStudentGroup(studentGroup.id, [studentId]);
-    reloadTable = {};
+    reloadTable = !reloadTable;
   }
 
   async function removeStudentFromGroup(studentId: string, studentGroupId?: string) {
@@ -55,6 +65,24 @@
       error(400, { message: 'Could not remove student from group' });
     }
   }
+
+  async function updateStudents(value: string) {
+    const pageable: Pageable = { page: 0, size: 40 };
+    try {
+      students =
+        (await getStudents(pageable, { firstName: value, lastName: value }).then(({ content }) => content)) || [];
+    } catch {
+      error(400, { message: 'Could not fetch students' });
+    }
+  }
+
+  async function updateGrades(value: string) {
+    try {
+      grades = await getGrades({ sort: ['name,asc'] }, { name: value });
+    } catch {
+      error(400, { message: 'Could not fetch grades' });
+    }
+  }
 </script>
 
 <div class="p-4">
@@ -65,23 +93,22 @@
         <div class="flex flex-row items-center justify-between w-full gap-8">
           <p>Stufe:</p>
           <div class="text-primary">
-            <!-- Wait for merge of constraint component for combobox 
             <ComboBox
-            onSearch={(value) => updateItems(value, parameter.parameterName, parameter.parameterType)}
-            data={data[parameter.parameterName || '']}
-          />
-           -->
+              onSearch={(value) => updateGrades(value)}
+              data={grades.map((grade) => ({ value: grade.id, label: grade.name }))}
+            />
           </div>
         </div>
         <div class="flex flex-row items-center justify-between w-full gap-8">
           <p>Schüler:</p>
           <div class="text-primary">
-            <!-- Wait for merge of constraint component for combobox 
             <ComboBox
-            onSearch={(value) => updateItems(value, parameter.parameterName, parameter.parameterType)}
-            data={data[parameter.parameterName || '']}
-          />
-           -->
+              onSearch={(value) => updateStudents(value)}
+              data={students.map((student) => ({
+                value: student.id,
+                label: `${student.firstName} ${student.lastName}`,
+              }))}
+            />
           </div>
         </div>
         <Button
@@ -94,10 +121,9 @@
       </div>
       {#key reloadTable}
         <div class="w-full">
-          <!-- Wait for merge of constraint component for data table changes
           <DataTable
-            columnNames,
-            keys,
+            {columnNames}
+            {keys}
             loadPage={getStudentsFromGroup}
             deleteEntry={removeStudentFromGroup}
             additionalId={studentGroup.id}
@@ -105,7 +131,6 @@
             addButton={false}
             pageSize={5}
           />
-          -->
         </div>
       {/key}
     </div>
