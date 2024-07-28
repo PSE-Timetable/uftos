@@ -95,7 +95,7 @@ public class RoomServiceTests {
     room1.setLessons(List.of(lesson1, lesson2, lesson3));
 
     Server server =
-        new Server(new TimetableMetadata(45, 8,"7:45", new Break[] {}), "2024");
+        new Server(new TimetableMetadata(45, 8, "7:45", new Break[] {}), "2024");
     when(serverRepository.findAll()).thenReturn(List.of(server));
     when(roomRepository.findById("123")).thenReturn(Optional.of(room1));
     when(roomRepository.findById("456")).thenReturn(Optional.of(room2));
