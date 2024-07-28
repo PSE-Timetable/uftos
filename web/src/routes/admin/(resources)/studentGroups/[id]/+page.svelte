@@ -37,7 +37,6 @@
       tagIds,
       subjectIds: subjectIds || [],
     };
-    console.log(studentGroupRequestDto);
     try {
       await updateStudentGroup(studentGroup.id, studentGroupRequestDto);
       console.log(await getStudentGroup(studentGroup.id));
