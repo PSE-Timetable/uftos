@@ -98,7 +98,7 @@
       name: studentGroup.name,
       studentIds: studentGroup.students.map((student) => student.id),
       tagIds: studentGroup.tags.map((tag) => tag.id),
-      subjectIds: studentGroup.tags.map((subject) => subject.id)
+      subjectIds: studentGroup.tags.map((subject) => subject.id),
     };
     await updateStudentGroup(studentGroup.id, requestDto);
   }
