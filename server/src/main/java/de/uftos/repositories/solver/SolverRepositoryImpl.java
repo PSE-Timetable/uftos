@@ -56,6 +56,53 @@ import java.util.concurrent.TimeUnit;
  */
 public class SolverRepositoryImpl implements SolverRepository {
 
+  @Override
+  public Future<TimetableSolutionDto> solve(TimetableProblemDto timetable)
+      throws IllegalArgumentException {
+    Callable<TimetableSolutionDto> solveTimetable = () -> {
+      TimetableSolutionTimefoldInstance solution =
+          getSolutionInstanceFromTimetableInstance(timetable);
+
+
+      ConstructionHeuristicPhaseConfig constructionHeuristic =
+          new ConstructionHeuristicPhaseConfig();
+      constructionHeuristic.setConstructionHeuristicType(
+          ConstructionHeuristicType.FIRST_FIT);
+
+      LocalSearchPhaseConfig localSearch = new LocalSearchPhaseConfig();
+      localSearch.setAcceptorConfig(
+          new LocalSearchAcceptorConfig().withSimulatedAnnealingStartingTemperature(
+              "5hard/100soft"));
+
+
+      SolverConfig solverConfig = new SolverConfig()
+          .withTerminationConfig(new TerminationConfig()
+              .withMillisecondsSpentLimit(60000L))
+          .withSolutionClass(TimetableSolutionTimefoldInstance.class)
+          .withEntityClassList(
+              Arrays.stream(new Class<?>[] {LessonTimefoldInstance.class}).toList())
+          .withScoreDirectorFactory(new ScoreDirectorFactoryConfig()
+              .withEasyScoreCalculatorClass(ScoreCalculator.class));
+
+
+      SolverFactory<TimetableSolutionTimefoldInstance> factory =
+          new DefaultSolverFactory<>(solverConfig);
+
+      Solver<TimetableSolutionTimefoldInstance> solver = factory.buildSolver();
+
+      TimetableSolutionTimefoldInstance solved = solver.solve(solution);
+
+      System.out.println(solved.getScore());
+
+      return getTimetableInstanceFromSolutionInstance(solved);
+    };
+
+    BlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<>(1);
+    ExecutorService es = new ThreadPoolExecutor(1, 1, 1, TimeUnit.SECONDS, workQueue);
+
+    return es.submit(solveTimetable);
+  }
+
   @SuppressWarnings("checkstyle:VariableDeclarationUsageDistance")
   private TimetableSolutionTimefoldInstance getSolutionInstanceFromTimetableInstance(
       TimetableProblemDto timetable) {
@@ -157,7 +204,7 @@ public class SolverRepositoryImpl implements SolverRepository {
     return solution;
   }
 
-  TimetableSolutionDto getTimetableInstanceFromSolutionInstance(
+  private TimetableSolutionDto getTimetableInstanceFromSolutionInstance(
       TimetableSolutionTimefoldInstance solution) {
     List<LessonProblemDto> lessons = new ArrayList<>();
 
@@ -189,53 +236,6 @@ public class SolverRepositoryImpl implements SolverRepository {
 
     return new TimetableSolutionDto(lessons);
 
-  }
-
-  @Override
-  public Future<TimetableSolutionDto> solve(TimetableProblemDto timetable)
-      throws IllegalArgumentException {
-    Callable<TimetableSolutionDto> solveTimetable = () -> {
-      TimetableSolutionTimefoldInstance solution =
-          getSolutionInstanceFromTimetableInstance(timetable);
-
-
-      ConstructionHeuristicPhaseConfig constructionHeuristic =
-          new ConstructionHeuristicPhaseConfig();
-      constructionHeuristic.setConstructionHeuristicType(
-          ConstructionHeuristicType.FIRST_FIT);
-
-      LocalSearchPhaseConfig localSearch = new LocalSearchPhaseConfig();
-      localSearch.setAcceptorConfig(
-          new LocalSearchAcceptorConfig().withSimulatedAnnealingStartingTemperature(
-              "5hard/100soft"));
-
-
-      SolverConfig solverConfig = new SolverConfig()
-          .withTerminationConfig(new TerminationConfig()
-              .withMillisecondsSpentLimit(60000L))
-          .withSolutionClass(TimetableSolutionTimefoldInstance.class)
-          .withEntityClassList(
-              Arrays.stream(new Class<?>[] {LessonTimefoldInstance.class}).toList())
-          .withScoreDirectorFactory(new ScoreDirectorFactoryConfig()
-              .withEasyScoreCalculatorClass(ScoreCalculator.class));
-
-
-      SolverFactory<TimetableSolutionTimefoldInstance> factory =
-          new DefaultSolverFactory<>(solverConfig);
-
-      Solver<TimetableSolutionTimefoldInstance> solver = factory.buildSolver();
-
-      TimetableSolutionTimefoldInstance solved = solver.solve(solution);
-
-      System.out.println(solved.getScore());
-
-      return getTimetableInstanceFromSolutionInstance(solved);
-    };
-
-    BlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<>(1);
-    ExecutorService es = new ThreadPoolExecutor(1, 1, 1, TimeUnit.SECONDS, workQueue);
-
-    return es.submit(solveTimetable);
   }
 
   private HashMap<String, GradeTimefoldInstance> getGrades(TimetableProblemDto timetable) {
