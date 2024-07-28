@@ -266,7 +266,7 @@
             >
               {#each row.cells as cell (cell.id)}
                 <Subscribe attrs={cell.attrs()} let:attrs>
-                  <Table.Cell class="mammt" {...attrs}>
+                  <Table.Cell {...attrs}>
                     <Render of={cell.render()} />
                   </Table.Cell>
                 </Subscribe>
