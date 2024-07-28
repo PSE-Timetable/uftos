@@ -44,9 +44,9 @@
   export let additionalId: string = '';
   export let sortable = true;
   export let addButton = true;
-  export let pageSize = 2;
-  let serverSidePagination:boolean = $tableData.length <= pageSize;
-  let allItems:DataItem[] = $tableData;
+  export let pageSize = 15;
+  let serverSidePagination: boolean = $tableData.length <= pageSize;
+  let allItems: DataItem[] = $tableData;
 
   const table = createTable(tableData, {
     page: addPagination({ serverSide: true, serverItemCount: totalElements, initialPageSize: pageSize }),
@@ -153,11 +153,11 @@
   async function getData() {
     if (serverSidePagination) {
       let sortKey: SortKey = $sortKeys[0];
-    let sortString;
-    sortString = sortKey ? `${sortKey.id},${sortKey.order}` : '';
-    let result = await loadPage($pageIndex, sortString, $filterValue, additionalId);
+      let sortString;
+      sortString = sortKey ? `${sortKey.id},${sortKey.order}` : '';
+      let result = await loadPage($pageIndex, sortString, $filterValue, additionalId);
       allItems = result.data;
-      
+
       totalElements.set(result.totalElements);
     }
     tableData.set(allItems.slice($pageIndex * pageSize, $pageIndex * pageSize + pageSize));
@@ -189,11 +189,11 @@
   <div class="flex items-center py-4">
     <div class="bg-white px-4 py-3 rounded-md shadow-custom">
       <Input
-      bind:value={$filterValue}
-      class="max-w-sm rounded-none bg-transparent border-0 border-b-2 p-0 border-foreground"
-      placeholder="Suche..."
-      type="text"
-    />
+        bind:value={$filterValue}
+        class="max-w-sm rounded-none bg-transparent border-0 border-b-2 p-0 border-foreground"
+        placeholder="Suche..."
+        type="text"
+      />
     </div>
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild let:builder>
@@ -312,7 +312,9 @@
               <Pagination.Item>
                 <Pagination.Link
                   {page}
-                  class=" shadow-custom bg-white text-primary {currentPage === page.value ? 'border-2 border-foreground' : ''}"
+                  class=" shadow-custom bg-white text-primary {currentPage === page.value
+                    ? 'border-2 border-foreground'
+                    : ''}"
                   on:click={() => {
                     $pageIndex = page.value - 1;
                   }}
