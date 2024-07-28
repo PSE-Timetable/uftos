@@ -58,11 +58,11 @@
       {#await getCurriculumFromGrade() then}
         <div class="flex flex-row m-7 items-center">
           <div class="w-28 text-xl font-bold mr-6">Anzahl an Stunden pro Fach:</div>
-          <div class="flex flex-wrap w-[54rem]">
+          <div class="grid grid-cols-4">
             {#each lessonsCounts as lessonCount}
-              <div class="bg-white rounded-md w-36 h-16 flex flex-col justify-items-center m-1">
+              <div class="bg-white p-4 max-w-[13vw] break-words rounded-md flex flex-col gap-2 justify-between m-1">
                 <div class="text-center m-1">{lessonCount.subject?.name}</div>
-                <div class="flex-row flex justify-center">
+                <div class="flex-row flex justify-center gap-2">
                   <button
                     type="button"
                     on:click={() => {
