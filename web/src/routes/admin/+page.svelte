@@ -77,7 +77,7 @@
     {/await}
   </div>
   {#if pageLoaded}
-    <div class="flex flex-col gap-16 text-foreground">
+    <div class="flex flex-col gap-16 pb-4">
       <div class="flex flex-col gap-4">
         <p class="font-bold text-2xl">Schüler</p>
         <DataTable
