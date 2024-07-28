@@ -2,7 +2,7 @@
   import { goto } from '$app/navigation';
   import { page } from '$app/stores';
   import { Button } from '$lib/elements/ui/button';
-  import ComboBox, { type ComboBoxItem } from '$lib/elements/ui/combo-box/combo-box.svelte';
+  import ComboBox from '$lib/elements/ui/combo-box/combo-box.svelte';
   import DataTable from '$lib/elements/ui/dataTable/data-table.svelte';
   import {
     addStudentsToStudentGroup,
