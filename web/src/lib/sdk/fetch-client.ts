@@ -25,7 +25,7 @@ export type ConstraintParameter = {
     parameterType: ParameterType;
 };
 export type ConstraintSignature = {
-    defaultType: DefaultType;
+    defaultType: RewardPenalize;
     description: string;
     name: string;
     parameters: ConstraintParameter[];
@@ -65,7 +65,7 @@ export type SlimArgument = {
 export type SlimInstance = {
     arguments: SlimArgument[];
     id: string;
-    "type": Type;
+    "type": RewardPenalize;
 };
 export type ConstraintArgumentDisplayName = {
     displayName: string;
@@ -76,11 +76,13 @@ export type ConstraintInstancesResponseDto = {
     displayNames: ConstraintArgumentDisplayName[];
     parameters: ConstraintParameter[];
 };
+export type ConstraintArgumentRequestDto = {
+    argumentId: string;
+    parameterName: string;
+};
 export type ConstraintInstanceRequestDto = {
-    arguments: {
-        [key: string]: string;
-    };
-    "type"?: Type;
+    arguments: ConstraintArgumentRequestDto[];
+    "type"?: RewardPenalize;
 };
 export type ConstraintArgument = {
     constraintParameter: ConstraintParameter;
@@ -90,7 +92,7 @@ export type ConstraintArgument = {
 export type ConstraintInstance = {
     arguments: ConstraintArgument[];
     id: string;
-    "type": Type;
+    "type": RewardPenalize;
 };
 export type Tag = {
     id: string;
@@ -144,8 +146,8 @@ export type CurriculumRequestDto = {
     name: string;
 };
 export type ParsingResponse = {
-    message?: string;
-    success?: boolean;
+    message: string;
+    success: boolean;
 };
 export type Sort = {
     sort?: string[];
@@ -413,16 +415,15 @@ export function getConstraintInstances(signatureId: string, pageable: Pageable, 
         ...opts
     }));
 }
-export function createConstraintInstance(signatureId: string, request: ConstraintInstanceRequestDto, opts?: Oazapfts.RequestOpts) {
+export function createConstraintInstance(signatureId: string, constraintInstanceRequestDto: ConstraintInstanceRequestDto, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
         data: ConstraintInstance;
-    }>(`/constraints/${encodeURIComponent(signatureId)}/instances${QS.query(QS.explode({
-        request
-    }))}`, {
+    }>(`/constraints/${encodeURIComponent(signatureId)}/instances`, oazapfts.json({
         ...opts,
-        method: "POST"
-    }));
+        method: "POST",
+        body: constraintInstanceRequestDto
+    })));
 }
 export function deleteConstraintInstance(signatureId: string, id: string, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchText(`/constraints/${encodeURIComponent(signatureId)}/instances/${encodeURIComponent(id)}`, {
@@ -438,16 +439,15 @@ export function getConstraintInstanceById(signatureId: string, id: string, opts?
         ...opts
     }));
 }
-export function updateConstraintInstanceById(signatureId: string, id: string, request: ConstraintInstanceRequestDto, opts?: Oazapfts.RequestOpts) {
+export function updateConstraintInstanceById(signatureId: string, id: string, constraintInstanceRequestDto: ConstraintInstanceRequestDto, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
         data: ConstraintInstance;
-    }>(`/constraints/${encodeURIComponent(signatureId)}/instances/${encodeURIComponent(id)}${QS.query(QS.explode({
-        request
-    }))}`, {
+    }>(`/constraints/${encodeURIComponent(signatureId)}/instances/${encodeURIComponent(id)}`, oazapfts.json({
         ...opts,
-        method: "PUT"
-    }));
+        method: "PUT",
+        body: constraintInstanceRequestDto
+    })));
 }
 export function getCurriculums(pageable: Pageable, { name }: {
     name?: string;
@@ -497,20 +497,29 @@ export function updateCurriculum(id: string, curriculumRequestDto: CurriculumReq
     })));
 }
 export function getUcdlFile(opts?: Oazapfts.RequestOpts) {
-    return oazapfts.ok(oazapfts.fetchJson<{
-        status: 200;
-        data: Blob;
-    }>("/editor", {
+    return oazapfts.ok(oazapfts.fetchText("/editor", {
         ...opts
     }));
 }
-export function setUcdlFile(body: {
-    file?: Blob;
+export function setUcdlFile(body?: {
+    file: Blob;
 }, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
         data: ParsingResponse;
     }>("/editor", oazapfts.json({
+        ...opts,
+        method: "PUT",
+        body
+    })));
+}
+export function validateUcdlFile(body?: {
+    file: Blob;
+}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.ok(oazapfts.fetchJson<{
+        status: 200;
+        data: ParsingResponse;
+    }>("/editor/validate", oazapfts.multipart({
         ...opts,
         method: "PUT",
         body
@@ -1062,7 +1071,7 @@ export function getTimetable(id: string, opts?: Oazapfts.RequestOpts) {
         ...opts
     }));
 }
-export enum DefaultType {
+export enum RewardPenalize {
     SoftReward = "SOFT_REWARD",
     HardReward = "HARD_REWARD",
     SoftPenalize = "SOFT_PENALIZE",
@@ -1080,12 +1089,6 @@ export enum ParameterType {
     Timeslot = "TIMESLOT",
     Number = "NUMBER",
     Timetable = "TIMETABLE"
-}
-export enum Type {
-    SoftReward = "SOFT_REWARD",
-    HardReward = "HARD_REWARD",
-    SoftPenalize = "SOFT_PENALIZE",
-    HardPenalize = "HARD_PENALIZE"
 }
 export enum Day {
     Monday = "MONDAY",

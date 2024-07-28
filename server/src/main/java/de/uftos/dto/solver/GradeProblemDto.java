@@ -11,6 +11,7 @@ public record GradeProblemDto(
     List<String> tagIds,
     List<String> studentGroupIds
 ) implements ResourceProblemDto {
+
   @Override
   public ResourceType getType() {
     return ResourceType.GRADE;

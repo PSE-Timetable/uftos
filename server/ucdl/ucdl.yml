@@ -1,96 +1,61 @@
-underTheWeek:
-  description: "Subject {subject} is taught under the week only"
+teacherCollision:
+  description: "Teachers may not have multiple lessons at the same time."
+  default_type: HARD_PENALIZE
+  parameter:
+    lesson1: Lesson
+    lesson2: Lesson
+  definition: >-
+    lesson1 != lesson2 && lesson1.timeslot == lesson2.timeslot && lesson1.teacher == lesson2.teacher
+
+studentCollision:
+  description: "Students may not have multiple lessons at the same time."
+  default_type: HARD_PENALIZE
+  parameter:
+    lesson1: Lesson
+    lesson2: Lesson
+  definition: >-
+    lesson1 != lesson2 && lesson1.timeslot == lesson2.timeslot && size(lesson1.studentGroup.students[lesson2.studentGroup.students]) > 0
+
+roomCollision:
+  description: "Rooms may not be occupied by multiple lessons at the same time."
+  default_type: HARD_PENALIZE
+  parameter:
+    lesson1: Lesson
+    lesson2: Lesson
+  definition: >-
+    lesson1 != lesson2 && lesson1.timeslot == lesson2.timeslot && lesson1.room == lesson2.room
+
+workingHours:
+  description: "Teacher {teacher} does work during Timeslot {timeslot}."
+  default_type: SOFT_PENALIZE
+  parameter:
+    teacher: Teacher
+    timeslot: Timeslot
+  definition: >-
+    if (timeslot in teacher.lessons.timeslot) {
+      return true
+    }
+    return false
+
+teacherTeachesGroup:
+  description: "Teacher {teacher} teaches student group {group} in subject {subject}."
+  default_type: SOFT_PENALIZE
+  parameter:
+    teacher: Teacher
+    group: Student-Group
+    subject: Subject
+  definition: >-
+    forall (lesson : group.lessons[this.subject == subject]) {
+      lesson.teacher == teacher
+    }
+
+subjectRoom:
+  description: "Subject {subject} is only taught in rooms with tag {tag}."
   default_type: SOFT_PENALIZE
   parameter:
     subject: Subject
-  definition: >-
-    for (timeslot : subject.lessons.timeslot[this.slot <= 3]) {
-      if (!timeslot.day in [1,2,3,4,5]) {
-        return false
-      }
-    }
-    return true
-studentTeacherTag:
-  description: "Student {student} requires Tag {tag} from their Teachers"
-  default_type: SOFT_PENALIZE
-  parameter:
-    student: Student
     tag: Tag
   definition: >-
-    for (teacher of student.studentGroups.lessons.teacher) {
-      if (!tag in teacher.tags) {
-        return true
-      }
+    forall (room : subject.lessons.room) {
+      tag in room.tags
     }
-    return false
-avoidTeacherCollision:
-  description: "Teachers may not have multiple lessons at the same time"
-  default_type: HARD_PENALIZE
-  parameter:
-  definition: >-
-    for (teacher of this.teachers) {
-      for (lesson1 of teacher.lessons) {
-        for (lesson2 of teacher.lessons) {
-          if (lesson1 != lesson2 && lesson1.timeslot == lesson2.timeslot) {
-            return true
-          }
-        }
-      }
-    }
-    return false
-avoidRoomCollision:
-  description: "Rooms may not be occupied by multiple lessons at the same time"
-  default_type: HARD_PENALIZE
-  parameter:
-  definition: >-
-    forall(room : this.rooms) {
-      exists(lesson1 : room.lessons) {
-        forall(lesson2 : room.lessons) {
-          lesson1 != lesson2 implies lesson1.timeslot != lesson2.timeslot
-        }
-      }
-    }
-teacherTeachesDuringTimeslot:
-  description: "Teacher {teacher} does work during Timeslot {timeslot}"
-  default_type: SOFT_PENALIZE
-  parameter:
-    teacher: Teacher
-    timeslot: Timeslot
-  definition: >-
-    if (timeslot in teacher.lessons.timeslot) {
-      return true
-    }
-    return false
-test:
-  description: "Teacher {teacher} does work during Timeslot {timeslot}"
-  default_type: SOFT_PENALIZE
-  parameter:
-    teacher: Teacher
-    timeslot: Timeslot
-  definition: >-
-    if (timeslot in teacher.lessons.timeslot) {
-      return true
-    }
-    if (timeslot in teacher.lessons.timeslot[this.day == 6]) {
-      if (timeslot == timeslot) {
-        return true
-      }
-      if (teacher == teacher) {
-        return true
-      }
-    }
-    if (teacher in timeslot.lessons[this.timeslot.slot < 3].teacher) {
-      for (t1 of teacher.lessons[this.index >= 2].timeslot) {
-        if (t1 != timeslot) {
-          return true
-        }
-      }
-    }
-    if (timeslot in teacher.lessons.timeslot) {
-      for (lesson : teacher.lessons) {
-        if (lesson.timeslot.day = timeslot.day) {
-          return true
-        }
-      }
-    }
-    return false

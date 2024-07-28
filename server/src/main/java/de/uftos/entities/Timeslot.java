@@ -5,6 +5,7 @@ import de.uftos.dto.Weekday;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -43,7 +44,7 @@ public class Timeslot {
   private int slot;
 
   @NotNull
-  @ManyToMany
+  @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(name = "timeslots_tags",
       joinColumns = @JoinColumn(name = "timeslots_id"),
       inverseJoinColumns = @JoinColumn(name = "tags_id"))

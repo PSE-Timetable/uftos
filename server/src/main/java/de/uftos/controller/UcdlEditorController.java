@@ -3,10 +3,12 @@ package de.uftos.controller;
 import de.uftos.dto.ucdl.ParsingResponse;
 import de.uftos.services.UcdlEditorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,14 +32,26 @@ public class UcdlEditorController {
   }
 
   /**
-   * Maps the HTTP POST request, to set the UCDL code, to the
-   * {@link UcdlEditorService#setUcdl(MultipartFile)} function of the editor service.
+   * Maps the HTTP POST request, to validate the UCDL code, to the
+   * {@link UcdlEditorService#validate(MultipartFile)} function of the editor service.
    *
    * @param file the file which contains the new UCDL code.
    * @return a response whether the file could be parsed successfully or not.
    */
+  @PutMapping(value = "/validate", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ParsingResponse validateUcdlFile(@RequestParam(value = "file") MultipartFile file) {
+    return this.editorService.validate(file);
+  }
+
+  /**
+   * Maps the HTTP PUT request, to set the UCDL code, to the
+   * {@link UcdlEditorService#setUcdl(MultipartFile)} function of the editor service.
+   *
+   * @param file the file which contains the new UCDL code.
+   * @return a response whether the file could be parsed and saved successfully or not.
+   */
   @PutMapping()
-  public ParsingResponse setUcdlFile(@RequestBody MultipartFile file) {
+  public ParsingResponse setUcdlFile(@RequestParam(value = "file") MultipartFile file) {
     return this.editorService.setUcdl(file);
   }
 
@@ -47,9 +61,8 @@ public class UcdlEditorController {
    *
    * @return a file containing the current UCDL code.
    */
-  @GetMapping()
-  public MultipartFile getUcdlFile() {
+  @GetMapping(produces = "text/yaml")
+  public Resource getUcdlFile() {
     return this.editorService.getUcdl();
   }
-
 }

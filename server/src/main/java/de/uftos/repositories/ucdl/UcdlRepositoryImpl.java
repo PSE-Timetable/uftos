@@ -5,6 +5,7 @@ import de.uftos.dto.ucdl.ParsingResponse;
 import de.uftos.repositories.ucdl.parser.UcdlParser;
 import de.uftos.repositories.ucdl.parser.javacc.ParseException;
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -24,6 +25,8 @@ public class UcdlRepositoryImpl implements UcdlRepository {
   public String getUcdl() throws BadRequestException {
     try {
       Files.createFile(UCDL_PATH);
+    } catch (FileAlreadyExistsException e) {
+      System.out.println("Skipping creation of UCDL file");
     } catch (IOException e) {
       throw new BadRequestException(e);
     }
@@ -47,7 +50,24 @@ public class UcdlRepositoryImpl implements UcdlRepository {
   @Override
   public ParsingResponse parseFile() {
     try {
-      this.currentDefinitions = UcdlParser.getDefinitions(this.getUcdl());
+      return parseString(this.getUcdl(), true);
+    } catch (BadRequestException e) {
+      return new ParsingResponse(false, e.getMessage());
+    }
+  }
+
+  @Override
+  public ParsingResponse parseString(String input) {
+    return parseString(input, false);
+  }
+
+  private ParsingResponse parseString(String input, boolean doesSaveDefinitions) {
+    try {
+      if (doesSaveDefinitions) {
+        this.currentDefinitions = UcdlParser.getDefinitions(input);
+      } else {
+        UcdlParser.getDefinitions(input);
+      }
     } catch (ParseException | IOException e) {
       return new ParsingResponse(false, e.getMessage());
     }

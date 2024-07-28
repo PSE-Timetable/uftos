@@ -1,11 +1,3 @@
-<script context="module" lang="ts">
-  export type DataItem = {
-    id: string;
-
-    [key: string]: string | string[] | number;
-  };
-</script>
-
 <script lang="ts">
   import { createTable, Render, Subscribe, createRender } from 'svelte-headless-table';
   import * as Table from '$lib/elements/ui/table';
@@ -24,30 +16,40 @@
   import ChevronRight from 'lucide-svelte/icons/chevron-right';
   import * as DropdownMenu from '$lib/elements/ui/dropdown-menu';
   import DataTableCheckbox from './data-table-checkbox.svelte';
-  import { ArrowDown, ArrowUp } from 'lucide-svelte';
+  import { ArrowDown, ArrowUp, Plus } from 'lucide-svelte';
   import { Input } from '$lib/elements/ui/input';
   import { writable, type Writable } from 'svelte/store';
   import { onMount } from 'svelte';
+  import { goto } from '$app/navigation';
+  import { page } from '$app/stores';
   import * as Pagination from '$lib/elements/ui/pagination';
+  import type { DataItem } from '$lib/utils/resources';
 
   onMount(async () => await getData());
 
   let tableData: Writable<DataItem[]> = writable([]);
   export let columnNames;
   export let keys;
-  export let totalElements: Writable<number> = writable(0);
+  let totalElements: Writable<number> = writable(0);
   export let loadPage: (
     index: number,
     toSort: string,
     filter: string,
+    additionalId?: string,
   ) => Promise<{
     data: DataItem[];
     totalElements: number;
   }>;
-  export let deleteEntry: (id: string) => Promise<void>;
+  export let deleteEntry: (id: string, additionalId?: string) => Promise<void>;
+  export let additionalId: string = '';
+  export let sortable = true;
+  export let addButton = true;
+  export let pageSize = 15;
+  let serverSidePagination:boolean = $tableData.length <= pageSize;
+  let allItems:DataItem[] = $tableData;
 
   const table = createTable(tableData, {
-    page: addPagination({ serverSide: true, serverItemCount: totalElements, initialPageSize: 10 }), //TODO: change page size, 10 only for testing
+    page: addPagination({ serverSide: true, serverItemCount: totalElements, initialPageSize: pageSize }),
     sort: addSortBy({ serverSide: true }),
     filter: addTableFilter({ serverSide: true }),
     hide: addHiddenColumns(),
@@ -107,7 +109,13 @@
         header: '',
         id: 'actions',
         cell: ({ value }) => {
-          return createRender(DataTableActions, { id: value.toString(), deleteEntry, getData });
+          return createRender(DataTableActions, {
+            id: value.toString(),
+            deleteEntry,
+            getData,
+            additionalId,
+            editAvailable: additionalId === '',
+          });
         },
         plugins: {
           sort: {
@@ -127,7 +135,7 @@
     columns,
     tableOptions,
   );
-  const { hasNextPage, hasPreviousPage, pageIndex } = pluginStates.page;
+  const { pageIndex } = pluginStates.page;
   const { filterValue } = pluginStates.filter;
   const { hiddenColumnIds } = pluginStates.hide;
   const { selectedDataIds, allPageRowsSelected } = pluginStates.select;
@@ -143,12 +151,17 @@
   const hidableCols = keys.slice(1);
 
   async function getData() {
-    let sortKey: SortKey = $sortKeys[0];
+    if (serverSidePagination) {
+      let sortKey: SortKey = $sortKeys[0];
     let sortString;
     sortString = sortKey ? `${sortKey.id},${sortKey.order}` : '';
-    let result = await loadPage($pageIndex, sortString, $filterValue);
-    tableData.set(result.data);
-    totalElements.set(result.totalElements);
+    let result = await loadPage($pageIndex, sortString, $filterValue, additionalId);
+      allItems = result.data;
+      
+      totalElements.set(result.totalElements);
+    }
+    tableData.set(allItems.slice($pageIndex * pageSize, $pageIndex * pageSize + pageSize));
+    serverSidePagination = allItems.length <= pageSize;
   }
 
   async function onDeleteKey(e: KeyboardEvent) {
@@ -157,7 +170,7 @@
     }
     let promises: Promise<void>[] = [];
     Object.keys($selectedDataIds).forEach((row) => {
-      promises.push(deleteEntry(row));
+      promises.push(deleteEntry(row, additionalId));
     });
     await Promise.all(promises);
     $allPageRowsSelected = false;
@@ -182,7 +195,7 @@
     />
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild let:builder>
-        <Button builders={[builder]} class="ml-auto shadow-custom" variant="secondary">
+        <Button builders={[builder]} class="ml-auto shadow-custom text-primary bg-white" variant="secondary">
           Spalten
           <ChevronDown class="ml-2 h-4 w-4" />
         </Button>
@@ -197,6 +210,15 @@
         {/each}
       </DropdownMenu.Content>
     </DropdownMenu.Root>
+    {#if addButton}
+      <Button
+        class="ml-auto text-md"
+        variant="secondary"
+        on:click={() => goto(`${$page.url}/new`)}
+        >Hinzufügen
+        <Plus class="ml-3" />
+      </Button>
+    {/if}
   </div>
   <div>
     <Table.Root {...$tableAttrs}>
@@ -207,7 +229,7 @@
               {#each headerRow.cells as cell (cell.id)}
                 <Subscribe attrs={cell.attrs()} let:attrs props={cell.props()} let:props>
                   <Table.Head {...attrs} class="[&:has([role=checkbox])]:pl-4">
-                    {#if cell.id !== 'actions' && cell.id !== 'id'}
+                    {#if cell.id !== 'actions' && cell.id !== 'id' && sortable}
                       <Button
                         variant="ghost"
                         on:click={(event) => {
@@ -223,7 +245,9 @@
                         </div>
                       </Button>
                     {:else}
-                      <Render of={cell.render()} />
+                      <div class="text-white">
+                        <Render of={cell.render()} />
+                      </div>
                     {/if}
                   </Table.Head>
                 </Subscribe>
@@ -233,9 +257,13 @@
         {/each}
       </Table.Header>
       <Table.Body {...$tableBodyAttrs}>
-        {#each $pageRows as row (row.id)}
+        {#each $pageRows as row (row.isData() ? row.dataId : row.id)}
           <Subscribe rowAttrs={row.attrs()} let:rowAttrs>
-            <Table.Row {...rowAttrs} {...rowAttrs} data-state={$selectedDataIds[row.id] && 'selected'}>
+            <Table.Row
+              {...rowAttrs}
+              {...rowAttrs}
+              data-state={(row.isData() ? $selectedDataIds[row.dataId] : $selectedDataIds[row.id]) && 'selected'}
+            >
               {#each row.cells as cell (cell.id)}
                 <Subscribe attrs={cell.attrs()} let:attrs>
                   <Table.Cell {...attrs}>
@@ -255,7 +283,7 @@
       {$rows.length} Zeile(n) ausgewählt.
     </div>
     <div>
-      <Pagination.Root count={$totalElements} perPage={10} let:pages let:currentPage>
+      <Pagination.Root count={$totalElements} perPage={pageSize} let:pages let:currentPage>
         <Pagination.Content>
           <Pagination.Item>
             <Pagination.PrevButton
