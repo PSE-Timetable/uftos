@@ -2,7 +2,6 @@
   import ChevronLeft from 'lucide-svelte/icons/chevron-left';
   import LinkBar from '$lib/components/ui/link-bar/link-bar.svelte';
   import { Button } from '$lib/elements/ui/button/index.js';
-  import { page } from '$app/stores';
   import { goto } from '$app/navigation';
 </script>
 

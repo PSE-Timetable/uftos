@@ -13,7 +13,6 @@
   // Workaround for https://github.com/sveltejs/svelte/issues/9305
   // Fixed in Svelte 5, but not backported to 4.x.
   export let readonly: $$Props['readonly'] = undefined;
-  export let background: boolean = false;
 </script>
 
 <div class="px-4 py-3 bg-white shadow-customSmall rounded-md">
