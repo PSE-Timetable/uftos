@@ -6,7 +6,7 @@ export const load = (async ({ params }) => {
   const sort: Sort = { sort: ['name,asc'] };
   const tags = await getTags(sort);
   if (params.id === 'new') {
-    const studentGroup: StudentGroup = { id: 'new', name: '', grades: [], students: [], tags: [] };
+    const studentGroup: StudentGroup = { id: 'new', name: '', grades: [], students: [], tags: [], subjects: [] };
     return {
       studentGroup,
       tags,
