@@ -125,9 +125,13 @@
       <div class="flex flex-col gap-8 bg-primary w-fit h-fit p-6 rounded-md text-white">
         <div class="flex flex-row justify-between">
           <p class="font-bold text-md">{studentGroup.name}</p>
-          <div>
-            <button type="button" on:click={() => goto(`${$page.url}/${studentGroup.id}`)}><Pencil /> </button>
-            <button type="button" on:click={() => deleteGroup(studentGroup.id)}><Trash2 /> </button>
+          <div class="flex flex-row gap-4">
+            <button type="button" on:click={() => goto(`${$page.url}/${studentGroup.id}`)}>
+              <Pencil class="hover:stroke-accent" />
+            </button>
+            <button type="button" on:click={() => deleteGroup(studentGroup.id)}>
+              <Trash2 class="hover:stroke-accent" />
+            </button>
           </div>
         </div>
         <div class="flex flex-row items-center justify-between w-full gap-8">

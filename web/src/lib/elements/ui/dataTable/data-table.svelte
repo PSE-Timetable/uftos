@@ -185,7 +185,7 @@
 </script>
 
 <svelte:window on:keydown={onDeleteKey} />
-<div class="flex flex-col gap-4">
+<div class="flex flex-col gap-6">
   <div class="flex items-center">
     <Input
       bind:value={$filterValue}
@@ -277,7 +277,7 @@
       </Table.Body>
     </Table.Root>
   </div>
-  <div class="flex justify-center items-center py-4 relative">
+  <div class="flex justify-center items-center relative">
     <div class=" text-sm text-muted-foreground absolute left-0 items-center">
       {Object.keys($selectedDataIds).length} von{' '}
       {$rows.length} Zeile(n) ausgewählt.

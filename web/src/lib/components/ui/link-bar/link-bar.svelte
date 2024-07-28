@@ -12,4 +12,5 @@
   <Link text="Stufe" url="/admin/grades" />
   <Link text="Tag" url="/admin/tags" />
   <Link text="Curriculum" url="/admin/curriculums" />
+  <Link text="Einschränkungen" url="/admin/constraints" />
 </div>

@@ -54,9 +54,8 @@
     <Button
       aria-expanded={open}
       builders={[builder]}
-      class="w-[200px] justify-between bg-white"
+      class="w-[200px] justify-between bg-white text-primary hover:bg-accent hover:text-white"
       role="combobox"
-      variant="outline"
     >
       {selectedValue}
       <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
