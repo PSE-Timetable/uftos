@@ -6,8 +6,10 @@
   import { page } from '$app/stores';
 
   export let id: string;
-  export let deleteEntry: (id: string) => Promise<void>;
+  export let deleteEntry: (id: string, additionalId?: string) => Promise<void>;
   export let getData: () => Promise<void>;
+  export let editAvailable: boolean;
+  export let additionalId: string;
 </script>
 
 <DropdownMenu.Root>
@@ -22,11 +24,13 @@
       <DropdownMenu.Label>Aktionen</DropdownMenu.Label>
       <DropdownMenu.Item on:click={() => navigator.clipboard.writeText(id)}>ID kopieren</DropdownMenu.Item>
     </DropdownMenu.Group>
-    <DropdownMenu.Item on:click={async () => await goto(`${$page.url}/${id}`)}>Editieren</DropdownMenu.Item>
+    {#if editAvailable}
+      <DropdownMenu.Item on:click={() => goto(`${$page.url}/${id}`)}>Editieren</DropdownMenu.Item>
+    {/if}
     <DropdownMenu.Separator />
     <DropdownMenu.Item
       on:click={async () => {
-        await deleteEntry(id);
+        await deleteEntry(id, additionalId);
         await getData();
       }}
       class="text-red-600">Löschen</DropdownMenu.Item
