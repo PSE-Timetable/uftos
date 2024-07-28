@@ -2,7 +2,6 @@
   import AddResource from '$lib/components/ui/add-resource/add-resource.svelte';
   import {
     createStudentGroup,
-    getStudentGroup,
     updateStudentGroup,
     type StudentGroup,
     type StudentGroupRequestDto,
