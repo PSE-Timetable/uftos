@@ -293,6 +293,7 @@ export type TimetableMetadata = {
     breaks: Break[];
     startTime: string;
     timeslotLength: number;
+    timeslotsAmount: number;
 };
 export type PageStudentGroup = {
     content?: StudentGroup[];

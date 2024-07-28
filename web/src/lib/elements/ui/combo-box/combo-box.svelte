@@ -17,10 +17,11 @@
   let open:boolean = false;
   let value = '';
   let searchedValue: string;
-  let selectedValue = 'Resource auswählen';
+  let selectedValue = 'Ressource auswählen';
   let lastSearchedValued: string;
 
   export let onSearch: (string: string) => void;
+  export let onSelectChange: () => void = () => {};
 
   $: searchedValue,
     data,
@@ -32,8 +33,9 @@
 
       if (value) {
         let selected = data.find((f) => f.value === value);
-        selectedValue = selected?.label ?? 'Resource auswählen';
+        selectedValue = selected?.label ?? 'Ressource auswählen';
         selectedId = selected?.value ?? '';
+        onSelectChange();
       }
     })();
 
@@ -62,8 +64,8 @@
   </Popover.Trigger>
   <Popover.Content class="w-[200px] p-0">
     <Command.Root shouldFilter={false}>
-      <Command.Input bind:value={searchedValue} placeholder="Suche Resource" />
-      <Command.Empty>Keine Resource gefunden</Command.Empty>
+      <Command.Input bind:value={searchedValue} placeholder="Suche Ressource" />
+      <Command.Empty>Keine Ressource gefunden</Command.Empty>
       {#each data as resource (resource.value)}
         <Command.Item
           value={resource.value}

@@ -17,6 +17,10 @@ public class TimetableMetadata {
   @NotNull
   private int timeslotLength;
 
+  @Positive
+  @NotNull
+  private int timeslotsAmount;
+
   @NotBlank
   private String startTime;
 

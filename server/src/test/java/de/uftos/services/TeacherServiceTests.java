@@ -49,7 +49,7 @@ public class TeacherServiceTests {
   private Room room2;
 
   private static void assertResultArraysSizes(LessonResponseDto result, int teachers, int lessons,
-                                             int rooms, int grades) {
+                                              int rooms, int grades) {
     assertAll("Testing whether the sizes of the arrays are correct",
         () -> assertEquals(teachers, result.teachers().size()),
         () -> assertEquals(lessons, result.lessons().size()),
@@ -100,7 +100,7 @@ public class TeacherServiceTests {
     teacher1.setSubjects(List.of(subject));
 
     Server server =
-        new Server(new TimetableMetadata(45, "7:45", new Break[] {}), "2024");
+        new Server(new TimetableMetadata(45, 8, "7:45", new Break[] {}), "2024");
     when(serverRepository.findAll()).thenReturn(List.of(server));
     when(teacherRepository.findById("123")).thenReturn(Optional.of(teacher1));
     when(teacherRepository.findById("456")).thenReturn(Optional.of(teacher2));

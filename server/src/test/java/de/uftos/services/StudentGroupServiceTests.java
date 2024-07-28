@@ -89,7 +89,7 @@ public class StudentGroupServiceTests {
     studentGroup1.setLessons(List.of(lesson1, lesson2, lesson3));
 
     Break[] breaks = {};
-    Server server = new Server(new TimetableMetadata(45, "8:00", breaks), "2024");
+    Server server = new Server(new TimetableMetadata(45, 8, "8:00", breaks), "2024");
     when(serverRepository.findAll()).thenReturn(List.of(server));
     when(studentGroupRepository.findById("123")).thenReturn(Optional.of(studentGroup1));
     when(studentGroupRepository.findById("456")).thenReturn(Optional.of(studentGroup2));
