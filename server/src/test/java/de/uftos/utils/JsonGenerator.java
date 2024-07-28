@@ -2,6 +2,7 @@ package de.uftos.utils;
 
 import de.uftos.dto.LessonsCountRequestDto;
 import de.uftos.dto.Weekday;
+import de.uftos.entities.Subject;
 import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -156,7 +157,7 @@ public class JsonGenerator {
    * @throws JSONException If something is malformed.
    */
   public static String generateStudentGroupJson(String name, List<String> students,
-                                                List<String> grades, List<String> tags)
+                                                List<String> grades, List<String> tags, List<String> subjects)
       throws JSONException {
 
     JSONArray studentIds = new JSONArray();
@@ -168,11 +169,15 @@ public class JsonGenerator {
     JSONArray tagIds = new JSONArray();
     tags.forEach(tagIds::put);
 
+    JSONArray subjectIds = new JSONArray();
+    subjects.forEach(subjectIds::put);
+
     return new JSONObject()
         .put("name", name)
         .put("studentIds", studentIds)
         .put("gradeIds", gradeIds)
         .put("tagIds", tagIds)
+        .put("subjectIds", subjectIds)
         .toString();
   }
 
