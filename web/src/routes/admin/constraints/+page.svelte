@@ -67,11 +67,11 @@
     }
   }
 
-  async function addInstance(constraintSignature: ConstraintSignature, data: Record<string, ComboBoxItem[]>) {
+  async function addInstance(constraintSignature: ConstraintSignature, selectedIds: Record<string, string>) {
     let argumentRequestDtos: ConstraintArgumentRequestDto[] = [];
     for (let parameter of constraintSignature.parameters) {
       argumentRequestDtos.push({
-        argumentId: data[parameter.parameterName][0]?.value ?? '',
+        argumentId: selectedIds[parameter.parameterName] ?? '',
         parameterName: parameter.parameterName,
       });
     }

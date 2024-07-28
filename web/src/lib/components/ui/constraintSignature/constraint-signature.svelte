@@ -19,10 +19,11 @@
   export let constraintSignature: ConstraintSignature;
   export let addInstance: (
     constraintSignature: ConstraintSignature,
-    data: Record<string, ComboBoxItem[]>,
+    selectedIds: Record<string, string>,
   ) => Promise<void>;
 
   let data: Record<string, ComboBoxItem[]> = {};
+  let selectedIds: Record<string, string> = {};
 
   async function updateItems(value: string, name: string, parameterType: ParameterType) {
     const page: Pageable = { page: 0, size: 40 };
@@ -107,42 +108,11 @@
         <p>{parameter.parameterName}</p>
 
         <div class="text-primary">
-          {#if parameter.parameterType === ParameterType.Teacher}
-            <ComboBox
-              onSearch={(value) => updateItems(value, parameter.parameterName, parameter.parameterType)}
-              data={data[parameter.parameterName]}
-            />
-          {:else if parameter.parameterType === ParameterType.Room}
-            <ComboBox
-              onSearch={(value) => updateItems(value, parameter.parameterName, parameter.parameterType)}
-              data={data[parameter.parameterName]}
-            />
-          {:else if parameter.parameterType === ParameterType.Grade}
-            <ComboBox
-              onSearch={(value) => updateItems(value, parameter.parameterName, parameter.parameterType)}
-              data={data[parameter.parameterName]}
-            />
-          {:else if parameter.parameterType === ParameterType.Tag}
-            <ComboBox
-              onSearch={(value) => updateItems(value, parameter.parameterName, parameter.parameterType)}
-              data={data[parameter.parameterName]}
-            />
-          {:else if parameter.parameterType === ParameterType.Timeslot}
-            <ComboBox
-              onSearch={(value) => updateItems(value, parameter.parameterName, parameter.parameterType)}
-              data={data[parameter.parameterName]}
-            />
-          {:else if parameter.parameterType === ParameterType.StudentGroup}
-            <ComboBox
-              onSearch={(value) => updateItems(value, parameter.parameterName, parameter.parameterType)}
-              data={data[parameter.parameterName]}
-            />
-          {:else if parameter.parameterType === ParameterType.Subject}
-            <ComboBox
-              onSearch={(value) => updateItems(value, parameter.parameterName, parameter.parameterType)}
-              data={data[parameter.parameterName]}
-            />
-          {/if}
+          <ComboBox
+            onSearch={(value) => updateItems(value, parameter.parameterName, parameter.parameterType)}
+            data={data[parameter.parameterName]}
+            bind:selectedId={selectedIds[parameter.parameterName]}
+          />
         </div>
       </div>
     {/each}
@@ -151,6 +121,6 @@
   <Button
     variant="outline"
     class="bg-accent border-0 text-md text-white py-6"
-    on:click={async () => addInstance(constraintSignature, data)}>Hinzufügen</Button
+    on:click={async () => addInstance(constraintSignature, selectedIds)}>Hinzufügen</Button
   >
 </div>

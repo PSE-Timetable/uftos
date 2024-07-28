@@ -12,6 +12,7 @@
   import { cn } from '$lib/utils.js';
 
   export let data: ComboBoxItem[] = [];
+  export let selectedId:string;
 
   let open:boolean = false;
   let value = '';
@@ -30,7 +31,9 @@
       }
 
       if (value) {
-        selectedValue = data.find((f) => f.value === value)?.label ?? 'Resource auswählen';
+        let selected = data.find((f) => f.value === value);
+        selectedValue = selected?.label ?? 'Resource auswählen';
+        selectedId = selected?.value ?? '';
       }
     })();
 
