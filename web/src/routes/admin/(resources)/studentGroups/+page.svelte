@@ -31,8 +31,8 @@
   let selectedGradeId: string;
   let reloadTable: boolean = false;
 
-  let columnNames = ['Vorname', 'Nachname', 'Fächer', 'Tags'];
-  let keys = ['id', 'firstName', 'lastName', 'subjects', 'tags'];
+  let columnNames = ['Vorname', 'Nachname', 'Tags'];
+  let keys = ['id', 'firstName', 'lastName', 'tags'];
 
   async function getStudentsFromGroup(index: number, toSort: string, filter: string, additionalId?: string) {
     if (!additionalId) {
