@@ -31,8 +31,8 @@
   let selectedGradeId: string;
   let reloadTable: boolean = false;
 
-  let columnNames = ['Vorname', 'Nachname', 'Tags'];
-  let keys = ['id', 'firstName', 'lastName', 'tags'];
+  let columnNames = ['Vorname', 'Nachname', 'Fächer', 'Tags'];
+  let keys = ['id', 'firstName', 'lastName', 'subjects', 'tags'];
 
   async function getStudentsFromGroup(index: number, toSort: string, filter: string, additionalId?: string) {
     if (!additionalId) {
@@ -98,7 +98,7 @@
       name: studentGroup.name,
       studentIds: studentGroup.students.map((student) => student.id),
       tagIds: studentGroup.tags.map((tag) => tag.id),
-      subjectIds: studentGroup.tags.map((subject) => subject.id),
+      subjectIds: studentGroup.subjects.map((subject) => subject.id),
     };
     await updateStudentGroup(studentGroup.id, requestDto);
   }

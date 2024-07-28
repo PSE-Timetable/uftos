@@ -2,6 +2,7 @@
   import AddResource from '$lib/components/ui/add-resource/add-resource.svelte';
   import {
     createStudentGroup,
+    getStudentGroup,
     updateStudentGroup,
     type StudentGroup,
     type StudentGroupRequestDto,
@@ -36,8 +37,10 @@
       tagIds,
       subjectIds: subjectIds || [],
     };
+    console.log(studentGroupRequestDto);
     try {
       await updateStudentGroup(studentGroup.id, studentGroupRequestDto);
+      console.log(await getStudentGroup(studentGroup.id));
     } catch {
       error(400, { message: 'Could not update student group' });
     }
@@ -51,5 +54,7 @@
   {update}
   createEntity={data.create}
   tags={data.tags}
+  subjects={data.subjects}
+  entitySubjectsIds={new Set(studentGroup.subjects.map((subject) => subject.id))}
   entityTags={studentGroup.tags}
 />
