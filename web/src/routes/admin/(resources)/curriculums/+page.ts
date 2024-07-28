@@ -12,7 +12,7 @@ import type { PageLoad } from './$types';
 
 export const load = (async () => {
   const sort: Sort = { sort: ['name,asc'] };
-  let grades = await getGrades(sort);
+  const grades = await getGrades(sort);
   const subjects = await getSubjects(sort);
 
   for (const grade of grades) {
@@ -28,9 +28,10 @@ export const load = (async () => {
       await updateCurriculum(grade.curriculumId, {
         name: result.name,
         gradeId: result.grade.id,
-        lessonsCounts: result.lessonsCounts
-          .concat(addLessonsCount)
-          .map((lessonsCount) => ({ count: lessonsCount.count!, subjectId: lessonsCount.subject!.id })),
+        lessonsCounts: result.lessonsCounts.map((lessonsCount) => ({
+          count: lessonsCount.count!,
+          subjectId: lessonsCount.subject!.id,
+        })),
       });
     } else {
       const curriculumRequestDto: CurriculumRequestDto = {
@@ -42,7 +43,7 @@ export const load = (async () => {
       grade.curriculumId = result.id;
     }
   }
-  grades = await getGrades({ sort: ['name,asc'] });
+  console.log(grades);
 
   return {
     grades,
