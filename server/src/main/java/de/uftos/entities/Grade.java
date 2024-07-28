@@ -1,5 +1,6 @@
 package de.uftos.entities;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,7 +29,7 @@ public class Grade {
 
   private String name;
 
-  @OneToOne(mappedBy = "grade")
+  @OneToOne(mappedBy = "grade", cascade = CascadeType.REMOVE)
   private Curriculum curriculum;
 
   @ManyToMany

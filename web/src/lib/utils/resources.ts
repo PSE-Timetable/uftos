@@ -1,14 +1,17 @@
 import {
+  deleteGrade,
   deleteRoom,
   deleteStudent,
   deleteSubject,
   deleteTag,
   deleteTeacher,
+  getGrades,
   getRooms,
   getStudents,
   getSubjects,
   getTags,
   getTeachers,
+  type GradeResponseDto,
   type Pageable,
   type PageRoom,
   type PageStudent,
@@ -188,5 +191,33 @@ export async function deleteTeacherEntry(id: string) {
     await deleteTeacher(id);
   } catch {
     error(400, { message: `could not delete teacher with id ${id}` });
+  }
+}
+
+export async function loadGrades(index: number, sortString: string, filter: string) {
+  const sort: Sort = { sort: [sortString] };
+  try {
+    const result: GradeResponseDto[] = await getGrades(sort, {
+      name: filter,
+    });
+    const dataItems: DataItem[] = result.map((grade) => ({
+      id: grade.id,
+      name: grade.name,
+      tags: grade.tags.map((tag) => tag.name),
+    }));
+    return {
+      data: dataItems,
+      totalElements: dataItems.length,
+    };
+  } catch {
+    error(400, { message: 'Could not fetch grades' });
+  }
+}
+
+export async function deleteGradeEntry(id: string) {
+  try {
+    await deleteGrade(id);
+  } catch {
+    error(400, { message: `could not delete grade with id ${id}` });
   }
 }
