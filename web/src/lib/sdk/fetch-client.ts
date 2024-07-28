@@ -25,7 +25,7 @@ export type ConstraintParameter = {
     parameterType: ParameterType;
 };
 export type ConstraintSignature = {
-    defaultType: DefaultType;
+    defaultType: RewardPenalize;
     description: string;
     name: string;
     parameters: ConstraintParameter[];
@@ -65,7 +65,7 @@ export type SlimArgument = {
 export type SlimInstance = {
     arguments: SlimArgument[];
     id: string;
-    "type": Type;
+    "type": RewardPenalize;
 };
 export type ConstraintArgumentDisplayName = {
     displayName: string;
@@ -76,11 +76,13 @@ export type ConstraintInstancesResponseDto = {
     displayNames: ConstraintArgumentDisplayName[];
     parameters: ConstraintParameter[];
 };
+export type ConstraintArgumentRequestDto = {
+    argumentId: string;
+    parameterName: string;
+};
 export type ConstraintInstanceRequestDto = {
-    arguments: {
-        [key: string]: string;
-    };
-    "type"?: Type;
+    arguments: ConstraintArgumentRequestDto[];
+    "type"?: RewardPenalize;
 };
 export type ConstraintArgument = {
     constraintParameter: ConstraintParameter;
@@ -90,7 +92,7 @@ export type ConstraintArgument = {
 export type ConstraintInstance = {
     arguments: ConstraintArgument[];
     id: string;
-    "type": Type;
+    "type": RewardPenalize;
 };
 export type Tag = {
     id: string;
@@ -1068,7 +1070,7 @@ export function getTimetable(id: string, opts?: Oazapfts.RequestOpts) {
         ...opts
     }));
 }
-export enum DefaultType {
+export enum RewardPenalize {
     SoftReward = "SOFT_REWARD",
     HardReward = "HARD_REWARD",
     SoftPenalize = "SOFT_PENALIZE",
@@ -1086,12 +1088,6 @@ export enum ParameterType {
     Timeslot = "TIMESLOT",
     Number = "NUMBER",
     Timetable = "TIMETABLE"
-}
-export enum Type {
-    SoftReward = "SOFT_REWARD",
-    HardReward = "HARD_REWARD",
-    SoftPenalize = "SOFT_PENALIZE",
-    HardPenalize = "HARD_PENALIZE"
 }
 export enum Day {
     Monday = "MONDAY",

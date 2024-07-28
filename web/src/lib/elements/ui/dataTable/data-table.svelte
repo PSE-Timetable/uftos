@@ -30,18 +30,23 @@
   let tableData: Writable<DataItem[]> = writable([]);
   export let columnNames;
   export let keys;
-  export let totalElements: Writable<number> = writable(0);
+  let totalElements: Writable<number> = writable(0);
   export let loadPage: (
     index: number,
     toSort: string,
     filter: string,
+    additionalId?: string,
   ) => Promise<{
     data: DataItem[];
     totalElements: number;
   }>;
-  export let deleteEntry: (id: string) => Promise<void>;
+  export let deleteEntry: (id: string, additionalId?: string) => Promise<void>;
+  export let additionalId: string = '';
+  export let sortable = true;
+  export let addButton = true;
   export let pageSize = 15;
-  $: serverSidePagination = $tableData.length <= pageSize;
+  let serverSidePagination:boolean = $tableData.length <= pageSize;
+  let allItems:DataItem[] = $tableData;
 
   const table = createTable(tableData, {
     page: addPagination({ serverSide: true, serverItemCount: totalElements, initialPageSize: pageSize }),
@@ -104,7 +109,13 @@
         header: '',
         id: 'actions',
         cell: ({ value }) => {
-          return createRender(DataTableActions, { id: value.toString(), deleteEntry, getData });
+          return createRender(DataTableActions, {
+            id: value.toString(),
+            deleteEntry,
+            getData,
+            additionalId,
+            editAvailable: additionalId === '',
+          });
         },
         plugins: {
           sort: {
@@ -140,16 +151,17 @@
   const hidableCols = keys.slice(1);
 
   async function getData() {
-    let sortKey: SortKey = $sortKeys[0];
+    if (serverSidePagination) {
+      let sortKey: SortKey = $sortKeys[0];
     let sortString;
     sortString = sortKey ? `${sortKey.id},${sortKey.order}` : '';
-    let result = await loadPage($pageIndex, sortString, $filterValue);
-    if (serverSidePagination) {
-      tableData.set(result.data);
+    let result = await loadPage($pageIndex, sortString, $filterValue, additionalId);
+      allItems = result.data;
+      
       totalElements.set(result.totalElements);
-    } else {
-      tableData.set(result.data.slice($pageIndex * pageSize, $pageIndex * pageSize + pageSize));
     }
+    tableData.set(allItems.slice($pageIndex * pageSize, $pageIndex * pageSize + pageSize));
+    serverSidePagination = allItems.length <= pageSize;
   }
 
   async function onDeleteKey(e: KeyboardEvent) {
@@ -158,7 +170,7 @@
     }
     let promises: Promise<void>[] = [];
     Object.keys($selectedDataIds).forEach((row) => {
-      promises.push(deleteEntry(row));
+      promises.push(deleteEntry(row, additionalId));
     });
     await Promise.all(promises);
     $allPageRowsSelected = false;
@@ -183,7 +195,7 @@
     />
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild let:builder>
-        <Button builders={[builder]} class="ml-auto shadow-custom" variant="secondary">
+        <Button builders={[builder]} class="ml-auto shadow-custom text-primary bg-white" variant="secondary">
           Spalten
           <ChevronDown class="ml-2 h-4 w-4" />
         </Button>
@@ -198,15 +210,15 @@
         {/each}
       </DropdownMenu.Content>
     </DropdownMenu.Root>
-    <Button
-      class="ml-auto text-md"
-      variant="secondary"
-      on:click={async () => {
-        await goto(`${$page.url}/new`);
-      }}
-      >Hinzufügen
-      <Plus class="ml-3" />
-    </Button>
+    {#if addButton}
+      <Button
+        class="ml-auto text-md"
+        variant="secondary"
+        on:click={() => goto(`${$page.url}/new`)}
+        >Hinzufügen
+        <Plus class="ml-3" />
+      </Button>
+    {/if}
   </div>
   <div>
     <Table.Root {...$tableAttrs}>
@@ -217,7 +229,7 @@
               {#each headerRow.cells as cell (cell.id)}
                 <Subscribe attrs={cell.attrs()} let:attrs props={cell.props()} let:props>
                   <Table.Head {...attrs} class="[&:has([role=checkbox])]:pl-4">
-                    {#if cell.id !== 'actions' && cell.id !== 'id'}
+                    {#if cell.id !== 'actions' && cell.id !== 'id' && sortable}
                       <Button
                         variant="ghost"
                         on:click={(event) => {
@@ -233,7 +245,9 @@
                         </div>
                       </Button>
                     {:else}
-                      <Render of={cell.render()} />
+                      <div class="text-white">
+                        <Render of={cell.render()} />
+                      </div>
                     {/if}
                   </Table.Head>
                 </Subscribe>

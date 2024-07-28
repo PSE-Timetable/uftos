@@ -1,6 +1,7 @@
 package de.uftos.utils;
 
 import de.uftos.dto.LessonsCountRequestDto;
+import de.uftos.dto.Weekday;
 import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -203,6 +204,29 @@ public class JsonGenerator {
         .put("tagName", name)
         .toString();
   }
+
+  /**
+   * Generates the timeslot JSON.
+   *
+   * @param day  The weekday of the timeslot
+   * @param slot The index of the timeslot within the day
+   * @param tags The ids of the tags the timeslot has
+   * @return The requested JSON
+   * @throws JSONException If something is malformed.
+   */
+  public static String generateTimeslotJson(Weekday day, int slot, List<String> tags)
+      throws JSONException {
+    JSONArray jsonArray = new JSONArray();
+    tags.forEach(jsonArray::put);
+
+    return new JSONObject()
+        .put("day", day)
+        .put("slot", slot)
+        .put("tagIds", jsonArray)
+        .toString();
+  }
+
+
 
   /**
    * Generates the page JSON.

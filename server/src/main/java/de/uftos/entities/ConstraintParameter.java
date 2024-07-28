@@ -13,6 +13,7 @@ import jakarta.validation.constraints.NotEmpty;
 import java.util.List;
 import java.util.Objects;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * The database table for constraint parameters.
@@ -20,6 +21,7 @@ import lombok.Data;
  */
 @Entity(name = "constraint_parameter")
 @Data
+@NoArgsConstructor
 public class ConstraintParameter {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
@@ -36,6 +38,10 @@ public class ConstraintParameter {
   @NotEmpty
   @Enumerated(EnumType.STRING)
   private ResourceType parameterType;
+
+  public ConstraintParameter(String parameterName) {
+    this.parameterName = parameterName;
+  }
 
   @Override
   public boolean equals(Object other) {
