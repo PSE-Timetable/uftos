@@ -93,7 +93,7 @@
 <div class="p-4">
   {#await getConstraints() then { constraints }}
     {#each constraints || [] as constraint}
-      <div class="flex flex-row w-full gap-8 items-center">
+      <div class="flex flex-row w-full gap-8 items-center my-5">
         <ConstraintSignatureComp constraintSignature={constraint} {addInstance} />
         {#key reloadTable}
           <div class="w-full">
