@@ -15,22 +15,24 @@
     PAUSE,
   }
 
-  let metaData: TimetableMetadata = data.metadata;
+  let metadata: TimetableMetadata = data.metadata;
 
-  let timeslotList: { from: string; to: string; relativeIndex: number; type: Type }[] = generateTimetable(metaData);
+  let timeslotList: { from: string; to: string; relativeIndex: number; type: Type }[] = generateTimetable(metadata);
 
-  $: timeslotList = generateTimetable(metaData);
+  $: timeslotList = generateTimetable(metadata);
 
   function addBreakAndUpdate(metadata: TimetableMetadata, afterSlot: number, length: number, long?: boolean) {
+    changed = true;
     metadata.breaks.push({ afterSlot, length, long });
     metadata.breaks.sort((a, b) => a.afterSlot - b.afterSlot);
-    metaData = metadata;
+    metadata = metadata;
   }
 
   function removeBreakAndUpdate(metadata: TimetableMetadata, index: number) {
+    changed = true;
     metadata.breaks.splice(index, 1);
     metadata.breaks.sort((a, b) => a.afterSlot - b.afterSlot);
-    metaData = metadata;
+    metadata = metadata;
   }
 
   function setPauseLength(metadata: TimetableMetadata, index: number, event: Event) {
@@ -38,8 +40,9 @@
     if (!target || target.value === null) {
       return;
     }
+    changed = true;
     metadata.breaks[index].length = Number.parseInt(target.value);
-    metaData = metadata;
+    metadata = metadata;
   }
 
   function generateTimetable(metadata: TimetableMetadata) {
@@ -84,7 +87,7 @@
   }
 
   async function saveMetadata() {
-    await setTimetableMetadata(metaData);
+    await setTimetableMetadata(metadata);
     toast.success('Erfolgreich', {
       description: 'Die Einstellungen wurden erfolgreich gespeichert!',
     });
@@ -121,10 +124,10 @@
     }
 
     const value = Number.parseInt(target.value);
-    if (value !== metaData.timeslotsAmount) {
+    if (value !== metadata.timeslotsAmount) {
       changed = true;
-      metaData.timeslotsAmount = value;
-      metaData.breaks = metaData.breaks.filter((b) => b.afterSlot < metaData.timeslotsAmount);
+      metadata.timeslotsAmount = value;
+      metadata.breaks = metadata.breaks.filter((b) => b.afterSlot < metadata.timeslotsAmount);
     }
   }
 
@@ -133,9 +136,9 @@
     if (!target || target.value === null) {
       return;
     }
-    if (target.value !== metaData.startTime) {
+    if (target.value !== metadata.startTime) {
       changed = true;
-      metaData.startTime = target.value;
+      metadata.startTime = target.value;
     }
   }
 
@@ -145,15 +148,15 @@
       return;
     }
     const newLength: number = Number.parseInt(target.value);
-    if (newLength !== metaData.timeslotLength) {
-      metaData.timeslotLength = newLength;
+    if (newLength !== metadata.timeslotLength) {
+      metadata.timeslotLength = newLength;
       changed = true;
     }
   }
 
   function hasTimeslotBreak(index: number): boolean {
-    for (let i = 0; i < metaData.breaks.length; i++) {
-      const break1 = metaData.breaks[i];
+    for (let i = 0; i < metadata.breaks.length; i++) {
+      const break1 = metadata.breaks[i];
       if (break1.afterSlot === index) {
         return true;
       }
@@ -170,7 +173,6 @@
     variant="secondary"
     size="icon"
     class="rounded-full bg-accent mr-6"
-    disabled={changed}
   >
     <ChevronLeft class="h-5 w-5 text-white" />
   </Button>
@@ -184,7 +186,7 @@
       background={true}
       id="slot"
       type="number"
-      value={metaData.timeslotsAmount}
+      value={metadata.timeslotsAmount}
       on:input={updateTimeslots}
       min="0"
       step="1"
@@ -195,7 +197,7 @@
       background={true}
       id="slot_length"
       type="number"
-      value={metaData.timeslotLength}
+      value={metadata.timeslotLength}
       on:input={updateTimeSlotLength}
       min="0"
       step="1"
@@ -204,14 +206,14 @@
     <label for="start_time" class="font-bold">Anfangsuhrzeit:</label>
     <Input
       background={true}
-      value={metaData.startTime}
+      value={metadata.startTime}
       on:input={updateStartTime}
       id="start_time"
       type="time"
       placeholder="07:45"
     />
     <div></div>
-    <Button class="bg-accent text-white py-8 col-span-2" on:click={saveMetadata}>Speichern</Button>
+    <Button class="bg-accent text-white py-8 col-span-2" on:click={saveMetadata} disabled={!changed}>Speichern</Button>
   </div>
   <div class="bg-white rounded-md p-8 gap-6 flex flex-col w-1/2 min-w-[fit-content]">
     <p class="font-bold text-lg">Timeslots</p>
@@ -224,7 +226,7 @@
           <button
             disabled={hasTimeslotBreak(timeslot.relativeIndex)}
             type="button"
-            on:click={() => addBreakAndUpdate(metaData, timeslot.relativeIndex, 5, false)}
+            on:click={() => addBreakAndUpdate(metadata, timeslot.relativeIndex, 5, false)}
           >
             <div class="stroke-accent">
               <CirclePlus class={hasTimeslotBreak(timeslot.relativeIndex) ? 'stroke-gray-400' : ''} />
@@ -239,14 +241,14 @@
             background={true}
             id="pause_length"
             type="number"
-            value={metaData.breaks[timeslot.relativeIndex].length}
-            on:input={(e) => setPauseLength(metaData, timeslot.relativeIndex, e)}
+            value={metadata.breaks[timeslot.relativeIndex].length}
+            on:input={(e) => setPauseLength(metadata, timeslot.relativeIndex, e)}
             min="0"
             step="1"
             placeholder="Länge"
             class="w-min"
           />
-          <button type="button" on:click={() => removeBreakAndUpdate(metaData, timeslot.relativeIndex)}>
+          <button type="button" on:click={() => removeBreakAndUpdate(metadata, timeslot.relativeIndex)}>
             <Trash2 />
           </button>
         {/if}
