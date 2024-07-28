@@ -99,6 +99,6 @@
     {/await}
   </div>
   {#if pageLoaded}
-    <DataTable {columnNames} {keys} {loadPage} {deleteEntry} />
+    <DataTable {columnNames} {keys} {loadPage} {deleteEntry} addButton={false} />
   {/if}
 </div>
