@@ -11,6 +11,7 @@ public record RoomProblemDto(
     List<String> tagIds,
     List<String> lessonIds
 ) implements ResourceProblemDto {
+
   @Override
   public ResourceType getType() {
     return ResourceType.ROOM;

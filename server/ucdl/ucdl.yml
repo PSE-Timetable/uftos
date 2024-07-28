@@ -2,44 +2,29 @@ teacherCollision:
   description: "Teachers may not have multiple lessons at the same time."
   default_type: HARD_PENALIZE
   parameter:
+    lesson1: Lesson
+    lesson2: Lesson
   definition: >-
-    for (teacher of this.teachers) {
-      for (lesson1 of teacher.lessons) {
-        for (lesson2 of teacher.lessons) {
-          if (lesson1 != lesson2 && lesson1.timeslot == lesson2.timeslot) {
-            return true
-          }
-        }
-      }
-    }
-    return false
+    lesson1 != lesson2 && lesson1.timeslot == lesson2.timeslot && lesson1.teacher == lesson2.teacher
+
 studentCollision:
   description: "Students may not have multiple lessons at the same time."
   default_type: HARD_PENALIZE
   parameter:
+    lesson1: Lesson
+    lesson2: Lesson
   definition: >-
-    for (student of this.students) {
-      for (lesson1 of student.studentGroups.lessons) {
-        for (lesson2 of student.studentGroups.lessons) {
-          if (lesson1 != lesson2 && lesson1.timeslot == lesson2.timeslot) {
-            return true
-          }
-        }
-      }
-    }
-    return false
+    lesson1 != lesson2 && lesson1.timeslot == lesson2.timeslot && size(lesson1.studentGroup.students[lesson2.studentGroup.students]) > 0
+
 roomCollision:
   description: "Rooms may not be occupied by multiple lessons at the same time."
   default_type: HARD_PENALIZE
   parameter:
+    lesson1: Lesson
+    lesson2: Lesson
   definition: >-
-    forall(room : this.rooms) {
-      exists(lesson1 : room.lessons) {
-        forall(lesson2 : room.lessons) {
-          lesson1 != lesson2 implies lesson1.timeslot != lesson2.timeslot
-        }
-      }
-    }
+    lesson1 != lesson2 && lesson1.timeslot == lesson2.timeslot && lesson1.room == lesson2.room
+
 workingHours:
   description: "Teacher {teacher} does work during Timeslot {timeslot}."
   default_type: SOFT_PENALIZE
@@ -51,6 +36,7 @@ workingHours:
       return true
     }
     return false
+
 teacherTeachesGroup:
   description: "Teacher {teacher} teaches student group {group} in subject {subject}."
   default_type: SOFT_PENALIZE
@@ -62,6 +48,7 @@ teacherTeachesGroup:
     forall (lesson : group.lessons[this.subject == subject]) {
       lesson.teacher == teacher
     }
+
 subjectRoom:
   description: "Subject {subject} is only taught in rooms with tag {tag}."
   default_type: SOFT_PENALIZE

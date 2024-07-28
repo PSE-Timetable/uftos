@@ -30,7 +30,9 @@ public class UftosApplication {
 
   @Bean
   ApplicationRunner init(ServerRepository serverRepository) {
-    return (ApplicationArguments args) -> serverRepository.save(
-        new de.uftos.entities.Server(new TimetableMetadata(45, "7:45", new Break[] {}), "2024"));
+    return (ApplicationArguments args) -> {
+      serverRepository.save(
+          new de.uftos.entities.Server(new TimetableMetadata(45, "7:45", new Break[] {}), "2024"));
+    };
   }
 }

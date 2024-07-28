@@ -12,6 +12,7 @@ public record TeacherProblemDto(
     List<String> lessonIds,
     List<String> subjectIds
 ) implements ResourceProblemDto {
+
   @Override
   public ResourceType getType() {
     return ResourceType.TEACHER;

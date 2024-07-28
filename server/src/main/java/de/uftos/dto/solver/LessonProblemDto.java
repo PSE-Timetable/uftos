@@ -1,7 +1,6 @@
 package de.uftos.dto.solver;
 
 import de.uftos.dto.ResourceType;
-import java.util.List;
 
 /**
  * The data transfer object of a Lesson for communication with solvers.
@@ -15,6 +14,7 @@ public record LessonProblemDto(
     String subjectId,
     String roomId
 ) implements ResourceProblemDto {
+
   @Override
   public ResourceType getType() {
     return ResourceType.LESSON;
