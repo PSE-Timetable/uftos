@@ -24,6 +24,6 @@ public record StudentGroupRequestDto(@NotEmpty String name, @NotNull List<String
    */
   public StudentGroup map() {
     return new StudentGroup(this.name, this.studentIds, this.gradeIds, this.tagIds,
-        this.studentIds);
+        this.subjectIds);
   }
 }
