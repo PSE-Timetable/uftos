@@ -32,7 +32,7 @@
     {#if subjects.length > 0}
       <div class="flex flex-row mb-7">
         <div class="my-5 flex w-40 text-xl font-bold">Fächer:</div>
-        <div class="flex flex-wrap bg-white rounded-md max-w-80">
+        <div class="flex flex-wrap bg-white rounded-md p-4 shadow-custom max-w-80">
           {#each subjects as subject, i}
             <div class="flex items-center space-x-2 mx-1">
               <Checkbox class="m-1" bind:checked={selectedSubjects[i].selected} />

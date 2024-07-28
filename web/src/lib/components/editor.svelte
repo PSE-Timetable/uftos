@@ -104,9 +104,9 @@
 <div class="flex w-full flex-col gap-4">
   <div class="flex justify-between mr-2 ml-2">
     <div class="flex gap-4">
-      <Button class="hover:bg-accent hover:text-white" on:click={() => onInsertTemplate()}>Template einfügen</Button>
-      <Button class="hover:bg-accent hover:text-white" on:click={() => onValidate()}>Code überprüfen</Button>
-      <Button class="hover:bg-accent hover:text-white" on:click={() => onSave()}>Speichern</Button>
+      <Button class="hover:bg-accent text-white" on:click={() => onInsertTemplate()}>Template einfügen</Button>
+      <Button class="hover:bg-accent text-white" on:click={() => onValidate()}>Code überprüfen</Button>
+      <Button class="hover:bg-accent text-white" on:click={() => onSave()}>Speichern</Button>
     </div>
     <div class="flex gap-4">
       <input
@@ -119,7 +119,7 @@
       />
       <label for="upload">
         <Button
-          class="hover:bg-accent hover:text-white"
+          class="hover:bg-accent text-white"
           on:click={() => {
             uploadElement.click();
           }}>Upload</Button
@@ -127,7 +127,7 @@
       </label>
       <!-- svelte-ignore a11y-missing-attribute -->
       <a bind:this={downloadElement} download="ucdl.yml" target="_blank" class="hidden">Download the UCDL file </a>
-      <Button class="hover:bg-accent hover:text-white" on:click={onDownload}>Download</Button>
+      <Button class="hover:bg-accent text-white" on:click={onDownload}>Download</Button>
     </div>
   </div>
   <div bind:this={element} class="h-[800px]" />
