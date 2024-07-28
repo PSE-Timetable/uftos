@@ -51,7 +51,7 @@ public class UcdlEditorController {
    * @param force if the ucdl file should be forcefully updated, ignoring inconsistencies. Defaults to false.
    * @return a response whether the file could be parsed and saved successfully or not.
    */
-  @PutMapping()
+  @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ParsingResponse setUcdlFile(@RequestParam(value = "file") MultipartFile file,
                                      @RequestParam(value = "force", required = false, defaultValue = "false")
                                      boolean force) {

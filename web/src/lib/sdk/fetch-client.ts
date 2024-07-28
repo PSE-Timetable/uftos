@@ -511,7 +511,7 @@ export function setUcdlFile(body?: {
         data: ParsingResponse;
     }>(`/editor${QS.query(QS.explode({
         force
-    }))}`, oazapfts.json({
+    }))}`, oazapfts.multipart({
         ...opts,
         method: "PUT",
         body
