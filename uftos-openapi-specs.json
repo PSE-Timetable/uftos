@@ -3188,7 +3188,7 @@
         }
       },
       "StudentGroup" : {
-        "required" : [ "grades", "id", "name", "students", "tags" ],
+        "required" : [ "grades", "id", "name", "students", "subjects", "tags" ],
         "type" : "object",
         "properties" : {
           "grades" : {
@@ -3209,6 +3209,12 @@
               "$ref" : "#/components/schemas/Student"
             }
           },
+          "subjects" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Subject"
+            }
+          },
           "tags" : {
             "type" : "array",
             "items" : {
@@ -3218,7 +3224,7 @@
         }
       },
       "StudentGroupRequestDto" : {
-        "required" : [ "gradeIds", "name", "studentIds", "tagIds" ],
+        "required" : [ "gradeIds", "name", "studentIds", "subjectIds", "tagIds" ],
         "type" : "object",
         "properties" : {
           "gradeIds" : {
@@ -3231,6 +3237,12 @@
             "type" : "string"
           },
           "studentIds" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "subjectIds" : {
             "type" : "array",
             "items" : {
               "type" : "string"

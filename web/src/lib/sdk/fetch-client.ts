@@ -245,6 +245,7 @@ export type StudentGroup = {
     id: string;
     name: string;
     students: Student[];
+    subjects: Subject[];
     tags: Tag[];
 };
 export type Lesson = {
@@ -312,6 +313,7 @@ export type StudentGroupRequestDto = {
     gradeIds: string[];
     name: string;
     studentIds: string[];
+    subjectIds: string[];
     tagIds: string[];
 };
 export type PageStudent = {

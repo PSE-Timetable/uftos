@@ -98,6 +98,7 @@
       name: studentGroup.name,
       studentIds: studentGroup.students.map((student) => student.id),
       tagIds: studentGroup.tags.map((tag) => tag.id),
+      subjectIds: studentGroup.subjects.map((subject) => subject.id),
     };
     await updateStudentGroup(studentGroup.id, requestDto);
   }

@@ -65,23 +65,26 @@ public class GradeServiceTests {
   @BeforeEach
   void setUp() {
     StudentGroup studentGroup1 =
-        new StudentGroup("5-Ethik", List.of("S1", "S2"), List.of(), List.of());
+        new StudentGroup("5-Ethik", List.of("S1", "S2"), List.of(), List.of(), List.of());
     studentGroup1.setId("g123");
 
     StudentGroup studentGroup2 =
-        new StudentGroup("5-Religion", List.of("S2", "S3"), List.of(), List.of("T1", "T2"));
+        new StudentGroup("5-Religion", List.of("S2", "S3"), List.of(), List.of(),
+            List.of("T1", "T2"));
     studentGroup2.setId("g456");
 
     StudentGroup studentGroup3 =
-        new StudentGroup("7-Ethik", List.of("S1", "S2"), List.of(), List.of());
+        new StudentGroup("7-Ethik", List.of("S1", "S2"), List.of(), List.of(), List.of());
     studentGroup3.setId("g234");
 
     StudentGroup studentGroup4 =
-        new StudentGroup("7-Religion", List.of("S2", "S3"), List.of(), List.of("T1", "T2"));
+        new StudentGroup("7-Religion", List.of("S2", "S3"), List.of(), List.of(),
+            List.of("T1", "T2"));
     studentGroup4.setId("g567");
 
     StudentGroup studentGroup5 =
-        new StudentGroup("7b-Religion", List.of("S2", "S3"), List.of(), List.of("T1", "T2"));
+        new StudentGroup("7b-Religion", List.of("S2", "S3"), List.of(), List.of(),
+            List.of("T1", "T2"));
     studentGroup5.setId("g678");
 
 
