@@ -136,11 +136,14 @@ public class UcdlEditorService {
 
       List<ConstraintSignature> signatures = constraintSignatureRepository.findAll();
 
-      for (ConstraintSignature signature : signatures) {
+      for (int i = 0; i < signatures.size(); i++) {
+        ConstraintSignature signature = signatures.get(i);
         ConstraintDefinitionDto definition = definitions.get(signature.getName());
         if (signatureChanged(signature, definition)) {
           constraintSignatureRepository.delete(signature);
-          signatures.remove(signature);
+          signatures.remove(i--);
+        } else {
+          updateSignature(signature, definition);
         }
       }
 
@@ -153,9 +156,21 @@ public class UcdlEditorService {
     }
   }
 
+  private void updateSignature(ConstraintSignature signature,
+                               ConstraintDefinitionDto definitionDto) {
+    if (!signature.getName().equals(definitionDto.name())) {
+      throw new IllegalArgumentException();
+    }
+    signature.setDefaultType(definitionDto.defaultType());
+    signature.setDescription(definitionDto.description());
+
+    constraintSignatureRepository.save(signature);
+  }
+
   private void saveDefinitionSignatures(List<ConstraintSignature> signatures,
                                         HashMap<String, ConstraintDefinitionDto> definitions) {
     for (ConstraintSignature signature : signatures) {
+      updateSignature(signature, definitions.get(signature.getName()));
       definitions.remove(signature.getName());
     }
 
