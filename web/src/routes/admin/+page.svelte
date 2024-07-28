@@ -3,14 +3,28 @@
   import { Icons } from '$lib/utils';
   import LinkBar from '$lib/components/ui/link-bar/link-bar.svelte';
   import DataTable from '$lib/elements/ui/dataTable/data-table.svelte';
-  import { deleteTeacher, getServerStats, getTeachers, type Pageable, type PageTeacher } from '$lib/sdk/fetch-client';
-  import { error } from '@sveltejs/kit';
+  import { getServerStats } from '$lib/sdk/fetch-client';
   import { onMount } from 'svelte';
   import * as Select from '$lib/elements/ui/select';
-  import type { DataItem } from '$lib/utils/resources';
+  import {
+    deleteGradeEntry,
+    deleteRoomEntry,
+    deleteStudentEntry,
+    deleteTeacherEntry,
+    loadGrades,
+    loadRoomPage,
+    loadStudentPage,
+    loadTeacherPage,
+  } from '$lib/utils/resources';
 
-  let columnNames = ['Vorname', 'Nachname', 'Akronym', 'Fächer', 'Tags'];
-  let keys = ['id', 'firstName', 'lastName', 'acronym', 'subjects', 'tags'];
+  let teacherColumnNames = ['Vorname', 'Nachname', 'Akronym', 'Fächer', 'Tags'];
+  let teacherKeys = ['id', 'firstName', 'lastName', 'acronym', 'subjects', 'tags'];
+  let studentColumnNames = ['Vorname', 'Nachname', 'Tags'];
+  let studentKeys = ['id', 'firstName', 'lastName', 'tags'];
+  let gradeColumnNames = ['Name', 'Tags'];
+  let gradeKeys = ['id', 'name', 'tags'];
+  let roomColumnNames = ['Name', 'Gebäude', 'Kapazität', 'Tags'];
+  let roomKeys = ['id', 'name', 'buildingName', 'capacity', 'tags'];
   let pageLoaded = false;
 
   const settings = [
@@ -24,46 +38,10 @@
   onMount(() => {
     pageLoaded = true;
   });
-
-  async function loadPage(index: number, sortString: string, filter: string) {
-    let pageable: Pageable = { page: index, size: 10, sort: [sortString] };
-    try {
-      const result: PageTeacher = await getTeachers(pageable, {
-        firstName: filter,
-        lastName: filter,
-        acronym: filter,
-      });
-      let dataItems: DataItem[] = result.content
-        ? result.content.map(
-            (teacher): DataItem => ({
-              id: teacher.id,
-              firstName: teacher.firstName,
-              lastName: teacher.lastName,
-              acronym: teacher.acronym,
-              tags: teacher.tags.map((tag) => tag.name),
-            }),
-          )
-        : [];
-      return {
-        data: dataItems,
-        totalElements: Number(result.totalElements),
-      };
-    } catch {
-      error(400, { message: 'Could not fetch page' });
-    }
-  }
-
-  async function deleteEntry(id: string) {
-    try {
-      await deleteTeacher(id);
-    } catch {
-      error(400, { message: `could not delete teacher with id ${id}` });
-    }
-  }
 </script>
 
-<div class="h-[170px] w-full bg-primary text-white p-4 font-medium text-2xl items-center absolute">
-  <div class="mb-8 flex flex-row justify-between">
+<div class="h-[170px] w-full bg-primary p-4 items-center absolute">
+  <div class="mb-8 flex flex-row justify-between text-white font-medium text-2xl">
     <div>
       <LinkBar />
     </div>
@@ -89,7 +67,7 @@
     </Select.Root>
   </div>
 
-  <div class="w-full flex flex-row gap-14 justify-between mb-6">
+  <div class="w-full flex flex-row gap-14 justify-between mb-6 text-white font-medium text-2xl">
     {#await getServerStats() then stats}
       <Card text="Schüler" icon={Icons.STUDENT} number={stats.classCount} url="/admin/students" />
       <Card text="Lehrer" icon={Icons.TEACHER} number={stats.teacherCount} url="/admin/teachers" />
@@ -99,6 +77,43 @@
     {/await}
   </div>
   {#if pageLoaded}
-    <DataTable {columnNames} {keys} {loadPage} {deleteEntry} />
+    <div class="text-foreground">
+      <DataTable
+        columnNames={studentColumnNames}
+        keys={studentKeys}
+        loadPage={loadStudentPage}
+        deleteEntry={deleteStudentEntry}
+        pageSize={5}
+        addButton={false}
+        editAvailable={false}
+      />
+      <DataTable
+        columnNames={teacherColumnNames}
+        keys={teacherKeys}
+        loadPage={loadTeacherPage}
+        deleteEntry={deleteTeacherEntry}
+        pageSize={5}
+        addButton={false}
+        editAvailable={false}
+      />
+      <DataTable
+        columnNames={gradeColumnNames}
+        keys={gradeKeys}
+        loadPage={loadGrades}
+        deleteEntry={deleteGradeEntry}
+        pageSize={5}
+        addButton={false}
+        editAvailable={false}
+      />
+      <DataTable
+        columnNames={roomColumnNames}
+        keys={roomKeys}
+        loadPage={loadRoomPage}
+        deleteEntry={deleteRoomEntry}
+        pageSize={5}
+        addButton={false}
+        editAvailable={false}
+      />
+    </div>
   {/if}
 </div>
