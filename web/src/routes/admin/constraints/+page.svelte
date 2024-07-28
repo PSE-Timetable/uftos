@@ -2,7 +2,6 @@
   import { goto } from '$app/navigation';
   import ConstraintSignatureComp from '$lib/components/ui/constraintSignature/constraint-signature.svelte';
   import { Button } from '$lib/elements/ui/button';
-  import type { ComboBoxItem } from '$lib/elements/ui/combo-box/combo-box.svelte';
   import DataTable from '$lib/elements/ui/dataTable/data-table.svelte';
   import {
     type ConstraintArgumentRequestDto,
@@ -67,11 +66,11 @@
     }
   }
 
-  async function addInstance(constraintSignature: ConstraintSignature, data: Record<string, ComboBoxItem[]>) {
+  async function addInstance(constraintSignature: ConstraintSignature, selectedIds: Record<string, string>) {
     let argumentRequestDtos: ConstraintArgumentRequestDto[] = [];
     for (let parameter of constraintSignature.parameters) {
       argumentRequestDtos.push({
-        argumentId: data[parameter.parameterName][0]?.value ?? '',
+        argumentId: selectedIds[parameter.parameterName] ?? '',
         parameterName: parameter.parameterName,
       });
     }
