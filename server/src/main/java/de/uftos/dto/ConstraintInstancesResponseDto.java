@@ -4,9 +4,11 @@ import de.uftos.dto.solver.RewardPenalize;
 import de.uftos.entities.ConstraintArgument;
 import de.uftos.entities.ConstraintInstance;
 import de.uftos.entities.ConstraintParameter;
+import de.uftos.entities.ConstraintSignature;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * A data transfer object used in the curriculum HTTP requests.
@@ -25,12 +27,16 @@ public record ConstraintInstancesResponseDto(@NotNull List<SlimInstance> constra
    *
    * @param constraintInstances the instances of the constraint
    * @param displayNames        the display names for the arguments
+   * @param constraintSignature the signature from which to get the parameters
    */
   public ConstraintInstancesResponseDto(List<ConstraintInstance> constraintInstances,
-                                        List<ConstraintArgumentDisplayName> displayNames) {
-    this(constraintInstances.stream().map(SlimInstance::new).toList(),
+                                        List<ConstraintArgumentDisplayName> displayNames,
+                                        ConstraintSignature constraintSignature) {
+    this(
+        constraintInstances.stream().map(SlimInstance::new).collect(Collectors.toList()),
         displayNames,
-        constraintInstances.getFirst().getSignature().getParameters());
+        constraintSignature.getParameters()
+    );
   }
 
   /**

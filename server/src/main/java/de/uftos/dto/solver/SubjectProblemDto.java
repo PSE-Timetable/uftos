@@ -9,8 +9,10 @@ import java.util.List;
 public record SubjectProblemDto(
     String id,
     List<String> tagIds,
-    List<String> lessonIds
+    List<String> lessonIds,
+    List<String> teacherIds
 ) implements ResourceProblemDto {
+
   @Override
   public ResourceType getType() {
     return ResourceType.SUBJECT;

@@ -2199,6 +2199,18 @@
           }
         }
       },
+      "ConstraintArgumentRequestDto" : {
+        "required" : [ "argumentId", "parameterName" ],
+        "type" : "object",
+        "properties" : {
+          "argumentId" : {
+            "type" : "string"
+          },
+          "parameterName" : {
+            "type" : "string"
+          }
+        }
+      },
       "ConstraintInstance" : {
         "required" : [ "arguments", "id", "type" ],
         "type" : "object",
@@ -2213,8 +2225,7 @@
             "type" : "string"
           },
           "type" : {
-            "type" : "string",
-            "enum" : [ "SOFT_REWARD", "HARD_REWARD", "SOFT_PENALIZE", "HARD_PENALIZE" ]
+            "$ref" : "#/components/schemas/RewardPenalize"
           }
         }
       },
@@ -2223,14 +2234,13 @@
         "type" : "object",
         "properties" : {
           "arguments" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ConstraintArgumentRequestDto"
             }
           },
           "type" : {
-            "type" : "string",
-            "enum" : [ "SOFT_REWARD", "HARD_REWARD", "SOFT_PENALIZE", "HARD_PENALIZE" ]
+            "$ref" : "#/components/schemas/RewardPenalize"
           }
         }
       },
@@ -2279,8 +2289,7 @@
         "type" : "object",
         "properties" : {
           "defaultType" : {
-            "type" : "string",
-            "enum" : [ "SOFT_REWARD", "HARD_REWARD", "SOFT_PENALIZE", "HARD_PENALIZE" ]
+            "$ref" : "#/components/schemas/RewardPenalize"
           },
           "description" : {
             "type" : "string"
@@ -3019,6 +3028,10 @@
           }
         }
       },
+      "RewardPenalize" : {
+        "type" : "string",
+        "enum" : [ "SOFT_REWARD", "HARD_REWARD", "SOFT_PENALIZE", "HARD_PENALIZE" ]
+      },
       "Room" : {
         "required" : [ "buildingName", "capacity", "id", "name", "tags" ],
         "type" : "object",
@@ -3118,8 +3131,7 @@
             "type" : "string"
           },
           "type" : {
-            "type" : "string",
-            "enum" : [ "SOFT_REWARD", "HARD_REWARD", "SOFT_PENALIZE", "HARD_PENALIZE" ]
+            "$ref" : "#/components/schemas/RewardPenalize"
           }
         }
       },
