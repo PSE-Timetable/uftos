@@ -1,27 +1,34 @@
 <script lang="ts">
+  import { goto } from '$app/navigation';
+  import { page } from '$app/stores';
   import { Button } from '$lib/elements/ui/button';
   import ComboBox, { type ComboBoxItem } from '$lib/elements/ui/combo-box/combo-box.svelte';
   import DataTable from '$lib/elements/ui/dataTable/data-table.svelte';
   import {
     addStudentsToStudentGroup,
+    deleteStudentGroup,
     getGrades,
     getStudentGroup,
+    getStudentGroups,
     getStudents,
     removeStudentsFromStudentGroup,
+    updateStudentGroup,
     type GradeResponseDto,
     type Pageable,
     type Student,
     type StudentGroup,
+    type StudentGroupRequestDto,
   } from '$lib/sdk/fetch-client.js';
   import { type DataItem } from '$lib/utils/resources.js';
   import { error } from '@sveltejs/kit';
+  import { Pencil, Plus, Trash2 } from 'lucide-svelte';
 
   export let data;
-  let studentGroups = data.studentGroups;
+  let studentGroups = data.studentGroups || [];
   let students: Student[] = data.students || [];
-  let selectedStudent: ComboBoxItem;
+  let selectedStudentId: string;
   let grades: GradeResponseDto[] = data.grades;
-  let selectedGrade: ComboBoxItem;
+  let selectedGradeId: string;
   let reloadTable: boolean = false;
 
   let columnNames = ['Vorname', 'Nachname', 'Tags'];
@@ -51,7 +58,7 @@
   }
 
   async function addStudentToGroup(studentGroup: StudentGroup, studentId: string) {
-    await addStudentsToStudentGroup(studentGroup.id, [studentId]);
+    studentGroup = await addStudentsToStudentGroup(studentGroup.id, [studentId]);
     reloadTable = !reloadTable;
   }
 
@@ -83,19 +90,51 @@
       error(400, { message: 'Could not fetch grades' });
     }
   }
+
+  async function saveGrade(gradeId: string, studentGroupId: string) {
+    let studentGroup = await getStudentGroup(studentGroupId); //studentGroups field doesn't contain newly added students
+    let requestDto: StudentGroupRequestDto = {
+      gradeIds: [gradeId],
+      name: studentGroup.name,
+      studentIds: studentGroup.students.map((student) => student.id),
+      tagIds: studentGroup.tags.map((tag) => tag.id),
+    };
+    await updateStudentGroup(studentGroup.id, requestDto);
+  }
+
+  async function deleteGroup(id: string) {
+    await deleteStudentGroup(id);
+    studentGroups =
+      (await getStudentGroups({ page: 0, size: 50, sort: ['name,asc'] }).then(({ content }) => content)) || [];
+  }
 </script>
 
+<div class="flex justify-end">
+  <Button class="mt-5 mx-5 text-md" variant="secondary" on:click={() => goto(`${$page.url}/new`)}
+    >Hinzufügen
+    <Plus class="ml-3" />
+  </Button>
+</div>
+
 <div class="p-4">
-  {#each studentGroups || [] as studentGroup}
-    <div class="flex flex-row w-full gap-8 items-center">
+  {#each studentGroups as studentGroup}
+    <div class="flex flex-row w-full gap-8 items-center my-5">
       <div class="flex flex-col gap-8 bg-primary w-fit p-6 rounded-md text-white">
-        <p class="font-bold text-md">{studentGroup.name}</p>
+        <div class="flex flex-row justify-between">
+          <p class="font-bold text-md">{studentGroup.name}</p>
+          <div>
+            <button type="button" on:click={() => goto(`${$page.url}/${studentGroup.id}`)}><Pencil /> </button>
+            <button type="button" on:click={() => deleteGroup(studentGroup.id)}><Trash2 /> </button>
+          </div>
+        </div>
         <div class="flex flex-row items-center justify-between w-full gap-8">
           <p>Stufe:</p>
           <div class="text-primary">
             <ComboBox
               onSearch={(value) => updateGrades(value)}
               data={grades.map((grade) => ({ value: grade.id, label: grade.name }))}
+              bind:selectedId={selectedGradeId}
+              onSelectChange={() => saveGrade(selectedGradeId, studentGroup.id)}
             />
           </div>
         </div>
@@ -108,19 +147,19 @@
                 value: student.id,
                 label: `${student.firstName} ${student.lastName}`,
               }))}
+              bind:selectedId={selectedStudentId}
             />
           </div>
         </div>
         <Button
           variant="outline"
           class="bg-accent border-0 text-md text-white py-6"
-          on:click={async () => {
-            addStudentToGroup(studentGroup, ''); //TODO add student id from combobox
-          }}>Schüler hinzufügen</Button
+          on:click={() => selectedStudentId && addStudentToGroup(studentGroup, selectedStudentId)}
+          >Schüler hinzufügen</Button
         >
       </div>
       {#key reloadTable}
-        <div class="w-full">
+        <div class="w-full -mt-5">
           <DataTable
             {columnNames}
             {keys}
