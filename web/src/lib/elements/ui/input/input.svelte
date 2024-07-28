@@ -16,10 +16,10 @@
   export let background: boolean = false;
 </script>
 
-<input
+<div class="px-4 py-3 bg-white shadow-customSmall rounded-md">
+  <input
   class={cn(
-    'flex w-full rounded-md px-4 py-3 border-input text-primary text-sm ring-offset-background file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
-    background ? 'shadow-customSmall bg-white' : 'bg-background',
+    'flex w-full rounded-md border-0 border-b-2 border-foreground text-primary text-sm ring-offset-background file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50',
     className,
   )}
   bind:value
@@ -42,3 +42,4 @@
   on:wheel|passive
   {...$$restProps}
 />
+</div>

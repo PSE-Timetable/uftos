@@ -185,16 +185,14 @@
 </script>
 
 <svelte:window on:keydown={onDeleteKey} />
-<div>
-  <div class="flex items-center py-4">
-    <div class="bg-white px-4 py-3 rounded-md shadow-custom">
-      <Input
-        bind:value={$filterValue}
-        class="max-w-sm rounded-none bg-transparent border-0 border-b-2 p-0 border-foreground"
-        placeholder="Suche..."
-        type="text"
-      />
-    </div>
+<div class="flex flex-col gap-4">
+  <div class="flex items-center">
+    <Input
+      bind:value={$filterValue}
+      class="max-w-sm rounded-none bg-transparent border-0 border-b-2 p-0 border-foreground"
+      placeholder="Suche..."
+      type="text"
+    />
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild let:builder>
         <Button builders={[builder]} class="ml-auto shadow-custom text-primary bg-white" variant="secondary">

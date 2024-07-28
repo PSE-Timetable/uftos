@@ -109,17 +109,20 @@
   }
 </script>
 
-<div class="flex justify-end">
-  <Button class="mt-5 mx-5 text-md" variant="secondary" on:click={() => goto(`${$page.url}/new`)}
+<div class="flex justify-end mb-4">
+  <Button
+    class="mt-5 mx-5 text-md text-primary bg-white shadow-customSmall"
+    variant="secondary"
+    on:click={() => goto(`${$page.url}/new`)}
     >Hinzufügen
     <Plus class="ml-3" />
   </Button>
 </div>
 
-<div class="p-4">
+<div class="flex flex-col gap-8 p-4">
   {#each studentGroups as studentGroup}
-    <div class="flex flex-row w-full gap-8 items-center my-5">
-      <div class="flex flex-col gap-8 bg-primary w-fit p-6 rounded-md text-white">
+    <div class="flex flex-row w-full gap-8 items-top my-5">
+      <div class="flex flex-col gap-8 bg-primary w-fit h-fit p-6 rounded-md text-white">
         <div class="flex flex-row justify-between">
           <p class="font-bold text-md">{studentGroup.name}</p>
           <div>
@@ -159,7 +162,7 @@
         >
       </div>
       {#key reloadTable}
-        <div class="w-full -mt-5">
+        <div class="w-full">
           <DataTable
             {columnNames}
             {keys}

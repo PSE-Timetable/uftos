@@ -24,10 +24,7 @@
     {#each descriptions as description, i}
       <div class="flex flex-row items-baseline">
         <div class="my-5 flex w-40">{description}</div>
-        <Input
-          bind:value={values[i]}
-          class="rounded-none border-0 border-b-4 border-foreground focus-visible:ring-0 focus-visible:border-b-4 text-lg font-normal flex max-w-80"
-        />
+        <Input bind:value={values[i]} background={true} class="rounded-none font-normal flex max-w-80" />
       </div>
     {/each}
   </div>
