@@ -184,6 +184,7 @@
     <label for="slot" class="font-bold fit-content">Timeslots pro Tag:</label>
     <Input
       background={true}
+      class="border-0"
       id="slot"
       type="number"
       value={metadata.timeslotsAmount}
@@ -195,6 +196,7 @@
     <label for="slot_length" class="font-bold">Timeslots Länge:</label>
     <Input
       background={true}
+      class="border-0"
       id="slot_length"
       type="number"
       value={metadata.timeslotLength}
@@ -206,6 +208,7 @@
     <label for="start_time" class="font-bold">Anfangsuhrzeit:</label>
     <Input
       background={true}
+      class="border-0"
       value={metadata.startTime}
       on:input={updateStartTime}
       id="start_time"
@@ -246,7 +249,7 @@
             min="0"
             step="1"
             placeholder="Länge"
-            class="w-min"
+            class="w-min border-0"
           />
           <button type="button" on:click={() => removeBreakAndUpdate(metadata, timeslot.relativeIndex)}>
             <Trash2 />
