@@ -45,8 +45,9 @@
   export let sortable = true;
   export let addButton = true;
   export let pageSize = 15;
-  let serverSidePagination: boolean = $tableData.length <= pageSize;
-  let allItems: DataItem[] = $tableData;
+  export let editAvailable = true;
+  let serverSidePagination:boolean = $tableData.length <= pageSize;
+  let allItems:DataItem[] = $tableData;
 
   const table = createTable(tableData, {
     page: addPagination({ serverSide: true, serverItemCount: totalElements, initialPageSize: pageSize }),
@@ -114,7 +115,7 @@
             deleteEntry,
             getData,
             additionalId,
-            editAvailable: additionalId === '',
+            editAvailable,
           });
         },
         plugins: {
@@ -153,11 +154,11 @@
   async function getData() {
     if (serverSidePagination) {
       let sortKey: SortKey = $sortKeys[0];
-      let sortString;
-      sortString = sortKey ? `${sortKey.id},${sortKey.order}` : '';
-      let result = await loadPage($pageIndex, sortString, $filterValue, additionalId);
+    let sortString;
+    sortString = sortKey ? `${sortKey.id},${sortKey.order}` : '';
+    let result = await loadPage($pageIndex, sortString, $filterValue, additionalId);
       allItems = result.data;
-
+      
       totalElements.set(result.totalElements);
     }
     tableData.set(allItems.slice($pageIndex * pageSize, $pageIndex * pageSize + pageSize));

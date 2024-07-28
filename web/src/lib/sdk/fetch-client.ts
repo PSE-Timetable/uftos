@@ -245,6 +245,7 @@ export type StudentGroup = {
     id: string;
     name: string;
     students: Student[];
+    subjects: Subject[];
     tags: Tag[];
 };
 export type Lesson = {
@@ -312,6 +313,7 @@ export type StudentGroupRequestDto = {
     gradeIds: string[];
     name: string;
     studentIds: string[];
+    subjectIds: string[];
     tagIds: string[];
 };
 export type PageStudent = {
@@ -992,11 +994,15 @@ export function getTeacherLessons(id: string, opts?: Oazapfts.RequestOpts) {
         ...opts
     }));
 }
-export function getTimeslots(opts?: Oazapfts.RequestOpts) {
+export function getTimeslots({ tags }: {
+    tags?: string[];
+} = {}, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
         data: Timeslot[];
-    }>("/timeslots", {
+    }>(`/timeslots${QS.query(QS.explode({
+        tags
+    }))}`, {
         ...opts
     }));
 }
