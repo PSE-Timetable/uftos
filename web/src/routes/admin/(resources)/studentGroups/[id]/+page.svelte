@@ -39,7 +39,6 @@
     };
     try {
       await updateStudentGroup(studentGroup.id, studentGroupRequestDto);
-      console.log(await getStudentGroup(studentGroup.id));
     } catch {
       error(400, { message: 'Could not update student group' });
     }
