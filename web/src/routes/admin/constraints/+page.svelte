@@ -2,7 +2,6 @@
   import { goto } from '$app/navigation';
   import ConstraintSignatureComp from '$lib/components/ui/constraintSignature/constraint-signature.svelte';
   import { Button } from '$lib/elements/ui/button';
-  import type { ComboBoxItem } from '$lib/elements/ui/combo-box/combo-box.svelte';
   import DataTable from '$lib/elements/ui/dataTable/data-table.svelte';
   import {
     type ConstraintArgumentRequestDto,
