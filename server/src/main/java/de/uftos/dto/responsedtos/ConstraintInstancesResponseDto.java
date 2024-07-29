@@ -1,5 +1,6 @@
-package de.uftos.dto;
+package de.uftos.dto.responsedtos;
 
+import de.uftos.dto.ConstraintArgumentDisplayName;
 import de.uftos.dto.solver.RewardPenalize;
 import de.uftos.entities.ConstraintArgument;
 import de.uftos.entities.ConstraintInstance;

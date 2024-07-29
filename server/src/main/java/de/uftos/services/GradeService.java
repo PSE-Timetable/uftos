@@ -1,22 +1,19 @@
 package de.uftos.services;
 
 
-import de.uftos.dto.GradeRequestDto;
-import de.uftos.dto.GradeResponseDto;
-import de.uftos.dto.LessonResponseDto;
+import de.uftos.dto.requestdtos.GradeRequestDto;
+import de.uftos.dto.responsedtos.GradeResponseDto;
+import de.uftos.dto.responsedtos.LessonResponseDto;
 import de.uftos.entities.Grade;
 import de.uftos.entities.Lesson;
-import de.uftos.entities.Student;
 import de.uftos.entities.StudentGroup;
 import de.uftos.repositories.database.GradeRepository;
 import de.uftos.repositories.database.ServerRepository;
 import de.uftos.utils.SpecificationBuilder;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;

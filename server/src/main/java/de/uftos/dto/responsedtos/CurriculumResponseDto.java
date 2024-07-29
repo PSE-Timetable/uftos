@@ -1,4 +1,4 @@
-package de.uftos.dto;
+package de.uftos.dto.responsedtos;
 
 import de.uftos.entities.Curriculum;
 import de.uftos.entities.LessonsCount;

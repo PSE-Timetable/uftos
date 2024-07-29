@@ -1,6 +1,6 @@
 package de.uftos.controller;
 
-import de.uftos.dto.StudentRequestDto;
+import de.uftos.dto.requestdtos.StudentRequestDto;
 import de.uftos.entities.Student;
 import de.uftos.services.StudentService;
 import java.util.Optional;

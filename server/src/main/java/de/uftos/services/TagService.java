@@ -1,6 +1,6 @@
 package de.uftos.services;
 
-import de.uftos.dto.TagRequestDto;
+import de.uftos.dto.requestdtos.TagRequestDto;
 import de.uftos.entities.Tag;
 import de.uftos.repositories.database.TagRepository;
 import de.uftos.utils.SpecificationBuilder;
