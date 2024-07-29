@@ -47,8 +47,8 @@
       return;
     }
     changed = true;
-    trigger = !trigger;
     metadata.breaks[index].length = Number.parseInt(target.value);
+    trigger = !trigger;
   }
 
   function generateTimetable(metadata: TimetableMetadata) {
