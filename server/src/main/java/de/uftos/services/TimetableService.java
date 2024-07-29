@@ -166,14 +166,14 @@ public class TimetableService {
    * @throws ResponseStatusException is thrown if the ID defined in the timetable parameter is
    *                                 already present in the database.
    */
-  public Timetable create(TimetableRequestDto timetable) throws BadRequestException {
+  public Timetable create(TimetableRequestDto timetable) throws ResponseStatusException {
     Timetable timetableEntity = timetable.map();
     timetableRepository.save(timetableEntity);
-    TimetableProblemDto problemInstance = getProblemInstance(timetableEntity);
     try {
+      TimetableProblemDto problemInstance = getProblemInstance(timetableEntity);
       return getSolution(solverRepository.solve(problemInstance).get());
-    } catch (InterruptedException | ExecutionException e) {
-      throw new BadRequestException(e);
+    } catch (InterruptedException | ExecutionException | BadRequestException e) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
     }
   }
 
@@ -193,7 +193,7 @@ public class TimetableService {
     try {
       definitions = ucdlRepository.getConstraints().values().stream().toList();
     } catch (ParseException | IOException e) {
-      throw new BadRequestException(e);
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
     HashMap<String, ResourceProblemDto> resources = new HashMap<>();

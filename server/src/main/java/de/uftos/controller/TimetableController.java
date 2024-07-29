@@ -4,7 +4,6 @@ import de.uftos.dto.requestdtos.TimetableRequestDto;
 import de.uftos.entities.Timetable;
 import de.uftos.services.TimetableService;
 import java.util.Optional;
-import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -43,8 +42,7 @@ public class TimetableController {
    * @return the created timetable with the assigned ID.
    */
   @PostMapping()
-  public Timetable createTimetable(@RequestBody TimetableRequestDto timetable)
-      throws BadRequestException {
+  public Timetable createTimetable(@RequestBody TimetableRequestDto timetable) {
     return this.timetablesService.create(timetable);
   }
 
