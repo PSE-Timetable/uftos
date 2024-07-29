@@ -23,7 +23,9 @@ import de.uftos.entities.Grade;
 import de.uftos.entities.Lesson;
 import de.uftos.entities.LessonsCount;
 import de.uftos.entities.Room;
+import de.uftos.entities.Student;
 import de.uftos.entities.StudentGroup;
+import de.uftos.entities.Subject;
 import de.uftos.entities.Tag;
 import de.uftos.entities.Teacher;
 import de.uftos.entities.Timeslot;
@@ -199,7 +201,27 @@ public class TimetableService {
     for (GradeProblemDto grade : grades) {
       resources.put(grade.id(), grade);
     }
-    //todo: put other resource-dtos inside
+    for (RoomProblemDto room : rooms) {
+      resources.put(room.id(), room);
+    }
+    for (StudentGroupProblemDto studentGroup : studentGroups) {
+      resources.put(studentGroup.id(), studentGroup);
+    }
+    for (StudentProblemDto student : students) {
+      resources.put(student.id(), student);
+    }
+    for (SubjectProblemDto subject : subjects) {
+      resources.put(subject.id(), subject);
+    }
+    for (TagProblemDto tag : tags) {
+      resources.put(tag.id(), tag);
+    }
+    for (TeacherProblemDto teacher : teachers) {
+      resources.put(teacher.id(), teacher);
+    }
+    for (TimeslotProblemDto timeslot : timeslots) {
+      resources.put(timeslot.id(), timeslot);
+    }
 
     List<ConstraintInstanceDto> instances = getConstraintInstances(resources);
 
@@ -229,26 +251,28 @@ public class TimetableService {
     List<Curriculum> curriculums = curriculumRepository.findAll();
     for (StudentGroup studentGroup : studentGroupRepository.findAll()) {
       for (Curriculum curriculum : curriculums) {
-        if (curriculum.getGrade() == studentGroup.getGrades().getFirst()) {
-          for (LessonsCount lessonsCount : curriculum.getLessonsCounts()) {
-            if (studentGroup.getSubjects().contains(lessonsCount.getSubject())) {
-              for (int index = 0; index < lessonsCount.getCount(); index++) {
-                Lesson lesson = new Lesson();
-                lesson.setYear(serverRepository.findAll().getLast().getCurrentYear());
-                lesson.setIndex(index);
-                lesson.setStudentGroup(studentGroup);
-                lesson.setSubject(lessonsCount.getSubject());
-                lesson.setTeacher(teacherRepository.findAll().getFirst());
-                lesson.setRoom(roomRepository.findAll().getFirst());
-                lesson.setTimeslot(timeslotRepository.findAll().getFirst());
-                lesson.setTimetable(timetable);
-
-                lessonRepository.save(lesson);
-              }
-            }
-          }
-          break;
+        if (curriculum.getGrade() != studentGroup.getGrades().getFirst()) {
+          continue;
         }
+        for (LessonsCount lessonsCount : curriculum.getLessonsCounts()) {
+          if (!studentGroup.getSubjects().contains(lessonsCount.getSubject())) {
+            continue;
+          }
+          for (int index = 0; index < lessonsCount.getCount(); index++) {
+            Lesson lesson = new Lesson();
+            lesson.setYear(serverRepository.findAll().getLast().getCurrentYear());
+            lesson.setIndex(index);
+            lesson.setStudentGroup(studentGroup);
+            lesson.setSubject(lessonsCount.getSubject());
+            lesson.setTeacher(teacherRepository.findAll().getFirst());
+            lesson.setRoom(roomRepository.findAll().getFirst());
+            lesson.setTimeslot(timeslotRepository.findAll().getFirst());
+            lesson.setTimetable(timetable);
+
+            lessonRepository.save(lesson);
+          }
+        }
+        break;
       }
     }
 
@@ -264,33 +288,158 @@ public class TimetableService {
     return lessons;
   }
 
-  //todo: implement ProblemDto-creation
   private List<RoomProblemDto> getRooms(Timetable timetable) {
-    return null;
+    List<RoomProblemDto> rooms = new ArrayList<>();
+    for (Room room : roomRepository.findAll()) {
+      List<String> tagIds = new ArrayList<>();
+      for (Tag tag : room.getTags()) {
+        tagIds.add(tag.getId());
+      }
+      List<String> lessonIds = new ArrayList<>();
+      for (Lesson lesson : room.getLessons().stream()
+          .filter(lesson -> lesson.getTimetable() == timetable).toList()) {
+        lessonIds.add(lesson.getId());
+      }
+      rooms.add(new RoomProblemDto(room.getId(), tagIds, lessonIds));
+    }
+    return rooms;
   }
 
   private List<StudentGroupProblemDto> getStudentGroups(Timetable timetable) {
-    return null;
+    List<StudentGroupProblemDto> studentGroups = new ArrayList<>();
+    for (StudentGroup studentGroup : studentGroupRepository.findAll()) {
+      List<String> tagIds = new ArrayList<>();
+      for (Tag tag : studentGroup.getTags()) {
+        tagIds.add(tag.getId());
+      }
+      List<String> lessonIds = new ArrayList<>();
+      for (Lesson lesson : studentGroup.getLessons().stream()
+          .filter(lesson -> lesson.getTimetable() == timetable).toList()) {
+        lessonIds.add(lesson.getId());
+      }
+      List<String> studentIds = new ArrayList<>();
+      for (Student student : studentGroup.getStudents()) {
+        studentIds.add(student.getId());
+      }
+      studentGroups.add(new StudentGroupProblemDto(studentGroup.getId(),
+          studentGroup.getGrades().getFirst().getId(), tagIds, lessonIds, studentIds));
+    }
+    return studentGroups;
   }
 
   private List<StudentProblemDto> getStudents() {
-    return null;
+    List<StudentProblemDto> students = new ArrayList<>();
+    for (Student student : studentRepository.findAll()) {
+      List<String> tagIds = new ArrayList<>();
+      for (Tag tag : student.getTags()) {
+        tagIds.add(tag.getId());
+      }
+      List<String> studentGroupIds = new ArrayList<>();
+      for (StudentGroup studentGroup : student.getGroups()) {
+        studentGroupIds.add(studentGroup.getId());
+      }
+      students.add(new StudentProblemDto(student.getId(), tagIds, studentGroupIds));
+    }
+    return students;
   }
 
   private List<SubjectProblemDto> getSubjects(Timetable timetable) {
-    return null;
+    List<SubjectProblemDto> subjects = new ArrayList<>();
+    for (Subject subject : subjectRepository.findAll()) {
+      List<String> tagIds = new ArrayList<>();
+      for (Tag tag : subject.getTags()) {
+        tagIds.add(tag.getId());
+      }
+      List<String> lessonIds = new ArrayList<>();
+      for (Lesson lesson : subject.getLessons().stream()
+          .filter(lesson -> lesson.getTimetable() == timetable).toList()) {
+        lessonIds.add(lesson.getId());
+      }
+      List<String> teacherIds = new ArrayList<>();
+      for (Teacher teacher : subject.getTeachers()) {
+        teacherIds.add(teacher.getId());
+      }
+      subjects.add(new SubjectProblemDto(subject.getId(), tagIds, lessonIds, teacherIds));
+    }
+    return subjects;
   }
 
   private List<TagProblemDto> getTags() {
-    return null;
+    List<TagProblemDto> tags = new ArrayList<>();
+    for (Tag tag : tagRepository.findAll()) {
+      List<String> gradeIds = new ArrayList<>();
+      for (Grade grade : tag.getGrades()) {
+        gradeIds.add(grade.getId());
+      }
+      List<String> roomIds = new ArrayList<>();
+      for (Room room : tag.getRooms()) {
+        roomIds.add(room.getId());
+      }
+      List<String> studentIds = new ArrayList<>();
+      for (Student student : tag.getStudents()) {
+        studentIds.add(student.getId());
+      }
+      List<String> studentGroupIds = new ArrayList<>();
+      for (StudentGroup studentGroup : tag.getStudentGroups()) {
+        studentGroupIds.add(studentGroup.getId());
+      }
+      List<String> subjectIds = new ArrayList<>();
+      for (Subject subject : tag.getSubjects()) {
+        subjectIds.add(subject.getId());
+      }
+      List<String> teacherIds = new ArrayList<>();
+      for (Teacher teacher : tag.getTeachers()) {
+        teacherIds.add(teacher.getId());
+      }
+      List<String> timeslotIds = new ArrayList<>();
+      for (Timeslot timeslot : tag.getTimeslots()) {
+        timeslotIds.add(timeslot.getId());
+      }
+      tags.add(
+          new TagProblemDto(tag.getId(), gradeIds, roomIds, studentIds, studentGroupIds, subjectIds,
+              teacherIds, timeslotIds));
+    }
+    return tags;
   }
 
   private List<TeacherProblemDto> getTeachers(Timetable timetable) {
-    return null;
+    List<TeacherProblemDto> teachers = new ArrayList<>();
+    for (Teacher teacher : teacherRepository.findAll()) {
+      List<String> tagIds = new ArrayList<>();
+      for (Tag tag : teacher.getTags()) {
+        tagIds.add(tag.getId());
+      }
+      List<String> lessonIds = new ArrayList<>();
+      for (Lesson lesson : teacher.getLessons().stream()
+          .filter(lesson -> lesson.getTimetable() == timetable).toList()) {
+        lessonIds.add(lesson.getId());
+      }
+      List<String> subjectIds = new ArrayList<>();
+      for (Subject subject : teacher.getSubjects()) {
+        subjectIds.add(subject.getId());
+      }
+      teachers.add(new TeacherProblemDto(teacher.getId(), tagIds, lessonIds, subjectIds));
+    }
+    return teachers;
   }
 
   private List<TimeslotProblemDto> getTimeslots(Timetable timetable) {
-    return null;
+    List<TimeslotProblemDto> timeslots = new ArrayList<>();
+    for (Timeslot timeslot : timeslotRepository.findAll()) {
+      List<String> tagIds = new ArrayList<>();
+      for (Tag tag : timeslot.getTags()) {
+        tagIds.add(tag.getId());
+      }
+      List<String> lessonIds = new ArrayList<>();
+      for (Lesson lesson : timeslot.getLessons().stream()
+          .filter(lesson -> lesson.getTimetable() == timetable).toList()) {
+        lessonIds.add(lesson.getId());
+      }
+      timeslots.add(
+          new TimeslotProblemDto(timeslot.getId(), timeslot.getDay().ordinal(), timeslot.getSlot(),
+              tagIds, lessonIds));
+    }
+    return timeslots;
   }
 
   private List<ConstraintInstanceDto> getConstraintInstances(
