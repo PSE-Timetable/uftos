@@ -50,10 +50,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import org.springframework.stereotype.Repository;
 
 /**
  * This class represents a implementation of the SolverRepository interface utilizing the Timefold solver.
  */
+@Repository
 public class SolverRepositoryImpl implements SolverRepository {
 
   @Override
