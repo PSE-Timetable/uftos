@@ -18,21 +18,27 @@
   let metadata: TimetableMetadata = data.metadata;
 
   let timeslotList: { from: string; to: string; relativeIndex: number; type: Type }[] = generateTimetable(metadata);
+  let trigger: boolean;
 
-  $: timeslotList = generateTimetable(metadata);
+  $: {
+    timeslotList = generateTimetable(metadata);
+    // TODO this is a temporary fix, please find a better solution
+    //  for some reason a rerender isn't triggered when the breaks are updated
+    console.log(trigger);
+  }
 
   function addBreakAndUpdate(metadata: TimetableMetadata, afterSlot: number, length: number, long?: boolean) {
     changed = true;
     metadata.breaks.push({ afterSlot, length, long });
     metadata.breaks.sort((a, b) => a.afterSlot - b.afterSlot);
-    metadata = metadata;
+    trigger = !trigger;
   }
 
   function removeBreakAndUpdate(metadata: TimetableMetadata, index: number) {
     changed = true;
     metadata.breaks.splice(index, 1);
     metadata.breaks.sort((a, b) => a.afterSlot - b.afterSlot);
-    metadata = metadata;
+    trigger = !trigger;
   }
 
   function setPauseLength(metadata: TimetableMetadata, index: number, event: Event) {
@@ -42,7 +48,7 @@
     }
     changed = true;
     metadata.breaks[index].length = Number.parseInt(target.value);
-    metadata = metadata;
+    trigger = !trigger;
   }
 
   function generateTimetable(metadata: TimetableMetadata) {
@@ -184,6 +190,7 @@
     <label for="slot" class="font-bold fit-content">Timeslots pro Tag:</label>
     <Input
       background={true}
+      class="border-0"
       id="slot"
       type="number"
       value={metadata.timeslotsAmount}
@@ -195,6 +202,7 @@
     <label for="slot_length" class="font-bold">Timeslots Länge:</label>
     <Input
       background={true}
+      class="border-0"
       id="slot_length"
       type="number"
       value={metadata.timeslotLength}
@@ -206,6 +214,7 @@
     <label for="start_time" class="font-bold">Anfangsuhrzeit:</label>
     <Input
       background={true}
+      class="border-0"
       value={metadata.startTime}
       on:input={updateStartTime}
       id="start_time"
@@ -246,7 +255,7 @@
             min="0"
             step="1"
             placeholder="Länge"
-            class="w-min"
+            class="w-min border-0"
           />
           <button type="button" on:click={() => removeBreakAndUpdate(metadata, timeslot.relativeIndex)}>
             <Trash2 />

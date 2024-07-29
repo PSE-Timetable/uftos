@@ -1,7 +1,7 @@
 <script lang="ts">
   import ChevronLeft from 'lucide-svelte/icons/chevron-left';
+  import LinkBar from '$lib/components/ui/link-bar/link-bar.svelte';
   import { Button } from '$lib/elements/ui/button/index.js';
-  import { page } from '$app/stores';
   import { goto } from '$app/navigation';
 </script>
 
@@ -16,7 +16,7 @@
   >
     <ChevronLeft class="h-5 w-5 text-white" />
   </Button>
-  <h1 class="font-bold text-xl mt-1">{$page.data['meta']['title']}</h1>
+  <LinkBar />
 </div>
 
 <slot />

@@ -24,7 +24,7 @@
     {#each selectedTags as tag}
       <input name={tag.label} hidden value={tag} />
     {/each}
-    <Select.Trigger>
+    <Select.Trigger class="shadow-customSmall">
       <Select.Value placeholder="Tags auswählen" />
     </Select.Trigger>
     <Select.Content>

@@ -186,11 +186,11 @@
 </script>
 
 <svelte:window on:keydown={onDeleteKey} />
-<div>
-  <div class="flex items-center py-4">
+<div class="flex flex-col gap-6">
+  <div class="flex items-center">
     <Input
       bind:value={$filterValue}
-      class="max-w-sm rounded-none border-0 border-b-4 border-foreground focus-visible:ring-0 focus-visible:border-b-4"
+      class="max-w-sm rounded-none bg-transparent border-0 border-b-2 p-0 border-foreground"
       placeholder="Suche..."
       type="text"
     />
@@ -213,7 +213,7 @@
     </DropdownMenu.Root>
     {#if addButton}
       <Button
-        class="ml-auto text-md"
+        class="ml-auto text-sm text-primary bg-white shadow-custom"
         variant="secondary"
         on:click={() => goto(`${$page.url}/new`)}
         >Hinzufügen
@@ -257,7 +257,7 @@
           </Subscribe>
         {/each}
       </Table.Header>
-      <Table.Body {...$tableBodyAttrs}>
+      <Table.Body class="text-primary" {...$tableBodyAttrs}>
         {#each $pageRows as row (row.isData() ? row.dataId : row.id)}
           <Subscribe rowAttrs={row.attrs()} let:rowAttrs>
             <Table.Row
@@ -278,7 +278,7 @@
       </Table.Body>
     </Table.Root>
   </div>
-  <div class="flex justify-center items-center py-4 relative">
+  <div class="flex justify-center items-center relative">
     <div class=" text-sm text-muted-foreground absolute left-0 items-center">
       {Object.keys($selectedDataIds).length} von{' '}
       {$rows.length} Zeile(n) ausgewählt.
@@ -291,10 +291,10 @@
               on:click={() => {
                 $pageIndex--;
               }}
-              class="shadow-custom"
+              class="shadow-custom bg-white"
             >
               <ChevronLeft class="h-4 w-4" />
-              <span class="hidden sm:block">Zurück</span>
+              <span class="hidden sm:block text-primary">Zurück</span>
             </Pagination.PrevButton>
           </Pagination.Item>
           {#each pages as page (page.key)}
@@ -311,7 +311,9 @@
               <Pagination.Item>
                 <Pagination.Link
                   {page}
-                  class=" shadow-custom {currentPage === page.value ? 'border-2 border-foreground' : ''}"
+                  class=" shadow-custom bg-white text-primary {currentPage === page.value
+                    ? 'border-2 border-foreground'
+                    : ''}"
                   on:click={() => {
                     $pageIndex = page.value - 1;
                   }}
@@ -326,10 +328,10 @@
               on:click={() => {
                 $pageIndex++;
               }}
-              class="shadow-custom"
+              class="shadow-custom bg-white"
             >
-              <span class="hidden sm:block">Weiter</span>
-              <ChevronRight class="h-4 w-4" />
+              <span class="hidden sm:block text-primary">Weiter</span>
+              <ChevronRight class="h-4 w-4 stroke-primary" />
             </Pagination.NextButton>
           </Pagination.Item>
         </Pagination.Content>
