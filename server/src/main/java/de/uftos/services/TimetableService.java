@@ -177,6 +177,7 @@ public class TimetableService {
     }
   }
 
+  @SuppressWarnings("checkstyle:VariableDeclarationUsageDistance")
   private TimetableProblemDto getProblemInstance(Timetable timetable) throws BadRequestException {
     List<GradeProblemDto> grades = getGrades();
 
@@ -188,7 +189,7 @@ public class TimetableService {
     List<TagProblemDto> tags = getTags();
     List<TeacherProblemDto> teachers = getTeachers(timetable);
     List<TimeslotProblemDto> timeslots = getTimeslots(timetable);
-    List<ConstraintDefinitionDto> definitions = null;
+    List<ConstraintDefinitionDto> definitions;
     try {
       definitions = ucdlRepository.getConstraints().values().stream().toList();
     } catch (ParseException | IOException e) {
