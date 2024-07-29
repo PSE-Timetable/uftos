@@ -1,6 +1,7 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
   import ConstraintSignatureComp from '$lib/components/ui/constraintSignature/constraint-signature.svelte';
+  import LinkBar from '$lib/components/ui/link-bar/link-bar.svelte';
   import { Button } from '$lib/elements/ui/button';
   import DataTable from '$lib/elements/ui/dataTable/data-table.svelte';
   import {
@@ -87,13 +88,13 @@
   <Button on:click={() => goto('./')} variant="secondary" size="icon" class="rounded-full bg-accent mr-6">
     <ChevronLeft class="h-5 w-5 text-white" />
   </Button>
-  <h1 class="font-bold text-xl mt-1">Constraints ändern</h1>
+  <LinkBar />
 </div>
 
 <div class="p-4">
   {#await getConstraints() then { constraints }}
     {#each constraints || [] as constraint}
-      <div class="flex flex-row w-full gap-8 items-center my-5">
+      <div class="flex flex-row w-full gap-8 items-top my-5">
         <ConstraintSignatureComp constraintSignature={constraint} {addInstance} />
         {#key reloadTable}
           <div class="w-full">
