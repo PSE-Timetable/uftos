@@ -1,5 +1,5 @@
 <script>
-    import { goto } from '$app/navigation';
+  import { goto } from '$app/navigation';
   import { page } from '$app/stores';
   import Editor from '$lib/components/editor.svelte';
   import { Button } from '$lib/elements/ui/button';

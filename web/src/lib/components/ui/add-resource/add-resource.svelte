@@ -59,7 +59,7 @@
             : await update(values, selectedTagIds, subjectIds);
           await goto('./');
         }}
-        class="max-w-52 bg-accent px-16 py-5 text-white flex"
+        class="max-w-52 bg-accent px-16 py-5 text-white hover:bg-accent flex"
         variant="secondary"
       >
         Speichern
