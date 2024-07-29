@@ -48,12 +48,7 @@
 <div class="h-[170px] w-[100%] min-w-[fit-content] bg-primary p-4 items-center absolute">
   <div class="mb-8 flex flex-row gap ì-2 justify-between text-white font-medium text-2xl items-center">
     <div class="flex flex-row">
-      <Button
-        on:click={() => goto('./')}
-        variant="secondary"
-        size="icon"
-        class="rounded-full bg-accent mr-6"
-      >
+      <Button on:click={() => goto('./')} variant="secondary" size="icon" class="rounded-full bg-accent mr-6">
         <ChevronLeft class="h-5 w-5 text-white" />
       </Button>
 
