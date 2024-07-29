@@ -49,9 +49,7 @@
   <div class="mb-8 flex flex-row gap ì-2 justify-between text-white font-medium text-2xl items-center">
     <div class="flex flex-row">
       <Button
-        on:click={async () => {
-          await goto('./');
-        }}
+        on:click={() => goto('./')}
         variant="secondary"
         size="icon"
         class="rounded-full bg-accent mr-6"
