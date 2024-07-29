@@ -1,6 +1,6 @@
 package de.uftos.services;
 
-import de.uftos.dto.StudentRequestDto;
+import de.uftos.dto.requestdtos.StudentRequestDto;
 import de.uftos.entities.Student;
 import de.uftos.repositories.database.StudentRepository;
 import de.uftos.utils.SpecificationBuilder;

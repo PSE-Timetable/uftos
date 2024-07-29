@@ -1,5 +1,6 @@
-package de.uftos.dto;
+package de.uftos.dto.requestdtos;
 
+import de.uftos.dto.Weekday;
 import de.uftos.entities.Timeslot;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;

@@ -1,4 +1,4 @@
-package de.uftos.dto;
+package de.uftos.dto.requestdtos;
 
 import de.uftos.entities.Student;
 import jakarta.validation.constraints.NotEmpty;

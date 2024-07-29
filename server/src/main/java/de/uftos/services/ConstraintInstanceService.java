@@ -1,10 +1,10 @@
 package de.uftos.services;
 
 import de.uftos.dto.ConstraintArgumentDisplayName;
-import de.uftos.dto.ConstraintArgumentRequestDto;
-import de.uftos.dto.ConstraintInstanceRequestDto;
-import de.uftos.dto.ConstraintInstancesResponseDto;
 import de.uftos.dto.ResourceType;
+import de.uftos.dto.requestdtos.ConstraintArgumentRequestDto;
+import de.uftos.dto.requestdtos.ConstraintInstanceRequestDto;
+import de.uftos.dto.responsedtos.ConstraintInstancesResponseDto;
 import de.uftos.entities.ConstraintArgument;
 import de.uftos.entities.ConstraintInstance;
 import de.uftos.entities.ConstraintParameter;

@@ -1,8 +1,8 @@
 package de.uftos.controller;
 
-import de.uftos.dto.GradeRequestDto;
-import de.uftos.dto.GradeResponseDto;
-import de.uftos.dto.LessonResponseDto;
+import de.uftos.dto.requestdtos.GradeRequestDto;
+import de.uftos.dto.responsedtos.GradeResponseDto;
+import de.uftos.dto.responsedtos.LessonResponseDto;
 import de.uftos.services.GradeService;
 import java.util.List;
 import java.util.Optional;

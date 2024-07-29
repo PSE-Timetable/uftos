@@ -1,7 +1,7 @@
 package de.uftos.controller;
 
-import de.uftos.dto.LessonResponseDto;
-import de.uftos.dto.RoomRequestDto;
+import de.uftos.dto.requestdtos.RoomRequestDto;
+import de.uftos.dto.responsedtos.LessonResponseDto;
 import de.uftos.entities.Room;
 import de.uftos.services.RoomService;
 import java.util.Optional;

@@ -1,7 +1,7 @@
 package de.uftos.controller;
 
-import de.uftos.dto.LessonResponseDto;
-import de.uftos.dto.StudentGroupRequestDto;
+import de.uftos.dto.requestdtos.StudentGroupRequestDto;
+import de.uftos.dto.responsedtos.LessonResponseDto;
 import de.uftos.entities.StudentGroup;
 import de.uftos.services.StudentGroupService;
 import java.util.List;

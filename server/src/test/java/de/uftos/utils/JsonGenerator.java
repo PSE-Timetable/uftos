@@ -1,7 +1,7 @@
 package de.uftos.utils;
 
-import de.uftos.dto.LessonsCountRequestDto;
 import de.uftos.dto.Weekday;
+import de.uftos.dto.requestdtos.LessonsCountRequestDto;
 import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
