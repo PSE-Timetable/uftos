@@ -7,10 +7,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
-import de.uftos.dto.ConstraintArgumentRequestDto;
-import de.uftos.dto.ConstraintInstanceRequestDto;
-import de.uftos.dto.ConstraintInstancesResponseDto;
 import de.uftos.dto.ResourceType;
+import de.uftos.dto.requestdtos.ConstraintArgumentRequestDto;
+import de.uftos.dto.requestdtos.ConstraintInstanceRequestDto;
+import de.uftos.dto.responsedtos.ConstraintInstancesResponseDto;
 import de.uftos.dto.solver.RewardPenalize;
 import de.uftos.entities.ConstraintArgument;
 import de.uftos.entities.ConstraintInstance;

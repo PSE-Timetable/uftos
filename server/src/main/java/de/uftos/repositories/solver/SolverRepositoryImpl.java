@@ -50,10 +50,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import org.springframework.stereotype.Repository;
 
 /**
  * This class represents a implementation of the SolverRepository interface utilizing the Timefold solver.
  */
+@Repository
 public class SolverRepositoryImpl implements SolverRepository {
 
   @Override
@@ -90,11 +92,7 @@ public class SolverRepositoryImpl implements SolverRepository {
 
       Solver<TimetableSolutionTimefoldInstance> solver = factory.buildSolver();
 
-      TimetableSolutionTimefoldInstance solved = solver.solve(solution);
-
-      System.out.println(solved.getScore());
-
-      return getTimetableInstanceFromSolutionInstance(solved);
+      return getTimetableInstanceFromSolutionInstance(solver.solve(solution));
     };
 
     BlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<>(1);
@@ -234,7 +232,8 @@ public class SolverRepositoryImpl implements SolverRepository {
       );
     }
 
-    return new TimetableSolutionDto(lessons);
+    return new TimetableSolutionDto(lessons, solution.getScore().hardScore(),
+        solution.getScore().softScore());
 
   }
 

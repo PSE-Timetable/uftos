@@ -1,6 +1,6 @@
 package de.uftos.controller;
 
-import de.uftos.dto.TagRequestDto;
+import de.uftos.dto.requestdtos.TagRequestDto;
 import de.uftos.entities.Tag;
 import de.uftos.services.TagService;
 import java.util.List;

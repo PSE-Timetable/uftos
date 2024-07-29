@@ -1,7 +1,7 @@
 package de.uftos.services;
 
-import de.uftos.dto.LessonResponseDto;
-import de.uftos.dto.RoomRequestDto;
+import de.uftos.dto.requestdtos.RoomRequestDto;
+import de.uftos.dto.responsedtos.LessonResponseDto;
 import de.uftos.entities.Lesson;
 import de.uftos.entities.Room;
 import de.uftos.repositories.database.RoomRepository;

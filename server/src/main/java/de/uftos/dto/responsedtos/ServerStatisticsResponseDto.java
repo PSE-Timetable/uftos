@@ -1,4 +1,4 @@
-package de.uftos.dto;
+package de.uftos.dto.responsedtos;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;

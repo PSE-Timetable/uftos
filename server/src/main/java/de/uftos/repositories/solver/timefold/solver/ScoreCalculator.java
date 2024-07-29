@@ -46,14 +46,28 @@ public class ScoreCalculator
             int hard = 0;
             int soft = 0;
             for (ConstraintInstanceTimefoldInstance constraint : constraintList) {
-              if (constraint.evaluate(timetableSolutionTimefoldInstance.getResources())) {
-                switch (constraint.rewardPenalize()) {
-                  case HARD_PENALIZE -> hard--;
-                  case SOFT_PENALIZE -> soft--;
-                  case HARD_REWARD -> hard++;
-                  case SOFT_REWARD -> soft++;
-                  default -> throw new IllegalStateException();
+              switch (constraint.rewardPenalize()) {
+                case HARD_PENALIZE -> {
+                  if (constraint.evaluate(timetableSolutionTimefoldInstance.getResources())) {
+                    hard--;
+                  }
                 }
+                case SOFT_PENALIZE -> {
+                  if (constraint.evaluate(timetableSolutionTimefoldInstance.getResources())) {
+                    soft--;
+                  }
+                }
+                case HARD_REWARD -> {
+                  if (!constraint.evaluate(timetableSolutionTimefoldInstance.getResources())) {
+                    hard--;
+                  }
+                }
+                case SOFT_REWARD -> {
+                  if (!constraint.evaluate(timetableSolutionTimefoldInstance.getResources())) {
+                    soft--;
+                  }
+                }
+                default -> throw new IllegalStateException();
               }
             }
             return HardSoftScore.of(hard, soft);

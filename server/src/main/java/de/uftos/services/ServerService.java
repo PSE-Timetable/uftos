@@ -1,6 +1,6 @@
 package de.uftos.services;
 
-import de.uftos.dto.ServerStatisticsResponseDto;
+import de.uftos.dto.responsedtos.ServerStatisticsResponseDto;
 import de.uftos.entities.Server;
 import de.uftos.entities.TimetableMetadata;
 import de.uftos.repositories.database.RoomRepository;

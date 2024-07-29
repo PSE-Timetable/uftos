@@ -1,4 +1,4 @@
-package de.uftos.dto;
+package de.uftos.dto.responsedtos;
 
 import de.uftos.entities.Grade;
 import de.uftos.entities.Lesson;

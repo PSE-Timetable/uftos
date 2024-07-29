@@ -2,8 +2,8 @@ package de.uftos.repositories.ucdl;
 
 import de.uftos.dto.ucdl.ConstraintDefinitionDto;
 import de.uftos.dto.ucdl.ParsingResponse;
+import de.uftos.repositories.ucdl.parser.javacc.ParseException;
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.HashMap;
 
 /**
@@ -46,4 +46,14 @@ public interface UcdlRepository {
    * @throws ParseException when the file can't be parsed.
    */
   HashMap<String, ConstraintDefinitionDto> getConstraints() throws ParseException, IOException;
+
+  /**
+   * Parses the given String and returns all constraint definitions contained by it.
+   *
+   * @param input the String which gets parsed.
+   * @return a HashMap which allows for finding constraint definitions by their name.
+   * @throws ParseException when the String can't be parsed.
+   */
+  HashMap<String, ConstraintDefinitionDto> getConstraintsFromString(String input)
+      throws ParseException, IOException;
 }

@@ -1,7 +1,7 @@
 package de.uftos.controller;
 
-import de.uftos.dto.LessonRequestDto;
-import de.uftos.dto.LessonResponseDto;
+import de.uftos.dto.requestdtos.LessonRequestDto;
+import de.uftos.dto.responsedtos.LessonResponseDto;
 import de.uftos.entities.Lesson;
 import de.uftos.services.LessonService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -396,9 +396,18 @@
       },
       "put" : {
         "operationId" : "setUcdlFile",
+        "parameters" : [ {
+          "in" : "query",
+          "name" : "force",
+          "required" : false,
+          "schema" : {
+            "type" : "boolean",
+            "default" : false
+          }
+        } ],
         "requestBody" : {
           "content" : {
-            "application/json" : {
+            "multipart/form-data" : {
               "schema" : {
                 "type" : "object",
                 "properties" : {

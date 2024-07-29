@@ -8,7 +8,7 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
-import de.uftos.dto.LessonsCountRequestDto;
+import de.uftos.dto.requestdtos.LessonsCountRequestDto;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.http.ContentType;
 import java.util.Collections;

@@ -1,6 +1,6 @@
 package de.uftos.entities;
 
-import de.uftos.dto.LessonsCountRequestDto;
+import de.uftos.dto.requestdtos.LessonsCountRequestDto;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
