@@ -49,17 +49,17 @@
   <div class="mb-8 flex flex-row gap ì-2 justify-between text-white font-medium text-2xl items-center">
     <div class="flex flex-row">
       <Button
-      on:click={async () => {
-        await goto('./');
-      }}
-      variant="secondary"
-      size="icon"
-      class="rounded-full bg-accent mr-6"
-    >
-      <ChevronLeft class="h-5 w-5 text-white" />
-    </Button>
+        on:click={async () => {
+          await goto('./');
+        }}
+        variant="secondary"
+        size="icon"
+        class="rounded-full bg-accent mr-6"
+      >
+        <ChevronLeft class="h-5 w-5 text-white" />
+      </Button>
 
-    <LinkBar />
+      <LinkBar />
     </div>
 
     <DropdownMenu.Root>
