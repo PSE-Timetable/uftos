@@ -45,6 +45,7 @@
   export let sortable = true;
   export let addButton = true;
   export let pageSize = 15;
+  export let editAvailable = true;
   let serverSidePagination:boolean = $tableData.length <= pageSize;
   let allItems:DataItem[] = $tableData;
 
@@ -114,7 +115,7 @@
             deleteEntry,
             getData,
             additionalId,
-            editAvailable: additionalId === '',
+            editAvailable,
           });
         },
         plugins: {
