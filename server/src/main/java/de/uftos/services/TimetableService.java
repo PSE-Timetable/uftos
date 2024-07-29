@@ -462,6 +462,11 @@ public class TimetableService {
   }
 
   private Timetable getSolution(TimetableSolutionDto solution) {
+    if (solution.hardScore() < 0) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          (-solution.hardScore()) + " hard constraints could not be satisfied");
+    }
+
     HashMap<String, LessonProblemDto> lessons = new HashMap<>();
 
     for (LessonProblemDto lesson : solution.lessons()) {

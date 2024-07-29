@@ -92,11 +92,7 @@ public class SolverRepositoryImpl implements SolverRepository {
 
       Solver<TimetableSolutionTimefoldInstance> solver = factory.buildSolver();
 
-      TimetableSolutionTimefoldInstance solved = solver.solve(solution);
-
-      System.out.println(solved.getScore());
-
-      return getTimetableInstanceFromSolutionInstance(solved);
+      return getTimetableInstanceFromSolutionInstance(solver.solve(solution));
     };
 
     BlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<>(1);
@@ -236,7 +232,8 @@ public class SolverRepositoryImpl implements SolverRepository {
       );
     }
 
-    return new TimetableSolutionDto(lessons);
+    return new TimetableSolutionDto(lessons, solution.getScore().hardScore(),
+        solution.getScore().softScore());
 
   }
 

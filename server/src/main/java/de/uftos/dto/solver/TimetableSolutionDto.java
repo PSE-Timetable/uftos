@@ -8,6 +8,8 @@ import java.util.List;
  * @param lessons all lessons of the timetable.
  */
 public record TimetableSolutionDto(
-    List<LessonProblemDto> lessons
+    List<LessonProblemDto> lessons,
+    int hardScore,
+    int softScore
 ) {
 }
