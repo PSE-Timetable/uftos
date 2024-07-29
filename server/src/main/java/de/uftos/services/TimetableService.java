@@ -1,5 +1,6 @@
 package de.uftos.services;
 
+import de.uftos.dto.requestdtos.TimetableRequestDto;
 import de.uftos.dto.solver.ConstraintInstanceDto;
 import de.uftos.dto.solver.GradeProblemDto;
 import de.uftos.dto.solver.LessonProblemDto;
@@ -28,7 +29,6 @@ import de.uftos.entities.Subject;
 import de.uftos.entities.Tag;
 import de.uftos.entities.Teacher;
 import de.uftos.entities.Timeslot;
-import de.uftos.dto.requestdtos.TimetableRequestDto;
 import de.uftos.entities.Timetable;
 import de.uftos.repositories.database.ConstraintSignatureRepository;
 import de.uftos.repositories.database.CurriculumRepository;
