@@ -1,7 +1,7 @@
 package de.uftos.controller;
 
-import de.uftos.dto.ConstraintInstanceRequestDto;
-import de.uftos.dto.ConstraintInstancesResponseDto;
+import de.uftos.dto.requestdtos.ConstraintInstanceRequestDto;
+import de.uftos.dto.responsedtos.ConstraintInstancesResponseDto;
 import de.uftos.entities.ConstraintInstance;
 import de.uftos.entities.ConstraintSignature;
 import de.uftos.services.ConstraintInstanceService;

@@ -1,6 +1,6 @@
 package de.uftos.controller;
 
-import de.uftos.dto.ServerStatisticsResponseDto;
+import de.uftos.dto.responsedtos.ServerStatisticsResponseDto;
 import de.uftos.entities.TimetableMetadata;
 import de.uftos.services.ServerService;
 import org.springframework.beans.factory.annotation.Autowired;

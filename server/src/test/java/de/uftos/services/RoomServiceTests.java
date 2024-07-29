@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
-import de.uftos.dto.LessonResponseDto;
+import de.uftos.dto.responsedtos.LessonResponseDto;
 import de.uftos.entities.Break;
 import de.uftos.entities.Grade;
 import de.uftos.entities.Lesson;

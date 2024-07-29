@@ -1,7 +1,7 @@
 package de.uftos.services;
 
-import de.uftos.dto.LessonResponseDto;
-import de.uftos.dto.StudentGroupRequestDto;
+import de.uftos.dto.requestdtos.StudentGroupRequestDto;
+import de.uftos.dto.responsedtos.LessonResponseDto;
 import de.uftos.entities.Lesson;
 import de.uftos.entities.Student;
 import de.uftos.entities.StudentGroup;
@@ -38,7 +38,7 @@ public class StudentGroupService {
    */
   @Autowired
   public StudentGroupService(StudentGroupRepository repository, ServerRepository serverRepository,
-      StudentRepository studentRepository) {
+                             StudentRepository studentRepository) {
     this.repository = repository;
     this.serverRepository = serverRepository;
     this.studentRepository = studentRepository;
@@ -124,7 +124,7 @@ public class StudentGroupService {
     Set<Student> studentsInGroup = new HashSet<>(studentGroup.getStudents());
     studentsInGroup.addAll(studentIds.stream()
         .map(studentId -> studentRepository.findById(studentId)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST))).toList());
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST))).toList());
     studentGroup.setStudents(new ArrayList<Student>(studentsInGroup));
     return this.repository.save(studentGroup);
   }

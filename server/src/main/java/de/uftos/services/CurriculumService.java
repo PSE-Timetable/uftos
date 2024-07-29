@@ -1,9 +1,9 @@
 package de.uftos.services;
 
 
-import de.uftos.dto.CurriculumRequestDto;
-import de.uftos.dto.CurriculumResponseDto;
-import de.uftos.dto.GradeResponseDto;
+import de.uftos.dto.requestdtos.CurriculumRequestDto;
+import de.uftos.dto.responsedtos.CurriculumResponseDto;
+import de.uftos.dto.responsedtos.GradeResponseDto;
 import de.uftos.entities.Curriculum;
 import de.uftos.entities.Grade;
 import de.uftos.repositories.database.CurriculumRepository;
