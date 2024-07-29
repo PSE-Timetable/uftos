@@ -505,11 +505,15 @@ export function getUcdlFile(opts?: Oazapfts.RequestOpts) {
 }
 export function setUcdlFile(body?: {
     file: Blob;
-}, opts?: Oazapfts.RequestOpts) {
+}, { force }: {
+    force?: boolean;
+} = {}, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
         data: ParsingResponse;
-    }>("/editor", oazapfts.json({
+    }>(`/editor${QS.query(QS.explode({
+        force
+    }))}`, oazapfts.multipart({
         ...opts,
         method: "PUT",
         body

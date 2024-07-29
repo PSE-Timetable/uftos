@@ -19,50 +19,61 @@ public enum PredefinedConstraint {
             default_type: HARD_PENALIZE
             parameter:
             definition: >-
+              if (false) {
+                return true
+              }
               return false
           """,
       new ArrayList<>()
   ),
+
   TEACHER_COLLISION("teacherCollision",
       """
           teacherCollision:
-            description: "Lehrer können nicht {lesson1} und {lesson2} unterrichten, sofern die Unterrichtseinheiten zeitgleich stattfinden."
+            description: "Lehrer {teacher} kann nicht mehrere Unterrichtseinheiten zeitgleich unterrichten."
             default_type: HARD_PENALIZE
             parameter:
-              lesson1: Lesson
-              lesson2: Lesson
+              teacher: Teacher
             definition: >-
-              lesson1 != lesson2 && lesson1.timeslot == lesson2.timeslot && lesson1.teacher == lesson2.teacher
+              exists (lesson1 : teacher.lessons) {
+                exists (lesson2 : teacher.lessons) {
+                  lesson1 != lesson2 && lesson1.timeslot == lesson2.timeslot && lesson1.teacher == lesson2.teacher
+                }
+              }
           """,
-      List.of(ResourceType.LESSON, ResourceType.LESSON)
+      List.of(ResourceType.TEACHER)
   ),
   STUDENT_COLLISION("studentCollision",
       """
           studentCollision:
-            description: "Schüler können nicht an {lesson1} und {lesson2} teilnehmen, sofern die Unterrichtseinheiten zeitgleich stattfinden."
+            description: "Schüler {student} kann nicht an mehreren Unterrichtseinheiten zeitgleich teilnehmen."
             default_type: HARD_PENALIZE
             parameter:
-              lesson1: Lesson
-              lesson2: Lesson
+              student: Student
             definition: >-
-              lesson1 != lesson2
-              && lesson1.timeslot == lesson2.timeslot
-              && size(lesson1.studentGroup.students[lesson2.studentGroup.students]) > 0
+              exists (lesson1 : student.studentGroups.lessons) {
+                exists (lesson2 : student.studentGroups.lessons) {
+                  lesson1 != lesson2 && lesson1.timeslot == lesson2.timeslot && lesson1.teacher == lesson2.teacher
+                }
+              }
           """,
-      List.of(ResourceType.LESSON, ResourceType.LESSON)
+      List.of(ResourceType.STUDENT)
   ),
   ROOM_COLLISION("roomCollision",
       """
           roomCollision:
-            description: "{lesson1} und {lesson2} können nicht beide im gleichen Raum stattfinden, sofern die Unterrichtseinheiten zeitgleich stattfinden.""
+            description: "In Raum {room} können nicht mehrere Unterrichtseinheiten zeitgleich unterrichtet werden."
             default_type: HARD_PENALIZE
             parameter:
-              lesson1: Lesson
-              lesson2: Lesson
+              room: Room
             definition: >-
-              lesson1 != lesson2 && lesson1.timeslot == lesson2.timeslot && lesson1.room == lesson2.room
+              exists (lesson1 : room.lessons) {
+                exists (lesson2 : room.lessons) {
+                  lesson1 != lesson2 && lesson1.timeslot == lesson2.timeslot && lesson1.teacher == lesson2.teacher
+                }
+              }
           """,
-      List.of(ResourceType.LESSON, ResourceType.LESSON)
+      List.of(ResourceType.ROOM)
   ),
   WORKING_HOURS("workingHours",
       """
@@ -84,15 +95,15 @@ public enum PredefinedConstraint {
       """
           teacherTeachesGroup:
             description: "Lehrer {teacher} unterrichtet Schülergruppe {group} in Fach {subject}."
-              default_type: SOFT_PENALIZE
-              parameter:
-                teacher: Teacher
-                group: Student-Group
-                subject: Subject
-              definition: >-
-                forall (lesson : group.lessons[this.subject == subject]) {
-                  lesson.teacher == teacher
-                }
+            default_type: SOFT_PENALIZE
+            parameter:
+              teacher: Teacher
+              group: Student-Group
+              subject: Subject
+            definition: >-
+              forall (lesson : group.lessons[this.subject == subject]) {
+                lesson.teacher == teacher
+              }
           """,
       List.of(ResourceType.TEACHER, ResourceType.STUDENT_GROUP, ResourceType.SUBJECT)
   ),

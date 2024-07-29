@@ -45,14 +45,17 @@ public class UcdlEditorController {
 
   /**
    * Maps the HTTP PUT request, to set the UCDL code, to the
-   * {@link UcdlEditorService#setUcdl(MultipartFile)} function of the editor service.
+   * {@link UcdlEditorService#setUcdl(MultipartFile, boolean)} function of the editor service.
    *
-   * @param file the file which contains the new UCDL code.
+   * @param file  the file which contains the new UCDL code.
+   * @param force if the ucdl file should be forcefully updated, ignoring inconsistencies. Defaults to false.
    * @return a response whether the file could be parsed and saved successfully or not.
    */
-  @PutMapping()
-  public ParsingResponse setUcdlFile(@RequestParam(value = "file") MultipartFile file) {
-    return this.editorService.setUcdl(file);
+  @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ParsingResponse setUcdlFile(@RequestParam(value = "file") MultipartFile file,
+                                     @RequestParam(value = "force", required = false, defaultValue = "false")
+                                     boolean force) {
+    return this.editorService.setUcdl(file, force);
   }
 
   /**
