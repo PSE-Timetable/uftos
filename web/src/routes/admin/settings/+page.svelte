@@ -18,21 +18,27 @@
   let metadata: TimetableMetadata = data.metadata;
 
   let timeslotList: { from: string; to: string; relativeIndex: number; type: Type }[] = generateTimetable(metadata);
+  let trigger: boolean;
 
-  $: timeslotList = generateTimetable(metadata);
+  $: {
+    timeslotList = generateTimetable(metadata);
+    // TODO this is a temporary fix, please find a better solution
+    //  for some reason a rerender isn't triggered when the breaks are updated
+    console.log(trigger);
+  }
 
   function addBreakAndUpdate(metadata: TimetableMetadata, afterSlot: number, length: number, long?: boolean) {
     changed = true;
     metadata.breaks.push({ afterSlot, length, long });
     metadata.breaks.sort((a, b) => a.afterSlot - b.afterSlot);
-    metadata = metadata;
+    trigger = !trigger;
   }
 
   function removeBreakAndUpdate(metadata: TimetableMetadata, index: number) {
     changed = true;
     metadata.breaks.splice(index, 1);
     metadata.breaks.sort((a, b) => a.afterSlot - b.afterSlot);
-    metadata = metadata;
+    trigger = !trigger;
   }
 
   function setPauseLength(metadata: TimetableMetadata, index: number, event: Event) {
@@ -41,8 +47,8 @@
       return;
     }
     changed = true;
+    trigger = !trigger;
     metadata.breaks[index].length = Number.parseInt(target.value);
-    metadata = metadata;
   }
 
   function generateTimetable(metadata: TimetableMetadata) {
