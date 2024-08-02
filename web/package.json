@@ -53,7 +53,7 @@
     "bits-ui": "^0.21.12",
     "clsx": "^2.1.1",
     "lodash-es": "^4.17.21",
-    "lucide-svelte": "^0.416.0",
+    "lucide-svelte": "^0.417.0",
     "cmdk-sv": "^0.0.18",
     "luxon": "^3.4.4",
     "mode-watcher": "^0.4.0",
