@@ -122,8 +122,9 @@ public class TimetableServiceTests {
     lesson2.setId("789");
 
     Student student1 = new Student("student123");
-    StudentGroup studentGroup = new StudentGroup("group123");
     Grade grade = new Grade("grade123");
+    StudentGroup studentGroup = new StudentGroup("group123");
+    studentGroup.setGrades(List.of(grade));
     Teacher teacher = new Teacher("teacher123");
     Subject subject = new Subject("subject123");
     Room room = new Room("room123");
