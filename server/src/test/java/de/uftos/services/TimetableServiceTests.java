@@ -88,13 +88,14 @@ public class TimetableServiceTests {
   @Mock
   private UcdlRepository ucdlRepository;
   
-  private SolverRepository solverRepository = new SolverRepositoryImpl();
+  private final SolverRepository solverRepository = new SolverRepositoryImpl();
   @Mock
   private ServerRepository serverRepository;
 
   @InjectMocks
   private TimetableService timetableService;
 
+  @SuppressWarnings("checkstyle:VariableDeclarationUsageDistance")
   @BeforeEach
   void setUp() throws ParseException, IOException {
     timetableService = new TimetableService(
@@ -140,7 +141,7 @@ public class TimetableServiceTests {
 
     ConstraintSignature constraintSignature = new ConstraintSignature();
     constraintSignature.setParameters(List.of(constraintParameter));
-    
+
     when(timetableRepository.findAll()).thenReturn(List.of(timetable));
     when(timetableRepository.findById("timetable123")).thenReturn(Optional.of(timetable));
 
@@ -177,7 +178,8 @@ public class TimetableServiceTests {
     when(ucdlRepository.getConstraints()).thenReturn(new HashMap<>());
 
     Break[] breaks = new Break[0];
-    when(serverRepository.findAll()).thenReturn(List.of(new Server(new TimetableMetadata(45, 10, "07:45", breaks), "2024")));
+    Server server = new Server(new TimetableMetadata(45, 10, "07:45", breaks), "2024");
+    when(serverRepository.findAll()).thenReturn(List.of(server));
   }
 
   @Test
