@@ -68,7 +68,11 @@
                   <button
                     type="button"
                     on:click={() => {
-                      lessonCount.count ? lessonCount.count-- : (lessonCount.count = 0);
+                      if (lessonCount.count) {
+                        lessonCount.count--;
+                      } else {
+                        lessonCount.count = 0;
+                      }
                     }}
                     ><CircleMinus />
                   </button>
@@ -76,7 +80,11 @@
                   <button
                     type="button"
                     on:click={() => {
-                      lessonCount.count ? lessonCount.count++ : (lessonCount.count = 1);
+                      if (lessonCount.count) {
+                        lessonCount.count++;
+                      } else {
+                        lessonCount.count = 1;
+                      }
                     }}
                     ><CirclePlus />
                   </button>
