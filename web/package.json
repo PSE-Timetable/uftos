@@ -17,6 +17,8 @@
     "test:unit": "vitest"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.1.0",
+    "@eslint/js": "^9.8.0",
     "@playwright/test": "^1.28.1",
     "@sveltejs/adapter-auto": "^3.0.0",
     "@sveltejs/kit": "^2.0.0",
@@ -31,6 +33,7 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-svelte": "^2.35.1",
     "eslint-plugin-unicorn": "^55.0.0",
+    "globals": "^15.9.0",
     "postcss": "^8.4.38",
     "prettier": "^3.1.1",
     "prettier-plugin-organize-imports": "^4.0.0",
@@ -52,9 +55,9 @@
     "@oazapfts/runtime": "^1.0.3",
     "bits-ui": "^0.21.12",
     "clsx": "^2.1.1",
+    "cmdk-sv": "^0.0.18",
     "lodash-es": "^4.17.21",
     "lucide-svelte": "^0.418.0",
-    "cmdk-sv": "^0.0.18",
     "luxon": "^3.4.4",
     "mode-watcher": "^0.4.0",
     "monaco-editor": "^0.50.0",
