@@ -54,9 +54,9 @@
       <Button
         on:click={async () => {
           let subjectIds = selectedSubjects.filter((subject) => subject.selected).map((subject) => subject.id);
-          createEntity
-            ? await create(values, selectedTagIds, subjectIds)
-            : await update(values, selectedTagIds, subjectIds);
+          await (createEntity
+            ? create(values, selectedTagIds, subjectIds)
+            : update(values, selectedTagIds, subjectIds));
           await goto('./');
         }}
         class="max-w-52 bg-accent px-16 py-5 text-white hover:bg-accent flex"
