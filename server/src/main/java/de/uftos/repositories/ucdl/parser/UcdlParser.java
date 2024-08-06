@@ -49,6 +49,7 @@ public class UcdlParser {
   }
 
   //parses one full definition
+  @SuppressWarnings("checkstyle:VariableDeclarationUsageDistance")
   private static ConstraintDefinitionDto parseConstraintDefinition(String name,
                                                                    JsonNode constraintDefinition)
       throws ParseException {
