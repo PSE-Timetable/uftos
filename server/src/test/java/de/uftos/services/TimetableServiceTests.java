@@ -51,6 +51,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
@@ -61,6 +62,7 @@ import org.springframework.web.server.ResponseStatusException;
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class TimetableServiceTests {
 
+  @Spy
   private final SolverRepository solverRepository = new SolverRepositoryImpl();
   @Mock
   private TimetableRepository timetableRepository;
@@ -97,23 +99,6 @@ public class TimetableServiceTests {
   @SuppressWarnings("checkstyle:VariableDeclarationUsageDistance")
   @BeforeEach
   void setUp() throws ParseException, IOException {
-    timetableService = new TimetableService(
-        timetableRepository,
-        curriculumRepository,
-        constraintSignatureRepository,
-        gradeRepository,
-        lessonRepository,
-        roomRepository,
-        studentGroupRepository,
-        studentRepository,
-        subjectRepository,
-        tagRepository,
-        teacherRepository,
-        timeslotRepository,
-        ucdlRepository,
-        solverRepository,
-        serverRepository
-    );
     //creation of new resources
     Lesson lesson1 = new Lesson();
     lesson1.setId("456");
