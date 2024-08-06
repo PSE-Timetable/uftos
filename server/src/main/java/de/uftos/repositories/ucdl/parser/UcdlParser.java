@@ -67,6 +67,14 @@ public class UcdlParser {
 
     String description = constraintDefinition.get("description").textValue();
 
+    if (description == null) {
+      throw new ParseException("The description needs to contain a String!");
+    }
+
+    if (description.replaceAll("\\s", "").isEmpty()) {
+      throw new ParseException("The description requires a non-whitespace text!");
+    }
+
     RewardPenalize defaultType = switch (constraintDefinition.get("default_type").textValue()) {
       case "HARD_REWARD" -> RewardPenalize.HARD_REWARD;
       case "SOFT_REWARD" -> RewardPenalize.SOFT_REWARD;
@@ -81,15 +89,34 @@ public class UcdlParser {
     LinkedHashMap<String, ResourceType> parameters = new LinkedHashMap<>();
     parameters.put("this", ResourceType.TIMETABLE);
 
+
+    if (constraintDefinition.get("parameter").isValueNode()) {
+      String parameterValue = constraintDefinition.get("parameter").textValue();
+      if (parameterValue != null) {
+        throw new ParseException(
+            "Parameter " + parameterValue + " requires a type!");
+      }
+    }
+
     Iterator<Map.Entry<String, JsonNode>> iterator = constraintDefinition.get("parameter").fields();
     while (iterator.hasNext()) {
       Map.Entry<String, JsonNode> entry = iterator.next();
-      if (entry != null) {
-        parameters.put(entry.getKey(), getResourceType(entry.getValue().textValue()));
-        if (entry.getKey().equals("this")) {
-          throw new ParseException("Parameters can't be called \"this\"!");
-        }
+
+      if (entry == null) {
+        throw new IllegalStateException();
       }
+
+      if (entry.getValue() == null || entry.getValue().textValue() == null) {
+        throw new ParseException("Parameter " + entry.getKey() + " requires a type!");
+      }
+      parameters.put(entry.getKey(), getResourceType(entry.getValue().textValue()));
+      if (entry.getKey().equals("this")) {
+        throw new ParseException("Parameters can't be called \"this\"!");
+      }
+    }
+
+    if (constraintDefinition.get("definition").textValue() == null) {
+      throw new ParseException("The definition requires code!");
     }
 
     AbstractSyntaxTreeDto definition =
