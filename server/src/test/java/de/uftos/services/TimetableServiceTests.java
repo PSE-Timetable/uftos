@@ -6,9 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 import de.uftos.dto.ResourceType;
+import de.uftos.dto.Weekday;
 import de.uftos.dto.requestdtos.LessonsCountRequestDto;
 import de.uftos.dto.requestdtos.TimetableRequestDto;
-import de.uftos.dto.responsedtos.LessonResponseDto;
 import de.uftos.entities.Break;
 import de.uftos.entities.ConstraintParameter;
 import de.uftos.entities.ConstraintSignature;
@@ -42,9 +42,9 @@ import de.uftos.repositories.solver.SolverRepositoryImpl;
 import de.uftos.repositories.ucdl.UcdlRepository;
 import de.uftos.repositories.ucdl.parser.javacc.ParseException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -61,6 +61,7 @@ import org.springframework.web.server.ResponseStatusException;
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class TimetableServiceTests {
 
+  private final SolverRepository solverRepository = new SolverRepositoryImpl();
   @Mock
   private TimetableRepository timetableRepository;
   @Mock
@@ -87,8 +88,6 @@ public class TimetableServiceTests {
   private TimeslotRepository timeslotRepository;
   @Mock
   private UcdlRepository ucdlRepository;
-  
-  private final SolverRepository solverRepository = new SolverRepositoryImpl();
   @Mock
   private ServerRepository serverRepository;
 
@@ -115,6 +114,7 @@ public class TimetableServiceTests {
         solverRepository,
         serverRepository
     );
+    //creation of new resources
     Lesson lesson1 = new Lesson();
     lesson1.setId("456");
 
@@ -122,19 +122,64 @@ public class TimetableServiceTests {
     lesson2.setId("789");
 
     Student student1 = new Student("student123");
-    Grade grade = new Grade("grade123");
-    StudentGroup studentGroup = new StudentGroup("group123");
-    studentGroup.setGrades(List.of(grade));
-    Teacher teacher = new Teacher("teacher123");
-    Subject subject = new Subject("subject123");
-    Room room = new Room("room123");
-    Timeslot timeslot = new Timeslot("timeslot123");
+    student1.setTags(new ArrayList<>());
+    student1.setGroups(new ArrayList<>());
+    student1.setLastName("lastName");
+    student1.setFirstName("firstName");
 
+    Grade grade = new Grade("grade123");
+    grade.setTags(new ArrayList<>());
+    grade.setStudentGroups(new ArrayList<>());
+    grade.setName("name");
+
+    StudentGroup studentGroup = new StudentGroup("group123");
+    studentGroup.setStudents(new ArrayList<>());
+    studentGroup.setGrades(new ArrayList<>());
+    studentGroup.setLessons(new ArrayList<>());
+    studentGroup.setSubjects(new ArrayList<>());
+    studentGroup.setTags(new ArrayList<>());
+    studentGroup.setName("name");
+
+    Teacher teacher = new Teacher("teacher123");
+    teacher.setTags(new ArrayList<>());
+    teacher.setSubjects(new ArrayList<>());
+    teacher.setLessons(new ArrayList<>());
+    teacher.setFirstName("firstName");
+    teacher.setLastName("lastName");
+    teacher.setAcronym("acronym");
+
+    Subject subject = new Subject("subject123");
+    subject.setTags(new ArrayList<>());
+    subject.setLessons(new ArrayList<>());
+    subject.setTeachers(new ArrayList<>());
+    subject.setLessonsCounts(new ArrayList<>());
+    subject.setName("name");
+    subject.setColor("color");
+
+    Room room = new Room("room123");
+    room.setLessons(new ArrayList<>());
+    room.setTags(new ArrayList<>());
+    room.setName("name");
+    room.setCapacity(0);
+    room.setBuildingName("buildingName");
+
+    Timeslot timeslot = new Timeslot("timeslot123");
+    timeslot.setTags(new ArrayList<>());
+    timeslot.setLessons(new ArrayList<>());
+    timeslot.setSlot(0);
+    timeslot.setDay(Weekday.MONDAY);
+
+    //relations between resources
+    studentGroup.setGrades(List.of(grade));
+    grade.setStudentGroups(List.of(studentGroup));
+
+    //timetable
     Timetable timetable = new Timetable("timetable123");
     timetable.setLessons(List.of(lesson1, lesson2));
 
     LessonsCountRequestDto lessonsCountRequestDto = new LessonsCountRequestDto("subject123", 5);
     Curriculum curriculum = new Curriculum(grade, "Curriculum", List.of(lessonsCountRequestDto));
+    grade.setCurriculum(curriculum);
 
     ConstraintParameter constraintParameter = new ConstraintParameter();
     constraintParameter.setParameterName("teacher_param");
