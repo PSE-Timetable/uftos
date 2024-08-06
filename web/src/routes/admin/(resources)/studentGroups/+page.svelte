@@ -133,7 +133,7 @@
       </div>
       {#key reloadTable}
         <div class="w-full">
-          {#await getStudentsFromGroup('', '', 0, studentGroup.id) then initialData}
+          {#await getStudentsFromGroup('', '', 0, 5, studentGroup.id) then initialData}
             <DataTable
               {initialData}
               {columnNames}

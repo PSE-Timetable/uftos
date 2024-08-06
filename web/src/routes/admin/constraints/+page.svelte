@@ -62,7 +62,7 @@
         <ConstraintSignatureComp constraintSignature={constraint} {addInstance} />
         {#key reloadTable}
           <div class="w-full">
-            {#await getInstancesPage('', '', 0, constraint.name) then initialData}
+            {#await getInstancesPage('', '', 0, 5, constraint.name) then initialData}
               <DataTable
                 {initialData}
                 columnNames={createColumnNames(constraint)}
