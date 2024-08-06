@@ -33,6 +33,7 @@
     toSort: string,
     filter: string,
     index?: number,
+    pageSize?:number,
     additionalId?: string,
   ) => Promise<{
     data: DataItem[];
@@ -158,7 +159,7 @@
       let sortKey: SortKey = $sortKeys[0];
       let sortString;
       sortString = sortKey ? `${sortKey.id},${sortKey.order}` : '';
-      let result = await loadPage(sortString, $filterValue, $pageIndex, additionalId);
+      let result = await loadPage(sortString, $filterValue, $pageIndex, pageSize, additionalId);
       allItems = result.data;
       totalElementsStore.set(result.totalElements);
     }

@@ -34,9 +34,7 @@ export type DataItem = {
 const toast = (success: boolean, message: string) =>
   success ? _toast.success(message) : _toast.error(message, { important: true, duration: 4000 });
 
-const pageSize = 15;
-
-export async function loadStudentPage(sortString: string, filter: string, index?: number) {
+export async function loadStudentPage(sortString: string, filter: string, index?: number, pageSize?: number) {
   const pageable: Pageable = { page: index, size: pageSize, sort: [sortString] };
   try {
     const result: PageStudent = await getStudents(pageable, {
@@ -72,7 +70,7 @@ export async function deleteStudentEntry(id: string) {
   }
 }
 
-export async function loadRoomPage(sortString: string, filter: string, index?: number) {
+export async function loadRoomPage(sortString: string, filter: string, index?: number, pageSize?: number) {
   const pageable: Pageable = { page: index, size: pageSize, sort: [sortString] };
   let result: PageRoom;
   try {
@@ -173,7 +171,7 @@ export async function deleteTagEntry(id: string) {
   }
 }
 
-export async function loadTeacherPage(sortString: string, filter: string, index?: number) {
+export async function loadTeacherPage(sortString: string, filter: string, index?: number, pageSize?: number) {
   const pageable: Pageable = { page: index, size: pageSize, sort: [sortString] };
   try {
     const result: PageTeacher = await getTeachers(pageable, {
@@ -246,6 +244,7 @@ export async function getInstancesPage(
   toSort: string,
   filter: string,
   pageIndex?: number,
+  pageSize?: number,
   constraintSignatureId?: string,
 ) {
   const pageable: Pageable = { page: pageIndex, size: 5, sort: [toSort] };
@@ -282,7 +281,13 @@ export async function deleteInstance(id: string, signatureId?: string) {
   }
 }
 
-export async function getStudentsFromGroup(toSort: string, filter: string, index?: number, additionalId?: string) {
+export async function getStudentsFromGroup(
+  toSort: string,
+  filter: string,
+  index?: number,
+  pageSize?: number,
+  additionalId?: string,
+) {
   if (!additionalId) {
     toast(false, 'Beim Laden der Schüler einer Gruppe ist ein Fehler aufgetreten');
     throw error(400, { message: 'Invalid student group id' });
