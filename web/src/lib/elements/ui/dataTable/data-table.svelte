@@ -19,22 +19,20 @@
   import { ArrowDown, ArrowUp, Plus } from 'lucide-svelte';
   import { Input } from '$lib/elements/ui/input';
   import { writable, type Writable } from 'svelte/store';
-  import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import { page } from '$app/stores';
   import * as Pagination from '$lib/elements/ui/pagination';
   import type { DataItem } from '$lib/utils/resources';
+  import { toast as _toast } from 'svelte-sonner';
+  import * as AlertDialog from '$lib/elements/ui/alert-dialog';
 
-  onMount(async () => await getData());
-
-  let tableData: Writable<DataItem[]> = writable([]);
+  export let initialData: { data: DataItem[]; totalElements: number };
   export let columnNames;
   export let keys;
-  let totalElements: Writable<number> = writable(0);
   export let loadPage: (
-    index: number,
     toSort: string,
     filter: string,
+    index?: number,
     additionalId?: string,
   ) => Promise<{
     data: DataItem[];
@@ -46,11 +44,19 @@
   export let addButton = true;
   export let pageSize = 15;
   export let editAvailable = true;
-  let serverSidePagination:boolean = $tableData.length <= pageSize;
-  let allItems:DataItem[] = $tableData;
+
+  let currentPaginationPage = 1;
+  let tableData: Writable<DataItem[]> = writable(initialData.data.slice(0, pageSize));
+  let totalElementsStore: Writable<number> = writable(initialData.totalElements);
+  let allItems: DataItem[] = initialData.data;
+  let serverSide: boolean = allItems.length <= pageSize;
+  let alertOpen = false;
+
+  const toast = (success: boolean, message: string) =>
+    success ? _toast.success(message) : _toast.error(message, { important: true, duration: 4000 });
 
   const table = createTable(tableData, {
-    page: addPagination({ serverSide: true, serverItemCount: totalElements, initialPageSize: pageSize }),
+    page: addPagination({ serverSide: true, serverItemCount: totalElementsStore, initialPageSize: pageSize }),
     sort: addSortBy({ serverSide: true }),
     filter: addTableFilter({ serverSide: true }),
     hide: addHiddenColumns(),
@@ -139,57 +145,62 @@
   const { pageIndex } = pluginStates.page;
   const { filterValue } = pluginStates.filter;
   const { hiddenColumnIds } = pluginStates.hide;
-  const { selectedDataIds, allPageRowsSelected } = pluginStates.select;
+  const { selectedDataIds, allRowsSelected } = pluginStates.select;
   const { sortKeys } = pluginStates.sort;
 
   const ids = flatColumns.map((col) => col.id);
   let hideForId = Object.fromEntries(ids.map((id) => [id, true]));
 
-  $: $hiddenColumnIds = Object.entries(hideForId)
-    .filter(([, hide]) => !hide)
-    .map(([id]) => id);
-
   const hidableCols = keys.slice(1);
 
   async function getData() {
-    if (serverSidePagination) {
+    if (serverSide) {
       let sortKey: SortKey = $sortKeys[0];
-    let sortString;
-    sortString = sortKey ? `${sortKey.id},${sortKey.order}` : '';
-    let result = await loadPage($pageIndex, sortString, $filterValue, additionalId);
+      let sortString;
+      sortString = sortKey ? `${sortKey.id},${sortKey.order}` : '';
+      let result = await loadPage(sortString, $filterValue, $pageIndex, additionalId);
       allItems = result.data;
-      
-      totalElements.set(result.totalElements);
+      totalElementsStore.set(result.totalElements);
     }
-    tableData.set(allItems.slice($pageIndex * pageSize, $pageIndex * pageSize + pageSize));
-    serverSidePagination = allItems.length <= pageSize;
+    serverSide = allItems.length <= pageSize;
+    if (serverSide) {
+      tableData.set(allItems);
+    } else {
+      tableData.set(allItems.slice($pageIndex * pageSize, $pageIndex * pageSize + pageSize));
+    }
   }
 
-  async function onDeleteKey(e: KeyboardEvent) {
-    if (e.code !== 'Delete') {
-      return;
-    }
+  async function deleteSelectedEntries() {
     let promises: Promise<void>[] = [];
     Object.keys($selectedDataIds).forEach((row) => {
       promises.push(deleteEntry(row, additionalId));
     });
     await Promise.all(promises);
-    $allPageRowsSelected = false;
+    $allRowsSelected = false;
+    currentPaginationPage = Math.ceil(($totalElementsStore - promises.length) / pageSize);
+    $pageIndex = currentPaginationPage - 1;
+    serverSide = true;
+    await getData();
+    toast(true, 'Alle ausgewählten Einträge erfolgreich gelöscht.');
+  }
+
+  async function onSearch() {
+    $pageIndex = 0;
+    currentPaginationPage = 1;
+    serverSide = true;
     await getData();
   }
 
-  $: (async () => {
-    $filterValue;
-    $pageIndex;
-    await getData();
-  })();
+  $: $hiddenColumnIds = Object.entries(hideForId)
+    .filter(([, hide]) => !hide)
+    .map(([id]) => id);
 </script>
 
-<svelte:window on:keydown={onDeleteKey} />
 <div class="flex flex-col gap-6">
   <div class="flex items-center">
     <Input
       bind:value={$filterValue}
+      on:input={onSearch}
       class="max-w-sm rounded-none bg-transparent border-0 border-b-2 p-0 border-foreground"
       placeholder="Suche..."
       type="text"
@@ -284,12 +295,13 @@
       {$rows.length} Zeile(n) ausgewählt.
     </div>
     <div>
-      <Pagination.Root count={$totalElements} perPage={pageSize} let:pages let:currentPage>
+      <Pagination.Root bind:count={$totalElementsStore} perPage={pageSize} let:pages bind:page={currentPaginationPage}>
         <Pagination.Content>
           <Pagination.Item>
             <Pagination.PrevButton
-              on:click={() => {
+              on:click={async () => {
                 $pageIndex--;
+                await getData();
               }}
               class="shadow-custom bg-white"
             >
@@ -299,11 +311,7 @@
           </Pagination.Item>
           {#each pages as page (page.key)}
             {#if page.type === 'ellipsis'}
-              <Pagination.Item
-                on:click={() => {
-                  $pageIndex = page;
-                }}
-              >
+              <Pagination.Item>
                 <Pagination.Ellipsis />
               </Pagination.Item>
             {:else if page.value > 0}
@@ -311,11 +319,12 @@
               <Pagination.Item>
                 <Pagination.Link
                   {page}
-                  class=" shadow-custom bg-white text-primary {currentPage === page.value
+                  class=" shadow-custom bg-white text-primary {currentPaginationPage === page.value
                     ? 'border-2 border-foreground'
                     : ''}"
-                  on:click={() => {
+                  on:click={async () => {
                     $pageIndex = page.value - 1;
+                    await getData();
                   }}
                 >
                   {page.value}
@@ -325,8 +334,9 @@
           {/each}
           <Pagination.Item>
             <Pagination.NextButton
-              on:click={() => {
+              on:click={async () => {
                 $pageIndex++;
+                await getData();
               }}
               class="shadow-custom bg-white"
             >
@@ -339,3 +349,28 @@
     </div>
   </div>
 </div>
+
+<svelte:window
+  on:keydown={(e) => {
+    if (e.code === 'Delete' && Object.keys($selectedDataIds).length > 0) {
+      alertOpen = true;
+    }
+  }}
+/>
+<AlertDialog.Root bind:open={alertOpen}>
+  <AlertDialog.Trigger />
+  <AlertDialog.Content>
+    <AlertDialog.Header>
+      <AlertDialog.Title>Ausgewählte Einträge löschen?</AlertDialog.Title>
+      <AlertDialog.Description
+        >Sind Sie sicher, dass Sie diese Einträge löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.</AlertDialog.Description
+      >
+    </AlertDialog.Header>
+    <AlertDialog.Footer>
+      <AlertDialog.Cancel class="shadow-custom">Abbrechen</AlertDialog.Cancel>
+      <AlertDialog.Action on:click={deleteSelectedEntries} class="text-red-600 shadow-custom"
+        >Löschen</AlertDialog.Action
+      >
+    </AlertDialog.Footer>
+  </AlertDialog.Content>
+</AlertDialog.Root>

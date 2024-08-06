@@ -11,7 +11,6 @@
     getStudentGroup,
     getStudentGroups,
     getStudents,
-    removeStudentsFromStudentGroup,
     updateStudentGroup,
     type GradeResponseDto,
     type Pageable,
@@ -19,7 +18,7 @@
     type StudentGroup,
     type StudentGroupRequestDto,
   } from '$lib/sdk/fetch-client.js';
-  import { type DataItem } from '$lib/utils/resources.js';
+  import { getStudentsFromGroup, removeStudentFromGroup } from '$lib/utils/resources.js';
   import { error } from '@sveltejs/kit';
   import { Pencil, Plus, Trash2 } from 'lucide-svelte';
 
@@ -34,43 +33,9 @@
   let columnNames = ['Vorname', 'Nachname', 'Tags'];
   let keys = ['id', 'firstName', 'lastName', 'tags'];
 
-  async function getStudentsFromGroup(index: number, toSort: string, filter: string, additionalId?: string) {
-    if (!additionalId) {
-      throw error(400, { message: 'Invalid student group id' });
-    }
-    try {
-      const studentGroup = await getStudentGroup(additionalId);
-      let dataItems: DataItem[] = studentGroup.students.map(
-        (student): DataItem => ({
-          id: student.id,
-          firstName: student.firstName,
-          lastName: student.lastName,
-          tags: student.tags.map((tag) => tag.name),
-        }),
-      );
-      return {
-        data: dataItems,
-        totalElements: Number(studentGroup.students.length),
-      };
-    } catch {
-      error(400, { message: 'Could not get student from group' });
-    }
-  }
-
   async function addStudentToGroup(studentGroup: StudentGroup, studentId: string) {
     studentGroup = await addStudentsToStudentGroup(studentGroup.id, [studentId]);
     reloadTable = !reloadTable;
-  }
-
-  async function removeStudentFromGroup(studentId: string, studentGroupId?: string) {
-    if (!studentGroupId) {
-      throw error(400, { message: 'Invalid student group id' });
-    }
-    try {
-      await removeStudentsFromStudentGroup(studentGroupId, [studentId]);
-    } catch {
-      error(400, { message: 'Could not remove student from group' });
-    }
   }
 
   async function updateStudents(value: string) {
@@ -168,16 +133,19 @@
       </div>
       {#key reloadTable}
         <div class="w-full">
-          <DataTable
-            {columnNames}
-            {keys}
-            loadPage={getStudentsFromGroup}
-            deleteEntry={removeStudentFromGroup}
-            additionalId={studentGroup.id}
-            sortable={false}
-            addButton={false}
-            pageSize={5}
-          />
+          {#await getStudentsFromGroup('', '', 0, studentGroup.id) then initialData}
+            <DataTable
+              {initialData}
+              {columnNames}
+              {keys}
+              loadPage={getStudentsFromGroup}
+              deleteEntry={removeStudentFromGroup}
+              additionalId={studentGroup.id}
+              sortable={false}
+              addButton={false}
+              pageSize={5}
+            />
+          {/await}
         </div>
       {/key}
     </div>
