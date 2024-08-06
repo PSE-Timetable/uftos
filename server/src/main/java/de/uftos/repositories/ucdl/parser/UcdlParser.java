@@ -108,11 +108,10 @@ public class UcdlParser {
       case "Tag" -> ResourceType.TAG;
       case "Subject" -> ResourceType.SUBJECT;
       case "Grade" -> ResourceType.GRADE;
-      case "Lesson" -> ResourceType.LESSON;
       case "Timeslot" -> ResourceType.TIMESLOT;
       default -> throw new ParseException("Illegal resource type \"" + resourceType
           + "! Expected one of \"Student\", \"Student-Group\", \"Teacher\", \"Room\", \"Tag\","
-          + " \"Subject\", \"Grade\", \"Timeslot\", \"Lesson\"!");
+          + " \"Subject\", \"Grade\", \"Timeslot\"!");
     };
   }
 
