@@ -227,6 +227,6 @@ public class TimetableServiceTests {
   @Test
   void timetableById() {
     Timetable timetable = timetableService.getById("timetable123");
-    assertEquals("timetable123", timetable.getId());
+    assertEquals("timetable123", timetable.getName());
   }
 }
