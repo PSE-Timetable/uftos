@@ -226,6 +226,10 @@ public class UcdlEditorService {
     Queue<ResourceType> definitionParameters =
         new ArrayDeque<>(definition.parameters().sequencedValues());
 
+    if (definitionParameters.remove() != ResourceType.TIMETABLE) { //removing "this"-parameter
+      throw new IllegalStateException();
+    }
+
     if (signatureParameters.size() != definitionParameters.size()) {
       return true;
     }
