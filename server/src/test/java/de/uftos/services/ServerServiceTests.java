@@ -1,34 +1,25 @@
 package de.uftos.services;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import de.uftos.dto.responsedtos.LessonResponseDto;
 import de.uftos.dto.responsedtos.ServerStatisticsResponseDto;
 import de.uftos.entities.Break;
-import de.uftos.entities.Grade;
-import de.uftos.entities.Lesson;
-import de.uftos.entities.Room;
 import de.uftos.entities.Server;
-import de.uftos.entities.Student;
-import de.uftos.entities.StudentGroup;
-import de.uftos.entities.Subject;
-import de.uftos.entities.Teacher;
 import de.uftos.entities.TimetableMetadata;
 import de.uftos.repositories.database.RoomRepository;
 import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.StudentGroupRepository;
 import de.uftos.repositories.database.StudentRepository;
 import de.uftos.repositories.database.TeacherRepository;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -58,15 +49,6 @@ public class ServerServiceTests {
   @InjectMocks
   private ServerService serverService;
 
-  private static void assertResultArraysSizes(LessonResponseDto result, int teachers, int lessons,
-                                              int rooms, int grades) {
-    assertAll("Testing whether the sizes of the arrays are correct",
-        () -> assertEquals(teachers, result.teachers().size()),
-        () -> assertEquals(lessons, result.lessons().size()),
-        () -> assertEquals(rooms, result.rooms().size()),
-        () -> assertEquals(grades, result.grades().size())
-    );
-  }
 
   @BeforeEach
   void setUp() {
@@ -102,11 +84,18 @@ public class ServerServiceTests {
     );
   }
 
-//  @Test
-//  void setMetadata() {
-//    TimetableMetadata newMetadata = new TimetableMetadata(90, 5, "8:00", new Break[] {});
-//    serverService.setTimetableMetadata(newMetadata);
-//  }
+  @Test
+  void setMetadata() {
+    TimetableMetadata newMetadata = new TimetableMetadata(90, 5, "8:00", new Break[] {});
+    serverService.setTimetableMetadata(newMetadata);
+
+    ArgumentCaptor<Server> serverCap = ArgumentCaptor.forClass(Server.class);
+    verify(serverRepository, times(1)).save(serverCap.capture());
+
+    Server server = serverCap.getValue();
+    assertEquals(server.getTimetableMetadata(), newMetadata);
+    assertEquals(server.getCurrentYear(), "2024");
+  }
 
 
 }
