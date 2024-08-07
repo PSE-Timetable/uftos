@@ -109,7 +109,7 @@ public class RoomServiceTests {
   }
 
   @Test
-  void getByNonExistingId() {
+  void getByNonExistentId() {
     assertThrows(ResponseStatusException.class,
         () -> roomService.getById("nonExistentId"));
   }
@@ -166,7 +166,7 @@ public class RoomServiceTests {
   }
 
   @Test
-  void deleteNonExistingGroup() {
+  void deleteNonExistingRoom() {
     assertThrows(ResponseStatusException.class, () -> roomService.delete("nonExistentId"));
   }
 
