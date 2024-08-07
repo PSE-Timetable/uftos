@@ -55,5 +55,5 @@ public interface UcdlRepository {
    * @throws ParseException when the String can't be parsed.
    */
   HashMap<String, ConstraintDefinitionDto> getConstraintsFromString(String input)
-      throws ParseException, IOException;
+      throws ParseException;
 }

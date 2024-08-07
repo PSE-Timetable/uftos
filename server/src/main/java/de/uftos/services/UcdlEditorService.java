@@ -97,7 +97,7 @@ public class UcdlEditorService {
     HashMap<String, ConstraintDefinitionDto> definitions;
     try {
       definitions = ucdlRepository.getConstraintsFromString(ucdlCode);
-    } catch (ParseException | IOException e) {
+    } catch (ParseException e) {
       return new ParsingResponse(false, e.getMessage());
     }
 
