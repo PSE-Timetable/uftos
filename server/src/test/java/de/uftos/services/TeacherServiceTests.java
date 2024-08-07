@@ -3,9 +3,14 @@ package de.uftos.services;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import de.uftos.dto.requestdtos.TeacherRequestDto;
 import de.uftos.dto.responsedtos.LessonResponseDto;
 import de.uftos.entities.Break;
 import de.uftos.entities.Grade;
@@ -25,11 +30,13 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.web.server.ResponseStatusException;
 
 @SuppressWarnings("checkstyle:MissingJavadocType")
 @ExtendWith(MockitoExtension.class)
@@ -104,6 +111,75 @@ public class TeacherServiceTests {
     when(serverRepository.findAll()).thenReturn(List.of(server));
     when(teacherRepository.findById("123")).thenReturn(Optional.of(teacher1));
     when(teacherRepository.findById("456")).thenReturn(Optional.of(teacher2));
+  }
+
+  @Test
+  void getByNonExistentId() {
+    assertThrows(ResponseStatusException.class,
+        () -> teacherService.getById("nonExistentId"));
+  }
+
+  @Test
+  void createTeacher() {
+    TeacherRequestDto requestDto =
+        new TeacherRequestDto("firstName", "lastName", "FL", List.of("subjectId"),
+            List.of("tagId"));
+    teacherService.create(requestDto);
+
+    ArgumentCaptor<Teacher> teacherCap = ArgumentCaptor.forClass(Teacher.class);
+    verify(teacherRepository, times(1)).save(teacherCap.capture());
+
+    Teacher teacher = teacherCap.getValue();
+    assertNotNull(teacher);
+    assertEquals("firstName", teacher.getFirstName());
+
+    assertEquals("lastName", teacher.getLastName());
+
+    assertEquals("FL", teacher.getAcronym());
+
+    assertEquals(1, teacher.getSubjects().size());
+    assertEquals("subjectId", teacher.getSubjects().getFirst().getId());
+
+    assertEquals(1, teacher.getTags().size());
+    assertEquals("tagId", teacher.getTags().getFirst().getId());
+  }
+
+  @Test
+  void updateTeacher() {
+    TeacherRequestDto requestDto =
+        new TeacherRequestDto("newFirstName", "newLastName", "NN", List.of(),
+            List.of());
+    teacherService.update("123", requestDto);
+
+    ArgumentCaptor<Teacher> teacherCap = ArgumentCaptor.forClass(Teacher.class);
+    verify(teacherRepository, times(1)).save(teacherCap.capture());
+
+    Teacher teacher = teacherCap.getValue();
+    assertNotNull(teacher);
+    assertEquals("newFirstName", teacher.getFirstName());
+
+    assertEquals("newLastName", teacher.getLastName());
+
+    assertEquals("NN", teacher.getAcronym());
+
+    assertEquals(0, teacher.getSubjects().size());
+
+    assertEquals(0, teacher.getTags().size());
+  }
+
+  @Test
+  void deleteExistingTeacher() {
+    assertDoesNotThrow(() -> teacherService.delete("123"));
+    ArgumentCaptor<Teacher> teacherCap = ArgumentCaptor.forClass(Teacher.class);
+    verify(teacherRepository, times(1)).delete(teacherCap.capture());
+
+    Teacher teacher = teacherCap.getValue();
+    assertEquals("123", teacher.getId());
+  }
+
+  @Test
+  void deleteNonExistingTeacher() {
+    assertThrows(ResponseStatusException.class, () -> teacherService.delete("nonExistentId"));
   }
 
   @Test
