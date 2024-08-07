@@ -52,15 +52,15 @@ public class GradeController {
    * Maps the HTTP GET request for a set of grades from the database, to the
    * {@link GradeService#get(Sort, Optional, Optional) get} function of the grade service.
    *
-   * @param sort contains the sort parameters.
-   * @param name the name filter.
-   * @param tags the tags filter.
+   * @param sort   contains the sort parameters.
+   * @param search the search filter.
+   * @param tags   the tags filter.
    * @return the page of grades fitting the parameters.
    */
   @GetMapping()
-  public List<GradeResponseDto> getGrades(Sort sort, Optional<String> name,
+  public List<GradeResponseDto> getGrades(Sort sort, Optional<String> search,
                                           Optional<String[]> tags) {
-    return this.gradeService.get(sort, name, tags);
+    return this.gradeService.get(sort, search, tags);
   }
 
   /**

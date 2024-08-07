@@ -28,12 +28,11 @@ export type DataItem = {
 
 const pageSize = 15;
 
-export async function loadStudentPage(index: number, sortString: string, filter: string) {
+export async function loadStudentPage(index: number, sortString: string, search: string) {
   const pageable: Pageable = { page: index, size: pageSize, sort: [sortString] };
   try {
     const result: PageStudent = await getStudents(pageable, {
-      firstName: filter,
-      lastName: filter,
+      search,
     });
     const dataItems: DataItem[] = result.content
       ? result.content.map(
@@ -62,13 +61,12 @@ export async function deleteStudentEntry(id: string) {
   }
 }
 
-export async function loadRoomPage(index: number, sortString: string, filter: string) {
+export async function loadRoomPage(index: number, sortString: string, search: string) {
   const pageable: Pageable = { page: index, size: pageSize, sort: [sortString] };
   let result: PageRoom;
   try {
     result = await getRooms(pageable, {
-      name: filter,
-      buildingName: filter,
+      search,
     });
     const dataItems: DataItem[] = result.content
       ? result.content.map(
@@ -98,11 +96,11 @@ export async function deleteRoomEntry(id: string) {
   }
 }
 
-export async function loadSubjects(index: number, sortString: string, filter: string) {
+export async function loadSubjects(index: number, sortString: string, search: string) {
   const sort: Sort = { sort: [sortString] };
   try {
     const result = await getSubjects(sort, {
-      name: filter,
+      search,
     });
     const dataItems: DataItem[] = result.map(
       (subject): DataItem => ({
@@ -129,11 +127,11 @@ export async function deleteSubjectEntry(id: string) {
   }
 }
 
-export async function loadTags(index: number, sortString: string, filter: string) {
+export async function loadTags(index: number, sortString: string, search: string) {
   const sort: Sort = { sort: [sortString] };
   try {
     const result = await getTags(sort, {
-      name: filter,
+      search,
     });
     const dataItems: DataItem[] = result.map((tag) => ({
       id: tag.id,
@@ -157,13 +155,11 @@ export async function deleteTagEntry(id: string) {
   }
 }
 
-export async function loadTeacherPage(index: number, sortString: string, filter: string) {
+export async function loadTeacherPage(index: number, sortString: string, search: string) {
   const pageable: Pageable = { page: index, size: pageSize, sort: [sortString] };
   try {
     const result: PageTeacher = await getTeachers(pageable, {
-      firstName: filter,
-      lastName: filter,
-      acronym: filter,
+      search,
     });
     const dataItems: DataItem[] = result.content
       ? result.content.map(
@@ -194,11 +190,11 @@ export async function deleteTeacherEntry(id: string) {
   }
 }
 
-export async function loadGrades(index: number, sortString: string, filter: string) {
+export async function loadGrades(index: number, sortString: string, search: string) {
   const sort: Sort = { sort: [sortString] };
   try {
     const result: GradeResponseDto[] = await getGrades(sort, {
-      name: filter,
+      search,
     });
     const dataItems: DataItem[] = result.map((grade) => ({
       id: grade.id,

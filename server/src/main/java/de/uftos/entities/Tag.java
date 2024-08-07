@@ -1,6 +1,8 @@
 package de.uftos.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.hypersistence.utils.hibernate.type.search.PostgreSQLTSVectorType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,6 +13,7 @@ import java.util.List;
 import java.util.Objects;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 
 /**
  * The database entity for tags.
@@ -56,6 +59,11 @@ public class Tag {
   @JsonIgnore
   @ManyToMany(mappedBy = "tags")
   private List<Timeslot> timeslots;
+
+  @JsonIgnore
+  @Type(PostgreSQLTSVectorType.class)
+  @Column(name = "search_vector", columnDefinition = "tsvector", insertable = false, updatable = false)
+  private String searchVector;
 
   /**
    * Creates a new tag.
