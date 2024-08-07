@@ -1,6 +1,8 @@
 package de.uftos.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.hypersistence.utils.hibernate.type.search.PostgreSQLTSVectorType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -17,6 +19,7 @@ import java.util.Objects;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.hibernate.annotations.Type;
 
 /**
  * The database entity for student groups.
@@ -64,6 +67,11 @@ public class StudentGroup {
       inverseJoinColumns = @JoinColumn(name = "subjects_id"))
   private List<Subject> subjects;
 
+  @JsonIgnore
+  @Type(PostgreSQLTSVectorType.class)
+  @Column(name = "search_vector", columnDefinition = "tsvector", insertable = false, updatable = false)
+  private String searchVector;
+
   /**
    * Creates a new student group.
    * Used if the ID of the student group is known.
@@ -90,8 +98,6 @@ public class StudentGroup {
     this.tags = tagIds.stream().map(Tag::new).toList();
     this.subjects = subjectsIds.stream().map(Subject::new).toList();
   }
-
-
 
 
   @Override

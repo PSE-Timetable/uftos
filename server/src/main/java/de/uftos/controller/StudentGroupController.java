@@ -56,14 +56,14 @@ public class StudentGroupController {
    * function of the student group service.
    *
    * @param pageable contains the parameters for the page.
-   * @param name     the name filter.
+   * @param search   the search filter.
    * @param tags     the tags filter.
    * @return the page of student groups fitting the parameters.
    */
   @GetMapping()
-  public Page<StudentGroupResponseDto> getStudentGroups(Pageable pageable, Optional<String> name,
-                                                        Optional<String[]> tags) {
-    return this.studentGroupService.get(pageable, name, tags);
+  public Page<StudentGroupResponseDto> getStudentGroups(Pageable pageable, Optional<String> search,
+                                             Optional<String[]> tags) {
+    return this.studentGroupService.get(pageable, search, tags);
   }
 
   /**

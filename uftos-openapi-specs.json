@@ -507,7 +507,7 @@
           }
         }, {
           "in" : "query",
-          "name" : "name",
+          "name" : "search",
           "required" : false,
           "schema" : {
             "type" : "string"
@@ -811,14 +811,7 @@
           }
         }, {
           "in" : "query",
-          "name" : "name",
-          "required" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "in" : "query",
-          "name" : "buildingName",
+          "name" : "search",
           "required" : false,
           "schema" : {
             "type" : "string"
@@ -1053,7 +1046,7 @@
           }
         }, {
           "in" : "query",
-          "name" : "name",
+          "name" : "search",
           "required" : false,
           "schema" : {
             "type" : "string"
@@ -1294,14 +1287,7 @@
           }
         }, {
           "in" : "query",
-          "name" : "firstName",
-          "required" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "in" : "query",
-          "name" : "lastName",
+          "name" : "search",
           "required" : false,
           "schema" : {
             "type" : "string"
@@ -1447,7 +1433,7 @@
           }
         }, {
           "in" : "query",
-          "name" : "name",
+          "name" : "search",
           "required" : false,
           "schema" : {
             "type" : "string"
@@ -1586,7 +1572,7 @@
           }
         }, {
           "in" : "query",
-          "name" : "name",
+          "name" : "search",
           "required" : false,
           "schema" : {
             "type" : "string"
@@ -1725,21 +1711,7 @@
           }
         }, {
           "in" : "query",
-          "name" : "firstName",
-          "required" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "in" : "query",
-          "name" : "lastName",
-          "required" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "in" : "query",
-          "name" : "acronym",
+          "name" : "search",
           "required" : false,
           "schema" : {
             "type" : "string"
