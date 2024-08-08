@@ -43,7 +43,6 @@ export const load = (async () => {
       grade.curriculumId = result.id;
     }
   }
-  console.log(grades);
 
   return {
     grades,

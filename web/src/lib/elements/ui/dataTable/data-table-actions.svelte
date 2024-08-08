@@ -4,15 +4,13 @@
   import Button from '$lib/elements/ui/button/button.svelte';
   import { goto } from '$app/navigation';
   import { page } from '$app/stores';
-  import * as AlertDialog from '$lib/elements/ui/alert-dialog';
+  import { toast } from '$lib/utils/resources';
 
   export let id: string;
   export let deleteEntry: (id: string, additionalId?: string) => Promise<void>;
   export let getData: () => Promise<void>;
   export let editAvailable: boolean;
   export let additionalId: string;
-
-  let alertOpen: boolean = false;
 </script>
 
 <DropdownMenu.Root>
@@ -31,28 +29,15 @@
       <DropdownMenu.Item on:click={() => goto(`${$page.url}/${id}`)}>Editieren</DropdownMenu.Item>
     {/if}
     <DropdownMenu.Separator />
-    <DropdownMenu.Item class="text-red-600" on:click={() => (alertOpen = true)}>Löschen</DropdownMenu.Item>
+    <DropdownMenu.Item
+      class="text-red-600"
+      on:click={async () => {
+        await deleteEntry(id, additionalId);
+        await getData();
+        toast(true, 'Eintrag erfolgreich gelöscht.');
+      }}
+    >
+      Löschen
+    </DropdownMenu.Item>
   </DropdownMenu.Content>
 </DropdownMenu.Root>
-
-<AlertDialog.Root bind:open={alertOpen}>
-  <AlertDialog.Trigger />
-  <AlertDialog.Content>
-    <AlertDialog.Header>
-      <AlertDialog.Title>Eintrag löschen?</AlertDialog.Title>
-      <AlertDialog.Description
-        >Sind Sie sicher, dass Sie diesen Eintrag löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.</AlertDialog.Description
-      >
-    </AlertDialog.Header>
-    <AlertDialog.Footer>
-      <AlertDialog.Cancel class="shadow-custom">Abbrechen</AlertDialog.Cancel>
-      <AlertDialog.Action
-        on:click={async () => {
-          await deleteEntry(id, additionalId);
-          await getData();
-        }}
-        class="text-red-600 shadow-custom">Löschen</AlertDialog.Action
-      >
-    </AlertDialog.Footer>
-  </AlertDialog.Content>
-</AlertDialog.Root>

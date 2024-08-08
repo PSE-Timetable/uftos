@@ -22,9 +22,9 @@
   import { goto } from '$app/navigation';
   import { page } from '$app/stores';
   import * as Pagination from '$lib/elements/ui/pagination';
-  import type { DataItem } from '$lib/utils/resources';
-  import { toast as _toast } from 'svelte-sonner';
+  import { toast, type DataItem } from '$lib/utils/resources';
   import * as AlertDialog from '$lib/elements/ui/alert-dialog';
+  import { error } from '@sveltejs/kit';
 
   export let initialData: { data: DataItem[]; totalElements: number };
   export let columnNames;
@@ -33,7 +33,7 @@
     toSort: string,
     filter: string,
     index?: number,
-    pageSize?:number,
+    pageSize?: number,
     additionalId?: string,
   ) => Promise<{
     data: DataItem[];
@@ -53,9 +53,6 @@
   let serverSide: boolean = allItems.length <= pageSize;
   let alertOpen = false;
 
-  const toast = (success: boolean, message: string) =>
-    success ? _toast.success(message) : _toast.error(message, { important: true, duration: 4000 });
-
   const table = createTable(tableData, {
     page: addPagination({ serverSide: true, serverItemCount: totalElementsStore, initialPageSize: pageSize }),
     sort: addSortBy({ serverSide: true }),
@@ -66,7 +63,6 @@
 
   let columns = table.createColumns([
     table.column({
-      //first column only contains the checkboxes.
       accessor: (item) => {
         return item[keys[0]];
       },
@@ -159,9 +155,13 @@
       let sortKey: SortKey = $sortKeys[0];
       let sortString;
       sortString = sortKey ? `${sortKey.id},${sortKey.order}` : '';
-      let result = await loadPage(sortString, $filterValue, $pageIndex, pageSize, additionalId);
-      allItems = result.data;
-      totalElementsStore.set(result.totalElements);
+      try {
+        let result = await loadPage(sortString, $filterValue, $pageIndex, pageSize, additionalId);
+        allItems = result.data;
+        totalElementsStore.set(result.totalElements);
+      } catch {
+        error(400, { message: 'Could not fetch page' });
+      }
     }
     serverSide = allItems.length <= pageSize;
     if (serverSide) {
@@ -245,9 +245,10 @@
                     {#if cell.id !== 'actions' && cell.id !== 'id' && sortable}
                       <Button
                         variant="ghost"
-                        on:click={(event) => {
+                        on:click={async (event) => {
                           props.sort.toggle(event);
-                          getData();
+                          serverSide = true;
+                          await getData();
                         }}
                         class="text-white"
                       >
