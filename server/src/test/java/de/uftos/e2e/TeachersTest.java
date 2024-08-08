@@ -161,7 +161,7 @@ class TeachersTest {
   void getTeachersWithName() throws JSONException {
     given().contentType(ContentType.JSON)
         .body(generatePageJson(0, 10, Collections.emptyList()))
-        .param("firstName", FIRST_TEACHER_FIRST_NAME)
+        .param("search", FIRST_TEACHER_FIRST_NAME)
         .when()
         .get("/teachers")
         .then()

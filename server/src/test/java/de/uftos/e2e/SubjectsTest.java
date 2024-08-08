@@ -5,6 +5,7 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
+import io.restassured.filter.log.LogDetail;
 import io.restassured.http.ContentType;
 import org.json.JSONException;
 import org.junit.jupiter.api.AfterAll;
@@ -13,8 +14,8 @@ import org.junit.jupiter.api.Test;
 
 class SubjectsTest {
 
-  private static final String SUBJECT1_NAME = "Subject 1";
-  private static final String SUBJECT2_NAME = "Subject 2";
+  private static final String SUBJECT1_NAME = "Subject1";
+  private static final String SUBJECT2_NAME = "Subject2";
 
   static String subject1Id;
   static String subject2Id;
@@ -75,10 +76,11 @@ class SubjectsTest {
   @Test
   void getSubjectsWithName() throws JSONException {
     given().contentType(ContentType.JSON)
-        .param("name", "ct 1")
+        .param("search", SUBJECT1_NAME)
         .when()
         .get("/subjects")
         .then()
+        .log().ifValidationFails(LogDetail.BODY)
         .statusCode(200)
         .body("size()", equalTo(1))
         .body("[0].id", equalTo(subject1Id))

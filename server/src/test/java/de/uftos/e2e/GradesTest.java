@@ -164,7 +164,7 @@ class GradesTest {
   void getGradesWithName() {
     given().contentType(ContentType.JSON)
         .body("")
-        .param("name", FIRST_GRADE_NAME)
+        .param("search", FIRST_GRADE_NAME)
         .when()
         .get("/grades")
         .then()

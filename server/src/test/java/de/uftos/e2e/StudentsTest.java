@@ -41,20 +41,6 @@ class StudentsTest {
         .extract()
         .body().jsonPath().getString("id");
 
-    secondStudent = given().contentType(ContentType.JSON)
-        .body(generateStudentJson(SECOND_STUDENT_FIRST_NAME, SECOND_STUDENT_LAST_NAME,
-            List.of(tagId)))
-        .when()
-        .post("/students")
-        .then()
-        .statusCode(200)
-        .body("id", notNullValue())
-        .body("firstName", equalTo(SECOND_STUDENT_FIRST_NAME))
-        .body("lastName", equalTo(SECOND_STUDENT_LAST_NAME))
-        .log().ifValidationFails()
-        .extract()
-        .body().jsonPath().getString("id");
-
     firstStudent = given().contentType(ContentType.JSON)
         .body(generateStudentJson(FIRST_STUDENT_FIRST_NAME, FIRST_STUDENT_LAST_NAME,
             Collections.emptyList()))
@@ -65,6 +51,20 @@ class StudentsTest {
         .body("id", notNullValue())
         .body("firstName", equalTo(FIRST_STUDENT_FIRST_NAME))
         .body("lastName", equalTo(FIRST_STUDENT_LAST_NAME))
+        .log().ifValidationFails()
+        .extract()
+        .body().jsonPath().getString("id");
+
+    secondStudent = given().contentType(ContentType.JSON)
+        .body(generateStudentJson(SECOND_STUDENT_FIRST_NAME, SECOND_STUDENT_LAST_NAME,
+            List.of(tagId)))
+        .when()
+        .post("/students")
+        .then()
+        .statusCode(200)
+        .body("id", notNullValue())
+        .body("firstName", equalTo(SECOND_STUDENT_FIRST_NAME))
+        .body("lastName", equalTo(SECOND_STUDENT_LAST_NAME))
         .log().ifValidationFails()
         .extract()
         .body().jsonPath().getString("id");
@@ -121,7 +121,7 @@ class StudentsTest {
   void getStudentsWithName() throws JSONException {
     given().contentType(ContentType.JSON)
         .body(generatePageJson(0, 10, Collections.emptyList()))
-        .param("firstName", FIRST_STUDENT_FIRST_NAME)
+        .param("search", FIRST_STUDENT_FIRST_NAME)
         .when()
         .get("/students")
         .then()

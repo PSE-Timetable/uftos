@@ -126,7 +126,7 @@ class RoomsTest {
   void getRoomsWithName() throws JSONException {
     given().contentType(ContentType.JSON)
         .body(generatePageJson(0, 10, Collections.emptyList()))
-        .param("name", FIRST_ROOM_NAME)
+        .param("search", FIRST_ROOM_NAME)
         .when()
         .get("/rooms")
         .then()
@@ -140,7 +140,7 @@ class RoomsTest {
   void getRoomsWithBuildingName() throws JSONException {
     given().contentType(ContentType.JSON)
         .body(generatePageJson(0, 10, Collections.emptyList()))
-        .param("buildingName", FIRST_ROOM_BUILDING)
+        .param("search", FIRST_ROOM_BUILDING)
         .when()
         .get("/rooms")
         .then()
