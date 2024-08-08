@@ -95,6 +95,12 @@
             <version>1.11.0-RC1</version>
             <scope>test</scope>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.yaml/snakeyaml -->
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>2.2</version>
+        </dependency>
     </dependencies>
     <dependencyManagement>
         <dependencies>
