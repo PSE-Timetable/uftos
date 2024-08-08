@@ -63,16 +63,16 @@ public class UcdlParser {
                                                                    HashMap<String, Object> constraintDefinition)
       throws ParseException {
     if (!constraintDefinition.containsKey("description")) {
-      throw new ParseException("Constraint description of constraint " + name + " is missing!");
+      throw new ParseException("Constraint " + name + " is missing field \"description\"!");
     }
     if (!constraintDefinition.containsKey("default_type")) {
-      throw new ParseException("Default type of constraint " + name + " is missing!");
+      throw new ParseException("Constraint " + name + " is missing field \"default_type\"!");
     }
     if (!constraintDefinition.containsKey("parameter")) {
-      throw new ParseException("Parameters of constraint " + name + " are missing!");
+      throw new ParseException("Constraint " + name + " is missing field \"parameter\"!");
     }
     if (!constraintDefinition.containsKey("definition")) {
-      throw new ParseException("Definition of constraint " + name + " is missing!");
+      throw new ParseException("Constraint " + name + " is missing field \"definition\"!");
     }
     if (constraintDefinition.size() != 4) {
       throw new ParseException(
