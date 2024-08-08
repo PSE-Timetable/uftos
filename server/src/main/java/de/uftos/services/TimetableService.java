@@ -52,6 +52,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Consumer;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -167,11 +168,14 @@ public class TimetableService {
    *                                 already present in the database.
    */
   public Timetable create(TimetableRequestDto timetable) throws ResponseStatusException {
+    //todo: make consumer do stuff and change returning of this method (currently returns once the solver is done)
+    Consumer<TimetableSolutionDto> solverFinishedEvent = (solution) -> {
+    };
     Timetable timetableEntity = timetable.map();
     timetableRepository.save(timetableEntity);
     try {
       TimetableProblemDto problemInstance = getProblemInstance(timetableEntity);
-      return getSolution(solverRepository.solve(problemInstance).get());
+      return getSolution(solverRepository.solve(problemInstance, solverFinishedEvent).get());
     } catch (InterruptedException | ExecutionException | BadRequestException e) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
     }

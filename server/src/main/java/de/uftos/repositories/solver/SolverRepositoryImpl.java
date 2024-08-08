@@ -50,6 +50,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -59,7 +60,8 @@ import org.springframework.stereotype.Repository;
 public class SolverRepositoryImpl implements SolverRepository {
 
   @Override
-  public Future<TimetableSolutionDto> solve(TimetableProblemDto timetable)
+  public Future<TimetableSolutionDto> solve(TimetableProblemDto timetable,
+                                            Consumer<TimetableSolutionDto> solverFinishedEvent)
       throws IllegalArgumentException {
     Callable<TimetableSolutionDto> solveTimetable = () -> {
       TimetableSolutionTimefoldInstance solution =
@@ -92,7 +94,12 @@ public class SolverRepositoryImpl implements SolverRepository {
 
       Solver<TimetableSolutionTimefoldInstance> solver = factory.buildSolver();
 
-      return getTimetableInstanceFromSolutionInstance(solver.solve(solution));
+      TimetableSolutionDto solutionDto =
+          getTimetableInstanceFromSolutionInstance(solver.solve(solution));
+
+      solverFinishedEvent.accept(solutionDto);
+
+      return solutionDto;
     };
 
     BlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<>(1);
