@@ -23,6 +23,8 @@
     loadTeacherPage,
   } from '$lib/utils/resources';
 
+  export let data;
+
   let teacherColumnNames = ['Vorname', 'Nachname', 'Akronym', 'Fächer', 'Tags'];
   let teacherKeys = ['id', 'firstName', 'lastName', 'acronym', 'subjects', 'tags'];
   let studentColumnNames = ['Vorname', 'Nachname', 'Tags'];
@@ -103,6 +105,7 @@
       <div class="flex flex-col gap-4">
         <p class="font-bold text-2xl">Schüler</p>
         <DataTable
+          initialData={data.initialStudents}
           columnNames={studentColumnNames}
           keys={studentKeys}
           loadPage={loadStudentPage}
@@ -115,6 +118,7 @@
       <div class="flex flex-col gap-4">
         <p class="font-bold text-2xl">Lehrer</p>
         <DataTable
+          initialData={data.initialTeachers}
           columnNames={teacherColumnNames}
           keys={teacherKeys}
           loadPage={loadTeacherPage}
@@ -127,6 +131,7 @@
       <div class="flex flex-col gap-4">
         <p class="font-bold text-2xl">Stufen</p>
         <DataTable
+          initialData={data.initialGrades}
           columnNames={gradeColumnNames}
           keys={gradeKeys}
           loadPage={loadGrades}
@@ -139,6 +144,7 @@
       <div class="flex flex-col gap-4">
         <p class="font-bold text-2xl">Räume</p>
         <DataTable
+          initialData={data.initialRooms}
           columnNames={roomColumnNames}
           keys={roomKeys}
           loadPage={loadRoomPage}
