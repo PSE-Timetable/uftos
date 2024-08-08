@@ -89,7 +89,7 @@ public class UcdlParser {
 
     String description = (String) descriptionObject;
 
-    if (description.replaceAll("\\s", "").isEmpty()) {
+    if (description.isBlank()) {
       throw new ParseException("The description requires a non-whitespace text!");
     }
 
