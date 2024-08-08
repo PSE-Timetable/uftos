@@ -86,7 +86,8 @@ public class ServerServiceTests {
 
   @Test
   void setMetadata() {
-    TimetableMetadata newMetadata = new TimetableMetadata(90, 5, "8:00", new Break[] {});
+    Break testBreak = new Break(false, 0, 15);
+    TimetableMetadata newMetadata = new TimetableMetadata(90, 5, "8:00", new Break[] {testBreak});
     serverService.setTimetableMetadata(newMetadata);
 
     ArgumentCaptor<Server> serverCap = ArgumentCaptor.forClass(Server.class);
