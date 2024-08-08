@@ -21,7 +21,8 @@ public class SpecificationBuilder<T> {
    * Constructs a new {@code SpecificationBuilder} with an empty specification.
    */
   public SpecificationBuilder() {
-    specification = Specification.where(((root, query, cb) -> cb.disjunction()));
+    //specification = Specification.where(((root, query, cb) -> cb.disjunction()));
+    specification = Specification.where(null);
   }
 
   /**

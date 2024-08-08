@@ -61,7 +61,6 @@ public class TeacherController {
    */
   @GetMapping()
   public Page<Teacher> getTeachers(Pageable pageable, Optional<String> search,
-
                                    Optional<String[]> subjects, Optional<String[]> tags) {
     return this.teacherService.get(pageable, search, subjects, tags);
   }
