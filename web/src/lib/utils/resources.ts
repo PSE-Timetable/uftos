@@ -299,7 +299,7 @@ export async function getStudentsFromGroup(
         id: student.id,
         firstName: student.firstName,
         lastName: student.lastName,
-        tags: student.tags.map((tag) => tag.name),
+        tags: student.tags.map(({ name }) => name),
       }),
     );
     return {
