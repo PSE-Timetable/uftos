@@ -2,10 +2,6 @@ package de.uftos.repositories.solver;
 
 import ai.timefold.solver.core.api.solver.Solver;
 import ai.timefold.solver.core.api.solver.SolverFactory;
-import ai.timefold.solver.core.config.constructionheuristic.ConstructionHeuristicPhaseConfig;
-import ai.timefold.solver.core.config.constructionheuristic.ConstructionHeuristicType;
-import ai.timefold.solver.core.config.localsearch.LocalSearchPhaseConfig;
-import ai.timefold.solver.core.config.localsearch.decider.acceptor.LocalSearchAcceptorConfig;
 import ai.timefold.solver.core.config.score.director.ScoreDirectorFactoryConfig;
 import ai.timefold.solver.core.config.solver.SolverConfig;
 import ai.timefold.solver.core.config.solver.termination.TerminationConfig;
@@ -65,27 +61,15 @@ public class SolverRepositoryImpl implements SolverRepository {
       TimetableSolutionTimefoldInstance solution =
           getSolutionInstanceFromTimetableInstance(timetable);
 
-
-      ConstructionHeuristicPhaseConfig constructionHeuristic =
-          new ConstructionHeuristicPhaseConfig();
-      constructionHeuristic.setConstructionHeuristicType(
-          ConstructionHeuristicType.FIRST_FIT);
-
-      LocalSearchPhaseConfig localSearch = new LocalSearchPhaseConfig();
-      localSearch.setAcceptorConfig(
-          new LocalSearchAcceptorConfig().withSimulatedAnnealingStartingTemperature(
-              "5hard/100soft"));
-
-
       SolverConfig solverConfig = new SolverConfig()
           .withTerminationConfig(new TerminationConfig()
-              .withMillisecondsSpentLimit(60000L))
+              .withUnimprovedMinutesSpentLimit(1L)
+              .withBestScoreLimit("0hard/0soft"))
           .withSolutionClass(TimetableSolutionTimefoldInstance.class)
           .withEntityClassList(
               Arrays.stream(new Class<?>[] {LessonTimefoldInstance.class}).toList())
           .withScoreDirectorFactory(new ScoreDirectorFactoryConfig()
               .withEasyScoreCalculatorClass(ScoreCalculator.class));
-
 
       SolverFactory<TimetableSolutionTimefoldInstance> factory =
           new DefaultSolverFactory<>(solverConfig);
