@@ -51,13 +51,13 @@ public class TagController {
    * Maps the HTTP GET request for a set of tags from the database to the
    * {@link TagService#get(Sort, Optional) get} function of the tag service.
    *
-   * @param sort contains the sort parameters.
-   * @param name the name filter.
+   * @param sort   contains the sort parameters.
+   * @param search the search filter.
    * @return the page of tags fitting the parameters.
    */
   @GetMapping()
-  public List<Tag> getTags(Sort sort, Optional<String> name) {
-    return this.tagsService.get(sort, name);
+  public List<Tag> getTags(Sort sort, Optional<String> search) {
+    return this.tagsService.get(sort, search);
   }
 
   /**

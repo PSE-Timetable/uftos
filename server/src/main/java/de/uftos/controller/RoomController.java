@@ -50,21 +50,19 @@ public class RoomController {
 
   /**
    * Maps the HTTP GET request for a set of rooms from the database to the
-   * {@link RoomService#get(Pageable, Optional, Optional, Optional, Optional)  get} function of
+   * {@link RoomService#get(Pageable, Optional, Optional, Optional)  get} function of
    * the room service.
    *
-   * @param pageable     contains the parameters for the page.
-   * @param name         the name filter.
-   * @param buildingName the building name filter.
-   * @param capacity     the capacity filter.
-   * @param tags         the tags filter.
+   * @param pageable contains the parameters for the page.
+   * @param search   the search filter.
+   * @param capacity the capacity filter.
+   * @param tags     the tags filter.
    * @return the page of rooms fitting the parameters.
    */
   @GetMapping()
-  public Page<Room> getRooms(Pageable pageable, Optional<String> name,
-                             Optional<String> buildingName, Optional<Integer> capacity,
+  public Page<Room> getRooms(Pageable pageable, Optional<String> search, Optional<Integer> capacity,
                              Optional<String[]> tags) {
-    return this.roomService.get(pageable, name, buildingName, capacity, tags);
+    return this.roomService.get(pageable, search, capacity, tags);
   }
 
   /**
