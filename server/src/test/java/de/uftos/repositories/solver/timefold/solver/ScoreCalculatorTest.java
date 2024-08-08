@@ -1,8 +1,10 @@
 package de.uftos.repositories.solver.timefold.solver;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
+import de.uftos.dto.solver.RewardPenalize;
 import de.uftos.repositories.solver.timefold.constraints.ConstraintInstanceTimefoldInstance;
-import de.uftos.repositories.solver.timefold.domain.RoomTimefoldInstance;
-import de.uftos.repositories.solver.timefold.domain.StudentTimefoldInstance;
 import de.uftos.repositories.solver.timefold.domain.TimetableSolutionTimefoldInstance;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,33 +27,68 @@ public class ScoreCalculatorTest {
 
   @Test
   void calculateScore() {
+    List<TimetableSolutionTimefoldInstance> timetables = getTimetables();
+    HardSoftScore score;
+
+    score = new ScoreCalculator().calculateScore(timetables.removeFirst());
+    assertTrue(score.hardScore() == -1 && score.softScore() == 0);
+
+    score = new ScoreCalculator().calculateScore(timetables.removeFirst());
+    assertTrue(score.hardScore() == 0 && score.softScore() == 0);
+
+    score = new ScoreCalculator().calculateScore(timetables.removeFirst());
+    assertTrue(score.hardScore() == 0 && score.softScore() == -1);
+
+    score = new ScoreCalculator().calculateScore(timetables.removeFirst());
+    assertTrue(score.hardScore() == 0 && score.softScore() == 0);
+
+    score = new ScoreCalculator().calculateScore(timetables.removeFirst());
+    assertTrue(score.hardScore() == 0 && score.softScore() == 0);
+
+    score = new ScoreCalculator().calculateScore(timetables.removeFirst());
+    assertTrue(score.hardScore() == -1 && score.softScore() == 0);
+
+    score = new ScoreCalculator().calculateScore(timetables.removeFirst());
+    assertTrue(score.hardScore() == 0 && score.softScore() == 0);
+
+    score = new ScoreCalculator().calculateScore(timetables.removeFirst());
+    assertTrue(score.hardScore() == 0 && score.softScore() == -1);
   }
 
   private List<TimetableSolutionTimefoldInstance> getTimetables() {
     List<TimetableSolutionTimefoldInstance> timetables = new ArrayList<>();
 
-    for (ConstraintInstanceTimefoldInstance instance : getConstraintInstances()) {
-      TimetableSolutionTimefoldInstance timetable = getTimetableWithoutConstraints();
-      timetable.getConstraintInstances().add(instance);
+    for (ConstraintInstanceTimefoldInstance constraintInstance : getConstraintInstances()) {
+      TimetableSolutionTimefoldInstance timetable = new TimetableSolutionTimefoldInstance();
+      timetable.getConstraintInstances().add(constraintInstance);
+      timetables.add(timetable);
+
+      timetable = new TimetableSolutionTimefoldInstance();
+      ConstraintInstanceTimefoldInstance invertedEvaluation =
+          new ConstraintInstanceTimefoldInstance(constraintInstance.arguments(),
+              (params) -> !constraintInstance.evaluationFunction().apply(params),
+              constraintInstance.rewardPenalize());
+      timetable.getConstraintInstances().add(invertedEvaluation);
       timetables.add(timetable);
     }
 
     return timetables;
   }
 
-  private TimetableSolutionTimefoldInstance getTimetableWithoutConstraints() {
-    TimetableSolutionTimefoldInstance timetable = new TimetableSolutionTimefoldInstance();
-    RoomTimefoldInstance room1 = new RoomTimefoldInstance("room1");
-    RoomTimefoldInstance room2 = new RoomTimefoldInstance("room1");
-    RoomTimefoldInstance room3 = new RoomTimefoldInstance("room1");
-
-    StudentTimefoldInstance student1 = new StudentTimefoldInstance("student1");
-    StudentTimefoldInstance student2 = new StudentTimefoldInstance("student2");
-    StudentTimefoldInstance student3 = new StudentTimefoldInstance("student3");
-    return timetable;
-  }
-
   private List<ConstraintInstanceTimefoldInstance> getConstraintInstances() {
-    return null;
+    List<ConstraintInstanceTimefoldInstance> instances = new ArrayList<>();
+    instances.add(new ConstraintInstanceTimefoldInstance(new ArrayList<>(),
+        (params) -> true,
+        RewardPenalize.HARD_PENALIZE));
+    instances.add(new ConstraintInstanceTimefoldInstance(new ArrayList<>(),
+        (params) -> true,
+        RewardPenalize.SOFT_PENALIZE));
+    instances.add(new ConstraintInstanceTimefoldInstance(new ArrayList<>(),
+        (params) -> true,
+        RewardPenalize.HARD_REWARD));
+    instances.add(new ConstraintInstanceTimefoldInstance(new ArrayList<>(),
+        (params) -> true,
+        RewardPenalize.SOFT_REWARD));
+    return instances;
   }
 }
