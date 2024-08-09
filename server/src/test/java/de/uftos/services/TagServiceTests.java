@@ -106,7 +106,7 @@ public class TagServiceTests {
   }
 
   @Test
-  void deleteNonExistentTimeslot() {
+  void deleteNonExistentTag() {
     assertThrows(ResponseStatusException.class, () -> tagService.delete("nonExistentId"));
   }
 
