@@ -4,9 +4,14 @@ package de.uftos.services;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import de.uftos.dto.requestdtos.RoomRequestDto;
 import de.uftos.dto.responsedtos.LessonResponseDto;
 import de.uftos.entities.Break;
 import de.uftos.entities.Grade;
@@ -26,11 +31,13 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.web.server.ResponseStatusException;
 
 @SuppressWarnings("checkstyle:MissingJavadocType")
 @ExtendWith(MockitoExtension.class)
@@ -99,6 +106,68 @@ public class RoomServiceTests {
     when(serverRepository.findAll()).thenReturn(List.of(server));
     when(roomRepository.findById("123")).thenReturn(Optional.of(room1));
     when(roomRepository.findById("456")).thenReturn(Optional.of(room2));
+  }
+
+  @Test
+  void getByNonExistentId() {
+    assertThrows(ResponseStatusException.class,
+        () -> roomService.getById("nonExistentId"));
+  }
+
+  @Test
+  void createRoom() {
+    RoomRequestDto requestDto =
+        new RoomRequestDto("roomName", "buildingName", 10, List.of("tagId"));
+    roomService.create(requestDto);
+
+    ArgumentCaptor<Room> roomCap = ArgumentCaptor.forClass(Room.class);
+    verify(roomRepository, times(1)).save(roomCap.capture());
+
+    Room room = roomCap.getValue();
+    assertNotNull(room);
+    assertEquals("roomName", room.getName());
+
+    assertEquals("buildingName", room.getBuildingName());
+
+    assertEquals(10, room.getCapacity());
+
+    assertEquals(1, room.getTags().size());
+    assertEquals("tagId", room.getTags().getFirst().getId());
+  }
+
+  @Test
+  void updateRoom() {
+    RoomRequestDto requestDto =
+        new RoomRequestDto("newRoomName", "newBuildingName", 11, List.of());
+    roomService.update("123", requestDto);
+
+    ArgumentCaptor<Room> roomCap = ArgumentCaptor.forClass(Room.class);
+    verify(roomRepository, times(1)).save(roomCap.capture());
+
+    Room room = roomCap.getValue();
+    assertNotNull(room);
+    assertEquals("newRoomName", room.getName());
+
+    assertEquals("newBuildingName", room.getBuildingName());
+
+    assertEquals(11, room.getCapacity());
+
+    assertEquals(0, room.getTags().size());
+  }
+
+  @Test
+  void deleteExistingRoom() {
+    assertDoesNotThrow(() -> roomService.delete("123"));
+    ArgumentCaptor<Room> roomCap = ArgumentCaptor.forClass(Room.class);
+    verify(roomRepository, times(1)).delete(roomCap.capture());
+
+    Room room = roomCap.getValue();
+    assertEquals("123", room.getId());
+  }
+
+  @Test
+  void deleteNonExistingRoom() {
+    assertThrows(ResponseStatusException.class, () -> roomService.delete("nonExistentId"));
   }
 
   @Test
