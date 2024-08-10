@@ -105,10 +105,12 @@ public class GradeService {
    *
    * @param grade the information about the grade which is to be created.
    * @return the created grade which includes the ID that has been assigned.
-   * @throws ResponseStatusException is thrown if the ID defined in the grade parameter
-   *                                 is already present in the database.
+   * @throws ResponseStatusException is thrown if the name of the grade is blank.
    */
   public GradeResponseDto create(GradeRequestDto grade) {
+    if (grade.name().isBlank()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+    }
     return this.mapResponseDto(this.repository.save(grade.map()));
   }
 
@@ -118,8 +120,12 @@ public class GradeService {
    * @param id           the ID of the grade which is to be updated.
    * @param gradeRequest the updated grade information
    * @return the updated grade.
+   * @throws ResponseStatusException is thrown if the name of the grade is blank.
    */
   public GradeResponseDto update(String id, GradeRequestDto gradeRequest) {
+    if (gradeRequest.name().isBlank()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+    }
     Grade grade = gradeRequest.map();
     grade.setId(id);
 

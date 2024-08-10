@@ -92,10 +92,12 @@ public class RoomService {
    *
    * @param room the information about the room which is to be created.
    * @return the created room which includes the ID that was assigned.
-   * @throws ResponseStatusException is thrown if the ID defined in the room parameter is
-   *                                 already present in the database.
+   * @throws ResponseStatusException is thrown if the name, building name are blank or the capacity is 0.
    */
   public Room create(RoomRequestDto room) {
+    if (room.name().isBlank() || room.buildingName().isBlank() || room.capacity() == 0) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+    }
     return this.repository.save(room.map());
   }
 
@@ -105,8 +107,12 @@ public class RoomService {
    * @param id          the ID of the room which is to be updated.
    * @param roomRequest the updated room information.
    * @return the updated room.
+   * @throws ResponseStatusException is thrown if the name, building name are blank or the capacity is 0.
    */
   public Room update(String id, RoomRequestDto roomRequest) {
+    if (roomRequest.name().isBlank() || roomRequest.buildingName().isBlank() || roomRequest.capacity() == 0) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+    }
     Room room = roomRequest.map();
     room.setId(id);
 
