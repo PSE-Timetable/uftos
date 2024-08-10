@@ -7,6 +7,7 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
+import io.restassured.filter.log.LogDetail;
 import io.restassured.http.ContentType;
 import java.util.Collections;
 import java.util.List;
@@ -128,7 +129,7 @@ class StudentsTest {
         .statusCode(200)
         .body("totalElements", equalTo(1))
         .body("content[0].id", equalTo(firstStudent))
-        .log().ifValidationFails();
+        .log().ifValidationFails(LogDetail.BODY);
 
   }
 }
