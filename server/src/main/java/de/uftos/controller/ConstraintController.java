@@ -1,11 +1,21 @@
 package de.uftos.controller;
 
+import de.uftos.dto.ResourceType;
 import de.uftos.dto.requestdtos.ConstraintInstanceRequestDto;
 import de.uftos.dto.responsedtos.ConstraintInstancesResponseDto;
+import de.uftos.dto.solver.RewardPenalize;
+import de.uftos.entities.ConstraintArgument;
 import de.uftos.entities.ConstraintInstance;
+import de.uftos.entities.ConstraintParameter;
 import de.uftos.entities.ConstraintSignature;
+import de.uftos.entities.Teacher;
+import de.uftos.repositories.database.ConstraintSignatureRepository;
+import de.uftos.repositories.database.TeacherRepository;
 import de.uftos.services.ConstraintInstanceService;
 import de.uftos.services.ConstraintSignatureService;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,6 +38,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class ConstraintController {
   private final ConstraintSignatureService constraintSignatureService;
   private final ConstraintInstanceService constraintInstanceService;
+  private final ConstraintSignatureRepository constraintSignatureRepository;
+  private final TeacherRepository teacherRepository;
 
   /**
    * Creates the constraint controller.
@@ -37,9 +49,13 @@ public class ConstraintController {
    */
   @Autowired
   public ConstraintController(ConstraintSignatureService constraintSignatureService,
-                              ConstraintInstanceService constraintInstanceService) {
+                              ConstraintInstanceService constraintInstanceService,
+                              ConstraintSignatureRepository constraintSignatureRepository,
+                              TeacherRepository teacherRepository) {
     this.constraintSignatureService = constraintSignatureService;
     this.constraintInstanceService = constraintInstanceService;
+    this.constraintSignatureRepository = constraintSignatureRepository;
+    this.teacherRepository = teacherRepository;
   }
 
   /**
@@ -54,6 +70,46 @@ public class ConstraintController {
   @GetMapping()
   public Page<ConstraintSignature> getConstraintSignatures(Pageable pageable,
                                                            Optional<String> name) {
+    Teacher teacher1 =
+        new Teacher("Max", "Musterman", "MM", Collections.emptyList(), Collections.emptyList());
+    teacher1 = teacherRepository.save(teacher1);
+
+    Teacher teacher2 =
+        new Teacher("Alex", "Musterman", "AM", Collections.emptyList(), Collections.emptyList());
+    teacher2 = teacherRepository.save(teacher2);
+
+    ConstraintSignature signature = new ConstraintSignature();
+    signature.setName("SampleSignature");
+    signature.setDescription("This is a sample constraint signature.");
+    signature.setDefaultType(RewardPenalize.HARD_REWARD);
+
+    ConstraintParameter parameter1 = new ConstraintParameter("parameter1");
+    parameter1.setParameterType(ResourceType.TEACHER);
+
+    signature.setParameters(List.of(parameter1));
+
+    ConstraintArgument argument1 =
+        new ConstraintArgument(parameter1.getParameterName(), teacher1.getId());
+    argument1.setConstraintParameter(parameter1);
+
+    ConstraintArgument argument2 =
+        new ConstraintArgument(parameter1.getParameterName(), teacher2.getId());
+    argument2.setConstraintParameter(parameter1);
+
+    List<ConstraintArgument> arguments = Arrays.asList(argument1, argument2);
+
+    ConstraintInstance instance1 = new ConstraintInstance();
+    instance1.setSignature(signature);
+    instance1.setArguments(List.of(argument1));
+    instance1.setType(RewardPenalize.SOFT_REWARD);
+
+    ConstraintInstance instance2 = new ConstraintInstance();
+    instance2.setSignature(signature);
+    instance2.setArguments(List.of(argument2));
+    instance2.setType(RewardPenalize.SOFT_REWARD);
+
+    signature.setInstances(Arrays.asList(instance1, instance2));
+    constraintSignatureRepository.save(signature);
 
     return this.constraintSignatureService.get(pageable, name);
   }

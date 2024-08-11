@@ -23,7 +23,6 @@ import de.uftos.repositories.database.SubjectRepository;
 import de.uftos.repositories.database.TagRepository;
 import de.uftos.repositories.database.TeacherRepository;
 import de.uftos.repositories.database.TimeslotRepository;
-import de.uftos.utils.SpecificationBuilder;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +31,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -139,14 +137,14 @@ public class ConstraintInstanceService {
    */
   public ConstraintInstancesResponseDto get(String signatureId, Pageable pageable,
                                             Optional<String> argument) {
-    // TODO search for "argument" in all resources relations and get all IDs of the resources
-    //  that fulfill the filter, then merge all the IDs with the IDs of the arguments of the
-    //  instances of this specific signature. THEN return the instances that own these arguments.
-    //  GOOD LUCK!
-    Specification<ConstraintInstance> specification = new SpecificationBuilder<ConstraintInstance>()
-        .build();
+    Page<ConstraintInstance> constraintInstances;
+    if (argument.isPresent()) {
+      // TODO fix "like" search
+      constraintInstances = this.repository.findByArguments(argument.get(), pageable);
+    } else {
+      constraintInstances = this.repository.findBySignatureName(signatureId, pageable);
+    }
 
-    Page<ConstraintInstance> constraintInstances = this.repository.findAll(specification, pageable);
     Optional<ConstraintSignature> signature = this.signatureRepository.findById(signatureId);
     List<ConstraintArgumentDisplayName> displayNames =
         processConstraintInstances(constraintInstances.getContent());
