@@ -78,7 +78,7 @@ public class CurriculumService {
    */
   public CurriculumResponseDto create(CurriculumRequestDto curriculum) {
     if (curriculum.name().isBlank()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"The name of the curriculum is blank.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The name of the curriculum is blank.");
     }
     Grade grade = gradeRepository.findById(curriculum.gradeId())
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
