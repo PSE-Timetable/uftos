@@ -96,7 +96,8 @@ public class RoomService {
    */
   public Room create(RoomRequestDto room) {
     if (room.name().isBlank() || room.buildingName().isBlank() || room.capacity() == 0) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "The name, building name are blank or the capacity is 0.");
     }
     return this.repository.save(room.map());
   }
@@ -111,7 +112,8 @@ public class RoomService {
    */
   public Room update(String id, RoomRequestDto roomRequest) {
     if (roomRequest.name().isBlank() || roomRequest.buildingName().isBlank() || roomRequest.capacity() == 0) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "The name, building name are blank or the capacity is 0.");
     }
     Room room = roomRequest.map();
     room.setId(id);

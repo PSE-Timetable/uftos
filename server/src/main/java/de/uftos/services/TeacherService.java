@@ -98,7 +98,8 @@ public class TeacherService {
    */
   public Teacher create(TeacherRequestDto teacher) {
     if (teacher.firstName().isBlank() || teacher.lastName().isBlank() || teacher.acronym().isBlank()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "The first name, last name or the acronym of the teacher is blank.");
     }
     return this.repository.save(teacher.map());
   }
@@ -112,9 +113,10 @@ public class TeacherService {
    * @throws ResponseStatusException is thrown if the first name, last name or the acronym of the teacher is blank.
    */
   public Teacher update(String id, TeacherRequestDto teacherRequest) {
-    if (teacherRequest.firstName().isBlank() || teacherRequest.lastName().isBlank() ||
-        teacherRequest.acronym().isBlank()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+    if (teacherRequest.firstName().isBlank() || teacherRequest.lastName().isBlank() 
+        || teacherRequest.acronym().isBlank()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "The first name, last name or acronym of the teacher is blank.");
     }
     Teacher teacher = teacherRequest.map();
     teacher.setId(id);

@@ -163,10 +163,12 @@ public class TimetableService {
    *
    * @param timetable the information about the timetable which is to be created.
    * @return the created timetable which includes the ID that was assigned.
-   * @throws ResponseStatusException is thrown if the ID defined in the timetable parameter is
-   *                                 already present in the database.
+   * @throws ResponseStatusException is thrown if the name of the timetable is blank.
    */
   public Timetable create(TimetableRequestDto timetable) throws ResponseStatusException {
+    if (timetable.name().isBlank()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The name of the timetable is blank.");
+    }
     Timetable timetableEntity = timetable.map();
     timetableRepository.save(timetableEntity);
     try {

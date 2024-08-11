@@ -66,7 +66,7 @@ public class TagService {
    */
   public Tag create(TagRequestDto tag) {
     if (tag.tagName().isBlank()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The name of the tag is blank.");
     }
     return this.repository.save(tag.map());
   }
@@ -81,7 +81,7 @@ public class TagService {
    */
   public Tag update(String id, TagRequestDto tagRequest) {
     if (tagRequest.tagName().isBlank()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The name of the tag is blank.");
     }
     Tag tag = tagRequest.map();
     tag.setId(id);

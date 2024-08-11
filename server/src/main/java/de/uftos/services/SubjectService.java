@@ -82,7 +82,7 @@ public class SubjectService {
    */
   public Subject update(String id, SubjectRequestDto subjectRequest) {
     if (subjectRequest.name().isBlank()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The name of the subject is blank.");
     }
     Subject subject = subjectRequest.map();
     subject.setId(id);
@@ -99,7 +99,7 @@ public class SubjectService {
   public void delete(String id) {
     var subject = this.repository.findById(id);
     if (subject.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The name of the subject is blank.");
     }
 
     this.repository.delete(subject.get());

@@ -97,7 +97,7 @@ public class StudentGroupService {
    */
   public StudentGroup create(StudentGroupRequestDto group) {
     if (group.name().isBlank()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The name of the student group is blank.");
     }
     return this.repository.save(group.map());
   }
@@ -112,7 +112,7 @@ public class StudentGroupService {
    */
   public StudentGroup update(String id, StudentGroupRequestDto groupRequest) {
     if (groupRequest.name().isBlank()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The name of the student group is blank.");
     }
     StudentGroup group = groupRequest.map();
     group.setId(id);

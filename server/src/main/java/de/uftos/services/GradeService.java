@@ -109,7 +109,7 @@ public class GradeService {
    */
   public GradeResponseDto create(GradeRequestDto grade) {
     if (grade.name().isBlank()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The name of the grade is blank.");
     }
     return this.mapResponseDto(this.repository.save(grade.map()));
   }
@@ -124,7 +124,7 @@ public class GradeService {
    */
   public GradeResponseDto update(String id, GradeRequestDto gradeRequest) {
     if (gradeRequest.name().isBlank()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The name of the grade is blank.");
     }
     Grade grade = gradeRequest.map();
     grade.setId(id);

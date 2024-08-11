@@ -70,8 +70,8 @@ public class StudentService {
    * @throws ResponseStatusException is thrown if the first or last name of the student is blank.
    */
   public Student create(StudentRequestDto student) {
-    if (student.firstName().isBlank() ||student.lastName().isBlank()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+    if (student.firstName().isBlank() || student.lastName().isBlank()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The first or last name of the student is blank.");
     }
     return this.repository.save(student.map());
   }
@@ -85,8 +85,8 @@ public class StudentService {
    * @throws ResponseStatusException is thrown if the first or last name of the student is blank.
    */
   public Student update(String id, StudentRequestDto studentRequest) {
-    if (studentRequest.firstName().isBlank() ||studentRequest.lastName().isBlank()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+    if (studentRequest.firstName().isBlank() || studentRequest.lastName().isBlank()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The first or last name of the student is blank.");
     }
     Student student = studentRequest.map();
     student.setId(id);
