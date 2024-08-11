@@ -52,6 +52,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Consumer;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -167,14 +168,18 @@ public class TimetableService {
    *                                 already present in the database.
    */
   public Timetable create(TimetableRequestDto timetable) throws ResponseStatusException {
+    Consumer<TimetableSolutionDto> solverFinishedEvent = (solution) -> {
+      saveSolution(solution);
+    };
     Timetable timetableEntity = timetable.map();
     timetableRepository.save(timetableEntity);
     try {
       TimetableProblemDto problemInstance = getProblemInstance(timetableEntity);
-      return getSolution(solverRepository.solve(problemInstance).get());
+      solverRepository.solve(problemInstance, solverFinishedEvent).get();
     } catch (InterruptedException | ExecutionException | BadRequestException e) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
     }
+    return timetable.map(); //todo: change signature of method as this is a useless return value
   }
 
   @SuppressWarnings("checkstyle:VariableDeclarationUsageDistance")
@@ -461,7 +466,7 @@ public class TimetableService {
     return instances;
   }
 
-  private Timetable getSolution(TimetableSolutionDto solution) {
+  private void saveSolution(TimetableSolutionDto solution) {
     if (solution.hardScore() < 0) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
           (-solution.hardScore()) + " hard constraints could not be satisfied");
@@ -474,6 +479,10 @@ public class TimetableService {
     }
 
     List<Lesson> lessonEntities = lessonRepository.findAllById(lessons.keySet());
+
+    if (lessonEntities.size() != lessons.size()) {
+      throw new IllegalStateException();
+    }
 
     for (Lesson lessonEntity : lessonEntities) {
       LessonProblemDto lesson = lessons.get(lessonEntity.getId());
@@ -492,8 +501,6 @@ public class TimetableService {
 
       lessonRepository.save(lessonEntity);
     }
-
-    return lessonEntities.getFirst().getTimetable();
   }
 
   /**
