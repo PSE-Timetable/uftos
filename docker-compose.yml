@@ -32,6 +32,10 @@ services:
       DB_USER: uftos
       DB_PASSWORD: superSecurePassword
       DB_NAME: uftos
+      MAIL_HOST: mail.example.org
+      MAIL_USER: myUser
+      MAIL_PASSWORD: highlySecurePassword
+      MAIL_FROM: uftos@example.com
   web:
     image: uftos-web-dev:latest
     container_name: uftos-web
