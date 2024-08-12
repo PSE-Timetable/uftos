@@ -93,10 +93,12 @@ public class StudentGroupService {
    *
    * @param group the student group which is to be created.
    * @return the updated student group including the ID which has been assigned.
-   * @throws ResponseStatusException is thrown if the ID defined in the student group parameter is
-   *                                 already present in the database.
+   * @throws ResponseStatusException is thrown if the name of the group is blank.
    */
   public StudentGroup create(StudentGroupRequestDto group) {
+    if (group.name().isBlank()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The name of the student group is blank.");
+    }
     return this.repository.save(group.map());
   }
 
@@ -106,8 +108,12 @@ public class StudentGroupService {
    * @param id           the ID of the student group which is to be updated.
    * @param groupRequest the updated student information.
    * @return the updated student.
+   * @throws ResponseStatusException is thrown if the name of the group is blank.
    */
   public StudentGroup update(String id, StudentGroupRequestDto groupRequest) {
+    if (groupRequest.name().isBlank()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The name of the student group is blank.");
+    }
     StudentGroup group = groupRequest.map();
     group.setId(id);
     return this.repository.save(group);

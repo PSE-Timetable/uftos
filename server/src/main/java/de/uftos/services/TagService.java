@@ -62,10 +62,12 @@ public class TagService {
    *
    * @param tag the information about the tag which is to be created.
    * @return the created tag which includes the ID that was assigned.
-   * @throws ResponseStatusException is thrown if the ID defined in the tag parameter is
-   *                                 already present in the database.
+   * @throws ResponseStatusException is thrown if the name of the tag is blank.
    */
   public Tag create(TagRequestDto tag) {
+    if (tag.tagName().isBlank()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The name of the tag is blank.");
+    }
     return this.repository.save(tag.map());
   }
 
@@ -75,8 +77,12 @@ public class TagService {
    * @param id         the ID of the tag which is to be updated.
    * @param tagRequest the updated tag information.
    * @return the updated tag.
+   * @throws ResponseStatusException is thrown if the name of the tag is blank.
    */
   public Tag update(String id, TagRequestDto tagRequest) {
+    if (tagRequest.tagName().isBlank()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The name of the tag is blank.");
+    }
     Tag tag = tagRequest.map();
     tag.setId(id);
 
