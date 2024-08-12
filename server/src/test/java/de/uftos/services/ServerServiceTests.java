@@ -10,9 +10,9 @@ import de.uftos.dto.responsedtos.ServerStatisticsResponseDto;
 import de.uftos.entities.Break;
 import de.uftos.entities.Server;
 import de.uftos.entities.TimetableMetadata;
+import de.uftos.repositories.database.GradeRepository;
 import de.uftos.repositories.database.RoomRepository;
 import de.uftos.repositories.database.ServerRepository;
-import de.uftos.repositories.database.StudentGroupRepository;
 import de.uftos.repositories.database.StudentRepository;
 import de.uftos.repositories.database.TeacherRepository;
 import java.util.List;
@@ -41,7 +41,7 @@ public class ServerServiceTests {
   private TeacherRepository teacherRepository;
 
   @Mock
-  private StudentGroupRepository studentGroupRepository;
+  private GradeRepository gradeRepository;
 
   @Mock
   private RoomRepository roomRepository;
@@ -57,7 +57,7 @@ public class ServerServiceTests {
     when(serverRepository.findAll()).thenReturn(List.of(server));
     when(studentRepository.count()).thenReturn(1L);
     when(teacherRepository.count()).thenReturn(2L);
-    when(studentGroupRepository.count()).thenReturn(3L);
+    when(gradeRepository.count()).thenReturn(3L);
     when(roomRepository.count()).thenReturn(4L);
   }
 

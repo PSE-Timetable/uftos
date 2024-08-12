@@ -55,7 +55,7 @@ public class ServerService {
    */
   public ServerStatisticsResponseDto getStats() {
     return new ServerStatisticsResponseDto(this.studentRepository.count(),
-        this.teacherRepository.count(),this.gradeRepository.count(), this.roomRepository.count(),
+        this.teacherRepository.count(), this.gradeRepository.count(), this.roomRepository.count(),
         this.constraintSignatureRepository.count());
   }
 
