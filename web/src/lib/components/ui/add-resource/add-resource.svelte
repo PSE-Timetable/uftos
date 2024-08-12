@@ -4,6 +4,7 @@
   import { Checkbox } from '$lib/elements/ui/checkbox';
   import { Input } from '$lib/elements/ui/input';
   import type { Subject, Tag } from '$lib/sdk/fetch-client';
+    import { toast } from '$lib/utils/resources';
   import TagsMultipleSelect from '../tags-multiple-select/tags-multiple-select.svelte';
 
   export let descriptions: string[];
@@ -62,7 +63,7 @@
           for (let value of values) {
             if (!value.trim()) {
               saved = true;
-              //toast(false, 'Die Eingabefelder dürfen nicht leer sein.'); waiting for merge of PR #264
+              toast(false, 'Die Eingabefelder dürfen nicht leer sein.');
               return;
             }
           }
