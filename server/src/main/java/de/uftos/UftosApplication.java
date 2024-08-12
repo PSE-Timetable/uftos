@@ -31,7 +31,9 @@ public class UftosApplication {
   @Bean
   ApplicationRunner init(ServerRepository serverRepository) {
     return (ApplicationArguments args) -> {
-      serverRepository.deleteAll();
+      if (serverRepository.count() > 0) {
+        return;
+      }
       serverRepository.save(
           new de.uftos.entities.Server(
               new TimetableMetadata(
