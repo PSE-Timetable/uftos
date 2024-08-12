@@ -43,7 +43,7 @@ public class TagServiceTests {
 
   @BeforeEach
   void setUp() {
-    Tag tag = new Tag("", "Sehbehinderung");
+    Tag tag = new Tag("", "Visual Impairment");
     tag.setId("123");
 
     Server server =
@@ -64,13 +64,13 @@ public class TagServiceTests {
     Tag result = tagService.getById("123");
     assertNotNull(result);
     assertEquals("123", result.getId());
-    assertEquals("Sehbehinderung", result.getName());
+    assertEquals("Visual Impairment", result.getName());
   }
 
   @Test
   void createTag() {
     TagRequestDto requestDto =
-        new TagRequestDto("Rollstuhl");
+        new TagRequestDto("Wheelchair");
     tagService.create(requestDto);
 
     ArgumentCaptor<Tag> tagCap = ArgumentCaptor.forClass(Tag.class);
@@ -78,7 +78,7 @@ public class TagServiceTests {
 
     Tag tag = tagCap.getValue();
     assertNotNull(tag);
-    assertEquals("Rollstuhl", tag.getName());
+    assertEquals("Wheelchair", tag.getName());
   }
 
   @Test

@@ -126,7 +126,7 @@ public class StudentGroupServiceTests {
   @Test
   void updateGroup() {
     StudentGroupRequestDto requestDto =
-        new StudentGroupRequestDto("Ethik2", List.of("studentId0", "studentId1"), List.of(),
+        new StudentGroupRequestDto("Ethics2", List.of("studentId0", "studentId1"), List.of(),
             List.of(), List.of());
     studentGroupService.update("123", requestDto);
 
@@ -135,7 +135,7 @@ public class StudentGroupServiceTests {
 
     StudentGroup studentGroup = studentGroupCap.getValue();
     assertNotNull(studentGroup);
-    assertEquals("Ethik2", studentGroup.getName());
+    assertEquals("Ethics2", studentGroup.getName());
     assertEquals("123", studentGroup.getId());
   }
 
@@ -185,7 +185,7 @@ public class StudentGroupServiceTests {
   @BeforeEach
   void setUp() {
     StudentGroup studentGroup1 =
-        new StudentGroup("Ethik", List.of("studentId0", "studentId1"), List.of(), List.of(),
+        new StudentGroup("Ethics", List.of("studentId0", "studentId1"), List.of(), List.of(),
             List.of());
     studentGroup1.setId("123");
 
