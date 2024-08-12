@@ -64,13 +64,13 @@ public class ConstraintDefinitionFactoryTest {
 
   @Test
   void getConstraintDefinition_Implies() {
-    AbstractSyntaxTreeDto trueAST = new ValueDto<>(UcdlToken.BOOL_VALUE, true);
-    AbstractSyntaxTreeDto falseAST = new ValueDto<>(UcdlToken.BOOL_VALUE, false);
+    AbstractSyntaxTreeDto trueAst = new ValueDto<>(UcdlToken.BOOL_VALUE, true);
+    AbstractSyntaxTreeDto falseAst = new ValueDto<>(UcdlToken.BOOL_VALUE, false);
     AbstractSyntaxTreeDto root;
     ConstraintDefinitionDto dto;
     ConstraintDefinitionTimefoldInstance definition;
 
-    root = new OperatorDto(UcdlToken.IMPLIES, List.of(trueAST, trueAST));
+    root = new OperatorDto(UcdlToken.IMPLIES, List.of(trueAst, trueAst));
 
     dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
         new LinkedHashMap<>(), root);
@@ -82,7 +82,7 @@ public class ConstraintDefinitionFactoryTest {
     assertEquals(definition.name(), dto.name());
 
 
-    root = new OperatorDto(UcdlToken.IMPLIES, List.of(trueAST, falseAST));
+    root = new OperatorDto(UcdlToken.IMPLIES, List.of(trueAst, falseAst));
 
     dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
         new LinkedHashMap<>(), root);
@@ -94,7 +94,7 @@ public class ConstraintDefinitionFactoryTest {
     assertEquals(definition.name(), dto.name());
 
 
-    root = new OperatorDto(UcdlToken.IMPLIES, List.of(falseAST, trueAST));
+    root = new OperatorDto(UcdlToken.IMPLIES, List.of(falseAst, trueAst));
 
     dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
         new LinkedHashMap<>(), root);
@@ -106,7 +106,7 @@ public class ConstraintDefinitionFactoryTest {
     assertEquals(definition.name(), dto.name());
 
 
-    root = new OperatorDto(UcdlToken.IMPLIES, List.of(falseAST, falseAST));
+    root = new OperatorDto(UcdlToken.IMPLIES, List.of(falseAst, falseAst));
 
     dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
         new LinkedHashMap<>(), root);
@@ -118,7 +118,7 @@ public class ConstraintDefinitionFactoryTest {
     assertEquals(definition.name(), dto.name());
 
 
-    root = new OperatorDto(UcdlToken.IMPLIES, List.of(falseAST));
+    root = new OperatorDto(UcdlToken.IMPLIES, List.of(falseAst));
 
     dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
         new LinkedHashMap<>(), root);
@@ -128,7 +128,7 @@ public class ConstraintDefinitionFactoryTest {
         () -> ConstraintDefinitionFactory.getConstraintDefinition(finalDto));
 
 
-    root = new OperatorDto(UcdlToken.IMPLIES, List.of(falseAST, falseAST, falseAST));
+    root = new OperatorDto(UcdlToken.IMPLIES, List.of(falseAst, falseAst, falseAst));
 
     dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
         new LinkedHashMap<>(), root);
@@ -140,13 +140,13 @@ public class ConstraintDefinitionFactoryTest {
 
   @Test
   void getConstraintDefinition_Or() {
-    AbstractSyntaxTreeDto trueAST = new ValueDto<>(UcdlToken.BOOL_VALUE, true);
-    AbstractSyntaxTreeDto falseAST = new ValueDto<>(UcdlToken.BOOL_VALUE, false);
+    AbstractSyntaxTreeDto trueAst = new ValueDto<>(UcdlToken.BOOL_VALUE, true);
+    AbstractSyntaxTreeDto falseAst = new ValueDto<>(UcdlToken.BOOL_VALUE, false);
     AbstractSyntaxTreeDto root;
     ConstraintDefinitionDto dto;
     ConstraintDefinitionTimefoldInstance definition;
 
-    root = new OperatorDto(UcdlToken.OR, List.of(trueAST, trueAST));
+    root = new OperatorDto(UcdlToken.OR, List.of(trueAst, trueAst));
 
     dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
         new LinkedHashMap<>(), root);
@@ -158,7 +158,7 @@ public class ConstraintDefinitionFactoryTest {
     assertEquals(definition.name(), dto.name());
 
 
-    root = new OperatorDto(UcdlToken.OR, List.of(trueAST, falseAST));
+    root = new OperatorDto(UcdlToken.OR, List.of(trueAst, falseAst));
 
     dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
         new LinkedHashMap<>(), root);
@@ -170,7 +170,7 @@ public class ConstraintDefinitionFactoryTest {
     assertEquals(definition.name(), dto.name());
 
 
-    root = new OperatorDto(UcdlToken.OR, List.of(falseAST, trueAST));
+    root = new OperatorDto(UcdlToken.OR, List.of(falseAst, trueAst));
 
     dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
         new LinkedHashMap<>(), root);
@@ -182,7 +182,7 @@ public class ConstraintDefinitionFactoryTest {
     assertEquals(definition.name(), dto.name());
 
 
-    root = new OperatorDto(UcdlToken.OR, List.of(falseAST, falseAST));
+    root = new OperatorDto(UcdlToken.OR, List.of(falseAst, falseAst));
 
     dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
         new LinkedHashMap<>(), root);
@@ -194,7 +194,7 @@ public class ConstraintDefinitionFactoryTest {
     assertEquals(definition.name(), dto.name());
 
 
-    root = new OperatorDto(UcdlToken.OR, List.of(falseAST, falseAST, falseAST, falseAST));
+    root = new OperatorDto(UcdlToken.OR, List.of(falseAst, falseAst, falseAst, falseAst));
 
     dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
         new LinkedHashMap<>(), root);
@@ -206,7 +206,7 @@ public class ConstraintDefinitionFactoryTest {
     assertEquals(definition.name(), dto.name());
 
 
-    root = new OperatorDto(UcdlToken.OR, List.of(falseAST, falseAST, trueAST, falseAST));
+    root = new OperatorDto(UcdlToken.OR, List.of(falseAst, falseAst, trueAst, falseAst));
 
     dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
         new LinkedHashMap<>(), root);
@@ -220,13 +220,13 @@ public class ConstraintDefinitionFactoryTest {
 
   @Test
   void getConstraintDefinition_And() {
-    AbstractSyntaxTreeDto trueAST = new ValueDto<>(UcdlToken.BOOL_VALUE, true);
-    AbstractSyntaxTreeDto falseAST = new ValueDto<>(UcdlToken.BOOL_VALUE, false);
+    AbstractSyntaxTreeDto trueAst = new ValueDto<>(UcdlToken.BOOL_VALUE, true);
+    AbstractSyntaxTreeDto falseAst = new ValueDto<>(UcdlToken.BOOL_VALUE, false);
     AbstractSyntaxTreeDto root;
     ConstraintDefinitionDto dto;
     ConstraintDefinitionTimefoldInstance definition;
 
-    root = new OperatorDto(UcdlToken.AND, List.of(trueAST, trueAST));
+    root = new OperatorDto(UcdlToken.AND, List.of(trueAst, trueAst));
 
     dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
         new LinkedHashMap<>(), root);
@@ -238,7 +238,7 @@ public class ConstraintDefinitionFactoryTest {
     assertEquals(definition.name(), dto.name());
 
 
-    root = new OperatorDto(UcdlToken.AND, List.of(trueAST, falseAST));
+    root = new OperatorDto(UcdlToken.AND, List.of(trueAst, falseAst));
 
     dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
         new LinkedHashMap<>(), root);
@@ -250,7 +250,7 @@ public class ConstraintDefinitionFactoryTest {
     assertEquals(definition.name(), dto.name());
 
 
-    root = new OperatorDto(UcdlToken.AND, List.of(falseAST, trueAST));
+    root = new OperatorDto(UcdlToken.AND, List.of(falseAst, trueAst));
 
     dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
         new LinkedHashMap<>(), root);
@@ -262,7 +262,7 @@ public class ConstraintDefinitionFactoryTest {
     assertEquals(definition.name(), dto.name());
 
 
-    root = new OperatorDto(UcdlToken.AND, List.of(falseAST, falseAST));
+    root = new OperatorDto(UcdlToken.AND, List.of(falseAst, falseAst));
 
     dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
         new LinkedHashMap<>(), root);
@@ -274,7 +274,7 @@ public class ConstraintDefinitionFactoryTest {
     assertEquals(definition.name(), dto.name());
 
 
-    root = new OperatorDto(UcdlToken.AND, List.of(trueAST, trueAST, trueAST, trueAST));
+    root = new OperatorDto(UcdlToken.AND, List.of(trueAst, trueAst, trueAst, trueAst));
 
     dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
         new LinkedHashMap<>(), root);
@@ -286,7 +286,7 @@ public class ConstraintDefinitionFactoryTest {
     assertEquals(definition.name(), dto.name());
 
 
-    root = new OperatorDto(UcdlToken.AND, List.of(trueAST, trueAST, falseAST, trueAST));
+    root = new OperatorDto(UcdlToken.AND, List.of(trueAst, trueAst, falseAst, trueAst));
 
     dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
         new LinkedHashMap<>(), root);
@@ -300,13 +300,13 @@ public class ConstraintDefinitionFactoryTest {
 
   @Test
   void getConstraintDefinition_Not() {
-    AbstractSyntaxTreeDto trueAST = new ValueDto<>(UcdlToken.BOOL_VALUE, true);
-    AbstractSyntaxTreeDto falseAST = new ValueDto<>(UcdlToken.BOOL_VALUE, false);
+    AbstractSyntaxTreeDto trueAst = new ValueDto<>(UcdlToken.BOOL_VALUE, true);
+    AbstractSyntaxTreeDto falseAst = new ValueDto<>(UcdlToken.BOOL_VALUE, false);
     AbstractSyntaxTreeDto root;
     ConstraintDefinitionDto dto;
     ConstraintDefinitionTimefoldInstance definition;
 
-    root = new OperatorDto(UcdlToken.NOT, List.of(trueAST));
+    root = new OperatorDto(UcdlToken.NOT, List.of(trueAst));
 
     dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
         new LinkedHashMap<>(), root);
@@ -318,7 +318,7 @@ public class ConstraintDefinitionFactoryTest {
     assertEquals(definition.name(), dto.name());
 
 
-    root = new OperatorDto(UcdlToken.NOT, List.of(falseAST));
+    root = new OperatorDto(UcdlToken.NOT, List.of(falseAst));
 
     dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
         new LinkedHashMap<>(), root);
@@ -330,7 +330,7 @@ public class ConstraintDefinitionFactoryTest {
     assertEquals(definition.name(), dto.name());
 
 
-    root = new OperatorDto(UcdlToken.NOT, List.of(falseAST, trueAST));
+    root = new OperatorDto(UcdlToken.NOT, List.of(falseAst, trueAst));
 
     dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
         new LinkedHashMap<>(), root);
@@ -342,8 +342,8 @@ public class ConstraintDefinitionFactoryTest {
 
   @Test
   void getConstraintDefinition_ForAll() {
-    AbstractSyntaxTreeDto trueAST = new ValueDto<>(UcdlToken.BOOL_VALUE, true);
-    AbstractSyntaxTreeDto falseAST = new ValueDto<>(UcdlToken.BOOL_VALUE, false);
+    AbstractSyntaxTreeDto trueAst = new ValueDto<>(UcdlToken.BOOL_VALUE, true);
+    AbstractSyntaxTreeDto falseAst = new ValueDto<>(UcdlToken.BOOL_VALUE, false);
     AbstractSyntaxTreeDto root;
     ConstraintDefinitionDto dto;
     ConstraintDefinitionTimefoldInstance definition;
@@ -355,14 +355,14 @@ public class ConstraintDefinitionFactoryTest {
     AbstractSyntaxTreeDto attribute = new ValueDto<>(UcdlToken.ATTRIBUTE, "studentGroups");
     AbstractSyntaxTreeDto set =
         new SetDto(UcdlToken.RESOURCE_SET, ResourceType.STUDENT_GROUP, setName, List.of(attribute));
-    AbstractSyntaxTreeDto ofAST = new OperatorDto(UcdlToken.OF, List.of(variableName, set));
+    AbstractSyntaxTreeDto ofAst = new OperatorDto(UcdlToken.OF, List.of(variableName, set));
 
     LinkedHashMap<String, ResourceType> parameters = new LinkedHashMap<>();
     parameters.put(student.getId(), ResourceType.STUDENT);
     List<ResourceTimefoldInstance> arguments = new ArrayList<>(List.of(student));
 
 
-    root = new QuantifierDto(UcdlToken.FOR_ALL, ofAST, trueAST);
+    root = new QuantifierDto(UcdlToken.FOR_ALL, ofAst, trueAst);
 
     dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
         parameters, root);
@@ -374,7 +374,7 @@ public class ConstraintDefinitionFactoryTest {
     assertEquals(definition.name(), dto.name());
 
 
-    root = new QuantifierDto(UcdlToken.FOR_ALL, ofAST, falseAST);
+    root = new QuantifierDto(UcdlToken.FOR_ALL, ofAst, falseAst);
 
     dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
         parameters, root);
@@ -388,7 +388,7 @@ public class ConstraintDefinitionFactoryTest {
     student.getStudentGroupList().add(null);
     student.getStudentGroupList().add(null);
 
-    root = new QuantifierDto(UcdlToken.FOR_ALL, ofAST, trueAST);
+    root = new QuantifierDto(UcdlToken.FOR_ALL, ofAst, trueAst);
 
     dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
         parameters, root);
@@ -400,7 +400,7 @@ public class ConstraintDefinitionFactoryTest {
     assertEquals(definition.name(), dto.name());
 
 
-    root = new QuantifierDto(UcdlToken.FOR_ALL, ofAST, falseAST);
+    root = new QuantifierDto(UcdlToken.FOR_ALL, ofAst, falseAst);
 
     dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
         parameters, root);
@@ -412,8 +412,8 @@ public class ConstraintDefinitionFactoryTest {
     assertEquals(definition.name(), dto.name());
 
 
-    ofAST = new OperatorDto(UcdlToken.OF, List.of(trueAST, trueAST, trueAST));
-    root = new QuantifierDto(UcdlToken.FOR_ALL, ofAST, falseAST);
+    ofAst = new OperatorDto(UcdlToken.OF, List.of(trueAst, trueAst, trueAst));
+    root = new QuantifierDto(UcdlToken.FOR_ALL, ofAst, falseAst);
     dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
         parameters, root);
 
@@ -426,8 +426,8 @@ public class ConstraintDefinitionFactoryTest {
 
   @Test
   void getConstraintDefinition_Exists() {
-    AbstractSyntaxTreeDto trueAST = new ValueDto<>(UcdlToken.BOOL_VALUE, true);
-    AbstractSyntaxTreeDto falseAST = new ValueDto<>(UcdlToken.BOOL_VALUE, false);
+    AbstractSyntaxTreeDto trueAst = new ValueDto<>(UcdlToken.BOOL_VALUE, true);
+    AbstractSyntaxTreeDto falseAst = new ValueDto<>(UcdlToken.BOOL_VALUE, false);
     AbstractSyntaxTreeDto root;
     ConstraintDefinitionDto dto;
     ConstraintDefinitionTimefoldInstance definition;
@@ -439,14 +439,14 @@ public class ConstraintDefinitionFactoryTest {
     AbstractSyntaxTreeDto attribute = new ValueDto<>(UcdlToken.ATTRIBUTE, "studentGroups");
     AbstractSyntaxTreeDto set =
         new SetDto(UcdlToken.RESOURCE_SET, ResourceType.STUDENT_GROUP, setName, List.of(attribute));
-    AbstractSyntaxTreeDto ofAST = new OperatorDto(UcdlToken.OF, List.of(variableName, set));
+    AbstractSyntaxTreeDto ofAst = new OperatorDto(UcdlToken.OF, List.of(variableName, set));
 
     LinkedHashMap<String, ResourceType> parameters = new LinkedHashMap<>();
     parameters.put(student.getId(), ResourceType.STUDENT);
     List<ResourceTimefoldInstance> arguments = new ArrayList<>(List.of(student));
 
 
-    root = new QuantifierDto(UcdlToken.EXISTS, ofAST, trueAST);
+    root = new QuantifierDto(UcdlToken.EXISTS, ofAst, trueAst);
 
     dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
         parameters, root);
@@ -458,7 +458,7 @@ public class ConstraintDefinitionFactoryTest {
     assertEquals(definition.name(), dto.name());
 
 
-    root = new QuantifierDto(UcdlToken.EXISTS, ofAST, falseAST);
+    root = new QuantifierDto(UcdlToken.EXISTS, ofAst, falseAst);
 
     dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
         parameters, root);
@@ -472,7 +472,7 @@ public class ConstraintDefinitionFactoryTest {
     student.getStudentGroupList().add(null);
     student.getStudentGroupList().add(null);
 
-    root = new QuantifierDto(UcdlToken.EXISTS, ofAST, trueAST);
+    root = new QuantifierDto(UcdlToken.EXISTS, ofAst, trueAst);
 
     dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
         parameters, root);
@@ -484,7 +484,7 @@ public class ConstraintDefinitionFactoryTest {
     assertEquals(definition.name(), dto.name());
 
 
-    root = new QuantifierDto(UcdlToken.EXISTS, ofAST, falseAST);
+    root = new QuantifierDto(UcdlToken.EXISTS, ofAst, falseAst);
 
     dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
         parameters, root);
@@ -496,8 +496,8 @@ public class ConstraintDefinitionFactoryTest {
     assertEquals(definition.name(), dto.name());
 
 
-    ofAST = new OperatorDto(UcdlToken.OF, List.of(trueAST, trueAST, trueAST));
-    root = new QuantifierDto(UcdlToken.EXISTS, ofAST, falseAST);
+    ofAst = new OperatorDto(UcdlToken.OF, List.of(trueAst, trueAst, trueAst));
+    root = new QuantifierDto(UcdlToken.EXISTS, ofAst, falseAst);
     dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
         parameters, root);
 
@@ -966,16 +966,16 @@ public class ConstraintDefinitionFactoryTest {
 
   @Test
   void getConstraintDefinition_CodeBlock() {
-    AbstractSyntaxTreeDto trueAST = new ValueDto<>(UcdlToken.BOOL_VALUE, true);
-    AbstractSyntaxTreeDto falseAST = new ValueDto<>(UcdlToken.BOOL_VALUE, false);
+    AbstractSyntaxTreeDto trueAst = new ValueDto<>(UcdlToken.BOOL_VALUE, true);
+    AbstractSyntaxTreeDto falseAst = new ValueDto<>(UcdlToken.BOOL_VALUE, false);
     AbstractSyntaxTreeDto returnTrue = new ValueDto<>(UcdlToken.RETURN, true);
     AbstractSyntaxTreeDto returnFalse = new ValueDto<>(UcdlToken.RETURN, false);
     AbstractSyntaxTreeDto ifTrueTrue =
-        new ControlSequenceDto(UcdlToken.IF, trueAST, List.of(returnTrue), true);
+        new ControlSequenceDto(UcdlToken.IF, trueAst, List.of(returnTrue), true);
     AbstractSyntaxTreeDto ifTrueFalse =
-        new ControlSequenceDto(UcdlToken.IF, trueAST, List.of(returnFalse), false);
+        new ControlSequenceDto(UcdlToken.IF, trueAst, List.of(returnFalse), false);
     AbstractSyntaxTreeDto ifFalse =
-        new ControlSequenceDto(UcdlToken.IF, falseAST, List.of(returnTrue), true);
+        new ControlSequenceDto(UcdlToken.IF, falseAst, List.of(returnTrue), true);
     AbstractSyntaxTreeDto root;
     ConstraintDefinitionDto dto;
     ConstraintDefinitionTimefoldInstance definition;
@@ -1097,7 +1097,7 @@ public class ConstraintDefinitionFactoryTest {
 
 
     params = new ArrayList<>();
-    params.add(trueAST);
+    params.add(trueAst);
     params.add(returnFalse);
     root = new OperatorDto(UcdlToken.CODEBLOCK, params);
     dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
