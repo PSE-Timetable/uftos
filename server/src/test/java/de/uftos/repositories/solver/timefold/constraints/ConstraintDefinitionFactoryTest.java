@@ -505,4 +505,114 @@ public class ConstraintDefinitionFactoryTest {
         () -> ConstraintDefinitionFactory.getConstraintDefinition(
             finalDto));
   }
+
+  @Test
+  void getConstraintDefinition_IS_EMPTY() {
+    AbstractSyntaxTreeDto root;
+    ConstraintDefinitionDto dto;
+    ConstraintDefinitionTimefoldInstance definition;
+
+    StudentTimefoldInstance student = new StudentTimefoldInstance("student");
+
+    AbstractSyntaxTreeDto setName = new ValueDto<>(UcdlToken.VALUE_REFERENCE, student.getId());
+    AbstractSyntaxTreeDto attribute = new ValueDto<>(UcdlToken.ATTRIBUTE, "studentGroups");
+    AbstractSyntaxTreeDto set =
+        new SetDto(UcdlToken.RESOURCE_SET, ResourceType.STUDENT_GROUP, setName, List.of(attribute));
+
+    LinkedHashMap<String, ResourceType> parameters = new LinkedHashMap<>();
+    parameters.put(student.getId(), ResourceType.STUDENT);
+    List<ResourceTimefoldInstance> arguments = new ArrayList<>(List.of(student));
+
+
+    root = new OperatorDto(UcdlToken.IS_EMPTY, List.of(set));
+
+    dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+        parameters, root);
+
+    definition = ConstraintDefinitionFactory.getConstraintDefinition(dto);
+
+    assertTrue(definition.evaluationFunction().apply(arguments));
+    assertEquals(definition.defaultType(), dto.defaultType());
+    assertEquals(definition.name(), dto.name());
+
+
+    student.getStudentGroupList().add(null);
+    student.getStudentGroupList().add(null);
+
+
+    root = new OperatorDto(UcdlToken.IS_EMPTY, List.of(set));
+
+    dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+        parameters, root);
+
+    definition = ConstraintDefinitionFactory.getConstraintDefinition(dto);
+
+    assertFalse(definition.evaluationFunction().apply(arguments));
+    assertEquals(definition.defaultType(), dto.defaultType());
+    assertEquals(definition.name(), dto.name());
+
+
+    root = new OperatorDto(UcdlToken.IS_EMPTY, List.of(set, set));
+    dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+        parameters, root);
+
+    ConstraintDefinitionDto finalDto = dto;
+    assertThrows(IllegalStateException.class,
+        () -> ConstraintDefinitionFactory.getConstraintDefinition(
+            finalDto));
+  }
+
+  @Test
+  void getConstraintDefinition_IN() {
+    AbstractSyntaxTreeDto root;
+    ConstraintDefinitionDto dto;
+    ConstraintDefinitionTimefoldInstance definition;
+
+    AbstractSyntaxTreeDto numberSet = new ValueDto<>(UcdlToken.NUMBER_SET, new Integer[] {1, 2, 3});
+
+
+    root = new OperatorDto(UcdlToken.IN, List.of(new ValueDto<>(UcdlToken.NUMBER, 1), numberSet));
+
+    dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+        new LinkedHashMap<>(), root);
+
+    definition = ConstraintDefinitionFactory.getConstraintDefinition(dto);
+
+    assertTrue(definition.evaluationFunction().apply(null));
+    assertEquals(definition.defaultType(), dto.defaultType());
+    assertEquals(definition.name(), dto.name());
+
+
+    root = new OperatorDto(UcdlToken.IN, List.of(new ValueDto<>(UcdlToken.NUMBER, 5), numberSet));
+
+    dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+        new LinkedHashMap<>(), root);
+
+    definition = ConstraintDefinitionFactory.getConstraintDefinition(dto);
+
+    assertFalse(definition.evaluationFunction().apply(null));
+    assertEquals(definition.defaultType(), dto.defaultType());
+    assertEquals(definition.name(), dto.name());
+
+
+    root = new OperatorDto(UcdlToken.IN, List.of(numberSet));
+    dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+        new LinkedHashMap<>(), root);
+
+    ConstraintDefinitionDto finalDto = dto;
+    assertThrows(IllegalStateException.class,
+        () -> ConstraintDefinitionFactory.getConstraintDefinition(
+            finalDto));
+
+
+    root = new OperatorDto(UcdlToken.IN, List.of(numberSet, numberSet, numberSet));
+    dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+        new LinkedHashMap<>(), root);
+
+    ConstraintDefinitionDto finalDto2 = dto;
+    assertThrows(IllegalStateException.class,
+        () -> ConstraintDefinitionFactory.getConstraintDefinition(
+            finalDto2));
+  }
+
 }
