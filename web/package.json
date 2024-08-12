@@ -53,7 +53,7 @@
   "dependencies": {
     "@internationalized/date": "^3.5.5",
     "@oazapfts/runtime": "^1.0.3",
-    "bits-ui": "^0.21.12",
+    "bits-ui": "^0.21.13",
     "clsx": "^2.1.1",
     "cmdk-sv": "^0.0.18",
     "lodash-es": "^4.17.21",

@@ -4,7 +4,7 @@
   import type { Writable } from 'svelte/store';
 
   export let checked: Writable<boolean>;
-  export let white: Boolean;
+  export let white: boolean;
 </script>
 
 {#if white}

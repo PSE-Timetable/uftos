@@ -63,10 +63,12 @@ public class SubjectService {
    *
    * @param subject the subject which to be created.
    * @return The updated subject which includes the ID that has been assigned.
-   * @throws ResponseStatusException is thrown if the ID defined in the subject parameter is
-   *                                 already present in the database.
+   * @throws ResponseStatusException is thrown if the name of the subject is blank.
    */
   public Subject create(SubjectRequestDto subject) {
+    if (subject.name().isBlank()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+    }
     return this.repository.save(subject.map());
   }
 
@@ -76,8 +78,12 @@ public class SubjectService {
    * @param id             the ID of the subject which is to be updated.
    * @param subjectRequest the updated subject information.
    * @return the updated subject.
+   * @throws ResponseStatusException is thrown if the name of the subject is blank.
    */
   public Subject update(String id, SubjectRequestDto subjectRequest) {
+    if (subjectRequest.name().isBlank()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The name of the subject is blank.");
+    }
     Subject subject = subjectRequest.map();
     subject.setId(id);
 
@@ -93,7 +99,7 @@ public class SubjectService {
   public void delete(String id) {
     var subject = this.repository.findById(id);
     if (subject.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The name of the subject is blank.");
     }
 
     this.repository.delete(subject.get());

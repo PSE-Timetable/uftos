@@ -18,10 +18,10 @@ import org.junit.jupiter.api.Test;
 class StudentsTest {
 
   private static final String FIRST_STUDENT_FIRST_NAME = "Karen";
-  private static final String FIRST_STUDENT_LAST_NAME = "Musterman";
+  private static final String FIRST_STUDENT_LAST_NAME = "Mustermann";
   private static final String SECOND_STUDENT_FIRST_NAME = "Jason";
-  private static final String SECOND_STUDENT_LAST_NAME = "Musterman";
-  private static final String TAG_NAME = "Sehbehinderung";
+  private static final String SECOND_STUDENT_LAST_NAME = "Mustermann";
+  private static final String TAG_NAME = "Visual Impairment";
 
   static String firstStudent;
   static String secondStudent;

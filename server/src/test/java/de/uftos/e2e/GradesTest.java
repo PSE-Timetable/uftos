@@ -22,7 +22,7 @@ class GradesTest {
   private static final String SECOND_GRADE_NAME = "7";
   private static final String FIRST_CURRICULUM_NAME = "curriculum5";
   private static final String SECOND_CURRICULUM_NAME = "curriculum7";
-  private static final String TAG_NAME = "Nachmittagsunterricht";
+  private static final String TAG_NAME = "Afternoon lessons";
 
   static String firstGrade;
   static String secondGrade;
