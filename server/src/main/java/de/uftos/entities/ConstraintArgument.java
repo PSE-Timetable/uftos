@@ -1,6 +1,5 @@
 package de.uftos.entities;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,7 +27,7 @@ public class ConstraintArgument {
   private String id;
 
   @NotNull
-  @ManyToOne(cascade = CascadeType.ALL)
+  @ManyToOne
   @JoinColumn(name = "constraint_parameter_id", nullable = false)
   private ConstraintParameter constraintParameter;
 

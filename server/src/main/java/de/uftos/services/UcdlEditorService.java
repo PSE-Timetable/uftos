@@ -199,7 +199,7 @@ public class UcdlEditorService {
     signature.setDefaultType(definition.defaultType());
     signature.setParameters(parameters);
 
-    constraintSignatureRepository.save(signature);
+    this.constraintSignatureRepository.save(signature);
   }
 
   private void removeDeletedSignatures(List<ConstraintSignature> signatures,
