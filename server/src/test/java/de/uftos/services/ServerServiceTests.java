@@ -10,6 +10,7 @@ import de.uftos.dto.responsedtos.ServerStatisticsResponseDto;
 import de.uftos.entities.Break;
 import de.uftos.entities.Server;
 import de.uftos.entities.TimetableMetadata;
+import de.uftos.repositories.database.ConstraintSignatureRepository;
 import de.uftos.repositories.database.GradeRepository;
 import de.uftos.repositories.database.RoomRepository;
 import de.uftos.repositories.database.ServerRepository;
@@ -46,6 +47,9 @@ public class ServerServiceTests {
   @Mock
   private RoomRepository roomRepository;
 
+  @Mock
+  private ConstraintSignatureRepository constraintSignatureRepository;
+
   @InjectMocks
   private ServerService serverService;
 
@@ -59,6 +63,7 @@ public class ServerServiceTests {
     when(teacherRepository.count()).thenReturn(2L);
     when(gradeRepository.count()).thenReturn(3L);
     when(roomRepository.count()).thenReturn(4L);
+    when(constraintSignatureRepository.count()).thenReturn(0L);
   }
 
   @Test
