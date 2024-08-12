@@ -4,7 +4,7 @@
   import { Checkbox } from '$lib/elements/ui/checkbox';
   import { Input } from '$lib/elements/ui/input';
   import type { Subject, Tag } from '$lib/sdk/fetch-client';
-    import { toast } from '$lib/utils/resources';
+  import { toast } from '$lib/utils/resources';
   import TagsMultipleSelect from '../tags-multiple-select/tags-multiple-select.svelte';
 
   export let descriptions: string[];
