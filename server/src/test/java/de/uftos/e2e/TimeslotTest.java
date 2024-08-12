@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Test;
 
 class TimeslotTest {
 
-  private static final String TAG_NAME = "Vormittags";
+  private static final String TAG_NAME = "Morning";
   private static final Weekday FIRST_TIMESLOT_DAY = Weekday.TUESDAY;
   private static final int FIRST_TIMESLOT_SLOT = 1;
   private static final Weekday SECOND_TIMESLOT_DAY = Weekday.FRIDAY;

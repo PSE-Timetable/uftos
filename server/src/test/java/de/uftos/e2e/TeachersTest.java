@@ -19,13 +19,13 @@ import org.junit.jupiter.api.Test;
 class TeachersTest {
 
   private static final String FIRST_TEACHER_FIRST_NAME = "Karen";
-  private static final String FIRST_TEACHER_LAST_NAME = "Musterman";
+  private static final String FIRST_TEACHER_LAST_NAME = "Mustermann";
   private static final String FIRST_TEACHER_ACRONYM = "KM";
   private static final String SECOND_TEACHER_FIRST_NAME = "Jason";
-  private static final String SECOND_TEACHER_LAST_NAME = "Musterman";
+  private static final String SECOND_TEACHER_LAST_NAME = "Mustermann";
   private static final String SECOND_TEACHER_ACRONYM = "JM";
-  private static final String TAG_NAME = "Gebärdensprache";
-  private static final String SUBJECT_NAME = "Mathe";
+  private static final String TAG_NAME = "Sign Language";
+  private static final String SUBJECT_NAME = "Maths";
 
   static String firstTeacher;
   static String secondTeacher;

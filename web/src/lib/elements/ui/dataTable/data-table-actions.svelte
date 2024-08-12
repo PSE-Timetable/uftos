@@ -4,6 +4,7 @@
   import Button from '$lib/elements/ui/button/button.svelte';
   import { goto } from '$app/navigation';
   import { page } from '$app/stores';
+  import { toast } from '$lib/utils/resources';
 
   export let id: string;
   export let deleteEntry: (id: string, additionalId?: string) => Promise<void>;
@@ -29,11 +30,14 @@
     {/if}
     <DropdownMenu.Separator />
     <DropdownMenu.Item
+      class="text-red-600"
       on:click={async () => {
         await deleteEntry(id, additionalId);
         await getData();
+        toast(true, 'Eintrag erfolgreich gelöscht.');
       }}
-      class="text-red-600">Löschen</DropdownMenu.Item
     >
+      Löschen
+    </DropdownMenu.Item>
   </DropdownMenu.Content>
 </DropdownMenu.Root>
