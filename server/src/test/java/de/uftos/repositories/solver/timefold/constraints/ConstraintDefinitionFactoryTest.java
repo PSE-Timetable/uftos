@@ -31,7 +31,7 @@ import org.mockito.quality.Strictness;
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class ConstraintDefinitionFactoryTest {
   @Test
-  void getConstraintDefinition_TRUE() {
+  void getConstraintDefinition_True() {
     AbstractSyntaxTreeDto root = new ValueDto<>(UcdlToken.BOOL_VALUE, true);
 
     ConstraintDefinitionDto dto =
@@ -47,7 +47,7 @@ public class ConstraintDefinitionFactoryTest {
   }
 
   @Test
-  void getConstraintDefinition_FALSE() {
+  void getConstraintDefinition_False() {
     AbstractSyntaxTreeDto root = new ValueDto<>(UcdlToken.BOOL_VALUE, false);
 
     ConstraintDefinitionDto dto =
@@ -63,7 +63,7 @@ public class ConstraintDefinitionFactoryTest {
   }
 
   @Test
-  void getConstraintDefinition_IMPLIES() {
+  void getConstraintDefinition_Implies() {
     AbstractSyntaxTreeDto trueAST = new ValueDto<>(UcdlToken.BOOL_VALUE, true);
     AbstractSyntaxTreeDto falseAST = new ValueDto<>(UcdlToken.BOOL_VALUE, false);
     AbstractSyntaxTreeDto root;
@@ -139,7 +139,7 @@ public class ConstraintDefinitionFactoryTest {
   }
 
   @Test
-  void getConstraintDefinition_OR() {
+  void getConstraintDefinition_Or() {
     AbstractSyntaxTreeDto trueAST = new ValueDto<>(UcdlToken.BOOL_VALUE, true);
     AbstractSyntaxTreeDto falseAST = new ValueDto<>(UcdlToken.BOOL_VALUE, false);
     AbstractSyntaxTreeDto root;
@@ -219,7 +219,7 @@ public class ConstraintDefinitionFactoryTest {
   }
 
   @Test
-  void getConstraintDefinition_AND() {
+  void getConstraintDefinition_And() {
     AbstractSyntaxTreeDto trueAST = new ValueDto<>(UcdlToken.BOOL_VALUE, true);
     AbstractSyntaxTreeDto falseAST = new ValueDto<>(UcdlToken.BOOL_VALUE, false);
     AbstractSyntaxTreeDto root;
@@ -299,7 +299,7 @@ public class ConstraintDefinitionFactoryTest {
   }
 
   @Test
-  void getConstraintDefinition_NOT() {
+  void getConstraintDefinition_Not() {
     AbstractSyntaxTreeDto trueAST = new ValueDto<>(UcdlToken.BOOL_VALUE, true);
     AbstractSyntaxTreeDto falseAST = new ValueDto<>(UcdlToken.BOOL_VALUE, false);
     AbstractSyntaxTreeDto root;
@@ -341,7 +341,7 @@ public class ConstraintDefinitionFactoryTest {
   }
 
   @Test
-  void getConstraintDefinition_FOR_ALL() {
+  void getConstraintDefinition_ForAll() {
     AbstractSyntaxTreeDto trueAST = new ValueDto<>(UcdlToken.BOOL_VALUE, true);
     AbstractSyntaxTreeDto falseAST = new ValueDto<>(UcdlToken.BOOL_VALUE, false);
     AbstractSyntaxTreeDto root;
@@ -425,7 +425,7 @@ public class ConstraintDefinitionFactoryTest {
   }
 
   @Test
-  void getConstraintDefinition_EXISTS() {
+  void getConstraintDefinition_Exists() {
     AbstractSyntaxTreeDto trueAST = new ValueDto<>(UcdlToken.BOOL_VALUE, true);
     AbstractSyntaxTreeDto falseAST = new ValueDto<>(UcdlToken.BOOL_VALUE, false);
     AbstractSyntaxTreeDto root;
@@ -508,7 +508,7 @@ public class ConstraintDefinitionFactoryTest {
   }
 
   @Test
-  void getConstraintDefinition_IS_EMPTY() {
+  void getConstraintDefinition_IsEmpty() {
     AbstractSyntaxTreeDto root;
     ConstraintDefinitionDto dto;
     ConstraintDefinitionTimefoldInstance definition;
@@ -564,7 +564,7 @@ public class ConstraintDefinitionFactoryTest {
   }
 
   @Test
-  void getConstraintDefinition_IN() {
+  void getConstraintDefinition_In() {
     AbstractSyntaxTreeDto root;
     ConstraintDefinitionDto dto;
     ConstraintDefinitionTimefoldInstance definition;
@@ -617,7 +617,7 @@ public class ConstraintDefinitionFactoryTest {
   }
 
   @Test
-  void getConstraintDefinition_EQUALS() {
+  void getConstraintDefinition_Equals() {
     AbstractSyntaxTreeDto number1 = new ValueDto<>(UcdlToken.NUMBER, 1);
     AbstractSyntaxTreeDto number2 = new ValueDto<>(UcdlToken.NUMBER, 2);
     AbstractSyntaxTreeDto root;
@@ -667,7 +667,7 @@ public class ConstraintDefinitionFactoryTest {
   }
 
   @Test
-  void getConstraintDefinition_NOT_EQUALS() {
+  void getConstraintDefinition_NotEquals() {
     AbstractSyntaxTreeDto number1 = new ValueDto<>(UcdlToken.NUMBER, 1);
     AbstractSyntaxTreeDto number2 = new ValueDto<>(UcdlToken.NUMBER, 2);
     AbstractSyntaxTreeDto root;
@@ -717,7 +717,7 @@ public class ConstraintDefinitionFactoryTest {
   }
 
   @Test
-  void getConstraintDefinition_SMALLER() {
+  void getConstraintDefinition_smaller() {
     AbstractSyntaxTreeDto number1 = new ValueDto<>(UcdlToken.NUMBER, 1);
     AbstractSyntaxTreeDto number2 = new ValueDto<>(UcdlToken.NUMBER, 2);
     AbstractSyntaxTreeDto root;
@@ -779,7 +779,7 @@ public class ConstraintDefinitionFactoryTest {
   }
 
   @Test
-  void getConstraintDefinition_SMALLER_EQUALS() {
+  void getConstraintDefinition_SmallerEquals() {
     AbstractSyntaxTreeDto number1 = new ValueDto<>(UcdlToken.NUMBER, 1);
     AbstractSyntaxTreeDto number2 = new ValueDto<>(UcdlToken.NUMBER, 2);
     AbstractSyntaxTreeDto root;
@@ -841,7 +841,7 @@ public class ConstraintDefinitionFactoryTest {
   }
 
   @Test
-  void getConstraintDefinition_GREATER() {
+  void getConstraintDefinition_Greater() {
     AbstractSyntaxTreeDto number1 = new ValueDto<>(UcdlToken.NUMBER, 1);
     AbstractSyntaxTreeDto number2 = new ValueDto<>(UcdlToken.NUMBER, 2);
     AbstractSyntaxTreeDto root;
@@ -903,7 +903,7 @@ public class ConstraintDefinitionFactoryTest {
   }
 
   @Test
-  void getConstraintDefinition_GREATER_EQUALS() {
+  void getConstraintDefinition_GreaterEquals() {
     AbstractSyntaxTreeDto number1 = new ValueDto<>(UcdlToken.NUMBER, 1);
     AbstractSyntaxTreeDto number2 = new ValueDto<>(UcdlToken.NUMBER, 2);
     AbstractSyntaxTreeDto root;
@@ -965,7 +965,7 @@ public class ConstraintDefinitionFactoryTest {
   }
 
   @Test
-  void getConstraintDefinition_CODEBLOCK() {
+  void getConstraintDefinition_CodeBlock() {
     AbstractSyntaxTreeDto trueAST = new ValueDto<>(UcdlToken.BOOL_VALUE, true);
     AbstractSyntaxTreeDto falseAST = new ValueDto<>(UcdlToken.BOOL_VALUE, false);
     AbstractSyntaxTreeDto returnTrue = new ValueDto<>(UcdlToken.RETURN, true);
