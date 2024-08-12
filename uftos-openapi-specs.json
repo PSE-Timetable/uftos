@@ -3080,14 +3080,14 @@
         }
       },
       "ServerStatisticsResponseDto" : {
-        "required" : [ "classCount", "resourceCount", "roomCount", "studentCount", "teacherCount" ],
+        "required" : [ "constraintCount", "gradeCount", "roomCount", "studentCount", "teacherCount" ],
         "type" : "object",
         "properties" : {
-          "classCount" : {
+          "constraintCount" : {
             "type" : "integer",
             "format" : "int64"
           },
-          "resourceCount" : {
+          "gradeCount" : {
             "type" : "integer",
             "format" : "int64"
           },

@@ -67,9 +67,9 @@ public class ServerServiceTests {
     assertAll("Testing whether the returned stats are correct",
         () -> assertEquals(1L, result.studentCount()),
         () -> assertEquals(2L, result.teacherCount()),
-        () -> assertEquals(3L, result.classCount()),
+        () -> assertEquals(3L, result.gradeCount()),
         () -> assertEquals(4L, result.roomCount()),
-        () -> assertEquals(0L, result.resourceCount())
+        () -> assertEquals(0L, result.constraintCount())
     );
   }
 

@@ -93,11 +93,11 @@
 
   <div class="w-full mb-12 flex flex-row gap-14 justify-between text-white font-medium text-2xl">
     {#await getServerStats() then stats}
-      <Card text="Schüler" icon={Icons.STUDENT} number={stats.classCount} url="/admin/students" />
+      <Card text="Schüler" icon={Icons.STUDENT} number={stats.studentCount} url="/admin/students" />
       <Card text="Lehrer" icon={Icons.TEACHER} number={stats.teacherCount} url="/admin/teachers" />
-      <Card text="Stufen" icon={Icons.GRADE} number={stats.teacherCount} url="/admin/grades" />
+      <Card text="Stufen" icon={Icons.GRADE} number={stats.gradeCount} url="/admin/grades" />
       <Card text="Räume" icon={Icons.ROOM} number={stats.roomCount} url="/admin/rooms" />
-      <Card text="Constraints" icon={Icons.CONSTRAINT} number={stats.classCount} url="/admin/constraints" />
+      <Card text="Constraints" icon={Icons.CONSTRAINT} number={stats.constraintCount} url="/admin/constraints" />
     {/await}
   </div>
   {#if pageLoaded}
