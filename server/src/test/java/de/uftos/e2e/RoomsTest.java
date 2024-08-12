@@ -23,7 +23,7 @@ class RoomsTest {
   private static final String SECOND_ROOM_NAME = "101";
   private static final String SECOND_BUILDING_NAME = "11.11";
   private static final int SECOND_ROOM_CAPACITY = 50;
-  private static final String TAG_NAME = "Rollstuhl geeignet";
+  private static final String TAG_NAME = "Accessible by wheelchair";
 
   static String firstRoomId;
   static String secondRoomId;
