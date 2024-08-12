@@ -24,7 +24,7 @@ public class TimetableSolutionTimefoldInstanceTest {
   }
 
   @Test
-  void timetableID() {
+  void timetableId() {
     assertEquals(new TimetableSolutionTimefoldInstance().getId(), "this");
   }
 
