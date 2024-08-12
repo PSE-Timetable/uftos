@@ -118,7 +118,7 @@ public class UcdlEditorService {
     }
 
     removeDeletedSignatures(signatures, definitions);
-    saveDefinitionSignatures(signatures, definitions);
+    saveDefinitionSignatures(definitions);
 
     return new ParsingResponse(true, "Code saved successfully!");
   }
@@ -142,12 +142,10 @@ public class UcdlEditorService {
         if (signatureChanged(signature, definition)) {
           constraintSignatureRepository.delete(signature);
           signatures.remove(i--);
-        } else {
-          updateSignature(signature, definition);
         }
       }
 
-      saveDefinitionSignatures(signatures, definitions);
+      saveDefinitionSignatures(definitions);
 
       return new ParsingResponse(true,
           "Saved file forcefully and deleted inconsistent constraint instances!");
@@ -156,24 +154,7 @@ public class UcdlEditorService {
     }
   }
 
-  private void updateSignature(ConstraintSignature signature,
-                               ConstraintDefinitionDto definitionDto) {
-    if (!signature.getName().equals(definitionDto.name())) {
-      throw new IllegalArgumentException();
-    }
-    signature.setDefaultType(definitionDto.defaultType());
-    signature.setDescription(definitionDto.description());
-
-    constraintSignatureRepository.save(signature);
-  }
-
-  private void saveDefinitionSignatures(List<ConstraintSignature> signatures,
-                                        HashMap<String, ConstraintDefinitionDto> definitions) {
-    for (ConstraintSignature signature : signatures) {
-      updateSignature(signature, definitions.get(signature.getName()));
-      definitions.remove(signature.getName());
-    }
-
+  private void saveDefinitionSignatures(HashMap<String, ConstraintDefinitionDto> definitions) {
     for (ConstraintDefinitionDto definition : definitions.values()) {
       saveDefinitionSignature(definition);
     }
