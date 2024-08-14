@@ -42,11 +42,11 @@ public interface ConstraintInstanceRepository
            LEFT OUTER JOIN subjects su
                    ON su.id=args.value
            WHERE
-               te.first_name ILIKE :arg OR te.last_name ILIKE :arg OR te.acronym ILIKE :arg
-               OR st.first_name ILIKE :arg OR st.last_name ILIKE :arg
-               OR st_g.name ILIKE :arg
-               OR gr.name ILIKE :arg
-               OR ro.name ILIKE :arg""")
+               te.first_name ILIKE cast(:arg as varchar) || '%' OR te.last_name ILIKE cast(:arg as varchar) || '%' OR te.acronym ILIKE cast(:arg as varchar) || '%'
+               OR st.first_name ILIKE cast(:arg as varchar) || '%' OR st.last_name ILIKE cast(:arg as varchar) || '%'
+               OR st_g.name ILIKE cast(:arg as varchar) || '%'
+               OR gr.name ILIKE cast(:arg as varchar) || '%'
+               OR ro.name ILIKE cast(:arg as varchar) || '%'""")
   Page<ConstraintInstance> findByArguments(String arg, Pageable pageable);
 
   Page<ConstraintInstance> findBySignatureName(String signatureName, Pageable pageable);
