@@ -168,7 +168,7 @@ public class CurriculumServiceTests {
   }
 
   @Test
-  void deleteNonExistentRoom() {
+  void deleteNonExistentCurriculum() {
     assertThrows(ResponseStatusException.class, () -> curriculumService.delete("nonExistentId"));
   }
 
