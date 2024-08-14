@@ -15,8 +15,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 class TagsTest {
-  private static final String FIRST_TAG_NAME = "Sehbehinderung";
-  private static final String SECOND_TAG_NAME = "Rollstuhl";
+  private static final String FIRST_TAG_NAME = "Visual Impairment";
+  private static final String SECOND_TAG_NAME = "Wheelchair";
 
   static String tagId1;
   static String tagId2;

@@ -1,22 +1,19 @@
 package de.uftos.services;
 
 
-import de.uftos.dto.GradeRequestDto;
-import de.uftos.dto.GradeResponseDto;
-import de.uftos.dto.LessonResponseDto;
+import de.uftos.dto.requestdtos.GradeRequestDto;
+import de.uftos.dto.responsedtos.GradeResponseDto;
+import de.uftos.dto.responsedtos.LessonResponseDto;
 import de.uftos.entities.Grade;
 import de.uftos.entities.Lesson;
-import de.uftos.entities.Student;
 import de.uftos.entities.StudentGroup;
 import de.uftos.repositories.database.GradeRepository;
 import de.uftos.repositories.database.ServerRepository;
 import de.uftos.utils.SpecificationBuilder;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,10 +105,12 @@ public class GradeService {
    *
    * @param grade the information about the grade which is to be created.
    * @return the created grade which includes the ID that has been assigned.
-   * @throws ResponseStatusException is thrown if the ID defined in the grade parameter
-   *                                 is already present in the database.
+   * @throws ResponseStatusException is thrown if the name of the grade is blank.
    */
   public GradeResponseDto create(GradeRequestDto grade) {
+    if (grade.name().isBlank()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The name of the grade is blank.");
+    }
     return this.mapResponseDto(this.repository.save(grade.map()));
   }
 
@@ -121,8 +120,12 @@ public class GradeService {
    * @param id           the ID of the grade which is to be updated.
    * @param gradeRequest the updated grade information
    * @return the updated grade.
+   * @throws ResponseStatusException is thrown if the name of the grade is blank.
    */
   public GradeResponseDto update(String id, GradeRequestDto gradeRequest) {
+    if (gradeRequest.name().isBlank()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The name of the grade is blank.");
+    }
     Grade grade = gradeRequest.map();
     grade.setId(id);
 

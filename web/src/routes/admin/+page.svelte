@@ -1,21 +1,42 @@
 <script lang="ts">
+  import { toast } from 'svelte-sonner';
+  import Button from './../../lib/elements/ui/button/button.svelte';
+  import { goto } from '$app/navigation';
+  import { ChevronLeft } from 'lucide-svelte/icons';
   import Card from '$lib/components/ui/card/card.svelte';
   import { Icons } from '$lib/utils';
   import LinkBar from '$lib/components/ui/link-bar/link-bar.svelte';
   import DataTable from '$lib/elements/ui/dataTable/data-table.svelte';
-  import { deleteTeacher, getServerStats, getTeachers, type Pageable, type PageTeacher } from '$lib/sdk/fetch-client';
-  import { error } from '@sveltejs/kit';
+  import { getServerStats } from '$lib/sdk/fetch-client';
   import { onMount } from 'svelte';
-  import * as Select from '$lib/elements/ui/select';
-  import type { DataItem } from '$lib/utils/resources';
+  import * as DropdownMenu from '$lib/elements/ui/dropdown-menu/index.js';
+  import { ChevronDown } from 'lucide-svelte';
+  import { createTimetable } from '$lib/sdk/fetch-client';
+  import {
+    deleteGradeEntry,
+    deleteRoomEntry,
+    deleteStudentEntry,
+    deleteTeacherEntry,
+    loadGrades,
+    loadRoomPage,
+    loadStudentPage,
+    loadTeacherPage,
+  } from '$lib/utils/resources';
 
-  let columnNames = ['Vorname', 'Nachname', 'Akronym', 'Fächer', 'Tags'];
-  let keys = ['id', 'firstName', 'lastName', 'acronym', 'subjects', 'tags'];
+  export let data;
+
+  let teacherColumnNames = ['Vorname', 'Nachname', 'Akronym', 'Fächer', 'Tags'];
+  let teacherKeys = ['id', 'firstName', 'lastName', 'acronym', 'subjects', 'tags'];
+  let studentColumnNames = ['Vorname', 'Nachname', 'Tags'];
+  let studentKeys = ['id', 'firstName', 'lastName', 'tags'];
+  let gradeColumnNames = ['Name', 'Tags'];
+  let gradeKeys = ['id', 'name', 'tags'];
+  let roomColumnNames = ['Name', 'Gebäude', 'Kapazität', 'Tags'];
+  let roomKeys = ['id', 'name', 'buildingName', 'capacity', 'tags'];
   let pageLoaded = false;
 
   const settings = [
     { value: 'edit_constraints', label: 'Constraints ändern', url: '/admin/constraints' },
-    { value: 'generate_timetable', label: 'Stundenplan generieren', url: '/admin/timetable' },
     { value: 'edit_curriculum', label: 'Curriculum anpassen', url: '/admin/curriculums' },
     { value: 'edit_dsl', label: 'DSL Editor', url: '/admin/editor' },
     { value: 'general_settings', label: 'Allgemeine Einstell.', url: '/admin/settings' },
@@ -24,72 +45,53 @@
   onMount(() => {
     pageLoaded = true;
   });
-
-  async function loadPage(index: number, sortString: string, filter: string) {
-    let pageable: Pageable = { page: index, size: 10, sort: [sortString] };
-    try {
-      const result: PageTeacher = await getTeachers(pageable, {
-        firstName: filter,
-        lastName: filter,
-        acronym: filter,
-      });
-      let dataItems: DataItem[] = result.content
-        ? result.content.map(
-            (teacher): DataItem => ({
-              id: teacher.id,
-              firstName: teacher.firstName,
-              lastName: teacher.lastName,
-              acronym: teacher.acronym,
-              tags: teacher.tags.map((tag) => tag.name),
-            }),
-          )
-        : [];
-      return {
-        data: dataItems,
-        totalElements: Number(result.totalElements),
-      };
-    } catch {
-      error(400, { message: 'Could not fetch page' });
-    }
-  }
-
-  async function deleteEntry(id: string) {
-    try {
-      await deleteTeacher(id);
-    } catch {
-      error(400, { message: `could not delete teacher with id ${id}` });
-    }
-  }
 </script>
 
-<div class="h-[170px] w-full bg-primary text-white p-4 font-medium text-2xl items-center absolute">
-  <div class="mb-8 flex flex-row justify-between">
-    <div>
+<div class="h-[170px] w-[100%] min-w-[fit-content] bg-primary p-4 items-center absolute">
+  <div class="mb-8 flex flex-row gap ì-2 justify-between text-white font-medium text-2xl items-center">
+    <div class="flex flex-row">
+      <Button on:click={() => goto('./')} variant="secondary" size="icon" class="rounded-full bg-accent mr-6">
+        <ChevronLeft class="h-5 w-5 text-white" />
+      </Button>
+
       <LinkBar />
     </div>
 
-    <Select.Root portal={null}>
-      <Select.Trigger class="w-fit flex flex-row gap-2 justify-between">
-        <Select.Value class="text-primary text-lg" placeholder="Einstellungen" />
-      </Select.Trigger>
-      <Select.Content>
-        <Select.Group>
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger asChild let:builder>
+        <Button class="bg-white text-primary text-lg hover:bg-accent hover:text-white" builders={[builder]}>
+          <div class="flex flex-row gap-2 items-center">
+            Einstellungen
+            <ChevronDown />
+          </div>
+        </Button>
+      </DropdownMenu.Trigger>
+      <DropdownMenu.Content class="w-56">
+        <DropdownMenu.Group>
           {#each settings as setting}
-            <Select.Item
-              value={setting.value}
-              label={setting.label}
+            <DropdownMenu.Item
+              class="text-lg"
               on:click={() => {
                 window.location.href = setting.url;
-              }}>{setting.label}</Select.Item
+              }}>{setting.label}</DropdownMenu.Item
             >
           {/each}
-        </Select.Group>
-      </Select.Content>
-      <Select.Input name="settings" />
-    </Select.Root>
+          <DropdownMenu.Item
+            class="text-lg"
+            on:click={async () => {
+              const name = new Date().getFullYear() + ':' + Date.now();
+              await createTimetable({ name });
+              toast.success('Erfolgreich', {
+                description: 'Die Erstellung eines Stundenplan wurde erfolgereich gestartet!',
+              });
+            }}>Stundenplan generieren</DropdownMenu.Item
+          >
+        </DropdownMenu.Group>
+      </DropdownMenu.Content>
+    </DropdownMenu.Root>
   </div>
 
-  <div class="w-full flex flex-row gap-14 justify-between mb-6">
+  <div class="w-full mb-12 flex flex-row gap-14 justify-between text-white font-medium text-2xl">
     {#await getServerStats() then stats}
       <Card text="Schüler" icon={Icons.STUDENT} number={stats.classCount} url="/admin/students" />
       <Card text="Lehrer" icon={Icons.TEACHER} number={stats.teacherCount} url="/admin/teachers" />
@@ -99,6 +101,59 @@
     {/await}
   </div>
   {#if pageLoaded}
-    <DataTable {columnNames} {keys} {loadPage} {deleteEntry} />
+    <div class="flex flex-col gap-16 pb-4">
+      <div class="flex flex-col gap-4">
+        <p class="font-bold text-2xl">Schüler</p>
+        <DataTable
+          initialData={data.initialStudents}
+          columnNames={studentColumnNames}
+          keys={studentKeys}
+          loadPage={loadStudentPage}
+          deleteEntry={deleteStudentEntry}
+          pageSize={5}
+          addButton={false}
+          editAvailable={false}
+        />
+      </div>
+      <div class="flex flex-col gap-4">
+        <p class="font-bold text-2xl">Lehrer</p>
+        <DataTable
+          initialData={data.initialTeachers}
+          columnNames={teacherColumnNames}
+          keys={teacherKeys}
+          loadPage={loadTeacherPage}
+          deleteEntry={deleteTeacherEntry}
+          pageSize={5}
+          addButton={false}
+          editAvailable={false}
+        />
+      </div>
+      <div class="flex flex-col gap-4">
+        <p class="font-bold text-2xl">Stufen</p>
+        <DataTable
+          initialData={data.initialGrades}
+          columnNames={gradeColumnNames}
+          keys={gradeKeys}
+          loadPage={loadGrades}
+          deleteEntry={deleteGradeEntry}
+          pageSize={5}
+          addButton={false}
+          editAvailable={false}
+        />
+      </div>
+      <div class="flex flex-col gap-4">
+        <p class="font-bold text-2xl">Räume</p>
+        <DataTable
+          initialData={data.initialRooms}
+          columnNames={roomColumnNames}
+          keys={roomKeys}
+          loadPage={loadRoomPage}
+          deleteEntry={deleteRoomEntry}
+          pageSize={5}
+          addButton={false}
+          editAvailable={false}
+        />
+      </div>
+    </div>
   {/if}
 </div>

@@ -1,7 +1,7 @@
 package de.uftos.services;
 
-import de.uftos.dto.LessonResponseDto;
-import de.uftos.dto.TeacherRequestDto;
+import de.uftos.dto.requestdtos.TeacherRequestDto;
+import de.uftos.dto.responsedtos.LessonResponseDto;
 import de.uftos.entities.Lesson;
 import de.uftos.entities.Teacher;
 import de.uftos.repositories.database.ServerRepository;
@@ -94,10 +94,13 @@ public class TeacherService {
    *
    * @param teacher the information about the teacher which is to be created.
    * @return the created teacher which includes the ID that was assigned.
-   * @throws ResponseStatusException is thrown if the ID defined in the teacher parameter is
-   *                                 already present in the database.
+   * @throws ResponseStatusException is thrown if the first name, last name or the acronym of the teacher is blank.
    */
   public Teacher create(TeacherRequestDto teacher) {
+    if (teacher.firstName().isBlank() || teacher.lastName().isBlank() || teacher.acronym().isBlank()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "The first name, last name or the acronym of the teacher is blank.");
+    }
     return this.repository.save(teacher.map());
   }
 
@@ -107,8 +110,14 @@ public class TeacherService {
    * @param id             the ID of the teacher which is to be updated.
    * @param teacherRequest the updated teacher information.
    * @return the updated teacher.
+   * @throws ResponseStatusException is thrown if the first name, last name or the acronym of the teacher is blank.
    */
   public Teacher update(String id, TeacherRequestDto teacherRequest) {
+    if (teacherRequest.firstName().isBlank() || teacherRequest.lastName().isBlank() 
+        || teacherRequest.acronym().isBlank()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "The first name, last name or acronym of the teacher is blank.");
+    }
     Teacher teacher = teacherRequest.map();
     teacher.setId(id);
     return this.repository.save(teacher);

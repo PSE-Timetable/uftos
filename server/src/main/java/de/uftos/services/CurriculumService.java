@@ -1,9 +1,9 @@
 package de.uftos.services;
 
 
-import de.uftos.dto.CurriculumRequestDto;
-import de.uftos.dto.CurriculumResponseDto;
-import de.uftos.dto.GradeResponseDto;
+import de.uftos.dto.requestdtos.CurriculumRequestDto;
+import de.uftos.dto.responsedtos.CurriculumResponseDto;
+import de.uftos.dto.responsedtos.GradeResponseDto;
 import de.uftos.entities.Curriculum;
 import de.uftos.entities.Grade;
 import de.uftos.repositories.database.CurriculumRepository;
@@ -74,10 +74,12 @@ public class CurriculumService {
    *
    * @param curriculum the information about the curriculum which is to be created.
    * @return the created curriculum which includes the ID that has been assigned.
-   * @throws ResponseStatusException is thrown if the ID defined in the curriculum parameter
-   *                                 is already present in the database.
+   * @throws ResponseStatusException is thrown if the name of the curriculum is blank.
    */
   public CurriculumResponseDto create(CurriculumRequestDto curriculum) {
+    if (curriculum.name().isBlank()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The name of the curriculum is blank.");
+    }
     Grade grade = gradeRepository.findById(curriculum.gradeId())
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
     return this.mapResponseDto(this.repository.save(curriculum.map(grade)));

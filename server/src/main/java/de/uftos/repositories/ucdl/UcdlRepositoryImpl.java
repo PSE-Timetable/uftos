@@ -68,7 +68,7 @@ public class UcdlRepositoryImpl implements UcdlRepository {
       } else {
         UcdlParser.getDefinitions(input);
       }
-    } catch (ParseException | IOException e) {
+    } catch (ParseException e) {
       return new ParsingResponse(false, e.getMessage());
     }
     return new ParsingResponse(true, "Parsing was successful!");
@@ -80,5 +80,11 @@ public class UcdlRepositoryImpl implements UcdlRepository {
       return null;
     }
     return this.currentDefinitions;
+  }
+
+  @Override
+  public HashMap<String, ConstraintDefinitionDto> getConstraintsFromString(String input)
+      throws ParseException {
+    return UcdlParser.getDefinitions(input);
   }
 }

@@ -1,6 +1,6 @@
 package de.uftos.controller;
 
-import de.uftos.dto.TimetableRequestDto;
+import de.uftos.dto.requestdtos.TimetableRequestDto;
 import de.uftos.entities.Timetable;
 import de.uftos.services.TimetableService;
 import java.util.Optional;

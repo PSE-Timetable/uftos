@@ -1,6 +1,6 @@
 package de.uftos.services;
 
-import de.uftos.dto.StudentRequestDto;
+import de.uftos.dto.requestdtos.StudentRequestDto;
 import de.uftos.entities.Student;
 import de.uftos.repositories.database.StudentRepository;
 import de.uftos.utils.SpecificationBuilder;
@@ -79,10 +79,12 @@ public class StudentService {
    *
    * @param student the student which is to be created.
    * @return the updated student which includes the ID that has been assigned.
-   * @throws ResponseStatusException is thrown if the ID defined in the student parameter
-   *                                 is already present in the database.
+   * @throws ResponseStatusException is thrown if the first or last name of the student is blank.
    */
   public Student create(StudentRequestDto student) {
+    if (student.firstName().isBlank() || student.lastName().isBlank()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The first or last name of the student is blank.");
+    }
     Student result = this.repository.save(student.map());
     System.out.println("Student " + result.getFirstName() + " has groups " + result.getGroups());
     return result;
@@ -95,8 +97,12 @@ public class StudentService {
    * @param id             the ID of the student which is to be updated.
    * @param studentRequest the updated student information.
    * @return the updated student.
+   * @throws ResponseStatusException is thrown if the first or last name of the student is blank.
    */
   public Student update(String id, StudentRequestDto studentRequest) {
+    if (studentRequest.firstName().isBlank() || studentRequest.lastName().isBlank()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The first or last name of the student is blank.");
+    }
     Student student = studentRequest.map();
     student.setId(id);
 

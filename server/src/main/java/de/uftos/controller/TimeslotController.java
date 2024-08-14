@@ -1,6 +1,6 @@
 package de.uftos.controller;
 
-import de.uftos.dto.TimeslotRequestDto;
+import de.uftos.dto.requestdtos.TimeslotRequestDto;
 import de.uftos.entities.Timeslot;
 import de.uftos.services.TimeslotService;
 import java.util.List;

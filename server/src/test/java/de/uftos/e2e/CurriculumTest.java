@@ -8,7 +8,7 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
-import de.uftos.dto.LessonsCountRequestDto;
+import de.uftos.dto.requestdtos.LessonsCountRequestDto;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.http.ContentType;
 import java.util.Collections;
@@ -22,7 +22,7 @@ class CurriculumTest {
   private static final String FIRST_CURRICULUM_NAME = "5 / SS24";
   private static final String SECOND_CURRICULUM_NAME = "7 / SS24";
 
-  private static final String SUBJECT_NAME = "Mathe";
+  private static final String SUBJECT_NAME = "Maths";
 
   private static final String FIRST_GRADE_NAME = "5";
   private static final String SECOND_GRADE_NAME = "7";

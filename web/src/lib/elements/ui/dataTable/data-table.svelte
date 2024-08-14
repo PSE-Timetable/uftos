@@ -19,32 +19,42 @@
   import { ArrowDown, ArrowUp, Plus } from 'lucide-svelte';
   import { Input } from '$lib/elements/ui/input';
   import { writable, type Writable } from 'svelte/store';
-  import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import { page } from '$app/stores';
   import * as Pagination from '$lib/elements/ui/pagination';
-  import type { DataItem } from '$lib/utils/resources';
+  import { toast, type DataItem } from '$lib/utils/resources';
+  import * as AlertDialog from '$lib/elements/ui/alert-dialog';
+  import { error } from '@sveltejs/kit';
 
-  onMount(async () => await getData());
-
-  let tableData: Writable<DataItem[]> = writable([]);
+  export let initialData: { data: DataItem[]; totalElements: number };
   export let columnNames;
   export let keys;
-  export let totalElements: Writable<number> = writable(0);
   export let loadPage: (
-    index: number,
     toSort: string,
     filter: string,
+    index?: number,
+    pageSize?: number,
+    additionalId?: string,
   ) => Promise<{
     data: DataItem[];
     totalElements: number;
   }>;
-  export let deleteEntry: (id: string) => Promise<void>;
+  export let deleteEntry: (id: string, additionalId?: string) => Promise<void>;
+  export let additionalId: string = '';
+  export let sortable = true;
+  export let addButton = true;
   export let pageSize = 15;
-  $: serverSidePagination = $totalElements <= pageSize;
+  export let editAvailable = true;
+
+  let currentPaginationPage = 1;
+  let tableData: Writable<DataItem[]> = writable(initialData.data.slice(0, pageSize));
+  let totalElementsStore: Writable<number> = writable(initialData.totalElements);
+  let allItems: DataItem[] = initialData.data;
+  let serverSide: boolean = allItems.length <= pageSize;
+  let alertOpen = false;
 
   const table = createTable(tableData, {
-    page: addPagination({ serverSide: true, serverItemCount: totalElements, initialPageSize: pageSize }),
+    page: addPagination({ serverSide: true, serverItemCount: totalElementsStore, initialPageSize: pageSize }),
     sort: addSortBy({ serverSide: true }),
     filter: addTableFilter({ serverSide: true }),
     hide: addHiddenColumns(),
@@ -53,7 +63,6 @@
 
   let columns = table.createColumns([
     table.column({
-      //first column only contains the checkboxes.
       accessor: (item) => {
         return item[keys[0]];
       },
@@ -104,7 +113,13 @@
         header: '',
         id: 'actions',
         cell: ({ value }) => {
-          return createRender(DataTableActions, { id: value.toString(), deleteEntry, getData });
+          return createRender(DataTableActions, {
+            id: value.toString(),
+            deleteEntry,
+            getData,
+            additionalId,
+            editAvailable,
+          });
         },
         plugins: {
           sort: {
@@ -127,63 +142,73 @@
   const { pageIndex } = pluginStates.page;
   const { filterValue } = pluginStates.filter;
   const { hiddenColumnIds } = pluginStates.hide;
-  const { selectedDataIds, allPageRowsSelected } = pluginStates.select;
+  const { selectedDataIds, allRowsSelected } = pluginStates.select;
   const { sortKeys } = pluginStates.sort;
 
   const ids = flatColumns.map((col) => col.id);
   let hideForId = Object.fromEntries(ids.map((id) => [id, true]));
 
-  $: $hiddenColumnIds = Object.entries(hideForId)
-    .filter(([, hide]) => !hide)
-    .map(([id]) => id);
-
   const hidableCols = keys.slice(1);
 
   async function getData() {
-    let sortKey: SortKey = $sortKeys[0];
-    let sortString;
-    sortString = sortKey ? `${sortKey.id},${sortKey.order}` : '';
-    let result = await loadPage($pageIndex, sortString, $filterValue);
-    if (serverSidePagination) {
-      tableData.set(result.data);
-      totalElements.set(result.totalElements);
+    if (serverSide) {
+      let sortKey: SortKey = $sortKeys[0];
+      let sortString;
+      sortString = sortKey ? `${sortKey.id},${sortKey.order}` : '';
+      try {
+        let result = await loadPage(sortString, $filterValue, $pageIndex, pageSize, additionalId);
+        allItems = result.data;
+        totalElementsStore.set(result.totalElements);
+      } catch {
+        error(400, { message: 'Could not fetch page' });
+      }
+    }
+    serverSide = allItems.length <= pageSize;
+    if (serverSide) {
+      tableData.set(allItems);
     } else {
-      tableData.set(result.data.slice($pageIndex * pageSize, $pageIndex * pageSize + pageSize));
+      tableData.set(allItems.slice($pageIndex * pageSize, $pageIndex * pageSize + pageSize));
     }
   }
 
-  async function onDeleteKey(e: KeyboardEvent) {
-    if (e.code !== 'Delete') {
-      return;
-    }
+  async function deleteSelectedEntries() {
     let promises: Promise<void>[] = [];
     Object.keys($selectedDataIds).forEach((row) => {
-      promises.push(deleteEntry(row));
+      promises.push(deleteEntry(row, additionalId));
     });
     await Promise.all(promises);
-    $allPageRowsSelected = false;
+    $allRowsSelected = false;
+    currentPaginationPage = Math.ceil(($totalElementsStore - promises.length) / pageSize);
+    $pageIndex = currentPaginationPage - 1;
+    serverSide = true;
+    await getData();
+    toast(true, 'Alle ausgewählten Einträge erfolgreich gelöscht.');
+  }
+
+  async function onSearch() {
+    $pageIndex = 0;
+    currentPaginationPage = 1;
+    serverSide = true;
     await getData();
   }
 
-  $: (async () => {
-    $filterValue;
-    $pageIndex;
-    await getData();
-  })();
+  $: $hiddenColumnIds = Object.entries(hideForId)
+    .filter(([, hide]) => !hide)
+    .map(([id]) => id);
 </script>
 
-<svelte:window on:keydown={onDeleteKey} />
-<div>
-  <div class="flex items-center py-4">
+<div class="flex flex-col gap-6">
+  <div class="flex items-center">
     <Input
       bind:value={$filterValue}
-      class="max-w-sm rounded-none border-0 border-b-4 border-foreground focus-visible:ring-0 focus-visible:border-b-4"
+      on:input={onSearch}
+      class="max-w-sm rounded-none bg-transparent border-0 border-b-2 p-0 border-foreground"
       placeholder="Suche..."
       type="text"
     />
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild let:builder>
-        <Button builders={[builder]} class="ml-auto shadow-custom" variant="secondary">
+        <Button builders={[builder]} class="ml-auto shadow-custom text-primary bg-white" variant="secondary">
           Spalten
           <ChevronDown class="ml-2 h-4 w-4" />
         </Button>
@@ -198,15 +223,15 @@
         {/each}
       </DropdownMenu.Content>
     </DropdownMenu.Root>
-    <Button
-      class="ml-auto text-md"
-      variant="secondary"
-      on:click={async () => {
-        await goto(`${$page.url}/new`);
-      }}
-      >Hinzufügen
-      <Plus class="ml-3" />
-    </Button>
+    {#if addButton}
+      <Button
+        class="ml-auto text-sm text-primary bg-white shadow-custom"
+        variant="secondary"
+        on:click={() => goto(`${$page.url}/new`)}
+        >Hinzufügen
+        <Plus class="ml-3" />
+      </Button>
+    {/if}
   </div>
   <div>
     <Table.Root {...$tableAttrs}>
@@ -217,12 +242,13 @@
               {#each headerRow.cells as cell (cell.id)}
                 <Subscribe attrs={cell.attrs()} let:attrs props={cell.props()} let:props>
                   <Table.Head {...attrs} class="[&:has([role=checkbox])]:pl-4">
-                    {#if cell.id !== 'actions' && cell.id !== 'id'}
+                    {#if cell.id !== 'actions' && cell.id !== 'id' && sortable}
                       <Button
                         variant="ghost"
-                        on:click={(event) => {
+                        on:click={async (event) => {
                           props.sort.toggle(event);
-                          getData();
+                          serverSide = true;
+                          await getData();
                         }}
                         class="text-white"
                       >
@@ -233,7 +259,9 @@
                         </div>
                       </Button>
                     {:else}
-                      <Render of={cell.render()} />
+                      <div class="text-white">
+                        <Render of={cell.render()} />
+                      </div>
                     {/if}
                   </Table.Head>
                 </Subscribe>
@@ -242,7 +270,7 @@
           </Subscribe>
         {/each}
       </Table.Header>
-      <Table.Body {...$tableBodyAttrs}>
+      <Table.Body class="text-primary" {...$tableBodyAttrs}>
         {#each $pageRows as row (row.isData() ? row.dataId : row.id)}
           <Subscribe rowAttrs={row.attrs()} let:rowAttrs>
             <Table.Row
@@ -263,32 +291,29 @@
       </Table.Body>
     </Table.Root>
   </div>
-  <div class="flex justify-center items-center py-4 relative">
+  <div class="flex justify-center items-center relative">
     <div class=" text-sm text-muted-foreground absolute left-0 items-center">
       {Object.keys($selectedDataIds).length} von{' '}
       {$rows.length} Zeile(n) ausgewählt.
     </div>
     <div>
-      <Pagination.Root count={$totalElements} perPage={pageSize} let:pages let:currentPage>
+      <Pagination.Root bind:count={$totalElementsStore} perPage={pageSize} let:pages bind:page={currentPaginationPage}>
         <Pagination.Content>
           <Pagination.Item>
             <Pagination.PrevButton
-              on:click={() => {
+              on:click={async () => {
                 $pageIndex--;
+                await getData();
               }}
-              class="shadow-custom"
+              class="shadow-custom bg-white"
             >
               <ChevronLeft class="h-4 w-4" />
-              <span class="hidden sm:block">Zurück</span>
+              <span class="hidden sm:block text-primary">Zurück</span>
             </Pagination.PrevButton>
           </Pagination.Item>
           {#each pages as page (page.key)}
             {#if page.type === 'ellipsis'}
-              <Pagination.Item
-                on:click={() => {
-                  $pageIndex = page;
-                }}
-              >
+              <Pagination.Item>
                 <Pagination.Ellipsis />
               </Pagination.Item>
             {:else if page.value > 0}
@@ -296,9 +321,12 @@
               <Pagination.Item>
                 <Pagination.Link
                   {page}
-                  class=" shadow-custom {currentPage === page.value ? 'border-2 border-foreground' : ''}"
-                  on:click={() => {
+                  class=" shadow-custom bg-white text-primary {currentPaginationPage === page.value
+                    ? 'border-2 border-foreground'
+                    : ''}"
+                  on:click={async () => {
                     $pageIndex = page.value - 1;
+                    await getData();
                   }}
                 >
                   {page.value}
@@ -308,13 +336,14 @@
           {/each}
           <Pagination.Item>
             <Pagination.NextButton
-              on:click={() => {
+              on:click={async () => {
                 $pageIndex++;
+                await getData();
               }}
-              class="shadow-custom"
+              class="shadow-custom bg-white"
             >
-              <span class="hidden sm:block">Weiter</span>
-              <ChevronRight class="h-4 w-4" />
+              <span class="hidden sm:block text-primary">Weiter</span>
+              <ChevronRight class="h-4 w-4 stroke-primary" />
             </Pagination.NextButton>
           </Pagination.Item>
         </Pagination.Content>
@@ -322,3 +351,28 @@
     </div>
   </div>
 </div>
+
+<svelte:window
+  on:keydown={(e) => {
+    if (e.code === 'Delete' && Object.keys($selectedDataIds).length > 0) {
+      alertOpen = true;
+    }
+  }}
+/>
+<AlertDialog.Root bind:open={alertOpen}>
+  <AlertDialog.Trigger />
+  <AlertDialog.Content>
+    <AlertDialog.Header>
+      <AlertDialog.Title>Ausgewählte Einträge löschen?</AlertDialog.Title>
+      <AlertDialog.Description
+        >Sind Sie sicher, dass Sie diese Einträge löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.</AlertDialog.Description
+      >
+    </AlertDialog.Header>
+    <AlertDialog.Footer>
+      <AlertDialog.Cancel class="shadow-custom">Abbrechen</AlertDialog.Cancel>
+      <AlertDialog.Action on:click={deleteSelectedEntries} class="text-red-600 shadow-custom"
+        >Löschen</AlertDialog.Action
+      >
+    </AlertDialog.Footer>
+  </AlertDialog.Content>
+</AlertDialog.Root>

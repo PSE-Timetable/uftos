@@ -3,10 +3,17 @@ package de.uftos.services;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import de.uftos.dto.LessonResponseDto;
+import de.uftos.dto.requestdtos.GradeRequestDto;
+import de.uftos.dto.responsedtos.GradeResponseDto;
+import de.uftos.dto.responsedtos.LessonResponseDto;
 import de.uftos.entities.Break;
 import de.uftos.entities.Grade;
 import de.uftos.entities.Lesson;
@@ -23,11 +30,13 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.web.server.ResponseStatusException;
 
 @SuppressWarnings("checkstyle:MissingJavadocType")
 @ExtendWith(MockitoExtension.class)
@@ -45,6 +54,9 @@ public class GradeServiceTests {
   @Mock
   private Grade grade2Mock;
 
+  @Mock
+  private Grade gradeForCreateAndUpdateMock;
+
 
   @InjectMocks
   private GradeService gradeService;
@@ -52,7 +64,10 @@ public class GradeServiceTests {
   private Room room1;
   private Room room2;
 
-  private static void assertResulArraysSizes(LessonResponseDto result, int teachers, int lessons,
+  private final GradeRequestDto requestDtoForCreateAndUpdate =
+      new GradeRequestDto("testName", List.of(), List.of("tagId"));
+
+  private static void assertResultArraysSizes(LessonResponseDto result, int teachers, int lessons,
                                              int rooms, int grades) {
     assertAll("Testing whether the sizes of the arrays are correct",
         () -> assertEquals(teachers, result.teachers().size()),
@@ -65,23 +80,26 @@ public class GradeServiceTests {
   @BeforeEach
   void setUp() {
     StudentGroup studentGroup1 =
-        new StudentGroup("5-Ethik", List.of("S1", "S2"), List.of(), List.of());
+        new StudentGroup("5-Ethics", List.of("S1", "S2"), List.of(), List.of(), List.of());
     studentGroup1.setId("g123");
 
     StudentGroup studentGroup2 =
-        new StudentGroup("5-Religion", List.of("S2", "S3"), List.of(), List.of("T1", "T2"));
+        new StudentGroup("5-Religion", List.of("S2", "S3"), List.of(), List.of(),
+            List.of("T1", "T2"));
     studentGroup2.setId("g456");
 
     StudentGroup studentGroup3 =
-        new StudentGroup("7-Ethik", List.of("S1", "S2"), List.of(), List.of());
+        new StudentGroup("7-Ethics", List.of("S1", "S2"), List.of(), List.of(), List.of());
     studentGroup3.setId("g234");
 
     StudentGroup studentGroup4 =
-        new StudentGroup("7-Religion", List.of("S2", "S3"), List.of(), List.of("T1", "T2"));
+        new StudentGroup("7-Religion", List.of("S2", "S3"), List.of(), List.of(),
+            List.of("T1", "T2"));
     studentGroup4.setId("g567");
 
     StudentGroup studentGroup5 =
-        new StudentGroup("7b-Religion", List.of("S2", "S3"), List.of(), List.of("T1", "T2"));
+        new StudentGroup("7b-Religion", List.of("S2", "S3"), List.of(), List.of(),
+            List.of("T1", "T2"));
     studentGroup5.setId("g678");
 
 
@@ -123,23 +141,62 @@ public class GradeServiceTests {
     studentGroup2.setGrades(List.of(grade1Mock));
 
     Break[] breaks = {};
-    Server server = new Server(new TimetableMetadata(45, "8:00", breaks), "2024");
+    Server server = new Server(new TimetableMetadata(45, 8, "8:00", breaks), "2024");
     when(serverRepository.findAll()).thenReturn(List.of(server));
     when(gradeRepository.findById("123")).thenReturn(Optional.of(grade1Mock));
     when(gradeRepository.findById("456")).thenReturn(Optional.of(grade2Mock));
+    when(gradeRepository.save(any(Grade.class))).thenReturn(gradeForCreateAndUpdateMock);
     when(grade1Mock.getStudentGroups()).thenReturn(List.of(studentGroup1, studentGroup2));
     when(grade1Mock.getId()).thenReturn(grade1.getId());
     when(grade1Mock.getName()).thenReturn(grade1.getName());
     when(grade1Mock.getTags()).thenReturn(grade1.getTags());
     when(grade2Mock.getStudentGroups()).thenReturn(List.of(studentGroup3, studentGroup4));
+
+    Grade gradeForTests = requestDtoForCreateAndUpdate.map();
+    when(gradeForCreateAndUpdateMock.getStudentGroups()).thenReturn(
+        gradeForTests.getStudentGroups());
+    when(gradeForCreateAndUpdateMock.getId()).thenReturn(gradeForTests.getId());
+    when(gradeForCreateAndUpdateMock.getName()).thenReturn(gradeForTests.getName());
+    when(gradeForCreateAndUpdateMock.getTags()).thenReturn(gradeForTests.getTags());
+  }
+
+  @Test
+  void getByNonExistentId() {
+    assertThrows(ResponseStatusException.class,
+        () -> gradeService.getById("nonExistentId"));
+  }
+
+  @Test
+  void getByExistentId() {
+    assertDoesNotThrow(() -> gradeService.getById("123"));
+    GradeResponseDto result = gradeService.getById("123");
+
+    assertAll("Testing whether the response dto is correct",
+        () -> assertEquals("123", result.id()),
+        () -> assertEquals("5", result.name()),
+        () -> assertEquals(2, result.studentGroupIds().size()),
+        () -> assertEquals(2, result.tags().size()),
+        () -> assertTrue(result.studentGroupIds().contains("g123")),
+        () -> assertTrue(result.studentGroupIds().contains("g456"))
+    );
   }
 
 
   @Test
-  void emptyLessons() {
-    assertDoesNotThrow(() -> gradeService.getLessonsById("456"));
-    LessonResponseDto result = gradeService.getLessonsById("456");
-    assertResulArraysSizes(result, 0, 0, 0, 0);
+  void createGrade() {
+    gradeService.create(requestDtoForCreateAndUpdate);
+    ArgumentCaptor<Grade> gradeCap = ArgumentCaptor.forClass(Grade.class);
+    verify(gradeRepository, times(1)).save(gradeCap.capture());
+
+    Grade grade = gradeCap.getValue();
+    assertNotNull(grade);
+    assertEquals("testName", grade.getName());
+
+    assertEquals(0, grade.getStudentGroups().size());
+
+    assertEquals(1, grade.getTags().size());
+    assertEquals("tagId", grade.getTags().getFirst().getId());
+
   }
 
   @Test
@@ -147,7 +204,7 @@ public class GradeServiceTests {
     LessonResponseDto result = gradeService.getLessonsById("123");
 
     //should be lessons 1, 3, 5
-    assertResulArraysSizes(result, 2, 3, 2, 1);
+    assertResultArraysSizes(result, 2, 3, 2, 1);
     assertAll("Testing whether the sizes of the arrays are correct",
         () -> assertEquals(2, result.grades().getFirst().studentGroupIds().size()),
         () -> assertEquals(3, result.grades().getFirst().studentIds().size())
@@ -169,6 +226,47 @@ public class GradeServiceTests {
         () -> assertTrue(result.grades().getFirst().studentIds().contains("S3"))
     );
   }
+
+  @Test
+  void updateGrade() {
+    gradeService.update("123", requestDtoForCreateAndUpdate);
+    ArgumentCaptor<Grade> gradeCap = ArgumentCaptor.forClass(Grade.class);
+    verify(gradeRepository, times(1)).save(gradeCap.capture());
+
+    Grade grade = gradeCap.getValue();
+    assertNotNull(grade);
+    assertEquals("testName", grade.getName());
+
+    assertEquals(0, grade.getStudentGroups().size());
+
+    assertEquals(1, grade.getTags().size());
+    assertEquals("tagId", grade.getTags().getFirst().getId());
+  }
+
+  @Test
+  void deleteExistentGrade() {
+    assertDoesNotThrow(() -> gradeService.delete("123"));
+    ArgumentCaptor<Grade> gradeCap = ArgumentCaptor.forClass(Grade.class);
+    verify(gradeRepository, times(1)).delete(gradeCap.capture());
+
+    Grade grade = gradeCap.getValue();
+    assertEquals("123", grade.getId());
+  }
+
+  @Test
+  void deleteNonExistentGrade() {
+    assertThrows(ResponseStatusException.class, () -> gradeService.delete("nonExistentId"));
+  }
+
+
+  @Test
+  void emptyLessons() {
+    assertDoesNotThrow(() -> gradeService.getLessonsById("456"));
+    LessonResponseDto result = gradeService.getLessonsById("456");
+    assertResultArraysSizes(result, 0, 0, 0, 0);
+  }
+
+
 
 
   private Lesson createLesson(Teacher teacher, Room room, StudentGroup studentGroup,

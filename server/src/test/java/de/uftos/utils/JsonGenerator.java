@@ -1,7 +1,7 @@
 package de.uftos.utils;
 
-import de.uftos.dto.LessonsCountRequestDto;
 import de.uftos.dto.Weekday;
+import de.uftos.dto.requestdtos.LessonsCountRequestDto;
 import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -157,12 +157,14 @@ public class JsonGenerator {
    * @param name     The name of the student group
    * @param students The ids of the students the student group contains
    * @param grades   The ids of the grades the student group belongs to
-   * @param tags     The ids of the tags the student has
+   * @param tags     The ids of the tags the student group has
+   * @param subjects The ids of the subject the student group has
    * @return The requested JSON
    * @throws JSONException If something is malformed.
    */
   public static String generateStudentGroupJson(String name, List<String> students,
-                                                List<String> grades, List<String> tags)
+                                                List<String> grades, List<String> tags,
+                                                List<String> subjects)
       throws JSONException {
 
     JSONArray studentIds = new JSONArray();
@@ -174,11 +176,15 @@ public class JsonGenerator {
     JSONArray tagIds = new JSONArray();
     tags.forEach(tagIds::put);
 
+    JSONArray subjectIds = new JSONArray();
+    subjects.forEach(subjectIds::put);
+
     return new JSONObject()
         .put("name", name)
         .put("studentIds", studentIds)
         .put("gradeIds", gradeIds)
         .put("tagIds", tagIds)
+        .put("subjectIds", subjectIds)
         .toString();
   }
 
@@ -231,7 +237,6 @@ public class JsonGenerator {
         .put("tagIds", jsonArray)
         .toString();
   }
-
 
 
   /**

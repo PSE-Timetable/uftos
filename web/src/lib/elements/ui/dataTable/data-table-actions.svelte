@@ -4,10 +4,13 @@
   import Button from '$lib/elements/ui/button/button.svelte';
   import { goto } from '$app/navigation';
   import { page } from '$app/stores';
+  import { toast } from '$lib/utils/resources';
 
   export let id: string;
-  export let deleteEntry: (id: string) => Promise<void>;
+  export let deleteEntry: (id: string, additionalId?: string) => Promise<void>;
   export let getData: () => Promise<void>;
+  export let editAvailable: boolean;
+  export let additionalId: string;
 </script>
 
 <DropdownMenu.Root>
@@ -22,14 +25,19 @@
       <DropdownMenu.Label>Aktionen</DropdownMenu.Label>
       <DropdownMenu.Item on:click={() => navigator.clipboard.writeText(id)}>ID kopieren</DropdownMenu.Item>
     </DropdownMenu.Group>
-    <DropdownMenu.Item on:click={async () => await goto(`${$page.url}/${id}`)}>Editieren</DropdownMenu.Item>
+    {#if editAvailable}
+      <DropdownMenu.Item on:click={() => goto(`${$page.url}/${id}`)}>Editieren</DropdownMenu.Item>
+    {/if}
     <DropdownMenu.Separator />
     <DropdownMenu.Item
+      class="text-red-600"
       on:click={async () => {
-        await deleteEntry(id);
+        await deleteEntry(id, additionalId);
         await getData();
+        toast(true, 'Eintrag erfolgreich gelöscht.');
       }}
-      class="text-red-600">Löschen</DropdownMenu.Item
     >
+      Löschen
+    </DropdownMenu.Item>
   </DropdownMenu.Content>
 </DropdownMenu.Root>

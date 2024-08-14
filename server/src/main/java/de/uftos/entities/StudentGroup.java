@@ -2,6 +2,7 @@ package de.uftos.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -34,7 +35,7 @@ public class StudentGroup {
   private String name;
 
   @NotNull
-  @ManyToMany
+  @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(name = "students_student_groups",
       joinColumns = @JoinColumn(name = "student_groups_id"),
       inverseJoinColumns = @JoinColumn(name = "students_id"))
@@ -45,7 +46,7 @@ public class StudentGroup {
   private List<Grade> grades;
 
   @NotNull
-  @ManyToMany
+  @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(name = "student_groups_tags",
       joinColumns = @JoinColumn(name = "student_groups_id"),
       inverseJoinColumns = @JoinColumn(name = "tags_id"))
@@ -54,6 +55,13 @@ public class StudentGroup {
   @JsonIgnore
   @OneToMany(mappedBy = "studentGroup")
   private List<Lesson> lessons;
+
+  @NotNull
+  @ManyToMany(fetch = FetchType.EAGER)
+  @JoinTable(name = "student_groups_subjects",
+      joinColumns = @JoinColumn(name = "student_groups_id"),
+      inverseJoinColumns = @JoinColumn(name = "subjects_id"))
+  private List<Subject> subjects;
 
   /**
    * Creates a new student group.
@@ -69,17 +77,19 @@ public class StudentGroup {
    * Creates a new student group.
    * Used if the ID of the student group isn't known.
    *
-   * @param name       the name of the student group.
-   * @param studentIds the IDs of the students that are part of the group.
-   * @param gradeIds   the IDs of the grade that are part of the student group.
-   * @param tagIds     the IDs of the tags associated with the student group.
+   * @param name        the name of the student group.
+   * @param studentIds  the IDs of the students that are part of the group.
+   * @param gradeIds    the IDs of the grade that are part of the student group.
+   * @param tagIds      the IDs of the tags associated with the student group.
+   * @param subjectsIds the IDs of the subjects associated with the student group.
    */
   public StudentGroup(String name, List<String> studentIds, List<String> gradeIds,
-                      List<String> tagIds) {
+                      List<String> tagIds, List<String> subjectsIds) {
     this.name = name;
     this.students = studentIds.stream().map(Student::new).toList();
     this.grades = gradeIds.stream().map(Grade::new).toList();
     this.tags = tagIds.stream().map(Tag::new).toList();
+    this.subjects = subjectsIds.stream().map(Subject::new).toList();
   }
 
   @Override

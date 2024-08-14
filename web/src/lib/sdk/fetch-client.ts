@@ -25,7 +25,7 @@ export type ConstraintParameter = {
     parameterType: ParameterType;
 };
 export type ConstraintSignature = {
-    defaultType: DefaultType;
+    defaultType: RewardPenalize;
     description: string;
     name: string;
     parameters: ConstraintParameter[];
@@ -65,7 +65,7 @@ export type SlimArgument = {
 export type SlimInstance = {
     arguments: SlimArgument[];
     id: string;
-    "type": Type;
+    "type": RewardPenalize;
 };
 export type ConstraintArgumentDisplayName = {
     displayName: string;
@@ -76,11 +76,13 @@ export type ConstraintInstancesResponseDto = {
     displayNames: ConstraintArgumentDisplayName[];
     parameters: ConstraintParameter[];
 };
+export type ConstraintArgumentRequestDto = {
+    argumentId: string;
+    parameterName: string;
+};
 export type ConstraintInstanceRequestDto = {
-    arguments: {
-        [key: string]: string;
-    };
-    "type"?: Type;
+    arguments: ConstraintArgumentRequestDto[];
+    "type"?: RewardPenalize;
 };
 export type ConstraintArgument = {
     constraintParameter: ConstraintParameter;
@@ -90,7 +92,7 @@ export type ConstraintArgument = {
 export type ConstraintInstance = {
     arguments: ConstraintArgument[];
     id: string;
-    "type": Type;
+    "type": RewardPenalize;
 };
 export type Tag = {
     id: string;
@@ -243,6 +245,7 @@ export type StudentGroup = {
     id: string;
     name: string;
     students: Student[];
+    subjects: Subject[];
     tags: Tag[];
 };
 export type Lesson = {
@@ -291,6 +294,7 @@ export type TimetableMetadata = {
     breaks: Break[];
     startTime: string;
     timeslotLength: number;
+    timeslotsAmount: number;
 };
 export type PageStudentGroup = {
     content?: StudentGroup[];
@@ -309,6 +313,7 @@ export type StudentGroupRequestDto = {
     gradeIds: string[];
     name: string;
     studentIds: string[];
+    subjectIds: string[];
     tagIds: string[];
 };
 export type PageStudent = {
@@ -500,11 +505,15 @@ export function getUcdlFile(opts?: Oazapfts.RequestOpts) {
 }
 export function setUcdlFile(body?: {
     file: Blob;
-}, opts?: Oazapfts.RequestOpts) {
+}, { force }: {
+    force?: boolean;
+} = {}, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
         data: ParsingResponse;
-    }>("/editor", oazapfts.json({
+    }>(`/editor${QS.query(QS.explode({
+        force
+    }))}`, oazapfts.multipart({
         ...opts,
         method: "PUT",
         body
@@ -989,11 +998,15 @@ export function getTeacherLessons(id: string, opts?: Oazapfts.RequestOpts) {
         ...opts
     }));
 }
-export function getTimeslots(opts?: Oazapfts.RequestOpts) {
+export function getTimeslots({ tags }: {
+    tags?: string[];
+} = {}, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
         data: Timeslot[];
-    }>("/timeslots", {
+    }>(`/timeslots${QS.query(QS.explode({
+        tags
+    }))}`, {
         ...opts
     }));
 }
@@ -1068,7 +1081,7 @@ export function getTimetable(id: string, opts?: Oazapfts.RequestOpts) {
         ...opts
     }));
 }
-export enum DefaultType {
+export enum RewardPenalize {
     SoftReward = "SOFT_REWARD",
     HardReward = "HARD_REWARD",
     SoftPenalize = "SOFT_PENALIZE",
@@ -1086,12 +1099,6 @@ export enum ParameterType {
     Timeslot = "TIMESLOT",
     Number = "NUMBER",
     Timetable = "TIMETABLE"
-}
-export enum Type {
-    SoftReward = "SOFT_REWARD",
-    HardReward = "HARD_REWARD",
-    SoftPenalize = "SOFT_PENALIZE",
-    HardPenalize = "HARD_PENALIZE"
 }
 export enum Day {
     Monday = "MONDAY",

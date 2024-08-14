@@ -13,6 +13,7 @@ public record StudentGroupProblemDto(
     List<String> lessonIds,
     List<String> studentIds
 ) implements ResourceProblemDto {
+
   @Override
   public ResourceType getType() {
     return ResourceType.STUDENT_GROUP;

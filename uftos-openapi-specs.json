@@ -396,9 +396,18 @@
       },
       "put" : {
         "operationId" : "setUcdlFile",
+        "parameters" : [ {
+          "in" : "query",
+          "name" : "force",
+          "required" : false,
+          "schema" : {
+            "type" : "boolean",
+            "default" : false
+          }
+        } ],
         "requestBody" : {
           "content" : {
-            "application/json" : {
+            "multipart/form-data" : {
               "schema" : {
                 "type" : "object",
                 "properties" : {
@@ -1878,6 +1887,17 @@
     "/timeslots" : {
       "get" : {
         "operationId" : "getTimeslots",
+        "parameters" : [ {
+          "in" : "query",
+          "name" : "tags",
+          "required" : false,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        } ],
         "responses" : {
           "200" : {
             "content" : {
@@ -2179,6 +2199,18 @@
           }
         }
       },
+      "ConstraintArgumentRequestDto" : {
+        "required" : [ "argumentId", "parameterName" ],
+        "type" : "object",
+        "properties" : {
+          "argumentId" : {
+            "type" : "string"
+          },
+          "parameterName" : {
+            "type" : "string"
+          }
+        }
+      },
       "ConstraintInstance" : {
         "required" : [ "arguments", "id", "type" ],
         "type" : "object",
@@ -2193,8 +2225,7 @@
             "type" : "string"
           },
           "type" : {
-            "type" : "string",
-            "enum" : [ "SOFT_REWARD", "HARD_REWARD", "SOFT_PENALIZE", "HARD_PENALIZE" ]
+            "$ref" : "#/components/schemas/RewardPenalize"
           }
         }
       },
@@ -2203,14 +2234,13 @@
         "type" : "object",
         "properties" : {
           "arguments" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ConstraintArgumentRequestDto"
             }
           },
           "type" : {
-            "type" : "string",
-            "enum" : [ "SOFT_REWARD", "HARD_REWARD", "SOFT_PENALIZE", "HARD_PENALIZE" ]
+            "$ref" : "#/components/schemas/RewardPenalize"
           }
         }
       },
@@ -2259,8 +2289,7 @@
         "type" : "object",
         "properties" : {
           "defaultType" : {
-            "type" : "string",
-            "enum" : [ "SOFT_REWARD", "HARD_REWARD", "SOFT_PENALIZE", "HARD_PENALIZE" ]
+            "$ref" : "#/components/schemas/RewardPenalize"
           },
           "description" : {
             "type" : "string"
@@ -2999,6 +3028,10 @@
           }
         }
       },
+      "RewardPenalize" : {
+        "type" : "string",
+        "enum" : [ "SOFT_REWARD", "HARD_REWARD", "SOFT_PENALIZE", "HARD_PENALIZE" ]
+      },
       "Room" : {
         "required" : [ "buildingName", "capacity", "id", "name", "tags" ],
         "type" : "object",
@@ -3098,8 +3131,7 @@
             "type" : "string"
           },
           "type" : {
-            "type" : "string",
-            "enum" : [ "SOFT_REWARD", "HARD_REWARD", "SOFT_PENALIZE", "HARD_PENALIZE" ]
+            "$ref" : "#/components/schemas/RewardPenalize"
           }
         }
       },
@@ -3156,7 +3188,7 @@
         }
       },
       "StudentGroup" : {
-        "required" : [ "grades", "id", "name", "students", "tags" ],
+        "required" : [ "grades", "id", "name", "students", "subjects", "tags" ],
         "type" : "object",
         "properties" : {
           "grades" : {
@@ -3177,6 +3209,12 @@
               "$ref" : "#/components/schemas/Student"
             }
           },
+          "subjects" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Subject"
+            }
+          },
           "tags" : {
             "type" : "array",
             "items" : {
@@ -3186,7 +3224,7 @@
         }
       },
       "StudentGroupRequestDto" : {
-        "required" : [ "gradeIds", "name", "studentIds", "tagIds" ],
+        "required" : [ "gradeIds", "name", "studentIds", "subjectIds", "tagIds" ],
         "type" : "object",
         "properties" : {
           "gradeIds" : {
@@ -3199,6 +3237,12 @@
             "type" : "string"
           },
           "studentIds" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "subjectIds" : {
             "type" : "array",
             "items" : {
               "type" : "string"
@@ -3403,7 +3447,7 @@
         }
       },
       "TimetableMetadata" : {
-        "required" : [ "breaks", "startTime", "timeslotLength" ],
+        "required" : [ "breaks", "startTime", "timeslotLength", "timeslotsAmount" ],
         "type" : "object",
         "properties" : {
           "breaks" : {
@@ -3416,6 +3460,10 @@
             "type" : "string"
           },
           "timeslotLength" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "timeslotsAmount" : {
             "type" : "integer",
             "format" : "int32"
           }

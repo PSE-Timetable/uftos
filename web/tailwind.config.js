@@ -79,6 +79,7 @@ const config = {
       },
       boxShadow: {
         custom: '0px 5px 4px 0px rgba(43, 110, 137, 0.5)',
+        customSmall: '0px 5px 8px 1px rgba(43, 110, 137, 0.5)',
       },
     },
   },

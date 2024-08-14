@@ -35,8 +35,14 @@ public class ConstraintArgument {
   @NotEmpty
   private String value;
 
-
+  /**
+   * Creates a new constraint argument.
+   *
+   * @param name  the of the parameter this argument refers to
+   * @param value the id of the entity this argument refers to
+   */
   public ConstraintArgument(String name, String value) {
+    this.constraintParameter = new ConstraintParameter(name);
     this.value = value;
   }
 

@@ -1,7 +1,7 @@
 package de.uftos.controller;
 
-import de.uftos.dto.ConstraintInstanceRequestDto;
-import de.uftos.dto.ConstraintInstancesResponseDto;
+import de.uftos.dto.requestdtos.ConstraintInstanceRequestDto;
+import de.uftos.dto.responsedtos.ConstraintInstancesResponseDto;
 import de.uftos.entities.ConstraintInstance;
 import de.uftos.entities.ConstraintSignature;
 import de.uftos.services.ConstraintInstanceService;
@@ -29,7 +29,6 @@ public class ConstraintController {
   private final ConstraintSignatureService constraintSignatureService;
   private final ConstraintInstanceService constraintInstanceService;
 
-
   /**
    * Creates the constraint controller.
    *
@@ -41,7 +40,6 @@ public class ConstraintController {
                               ConstraintInstanceService constraintInstanceService) {
     this.constraintSignatureService = constraintSignatureService;
     this.constraintInstanceService = constraintInstanceService;
-
   }
 
   /**
@@ -56,6 +54,7 @@ public class ConstraintController {
   @GetMapping()
   public Page<ConstraintSignature> getConstraintSignatures(Pageable pageable,
                                                            Optional<String> name) {
+
     return this.constraintSignatureService.get(pageable, name);
   }
 

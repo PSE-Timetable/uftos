@@ -1,6 +1,6 @@
 package de.uftos.controller;
 
-import de.uftos.dto.SubjectRequestDto;
+import de.uftos.dto.requestdtos.SubjectRequestDto;
 import de.uftos.entities.Subject;
 import de.uftos.services.SubjectService;
 import java.util.List;

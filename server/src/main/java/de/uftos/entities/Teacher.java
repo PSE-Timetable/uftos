@@ -2,6 +2,7 @@ package de.uftos.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -38,14 +39,14 @@ public class Teacher {
   private String acronym;
 
   @NotNull
-  @ManyToMany
+  @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(name = "teachers_subjects",
       joinColumns = @JoinColumn(name = "teachers_id"),
       inverseJoinColumns = @JoinColumn(name = "subjects_id"))
   private List<Subject> subjects;
 
   @NotEmpty
-  @ManyToMany
+  @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(name = "teachers_tags",
       joinColumns = @JoinColumn(name = "teachers_id"),
       inverseJoinColumns = @JoinColumn(name = "tags_id"))

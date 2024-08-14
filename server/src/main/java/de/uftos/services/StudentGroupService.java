@@ -1,16 +1,19 @@
 package de.uftos.services;
 
-import de.uftos.dto.LessonResponseDto;
-import de.uftos.dto.StudentAndGroup;
-import de.uftos.dto.StudentGroupRequestDto;
+import de.uftos.dto.requestdtos.StudentGroupRequestDto;
+import de.uftos.dto.responsedtos.LessonResponseDto;
 import de.uftos.entities.Lesson;
+import de.uftos.entities.Student;
 import de.uftos.entities.StudentGroup;
 import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.StudentGroupRepository;
+import de.uftos.repositories.database.StudentRepository;
 import de.uftos.utils.SpecificationBuilder;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +29,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class StudentGroupService {
   private final StudentGroupRepository repository;
   private final ServerRepository serverRepository;
+  private final StudentRepository studentRepository;
 
   /**
    * Creates a student group service.
@@ -33,9 +37,11 @@ public class StudentGroupService {
    * @param repository the repository for accessing the student group table.
    */
   @Autowired
-  public StudentGroupService(StudentGroupRepository repository, ServerRepository serverRepository) {
+  public StudentGroupService(StudentGroupRepository repository, ServerRepository serverRepository,
+                             StudentRepository studentRepository) {
     this.repository = repository;
     this.serverRepository = serverRepository;
+    this.studentRepository = studentRepository;
   }
 
   /**
@@ -87,10 +93,12 @@ public class StudentGroupService {
    *
    * @param group the student group which is to be created.
    * @return the updated student group including the ID which has been assigned.
-   * @throws ResponseStatusException is thrown if the ID defined in the student group parameter is
-   *                                 already present in the database.
+   * @throws ResponseStatusException is thrown if the name of the group is blank.
    */
   public StudentGroup create(StudentGroupRequestDto group) {
+    if (group.name().isBlank()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The name of the student group is blank.");
+    }
     return this.repository.save(group.map());
   }
 
@@ -100,8 +108,12 @@ public class StudentGroupService {
    * @param id           the ID of the student group which is to be updated.
    * @param groupRequest the updated student information.
    * @return the updated student.
+   * @throws ResponseStatusException is thrown if the name of the group is blank.
    */
   public StudentGroup update(String id, StudentGroupRequestDto groupRequest) {
+    if (groupRequest.name().isBlank()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The name of the student group is blank.");
+    }
     StudentGroup group = groupRequest.map();
     group.setId(id);
     return this.repository.save(group);
@@ -114,9 +126,13 @@ public class StudentGroupService {
    * @param studentIds the IDs of students which are to be added to the student group.
    */
   public StudentGroup addStudents(String id, List<String> studentIds) {
-    this.repository.addStudentsToGroups(
-        studentIds.stream().map((studentId) -> new StudentAndGroup(studentId, id)).toList());
-    return this.getById(id);
+    StudentGroup studentGroup = getById(id);
+    Set<Student> studentsInGroup = new HashSet<>(studentGroup.getStudents());
+    studentsInGroup.addAll(studentIds.stream()
+        .map(studentId -> studentRepository.findById(studentId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST))).toList());
+    studentGroup.setStudents(new ArrayList<Student>(studentsInGroup));
+    return this.repository.save(studentGroup);
   }
 
   /**
@@ -126,7 +142,11 @@ public class StudentGroupService {
    * @param studentIds the IDs of students which are to be removed.
    */
   public void removeStudents(String id, List<String> studentIds) {
-    this.repository.removeStudentsFromGroup(id, studentIds);
+    StudentGroup studentGroup = getById(id);
+    List<Student> filteredStudents = studentGroup.getStudents().stream()
+        .filter(student -> !studentIds.contains(student.getId())).toList();
+    studentGroup.setStudents(new ArrayList<Student>(filteredStudents)); //make list mutable
+    this.repository.save(studentGroup);
   }
 
   /**

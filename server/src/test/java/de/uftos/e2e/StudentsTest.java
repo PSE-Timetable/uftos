@@ -12,7 +12,6 @@ import io.restassured.filter.log.LogDetail;
 import io.restassured.http.ContentType;
 import java.util.Collections;
 import java.util.List;
-import lombok.extern.java.Log;
 import org.json.JSONException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -47,7 +46,7 @@ class StudentsTest {
         .body().jsonPath().getString("id");
 
     groupId = given().contentType(ContentType.JSON)
-        .body(generateStudentGroupJson(GROUP_NAME, List.of(), List.of(), List.of()))
+        .body(generateStudentGroupJson(GROUP_NAME, List.of(), List.of(), List.of(), List.of()))
         .when()
         .post("/student-groups")
         .then()
