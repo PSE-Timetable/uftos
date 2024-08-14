@@ -60,11 +60,13 @@ public class Student {
    *
    * @param firstName the first name of the student.
    * @param lastName  the last name of the student.
+   * @param groupIds  the IDs of the groups the student is in.
    * @param tagIds    the IDs of the tags associated with the student.
    */
-  public Student(String firstName, String lastName, List<String> tagIds) {
+  public Student(String firstName, String lastName, List<String> groupIds, List<String> tagIds) {
     this.firstName = firstName;
     this.lastName = lastName;
+    this.groups = groupIds.stream().map(StudentGroup::new).toList();
     this.tags = tagIds.stream().map(Tag::new).toList();
   }
 
@@ -72,6 +74,7 @@ public class Student {
    * Creates a new student.
    * Used if the ID is known.
    *
+   * @param id        the ID of the student
    * @param firstName the first name of the student.
    * @param lastName  the last name of the student.
    * @param groups    the list of student groups in which the student is.
