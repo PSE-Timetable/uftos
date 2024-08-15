@@ -26,7 +26,7 @@ public class ConstraintSignature {
 
   @NotEmpty
   private String description;
- 
+
   @NotEmpty
   private RewardPenalize defaultType;
 
@@ -35,7 +35,7 @@ public class ConstraintSignature {
   private List<ConstraintParameter> parameters;
 
   @JsonIgnore
-  @OneToMany(mappedBy = "signature", cascade = CascadeType.ALL)
+  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
   private List<ConstraintInstance> instances;
 
   @Override
