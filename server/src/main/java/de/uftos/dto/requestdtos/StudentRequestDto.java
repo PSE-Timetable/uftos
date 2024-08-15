@@ -12,7 +12,8 @@ import java.util.List;
  * @param lastName  the last name of the student.
  * @param tagIds    the tags associated with the student.
  */
-public record StudentRequestDto(@NotEmpty String firstName, @NotEmpty String lastName, @NotNull List<String> groupIds,
+public record StudentRequestDto(@NotEmpty String firstName, @NotEmpty String lastName,
+                                @NotNull List<String> groupIds,
                                 @NotNull List<String> tagIds) {
 
   /**
@@ -21,6 +22,6 @@ public record StudentRequestDto(@NotEmpty String firstName, @NotEmpty String las
    * @return the new student entity.
    */
   public Student map() {
-    return new Student(this.firstName(), this.lastName(), this.groupIds(), this.tagIds());
+    return new Student(this.firstName(), this.lastName(), this.tagIds());
   }
 }
