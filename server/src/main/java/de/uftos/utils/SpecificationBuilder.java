@@ -41,13 +41,14 @@ public class SpecificationBuilder<T> {
    * @return The current instance of {@code SpecificationBuilder} with the
    *     OR filter added if the parameter is present.
    */
-  public SpecificationBuilder<T> optionalOrEquals(Optional<String> param, String paramName) {
+  public SpecificationBuilder<T> optionalOrLike(Optional<String> param, String paramName) {
     if (param.isEmpty()) {
       return this;
     }
     specification =
         specification.or(
-            ((root, query, cb) -> cb.like(root.get(paramName), "%" + param.get() + "%")));
+            ((root, query, cb) -> likeIgnoreCase(cb, root.get(paramName), param.get()))
+        );
     return this;
   }
 

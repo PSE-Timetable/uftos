@@ -52,8 +52,8 @@ public class RoomService {
                         Optional<String[]> tags) {
     //currently no capacity filter
     Specification<Room> spec = new SpecificationBuilder<Room>()
-        .optionalOrEquals(name, "name")
-        .optionalOrEquals(buildingName, "buildingName")
+        .optionalOrLike(name, "name")
+        .optionalOrLike(buildingName, "buildingName")
         .optionalAndJoinIn(tags, "tags", "id")
         .build();
     return this.repository.findAll(spec, pageable);

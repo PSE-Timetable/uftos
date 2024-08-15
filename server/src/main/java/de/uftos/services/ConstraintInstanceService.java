@@ -124,10 +124,12 @@ public class ConstraintInstanceService {
 
     ConstraintInstance instance = new ConstraintInstance();
     instance.setArguments(arguments);
-    instance.setSignature(signature);
     instance.setType(request.type());
 
-    return this.repository.save(instance);
+    signature.getInstances().add(instance);
+    this.signatureRepository.save(signature);
+
+    return instance;
   }
 
   /**
@@ -204,16 +206,17 @@ public class ConstraintInstanceService {
    * @param id          the ID of the constraintInstance.
    */
   public void delete(String signatureId, String id) {
-    ConstraintInstance instance = this.getInstanceById(signatureId, id);
-
-    this.repository.delete(instance);
+    ConstraintSignature signature = this.signatureRepository.findById(signatureId).orElseThrow(
+        () -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+            "Could not find signature with this id."));
+    signature.getInstances().removeIf((instance) -> instance.getId().equals(id));
+    this.signatureRepository.save(signature);
   }
 
   private ConstraintInstance getInstanceById(String signatureId, String id) {
-    ConstraintSignature signature = this.signatureRepository.findById(signatureId)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
-
-    return this.repository.findBySignatureAndId(signature, id)
+    return this.signatureRepository.findById(signatureId)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST)).getInstances()
+        .stream().filter(instance -> instance.getId().equals(id)).findFirst()
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
   }
 

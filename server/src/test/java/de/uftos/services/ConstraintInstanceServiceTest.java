@@ -28,6 +28,7 @@ import de.uftos.repositories.database.SubjectRepository;
 import de.uftos.repositories.database.TagRepository;
 import de.uftos.repositories.database.TeacherRepository;
 import de.uftos.repositories.database.TimeslotRepository;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -90,16 +91,15 @@ public class ConstraintInstanceServiceTest {
 
     ConstraintInstance constraintInstance = new ConstraintInstance();
     constraintInstance.setId("123");
-    constraintInstance.setSignature(constraintSignature);
     constraintInstance.setArguments(List.of(constraintArgument));
 
-    constraintSignature.setInstances(List.of(constraintInstance));
+    constraintSignature.setInstances(new ArrayList<>(List.of(constraintInstance)));
     constraintSignature.setParameters(List.of(constraintParameter));
 
     when(constraintInstanceRepository.findById("123")).thenReturn(
         Optional.of(constraintInstance));
-    when(constraintInstanceRepository.findBySignatureAndId(constraintSignature, "123")).thenReturn(
-        Optional.of(constraintInstance));
+    when(constraintSignatureRepository.findById(constraintSignature.getName())).thenReturn(
+        Optional.of(constraintSignature));
     when(constraintSignatureRepository.findById("test constraint")).thenReturn(
         Optional.of(constraintSignature));
 

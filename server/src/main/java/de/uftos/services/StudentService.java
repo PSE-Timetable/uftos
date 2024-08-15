@@ -53,8 +53,8 @@ public class StudentService {
     }
 
     Specification<Student> spec = new SpecificationBuilder<Student>()
-        .optionalOrEquals(firstName, "firstName")
-        .optionalOrEquals(lastName, "lastName")
+        .optionalOrLike(firstName, "firstName")
+        .optionalOrLike(lastName, "lastName")
         .optionalAndJoinIn(groups, "groups", "id")
         .optionalAndJoinIn(tags, "tags", "id")
         .build();
