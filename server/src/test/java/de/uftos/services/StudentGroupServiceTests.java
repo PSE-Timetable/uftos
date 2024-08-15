@@ -203,6 +203,9 @@ public class StudentGroupServiceTests {
 
     Grade grade1 = new Grade("723");
     grade1.setStudentGroups(List.of(studentGroup1, studentGroup2));
+
+    when(gradeRepository.findAllById(List.of("723"))).thenReturn(List.of(grade1));
+
     studentGroup1.setGrades(List.of(grade1));
     studentGroup2.setGrades(List.of(grade1));
 
