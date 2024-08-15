@@ -13,6 +13,7 @@ import de.uftos.repositories.ucdl.parser.javacc.Node;
 import de.uftos.repositories.ucdl.parser.javacc.ParseException;
 import de.uftos.repositories.ucdl.parser.javacc.SimpleNode;
 import de.uftos.repositories.ucdl.parser.javacc.SyntaxChecker;
+import de.uftos.repositories.ucdl.parser.javacc.TokenMgrError;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -39,8 +40,12 @@ public class DefinitionParser {
       throws ParseException {
     LinkedHashMap<String, ResourceType> params = new LinkedHashMap<>(parameters);
 
-    SimpleNode root = SyntaxChecker.parseString(definition);
-    return buildAst(root, params);
+    try {
+      SimpleNode root = SyntaxChecker.parseString(definition);
+      return buildAst(root, params);
+    } catch (TokenMgrError e) {
+      throw new ParseException(e.getMessage());
+    }
   }
 
   private static AbstractSyntaxTreeDto buildAst(Node root,
@@ -487,19 +492,21 @@ public class DefinitionParser {
   private static boolean getReturnValue(List<AbstractSyntaxTreeDto> body) throws ParseException {
     boolean and = true;
     boolean or = false;
+    boolean noControlSequence = true;
     for (AbstractSyntaxTreeDto ast : body) {
       if (ast.getToken() == UcdlToken.FOR || ast.getToken() == UcdlToken.IF) {
+        noControlSequence = false;
         ControlSequenceDto cs = (ControlSequenceDto) ast;
         and &= cs.returnValue();
         or |= cs.returnValue();
       }
     }
-    if (and != or) {
+    if (!noControlSequence && (and != or)) {
       throw new ParseException(
           "All control sequences in the body of a control sequence need to return"
               + " the same boolean value!");
     }
-    return and;
+    return noControlSequence || and;
   }
 
   private static UcdlToken getComparatorToken(String comparator, List<AbstractSyntaxTreeDto> params)

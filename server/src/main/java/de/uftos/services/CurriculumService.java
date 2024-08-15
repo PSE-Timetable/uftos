@@ -49,7 +49,7 @@ public class CurriculumService {
   public Page<CurriculumResponseDto> get(Pageable pageable, Optional<String> name) {
     //currently no filter for grades
     Specification<Curriculum> spec = new SpecificationBuilder<Curriculum>()
-        .optionalOrEquals(name, "name").build();
+        .optionalOrLike(name, "name").build();
     List<CurriculumResponseDto> curricula = this.repository.findAll(spec, pageable).stream()
         .map(CurriculumResponseDto::new).toList();
 
@@ -74,10 +74,12 @@ public class CurriculumService {
    *
    * @param curriculum the information about the curriculum which is to be created.
    * @return the created curriculum which includes the ID that has been assigned.
-   * @throws ResponseStatusException is thrown if the ID defined in the curriculum parameter
-   *                                 is already present in the database.
+   * @throws ResponseStatusException is thrown if the name of the curriculum is blank.
    */
   public CurriculumResponseDto create(CurriculumRequestDto curriculum) {
+    if (curriculum.name().isBlank()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The name of the curriculum is blank.");
+    }
     Grade grade = gradeRepository.findById(curriculum.gradeId())
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
     return this.mapResponseDto(this.repository.save(curriculum.map(grade)));

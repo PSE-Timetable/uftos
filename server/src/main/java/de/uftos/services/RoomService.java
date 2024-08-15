@@ -52,8 +52,8 @@ public class RoomService {
                         Optional<String[]> tags) {
     //currently no capacity filter
     Specification<Room> spec = new SpecificationBuilder<Room>()
-        .optionalOrEquals(name, "name")
-        .optionalOrEquals(buildingName, "buildingName")
+        .optionalOrLike(name, "name")
+        .optionalOrLike(buildingName, "buildingName")
         .optionalAndJoinIn(tags, "tags", "id")
         .build();
     return this.repository.findAll(spec, pageable);
@@ -92,10 +92,13 @@ public class RoomService {
    *
    * @param room the information about the room which is to be created.
    * @return the created room which includes the ID that was assigned.
-   * @throws ResponseStatusException is thrown if the ID defined in the room parameter is
-   *                                 already present in the database.
+   * @throws ResponseStatusException is thrown if the name, building name are blank or the capacity is 0.
    */
   public Room create(RoomRequestDto room) {
+    if (room.name().isBlank() || room.buildingName().isBlank() || room.capacity() == 0) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "The name, building name are blank or the capacity is 0.");
+    }
     return this.repository.save(room.map());
   }
 
@@ -105,8 +108,13 @@ public class RoomService {
    * @param id          the ID of the room which is to be updated.
    * @param roomRequest the updated room information.
    * @return the updated room.
+   * @throws ResponseStatusException is thrown if the name, building name are blank or the capacity is 0.
    */
   public Room update(String id, RoomRequestDto roomRequest) {
+    if (roomRequest.name().isBlank() || roomRequest.buildingName().isBlank() || roomRequest.capacity() == 0) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "The name, building name are blank or the capacity is 0.");
+    }
     Room room = roomRequest.map();
     room.setId(id);
 
