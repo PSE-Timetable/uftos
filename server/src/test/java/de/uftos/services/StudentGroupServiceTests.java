@@ -46,6 +46,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class StudentGroupServiceTests {
   @Mock
   private StudentGroupRepository studentGroupRepository;
+  
   @Mock
   private StudentRepository studentRepository;
 

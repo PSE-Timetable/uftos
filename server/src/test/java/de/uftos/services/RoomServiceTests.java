@@ -189,7 +189,7 @@ public class RoomServiceTests {
     );
 
     assertAll("Testing whether all the rooms are there",
-        () -> assertTrue(result.rooms().contains(room1))
+        () -> assertTrue(result.rooms().stream().map(room -> room.getId()).toList().contains(room1.getId()))
     );
 
     assertAll("Testing whether all the student groups are there",
