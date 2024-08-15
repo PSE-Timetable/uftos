@@ -100,7 +100,7 @@ public class TimetableServiceTests {
   }
 
   @Test
-  void timetableById() {
+  void getTimetableById() {
     Timetable timetable = timetableService.getById("timetable123");
     assertEquals("timetable123", timetable.getId());
   }
