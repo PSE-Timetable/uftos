@@ -13,6 +13,7 @@ import de.uftos.repositories.ucdl.parser.javacc.Node;
 import de.uftos.repositories.ucdl.parser.javacc.ParseException;
 import de.uftos.repositories.ucdl.parser.javacc.SimpleNode;
 import de.uftos.repositories.ucdl.parser.javacc.SyntaxChecker;
+import de.uftos.repositories.ucdl.parser.javacc.TokenMgrError;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -39,8 +40,12 @@ public class DefinitionParser {
       throws ParseException {
     LinkedHashMap<String, ResourceType> params = new LinkedHashMap<>(parameters);
 
-    SimpleNode root = SyntaxChecker.parseString(definition);
-    return buildAst(root, params);
+    try {
+      SimpleNode root = SyntaxChecker.parseString(definition);
+      return buildAst(root, params);
+    } catch (TokenMgrError e) {
+      throw new ParseException(e.getMessage());
+    }
   }
 
   private static AbstractSyntaxTreeDto buildAst(Node root,
