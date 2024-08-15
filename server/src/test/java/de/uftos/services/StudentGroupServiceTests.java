@@ -23,6 +23,7 @@ import de.uftos.entities.StudentGroup;
 import de.uftos.entities.Subject;
 import de.uftos.entities.Teacher;
 import de.uftos.entities.TimetableMetadata;
+import de.uftos.repositories.database.GradeRepository;
 import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.StudentGroupRepository;
 import de.uftos.repositories.database.StudentRepository;
@@ -46,9 +47,12 @@ import org.springframework.web.server.ResponseStatusException;
 public class StudentGroupServiceTests {
   @Mock
   private StudentGroupRepository studentGroupRepository;
-  
+
   @Mock
   private StudentRepository studentRepository;
+
+  @Mock
+  private GradeRepository gradeRepository;
 
   @Mock
   private ServerRepository serverRepository;
