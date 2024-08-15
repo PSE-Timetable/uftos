@@ -27,6 +27,7 @@ import de.uftos.repositories.database.GradeRepository;
 import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.StudentGroupRepository;
 import de.uftos.repositories.database.StudentRepository;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -202,7 +203,7 @@ public class StudentGroupServiceTests {
     studentGroup2.setLessons(Collections.emptyList());
 
     Grade grade1 = new Grade("gradeId1");
-    grade1.setStudentGroups(List.of(studentGroup1, studentGroup2));
+    grade1.setStudentGroups(new ArrayList<>(List.of(studentGroup1, studentGroup2)));
 
     when(gradeRepository.findAllById(List.of("gradeId1"))).thenReturn(List.of(grade1));
 
