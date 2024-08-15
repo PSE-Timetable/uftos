@@ -10,6 +10,7 @@ import java.util.List;
  *
  * @param firstName the first name of the student.
  * @param lastName  the last name of the student.
+ * @param groupIds  the ids of the student groups.
  * @param tagIds    the tags associated with the student.
  */
 public record StudentRequestDto(@NotEmpty String firstName, @NotEmpty String lastName,

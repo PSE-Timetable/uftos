@@ -45,20 +45,10 @@ class StudentsTest {
         .extract()
         .body().jsonPath().getString("id");
 
-    groupId = given().contentType(ContentType.JSON)
-        .body(generateStudentGroupJson(GROUP_NAME, List.of(), List.of(), List.of(), List.of()))
-        .when()
-        .post("/student-groups")
-        .then()
-        .statusCode(200)
-        .body("id", notNullValue())
-        .body("name", equalTo(GROUP_NAME))
-        .log().ifValidationFails()
-        .extract()
-        .body().jsonPath().getString("id");
+
 
     secondStudent = given().contentType(ContentType.JSON)
-        .body(generateStudentJson(SECOND_STUDENT_FIRST_NAME, SECOND_STUDENT_LAST_NAME, List.of(groupId),
+        .body(generateStudentJson(SECOND_STUDENT_FIRST_NAME, SECOND_STUDENT_LAST_NAME, List.of(),
             List.of(tagId)))
         .when()
         .post("/students")
@@ -85,10 +75,28 @@ class StudentsTest {
         .log().ifValidationFails()
         .extract()
         .body().jsonPath().getString("id");
+
+    groupId = given().contentType(ContentType.JSON)
+        .body(generateStudentGroupJson(GROUP_NAME, List.of(secondStudent), List.of(), List.of(), List.of()))
+        .when()
+        .post("/student-groups")
+        .then()
+        .statusCode(200)
+        .body("id", notNullValue())
+        .body("name", equalTo(GROUP_NAME))
+        .log().ifValidationFails()
+        .extract()
+        .body().jsonPath().getString("id");
   }
 
   @AfterAll
   static void deleteCreatedStudents() {
+    given().contentType(ContentType.JSON)
+        .when()
+        .delete("/student-groups/{id}", groupId)
+        .then()
+        .statusCode(200);
+
     given().contentType(ContentType.JSON)
         .when()
         .delete("/students/{id}", firstStudent)
@@ -98,12 +106,6 @@ class StudentsTest {
     given().contentType(ContentType.JSON)
         .when()
         .delete("/students/{id}", secondStudent)
-        .then()
-        .statusCode(200);
-
-    given().contentType(ContentType.JSON)
-        .when()
-        .delete("/student-groups/{id}", groupId)
         .then()
         .statusCode(200);
 

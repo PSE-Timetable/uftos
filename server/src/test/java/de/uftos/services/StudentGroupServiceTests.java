@@ -215,10 +215,10 @@ public class StudentGroupServiceTests {
 
     studentGroup1.setLessons(List.of(lesson1, lesson2, lesson3));
 
-    Student student = new Student("Firstname", "Lastname", List.of(studentGroup1.getId(), studentGroup2.getId()), List.of("tagId1"));
+    Student student = new Student("Firstname", "Lastname", List.of("tagId1"));
     student.setId("studentId1");
 
-    Student student1 = new Student("Firstname1", "Lastname1", List.of(studentGroup2.getId()), List.of("tagId1"));
+    Student student1 = new Student("Firstname1", "Lastname1", List.of("tagId1"));
     student1.setId("studentId2");
     when(studentRepository.findById(student.getId())).thenReturn(Optional.of(student));
     when(studentRepository.findById(student1.getId())).thenReturn(Optional.of(student1));
