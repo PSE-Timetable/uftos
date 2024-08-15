@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -46,10 +47,9 @@ import org.springframework.web.server.ResponseStatusException;
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class StudentGroupServiceTests {
-  private final StudentGroup studentGroup =
+  private final StudentGroupRequestDto requestDto =
       new StudentGroupRequestDto("testName", List.of("studentId1"), List.of("gradeId1"),
-          List.of("tagId1"), List.of("subjectId1"))
-          .map();
+          List.of("tagId1"), List.of("subjectId1"));
   @Mock
   private StudentGroupRepository studentGroupRepository;
   @Mock
@@ -104,15 +104,8 @@ public class StudentGroupServiceTests {
 
   @Test
   void createGroup() {
-    StudentGroupRequestDto studentGroupRequestDto =
-        new StudentGroupRequestDto("testName", List.of("studentId1"), List.of("gradeId1"),
-            List.of("tagId1"), List.of("subjectId1"));
-    studentGroupService.create(studentGroupRequestDto);
+    StudentGroup studentGroup = studentGroupService.create(requestDto);
 
-    ArgumentCaptor<StudentGroup> studentGroupCap = ArgumentCaptor.forClass(StudentGroup.class);
-    verify(studentGroupRepository, times(1)).save(studentGroupCap.capture());
-
-    StudentGroup studentGroup = studentGroupCap.getValue();
     assertNotNull(studentGroup);
     assertEquals("testName", studentGroup.getName());
 
@@ -185,7 +178,7 @@ public class StudentGroupServiceTests {
 
   @Test
   void deleteNonExistingGroup() {
-    assertThrows(ResponseStatusException.class, () -> studentGroupService.delete("789"));
+    assertThrows(ResponseStatusException.class, () -> studentGroupService.delete("123456"));
   }
 
   @BeforeEach
@@ -243,7 +236,9 @@ public class StudentGroupServiceTests {
     StudentGroup studentGroup3 =
         new StudentGroup("testName", List.of("studentId1"), List.of("tagId1"), List.of("subjectId1"));
     studentGroup3.setGrades(List.of(new Grade("gradeId1")));
-    when(studentGroupRepository.save(studentGroup)).thenReturn(studentGroup3);
+    studentGroup3.setId("789");
+    when(studentGroupRepository.save(any(StudentGroup.class))).thenReturn(studentGroup3);
+    when(studentGroupRepository.findById("789")).thenReturn(Optional.of(studentGroup3));
   }
 
   private Lesson createLesson(Teacher teacher, Room room, StudentGroup studentGroup,

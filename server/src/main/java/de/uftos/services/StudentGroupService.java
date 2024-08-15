@@ -2,6 +2,7 @@ package de.uftos.services;
 
 import de.uftos.dto.requestdtos.StudentGroupRequestDto;
 import de.uftos.dto.responsedtos.LessonResponseDto;
+import de.uftos.dto.responsedtos.StudentGroupResponseDto;
 import de.uftos.entities.Grade;
 import de.uftos.entities.Lesson;
 import de.uftos.entities.Student;
@@ -56,12 +57,13 @@ public class StudentGroupService {
    * @param tags     the tags filter.
    * @return the page of the entries fitting the parameters.
    */
-  public Page<StudentGroup> get(Pageable pageable, Optional<String> name, Optional<String[]> tags) {
+  public Page<StudentGroupResponseDto> get(Pageable pageable, Optional<String> name, Optional<String[]> tags) {
     Specification<StudentGroup> spec = new SpecificationBuilder<StudentGroup>()
         .optionalOrLike(name, "name")
         .optionalAndJoinIn(tags, "tags", "id")
         .build();
-    return this.repository.findAll(spec, pageable);
+    Page<StudentGroup> studentGroupPage = this.repository.findAll(spec, pageable);
+    return studentGroupPage.map(StudentGroupResponseDto::new);
   }
 
 
@@ -72,9 +74,8 @@ public class StudentGroupService {
    * @return the student group with the given ID.
    * @throws ResponseStatusException is thrown if the ID doesn't have a corresponding student group.
    */
-  public StudentGroup getById(String id) {
-    Optional<StudentGroup> studentGroup = this.repository.findById(id);
-    return studentGroup.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+  public StudentGroupResponseDto getById(String id) {
+    return new StudentGroupResponseDto(getStudentGroupById(id));
   }
 
   /**
@@ -85,7 +86,7 @@ public class StudentGroupService {
    * @throws ResponseStatusException is thrown if the ID doesn't have a corresponding student group.
    */
   public LessonResponseDto getLessonsById(String id) {
-    StudentGroup studentGroup = getById(id);
+    StudentGroup studentGroup = getStudentGroupById(id);
     List<Lesson> lessons = new ArrayList<>(studentGroup.getLessons());
     lessons.removeIf(lesson -> !lesson.getYear().equals(
         serverRepository.findAll().getFirst().getCurrentYear()));
@@ -99,7 +100,7 @@ public class StudentGroupService {
    * @return the updated student group including the ID which has been assigned.
    * @throws ResponseStatusException is thrown if the name of the group is blank.
    */
-  public StudentGroup create(StudentGroupRequestDto rawGroup) {
+  public StudentGroupResponseDto create(StudentGroupRequestDto rawGroup) {
     if (rawGroup.name().isBlank()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
           "The name of the student group is blank.");
@@ -118,7 +119,7 @@ public class StudentGroupService {
     }
 
     //noinspection OptionalGetWithoutIsPresent
-    return this.repository.findById(studentGroup.getId()).get();
+    return new StudentGroupResponseDto(this.repository.findById(studentGroup.getId()).get());
   }
 
   /**
@@ -129,7 +130,7 @@ public class StudentGroupService {
    * @return the updated student.
    * @throws ResponseStatusException is thrown if the name of the group is blank.
    */
-  public StudentGroup update(String id, StudentGroupRequestDto groupRequest) {
+  public StudentGroupResponseDto update(String id, StudentGroupRequestDto groupRequest) {
     if (groupRequest.name().isBlank()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
           "The name of the student group is blank.");
@@ -146,7 +147,7 @@ public class StudentGroupService {
     }
 
     //noinspection OptionalGetWithoutIsPresent
-    return this.repository.findById(id).get();
+    return new StudentGroupResponseDto(this.repository.findById(id).get());
   }
 
   /**
@@ -155,14 +156,14 @@ public class StudentGroupService {
    * @param id         the ID of the student group.
    * @param studentIds the IDs of students which are to be added to the student group.
    */
-  public StudentGroup addStudents(String id, List<String> studentIds) {
-    StudentGroup studentGroup = getById(id);
+  public StudentGroupResponseDto addStudents(String id, List<String> studentIds) {
+    StudentGroup studentGroup = getStudentGroupById(id);
     Set<Student> studentsInGroup = new HashSet<>(studentGroup.getStudents());
     studentsInGroup.addAll(studentIds.stream()
         .map(studentId -> studentRepository.findById(studentId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST))).toList());
     studentGroup.setStudents(new ArrayList<Student>(studentsInGroup));
-    return this.repository.save(studentGroup);
+    return new StudentGroupResponseDto(this.repository.save(studentGroup));
   }
 
   /**
@@ -172,7 +173,7 @@ public class StudentGroupService {
    * @param studentIds the IDs of students which are to be removed.
    */
   public void removeStudents(String id, List<String> studentIds) {
-    StudentGroup studentGroup = getById(id);
+    StudentGroup studentGroup = getStudentGroupById(id);
     List<Student> filteredStudents = studentGroup.getStudents().stream()
         .filter(student -> !studentIds.contains(student.getId())).toList();
     studentGroup.setStudents(new ArrayList<Student>(filteredStudents)); //make list mutable
@@ -192,5 +193,10 @@ public class StudentGroupService {
     }
 
     this.repository.delete(group.get());
+  }
+
+  private StudentGroup getStudentGroupById(String id) {
+    Optional<StudentGroup> studentGroup = this.repository.findById(id);
+    return studentGroup.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
   }
 }
