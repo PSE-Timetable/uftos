@@ -2,9 +2,11 @@ package de.uftos.services;
 
 import de.uftos.dto.requestdtos.StudentGroupRequestDto;
 import de.uftos.dto.responsedtos.LessonResponseDto;
+import de.uftos.entities.Grade;
 import de.uftos.entities.Lesson;
 import de.uftos.entities.Student;
 import de.uftos.entities.StudentGroup;
+import de.uftos.repositories.database.GradeRepository;
 import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.StudentGroupRepository;
 import de.uftos.repositories.database.StudentRepository;
@@ -30,6 +32,7 @@ public class StudentGroupService {
   private final StudentGroupRepository repository;
   private final ServerRepository serverRepository;
   private final StudentRepository studentRepository;
+  private final GradeRepository gradeRepository;
 
   /**
    * Creates a student group service.
@@ -38,10 +41,11 @@ public class StudentGroupService {
    */
   @Autowired
   public StudentGroupService(StudentGroupRepository repository, ServerRepository serverRepository,
-                             StudentRepository studentRepository) {
+                             StudentRepository studentRepository, GradeRepository gradeRepository) {
     this.repository = repository;
     this.serverRepository = serverRepository;
     this.studentRepository = studentRepository;
+    this.gradeRepository = gradeRepository;
   }
 
   /**
@@ -91,15 +95,29 @@ public class StudentGroupService {
   /**
    * Creates a new student group in the database.
    *
-   * @param group the student group which is to be created.
+   * @param rawGroup the student group which is to be created.
    * @return the updated student group including the ID which has been assigned.
    * @throws ResponseStatusException is thrown if the name of the group is blank.
    */
-  public StudentGroup create(StudentGroupRequestDto group) {
-    if (group.name().isBlank()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The name of the student group is blank.");
+  public StudentGroup create(StudentGroupRequestDto rawGroup) {
+    if (rawGroup.name().isBlank()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "The name of the student group is blank.");
     }
-    return this.repository.save(group.map());
+    StudentGroup studentGroup = this.repository.save(rawGroup.map());
+
+    List<Grade> grades =
+        this.gradeRepository.findAllById(rawGroup.gradeIds());
+    if (grades.size() != rawGroup.gradeIds().size()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "Could not find all grades by id");
+    }
+    for (Grade grade : grades) {
+      grade.getStudentGroups().add(studentGroup);
+      this.gradeRepository.save(grade);
+    }
+
+    return studentGroup;
   }
 
   /**
@@ -112,11 +130,22 @@ public class StudentGroupService {
    */
   public StudentGroup update(String id, StudentGroupRequestDto groupRequest) {
     if (groupRequest.name().isBlank()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The name of the student group is blank.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "The name of the student group is blank.");
     }
     StudentGroup group = groupRequest.map();
     group.setId(id);
-    return this.repository.save(group);
+    this.repository.save(group);
+
+    List<Grade> grades =
+        this.gradeRepository.findAllById(groupRequest.gradeIds());
+    for (Grade grade : grades) {
+      grade.getStudentGroups().add(group);
+      this.gradeRepository.save(grade);
+    }
+
+    //noinspection OptionalGetWithoutIsPresent
+    return this.repository.findById(id).get();
   }
 
   /**

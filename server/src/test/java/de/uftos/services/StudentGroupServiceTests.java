@@ -186,12 +186,12 @@ public class StudentGroupServiceTests {
   @BeforeEach
   void setUp() {
     StudentGroup studentGroup1 =
-        new StudentGroup("Ethics", List.of("studentId0", "studentId1"), List.of(), List.of(),
+        new StudentGroup("Ethics", List.of("studentId0", "studentId1"), List.of(),
             List.of());
     studentGroup1.setId("123");
 
     StudentGroup studentGroup2 =
-        new StudentGroup("Religion", List.of("studentId1", "studentId2", "studentId3"), List.of(),
+        new StudentGroup("Religion", List.of("studentId1", "studentId2", "studentId3"),
             List.of(),
             List.of("T1", "T2"));
     studentGroup2.setId("456");

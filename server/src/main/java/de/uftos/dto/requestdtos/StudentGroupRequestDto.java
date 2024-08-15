@@ -23,7 +23,7 @@ public record StudentGroupRequestDto(@NotEmpty String name, @NotNull List<String
    * @return the new student group entity.
    */
   public StudentGroup map() {
-    return new StudentGroup(this.name, this.studentIds, this.gradeIds, this.tagIds,
+    return new StudentGroup(this.name, this.studentIds, this.tagIds,
         this.subjectIds);
   }
 }
