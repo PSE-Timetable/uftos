@@ -44,18 +44,25 @@ import org.springframework.web.server.ResponseStatusException;
 public class GradeServiceTests {
   private final GradeRequestDto requestDtoForCreateAndUpdate =
       new GradeRequestDto("testName", List.of(), List.of("tagId"));
+
   @Mock
   private GradeRepository gradeRepository;
+
   @Mock
   private ServerRepository serverRepository;
+
   @Mock
   private Grade grade1Mock;
+
   @Mock
   private Grade grade2Mock;
+
   @Mock
   private Grade gradeForCreateAndUpdateMock;
+
   @InjectMocks
   private GradeService gradeService;
+
   private Room room1;
   private Room room2;
 
