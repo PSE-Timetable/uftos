@@ -7,7 +7,6 @@
   import { Icons } from '$lib/utils';
   import LinkBar from '$lib/components/ui/link-bar/link-bar.svelte';
   import DataTable from '$lib/elements/ui/dataTable/data-table.svelte';
-  import { getServerStats } from '$lib/sdk/fetch-client';
   import * as DropdownMenu from '$lib/elements/ui/dropdown-menu/index.js';
   import { ChevronDown } from 'lucide-svelte';
   import { createTimetable } from '$lib/sdk/fetch-client';
