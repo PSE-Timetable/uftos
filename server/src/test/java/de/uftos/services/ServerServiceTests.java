@@ -10,9 +10,10 @@ import de.uftos.dto.responsedtos.ServerStatisticsResponseDto;
 import de.uftos.entities.Break;
 import de.uftos.entities.Server;
 import de.uftos.entities.TimetableMetadata;
+import de.uftos.repositories.database.ConstraintSignatureRepository;
+import de.uftos.repositories.database.GradeRepository;
 import de.uftos.repositories.database.RoomRepository;
 import de.uftos.repositories.database.ServerRepository;
-import de.uftos.repositories.database.StudentGroupRepository;
 import de.uftos.repositories.database.StudentRepository;
 import de.uftos.repositories.database.TeacherRepository;
 import java.util.List;
@@ -41,10 +42,13 @@ public class ServerServiceTests {
   private TeacherRepository teacherRepository;
 
   @Mock
-  private StudentGroupRepository studentGroupRepository;
+  private GradeRepository gradeRepository;
 
   @Mock
   private RoomRepository roomRepository;
+
+  @Mock
+  private ConstraintSignatureRepository constraintSignatureRepository;
 
   @InjectMocks
   private ServerService serverService;
@@ -57,8 +61,9 @@ public class ServerServiceTests {
     when(serverRepository.findAll()).thenReturn(List.of(server));
     when(studentRepository.count()).thenReturn(1L);
     when(teacherRepository.count()).thenReturn(2L);
-    when(studentGroupRepository.count()).thenReturn(3L);
+    when(gradeRepository.count()).thenReturn(3L);
     when(roomRepository.count()).thenReturn(4L);
+    when(constraintSignatureRepository.count()).thenReturn(0L);
   }
 
   @Test
@@ -67,9 +72,9 @@ public class ServerServiceTests {
     assertAll("Testing whether the returned stats are correct",
         () -> assertEquals(1L, result.studentCount()),
         () -> assertEquals(2L, result.teacherCount()),
-        () -> assertEquals(3L, result.classCount()),
+        () -> assertEquals(3L, result.gradeCount()),
         () -> assertEquals(4L, result.roomCount()),
-        () -> assertEquals(0L, result.resourceCount())
+        () -> assertEquals(0L, result.constraintCount())
     );
   }
 

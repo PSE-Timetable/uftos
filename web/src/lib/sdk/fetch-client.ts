@@ -279,8 +279,8 @@ export type RoomRequestDto = {
     tagIds: string[];
 };
 export type ServerStatisticsResponseDto = {
-    classCount: number;
-    resourceCount: number;
+    constraintCount: number;
+    gradeCount: number;
     roomCount: number;
     studentCount: number;
     teacherCount: number;
