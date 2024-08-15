@@ -13,7 +13,8 @@
     "lint:fix": "eslint . --max-warnings 0 --fix",
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
-    "test:integration": "playwright test",
+    "test:e2e": "playwright test",
+    "test:start": "playwright test --ui",
     "test:unit": "vitest"
   },
   "devDependencies": {
