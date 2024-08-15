@@ -8,7 +8,6 @@
   import LinkBar from '$lib/components/ui/link-bar/link-bar.svelte';
   import DataTable from '$lib/elements/ui/dataTable/data-table.svelte';
   import { getServerStats } from '$lib/sdk/fetch-client';
-  import { onMount } from 'svelte';
   import * as DropdownMenu from '$lib/elements/ui/dropdown-menu/index.js';
   import { ChevronDown } from 'lucide-svelte';
   import { createTimetable } from '$lib/sdk/fetch-client';
@@ -33,7 +32,6 @@
   let gradeKeys = ['id', 'name', 'tags'];
   let roomColumnNames = ['Name', 'Gebäude', 'Kapazität', 'Tags'];
   let roomKeys = ['id', 'name', 'buildingName', 'capacity', 'tags'];
-  let pageLoaded = false;
 
   const settings = [
     { value: 'edit_constraints', label: 'Constraints ändern', url: '/admin/constraints' },
@@ -41,10 +39,6 @@
     { value: 'edit_dsl', label: 'DSL Editor', url: '/admin/editor' },
     { value: 'general_settings', label: 'Allgemeine Einstell.', url: '/admin/settings' },
   ];
-
-  onMount(() => {
-    pageLoaded = true;
-  });
 </script>
 
 <div class="h-[170px] w-[100%] min-w-[fit-content] bg-primary p-4 items-center absolute">
@@ -92,68 +86,64 @@
   </div>
 
   <div class="w-full mb-12 flex flex-row gap-14 justify-between text-white font-medium text-2xl">
-    {#await getServerStats() then stats}
-      <Card text="Schüler" icon={Icons.STUDENT} number={stats.studentCount} url="/admin/students" />
-      <Card text="Lehrer" icon={Icons.TEACHER} number={stats.teacherCount} url="/admin/teachers" />
-      <Card text="Stufen" icon={Icons.GRADE} number={stats.gradeCount} url="/admin/grades" />
-      <Card text="Räume" icon={Icons.ROOM} number={stats.roomCount} url="/admin/rooms" />
-      <Card text="Constraints" icon={Icons.CONSTRAINT} number={stats.constraintCount} url="/admin/constraints" />
-    {/await}
+    <Card text="Schüler" icon={Icons.STUDENT} number={data.stats.studentCount} url="/admin/students" />
+    <Card text="Lehrer" icon={Icons.TEACHER} number={data.stats.teacherCount} url="/admin/teachers" />
+    <Card text="Stufen" icon={Icons.GRADE} number={data.stats.gradeCount} url="/admin/grades" />
+    <Card text="Räume" icon={Icons.ROOM} number={data.stats.roomCount} url="/admin/rooms" />
+    <Card text="Constraints" icon={Icons.CONSTRAINT} number={data.stats.constraintCount} url="/admin/constraints" />
   </div>
-  {#if pageLoaded}
-    <div class="flex flex-col gap-16 pb-4">
-      <div class="flex flex-col gap-4">
-        <p class="font-bold text-2xl">Schüler</p>
-        <DataTable
-          initialData={data.initialStudents}
-          columnNames={studentColumnNames}
-          keys={studentKeys}
-          loadPage={loadStudentPage}
-          deleteEntry={deleteStudentEntry}
-          pageSize={5}
-          addButton={false}
-          editAvailable={false}
-        />
-      </div>
-      <div class="flex flex-col gap-4">
-        <p class="font-bold text-2xl">Lehrer</p>
-        <DataTable
-          initialData={data.initialTeachers}
-          columnNames={teacherColumnNames}
-          keys={teacherKeys}
-          loadPage={loadTeacherPage}
-          deleteEntry={deleteTeacherEntry}
-          pageSize={5}
-          addButton={false}
-          editAvailable={false}
-        />
-      </div>
-      <div class="flex flex-col gap-4">
-        <p class="font-bold text-2xl">Stufen</p>
-        <DataTable
-          initialData={data.initialGrades}
-          columnNames={gradeColumnNames}
-          keys={gradeKeys}
-          loadPage={loadGrades}
-          deleteEntry={deleteGradeEntry}
-          pageSize={5}
-          addButton={false}
-          editAvailable={false}
-        />
-      </div>
-      <div class="flex flex-col gap-4">
-        <p class="font-bold text-2xl">Räume</p>
-        <DataTable
-          initialData={data.initialRooms}
-          columnNames={roomColumnNames}
-          keys={roomKeys}
-          loadPage={loadRoomPage}
-          deleteEntry={deleteRoomEntry}
-          pageSize={5}
-          addButton={false}
-          editAvailable={false}
-        />
-      </div>
+  <div class="flex flex-col gap-16 pb-4">
+    <div class="flex flex-col gap-4">
+      <p class="font-bold text-2xl">Schüler</p>
+      <DataTable
+        initialData={data.initialStudents}
+        columnNames={studentColumnNames}
+        keys={studentKeys}
+        loadPage={loadStudentPage}
+        deleteEntry={deleteStudentEntry}
+        pageSize={5}
+        addButton={false}
+        editAvailable={false}
+      />
     </div>
-  {/if}
+    <div class="flex flex-col gap-4">
+      <p class="font-bold text-2xl">Lehrer</p>
+      <DataTable
+        initialData={data.initialTeachers}
+        columnNames={teacherColumnNames}
+        keys={teacherKeys}
+        loadPage={loadTeacherPage}
+        deleteEntry={deleteTeacherEntry}
+        pageSize={5}
+        addButton={false}
+        editAvailable={false}
+      />
+    </div>
+    <div class="flex flex-col gap-4">
+      <p class="font-bold text-2xl">Stufen</p>
+      <DataTable
+        initialData={data.initialGrades}
+        columnNames={gradeColumnNames}
+        keys={gradeKeys}
+        loadPage={loadGrades}
+        deleteEntry={deleteGradeEntry}
+        pageSize={5}
+        addButton={false}
+        editAvailable={false}
+      />
+    </div>
+    <div class="flex flex-col gap-4">
+      <p class="font-bold text-2xl">Räume</p>
+      <DataTable
+        initialData={data.initialRooms}
+        columnNames={roomColumnNames}
+        keys={roomKeys}
+        loadPage={loadRoomPage}
+        deleteEntry={deleteRoomEntry}
+        pageSize={5}
+        addButton={false}
+        editAvailable={false}
+      />
+    </div>
+  </div>
 </div>
