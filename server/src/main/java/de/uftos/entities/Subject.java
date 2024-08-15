@@ -1,6 +1,7 @@
 package de.uftos.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -52,7 +53,7 @@ public class Subject {
   private List<Lesson> lessons;
 
   @JsonIgnore
-  @OneToMany(mappedBy = "subject")
+  @OneToMany(mappedBy = "subject", cascade = CascadeType.REMOVE)
   private List<LessonsCount> lessonsCounts;
 
   /**
