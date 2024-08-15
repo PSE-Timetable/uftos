@@ -52,6 +52,26 @@ public class SpecificationBuilder<T> {
     return this;
   }
 
+
+  /**
+   * Adds an OR filter to the specification if the provided parameter is present.
+   *
+   * @param param     The optional parameter value to filter by.
+   * @param paramName The name of the parameter to filter on.
+   * @return The current instance of {@code SpecificationBuilder} with the
+   *     OR filter added if the parameter is present.
+   */
+  public SpecificationBuilder<T> optionalAndIn(Optional<String[]> param, String paramName) {
+    if (param.isEmpty()) {
+      return this;
+    }
+    specification =
+        specification.and(
+            (root, query, cb) -> cb.equal(root.get(paramName), param)
+        );
+    return this;
+  }
+
   /**
    * Adds a filter to the specification by joining with another relation if the
    * provided attribute value array is present.

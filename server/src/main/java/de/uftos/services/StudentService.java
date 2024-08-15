@@ -55,7 +55,7 @@ public class StudentService {
     Specification<Student> spec = new SpecificationBuilder<Student>()
         .optionalOrLike(firstName, "firstName")
         .optionalOrLike(lastName, "lastName")
-        .optionalAndJoinIn(groups, "groups", "id")
+        .optionalAndIn(groups, "groups")
         .optionalAndJoinIn(tags, "tags", "id")
         .build();
     return this.repository.findAll(spec, pageable);

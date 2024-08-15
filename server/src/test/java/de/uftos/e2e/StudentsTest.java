@@ -163,6 +163,7 @@ class StudentsTest {
         .when()
         .get("/students")
         .then()
+        .log().ifValidationFails(LogDetail.ALL)
         .statusCode(200)
         .body("totalElements", equalTo(1))
         .body("content[0].id", equalTo(secondStudent))
