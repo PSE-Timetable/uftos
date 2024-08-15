@@ -52,9 +52,9 @@ public class TeacherService {
                            Optional<String> lastName, Optional<String> acronym,
                            Optional<String[]> subjects, Optional<String[]> tags) {
     Specification<Teacher> spec = new SpecificationBuilder<Teacher>()
-        .optionalOrEquals(firstName, "firstName")
-        .optionalOrEquals(lastName, "lastName")
-        .optionalOrEquals(acronym, "acronym")
+        .optionalOrLike(firstName, "firstName")
+        .optionalOrLike(lastName, "lastName")
+        .optionalOrLike(acronym, "acronym")
         .optionalAndJoinIn(subjects, "subjects", "id")
         .optionalAndJoinIn(tags, "tags", "id")
         .build();
@@ -113,7 +113,7 @@ public class TeacherService {
    * @throws ResponseStatusException is thrown if the first name, last name or the acronym of the teacher is blank.
    */
   public Teacher update(String id, TeacherRequestDto teacherRequest) {
-    if (teacherRequest.firstName().isBlank() || teacherRequest.lastName().isBlank() 
+    if (teacherRequest.firstName().isBlank() || teacherRequest.lastName().isBlank()
         || teacherRequest.acronym().isBlank()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
           "The first name, last name or acronym of the teacher is blank.");

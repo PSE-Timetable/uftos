@@ -49,7 +49,7 @@ public class CurriculumService {
   public Page<CurriculumResponseDto> get(Pageable pageable, Optional<String> name) {
     //currently no filter for grades
     Specification<Curriculum> spec = new SpecificationBuilder<Curriculum>()
-        .optionalOrEquals(name, "name").build();
+        .optionalOrLike(name, "name").build();
     List<CurriculumResponseDto> curricula = this.repository.findAll(spec, pageable).stream()
         .map(CurriculumResponseDto::new).toList();
 

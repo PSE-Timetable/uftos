@@ -38,7 +38,7 @@ public class TagService {
    */
   public List<Tag> get(Sort sort, Optional<String> name) {
     Specification<Tag> specification = new SpecificationBuilder<Tag>()
-        .optionalOrEquals(name, "name")
+        .optionalOrLike(name, "name")
         .build();
 
     return this.repository.findAll(specification, sort);
