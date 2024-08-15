@@ -487,19 +487,21 @@ public class DefinitionParser {
   private static boolean getReturnValue(List<AbstractSyntaxTreeDto> body) throws ParseException {
     boolean and = true;
     boolean or = false;
+    boolean noControlSequence = true;
     for (AbstractSyntaxTreeDto ast : body) {
       if (ast.getToken() == UcdlToken.FOR || ast.getToken() == UcdlToken.IF) {
+        noControlSequence = false;
         ControlSequenceDto cs = (ControlSequenceDto) ast;
         and &= cs.returnValue();
         or |= cs.returnValue();
       }
     }
-    if (and != or) {
+    if (!noControlSequence && (and != or)) {
       throw new ParseException(
           "All control sequences in the body of a control sequence need to return"
               + " the same boolean value!");
     }
-    return and;
+    return noControlSequence || and;
   }
 
   private static UcdlToken getComparatorToken(String comparator, List<AbstractSyntaxTreeDto> params)
