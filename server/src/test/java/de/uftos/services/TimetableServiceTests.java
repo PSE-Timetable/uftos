@@ -1,50 +1,21 @@
 package de.uftos.services;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
-import de.uftos.dto.ResourceType;
-import de.uftos.dto.requestdtos.LessonsCountRequestDto;
-import de.uftos.dto.requestdtos.TimetableRequestDto;
-import de.uftos.dto.responsedtos.LessonResponseDto;
 import de.uftos.entities.Break;
-import de.uftos.entities.ConstraintParameter;
-import de.uftos.entities.ConstraintSignature;
-import de.uftos.entities.Curriculum;
-import de.uftos.entities.Grade;
 import de.uftos.entities.Lesson;
-import de.uftos.entities.Room;
 import de.uftos.entities.Server;
-import de.uftos.entities.Student;
-import de.uftos.entities.StudentGroup;
-import de.uftos.entities.Subject;
-import de.uftos.entities.Teacher;
-import de.uftos.entities.Timeslot;
 import de.uftos.entities.Timetable;
 import de.uftos.entities.TimetableMetadata;
-import de.uftos.repositories.database.ConstraintSignatureRepository;
-import de.uftos.repositories.database.CurriculumRepository;
-import de.uftos.repositories.database.GradeRepository;
-import de.uftos.repositories.database.LessonRepository;
-import de.uftos.repositories.database.RoomRepository;
 import de.uftos.repositories.database.ServerRepository;
-import de.uftos.repositories.database.StudentGroupRepository;
-import de.uftos.repositories.database.StudentRepository;
-import de.uftos.repositories.database.SubjectRepository;
-import de.uftos.repositories.database.TagRepository;
-import de.uftos.repositories.database.TeacherRepository;
-import de.uftos.repositories.database.TimeslotRepository;
 import de.uftos.repositories.database.TimetableRepository;
-import de.uftos.repositories.solver.SolverRepository;
-import de.uftos.repositories.solver.SolverRepositoryImpl;
 import de.uftos.repositories.ucdl.UcdlRepository;
 import de.uftos.repositories.ucdl.parser.javacc.ParseException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -65,7 +36,7 @@ public class TimetableServiceTests {
   private TimetableRepository timetableRepository;
   @Mock
   private UcdlRepository ucdlRepository;
-  
+
   @Mock
   private ServerRepository serverRepository;
 
