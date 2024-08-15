@@ -17,7 +17,6 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import java.util.List;
-import java.util.Objects;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -76,17 +75,4 @@ public class Timeslot {
   public Timeslot(String id) {
     this.id = id;
   }
-
-  @Override
-  public boolean equals(Object other) {
-    if (this == other) {
-      return true;
-    }
-    if (other == null || getClass() != other.getClass()) {
-      return false;
-    }
-    Timeslot timeslot = (Timeslot) other;
-    return Objects.equals(id, timeslot.id);
-  }
 }
-

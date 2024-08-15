@@ -6,7 +6,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import java.util.Objects;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -39,15 +38,4 @@ public class LessonsCount {
     this.count = count;
   }
 
-  @Override
-  public boolean equals(Object other) {
-    if (this == other) {
-      return true;
-    }
-    if (other == null || getClass() != other.getClass()) {
-      return false;
-    }
-    LessonsCount that = (LessonsCount) other;
-    return Objects.equals(id, that.id);
-  }
 }

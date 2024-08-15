@@ -9,7 +9,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
-import java.util.Objects;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -88,17 +87,5 @@ public class Lesson {
     this.subject = new Subject(subjectId);
     this.timetable = new Timetable(timetableId);
     this.year = year;
-  }
-
-  @Override
-  public boolean equals(Object other) {
-    if (this == other) {
-      return true;
-    }
-    if (other == null || getClass() != other.getClass()) {
-      return false;
-    }
-    Lesson lesson = (Lesson) other;
-    return Objects.equals(id, lesson.id);
   }
 }

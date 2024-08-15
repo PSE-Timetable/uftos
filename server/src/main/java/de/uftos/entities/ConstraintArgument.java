@@ -8,7 +8,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import java.util.Objects;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -43,17 +42,5 @@ public class ConstraintArgument {
   public ConstraintArgument(String name, String value) {
     this.constraintParameter = new ConstraintParameter(name);
     this.value = value;
-  }
-
-  @Override
-  public boolean equals(Object other) {
-    if (this == other) {
-      return true;
-    }
-    if (other == null || getClass() != other.getClass()) {
-      return false;
-    }
-    ConstraintArgument that = (ConstraintArgument) other;
-    return Objects.equals(id, that.id);
   }
 }

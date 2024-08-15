@@ -7,7 +7,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import java.util.Objects;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -33,17 +32,5 @@ public class Server {
   public Server(TimetableMetadata timetableMetadata, String currentYear) {
     this.timetableMetadata = timetableMetadata;
     this.currentYear = currentYear;
-  }
-
-  @Override
-  public boolean equals(Object other) {
-    if (this == other) {
-      return true;
-    }
-    if (other == null || getClass() != other.getClass()) {
-      return false;
-    }
-    Server server = (Server) other;
-    return Objects.equals(id, server.id);
   }
 }

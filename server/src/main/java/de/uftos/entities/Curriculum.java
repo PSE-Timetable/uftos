@@ -11,7 +11,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotEmpty;
 import java.util.List;
-import java.util.Objects;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -48,17 +47,5 @@ public class Curriculum {
     this.name = name;
     this.grade = grade;
     this.lessonsCounts = lessonsCounts.stream().map(LessonsCountRequestDto::map).toList();
-  }
-
-  @Override
-  public boolean equals(Object other) {
-    if (this == other) {
-      return true;
-    }
-    if (other == null || getClass() != other.getClass()) {
-      return false;
-    }
-    Curriculum that = (Curriculum) other;
-    return Objects.equals(id, that.id);
   }
 }

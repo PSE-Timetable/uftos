@@ -9,9 +9,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import de.uftos.dto.requestdtos.RoomRequestDto;
 import de.uftos.dto.requestdtos.SubjectRequestDto;
-import de.uftos.entities.Room;
 import de.uftos.entities.Subject;
 import de.uftos.entities.Tag;
 import de.uftos.repositories.database.SubjectRepository;

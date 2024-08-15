@@ -13,7 +13,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
-import java.util.Objects;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -77,17 +76,5 @@ public class Subject {
     this.name = name;
     this.color = color;
     this.tags = tagIds.stream().map(Tag::new).toList();
-  }
-
-  @Override
-  public boolean equals(Object other) {
-    if (this == other) {
-      return true;
-    }
-    if (other == null || getClass() != other.getClass()) {
-      return false;
-    }
-    Subject subject = (Subject) other;
-    return Objects.equals(id, subject.id);
   }
 }

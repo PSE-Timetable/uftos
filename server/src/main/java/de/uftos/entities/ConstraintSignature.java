@@ -9,7 +9,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
-import java.util.Objects;
 import lombok.Data;
 
 /**
@@ -38,15 +37,4 @@ public class ConstraintSignature {
   @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
   private List<ConstraintInstance> instances;
 
-  @Override
-  public boolean equals(Object other) {
-    if (this == other) {
-      return true;
-    }
-    if (other == null || getClass() != other.getClass()) {
-      return false;
-    }
-    ConstraintSignature that = (ConstraintSignature) other;
-    return Objects.equals(name, that.name);
-  }
 }

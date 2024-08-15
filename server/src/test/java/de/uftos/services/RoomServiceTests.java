@@ -53,7 +53,7 @@ public class RoomServiceTests {
   private RoomService roomService;
 
 
-  private static void assertResulArraysSizes(LessonResponseDto result, int teachers, int lessons,
+  private static void assertResultArraysSizes(LessonResponseDto result, int teachers, int lessons,
                                              int rooms, int grades) {
     assertAll("Testing whether the sizes of the arrays are correct",
         () -> assertEquals(teachers, result.teachers().size()),
@@ -174,7 +174,7 @@ public class RoomServiceTests {
   void emptyLessons() {
     assertDoesNotThrow(() -> roomService.getLessonsById("456"));
     LessonResponseDto result = roomService.getLessonsById("456");
-    assertResulArraysSizes(result, 0, 0, 0, 0);
+    assertResultArraysSizes(result, 0, 0, 0, 0);
   }
 
   @Test
@@ -182,7 +182,7 @@ public class RoomServiceTests {
     Room room1 = roomRepository.findById("123").orElseThrow();
 
     LessonResponseDto result = roomService.getLessonsById("123");
-    assertResulArraysSizes(result, 1, 2, 1, 1);
+    assertResultArraysSizes(result, 1, 2, 1, 1);
     assertAll("Testing whether the sizes of the arrays are correct",
         () -> assertEquals(2, result.grades().getFirst().studentGroupIds().size()),
         () -> assertEquals(4, result.grades().getFirst().studentIds().size())
