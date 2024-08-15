@@ -46,18 +46,18 @@ import org.springframework.web.server.ResponseStatusException;
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class StudentGroupServiceTests {
+  private final StudentGroup studentGroup =
+      new StudentGroupRequestDto("testName", List.of("studentId1"), List.of("gradeId1"),
+          List.of("tagId1"), List.of("subjectId1"))
+          .map();
   @Mock
   private StudentGroupRepository studentGroupRepository;
-
   @Mock
   private StudentRepository studentRepository;
-
   @Mock
   private GradeRepository gradeRepository;
-
   @Mock
   private ServerRepository serverRepository;
-
   @InjectMocks
   private StudentGroupService studentGroupService;
 
@@ -104,10 +104,10 @@ public class StudentGroupServiceTests {
 
   @Test
   void createGroup() {
-    StudentGroupRequestDto requestDto =
+    StudentGroupRequestDto studentGroupRequestDto =
         new StudentGroupRequestDto("testName", List.of("studentId1"), List.of("gradeId1"),
             List.of("tagId1"), List.of("subjectId1"));
-    studentGroupService.create(requestDto);
+    studentGroupService.create(studentGroupRequestDto);
 
     ArgumentCaptor<StudentGroup> studentGroupCap = ArgumentCaptor.forClass(StudentGroup.class);
     verify(studentGroupRepository, times(1)).save(studentGroupCap.capture());
@@ -239,6 +239,11 @@ public class StudentGroupServiceTests {
     when(serverRepository.findAll()).thenReturn(List.of(server));
     when(studentGroupRepository.findById("123")).thenReturn(Optional.of(studentGroup1));
     when(studentGroupRepository.findById("456")).thenReturn(Optional.of(studentGroup2));
+
+    StudentGroup studentGroup3 =
+        new StudentGroup("testName", List.of("studentId1"), List.of("tagId1"), List.of("subjectId1"));
+    studentGroup3.setGrades(List.of(new Grade("gradeId1")));
+    when(studentGroupRepository.save(studentGroup)).thenReturn(studentGroup3);
   }
 
   private Lesson createLesson(Teacher teacher, Room room, StudentGroup studentGroup,

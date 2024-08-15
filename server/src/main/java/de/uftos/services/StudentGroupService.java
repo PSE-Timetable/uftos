@@ -117,7 +117,8 @@ public class StudentGroupService {
       this.gradeRepository.save(grade);
     }
 
-    return studentGroup;
+    //noinspection OptionalGetWithoutIsPresent
+    return this.repository.findById(studentGroup.getId()).get();
   }
 
   /**
