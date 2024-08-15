@@ -51,7 +51,8 @@ public class SpecificationBuilder<T> {
 
     specification = specification.or((root, query, cb) -> cb.isTrue(
         cb.function("tsvector_match", Boolean.class, root.get("searchVector"),
-            cb.function("websearch_to_tsquery", String.class, cb.literal(text.get())))));
+            cb.function("websearch_to_tsquery", String.class, cb.literal("german"),
+                cb.literal(text.get())))));
 
     return this;
   }
