@@ -42,33 +42,25 @@ import org.springframework.web.server.ResponseStatusException;
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class GradeServiceTests {
+  private final GradeRequestDto requestDtoForCreateAndUpdate =
+      new GradeRequestDto("testName", List.of(), List.of("tagId"));
   @Mock
   private GradeRepository gradeRepository;
-
   @Mock
   private ServerRepository serverRepository;
-
   @Mock
   private Grade grade1Mock;
-
   @Mock
   private Grade grade2Mock;
-
   @Mock
   private Grade gradeForCreateAndUpdateMock;
-
-
   @InjectMocks
   private GradeService gradeService;
-
   private Room room1;
   private Room room2;
 
-  private final GradeRequestDto requestDtoForCreateAndUpdate =
-      new GradeRequestDto("testName", List.of(), List.of("tagId"));
-
   private static void assertResultArraysSizes(LessonResponseDto result, int teachers, int lessons,
-                                             int rooms, int grades) {
+                                              int rooms, int grades) {
     assertAll("Testing whether the sizes of the arrays are correct",
         () -> assertEquals(teachers, result.teachers().size()),
         () -> assertEquals(lessons, result.lessons().size()),
@@ -80,25 +72,25 @@ public class GradeServiceTests {
   @BeforeEach
   void setUp() {
     StudentGroup studentGroup1 =
-        new StudentGroup("5-Ethics", List.of("S1", "S2"), List.of(), List.of(), List.of());
+        new StudentGroup("5-Ethics", List.of("S1", "S2"), List.of(), List.of());
     studentGroup1.setId("g123");
 
     StudentGroup studentGroup2 =
-        new StudentGroup("5-Religion", List.of("S2", "S3"), List.of(), List.of(),
+        new StudentGroup("5-Religion", List.of("S2", "S3"), List.of(),
             List.of("T1", "T2"));
     studentGroup2.setId("g456");
 
     StudentGroup studentGroup3 =
-        new StudentGroup("7-Ethics", List.of("S1", "S2"), List.of(), List.of(), List.of());
+        new StudentGroup("7-Ethics", List.of("S1", "S2"), List.of(), List.of());
     studentGroup3.setId("g234");
 
     StudentGroup studentGroup4 =
-        new StudentGroup("7-Religion", List.of("S2", "S3"), List.of(), List.of(),
+        new StudentGroup("7-Religion", List.of("S2", "S3"), List.of(),
             List.of("T1", "T2"));
     studentGroup4.setId("g567");
 
     StudentGroup studentGroup5 =
-        new StudentGroup("7b-Religion", List.of("S2", "S3"), List.of(), List.of(),
+        new StudentGroup("7b-Religion", List.of("S2", "S3"), List.of(),
             List.of("T1", "T2"));
     studentGroup5.setId("g678");
 
@@ -266,8 +258,6 @@ public class GradeServiceTests {
     LessonResponseDto result = gradeService.getLessonsById("456");
     assertResultArraysSizes(result, 0, 0, 0, 0);
   }
-
-
 
 
   private Lesson createLesson(Teacher teacher, Room room, StudentGroup studentGroup,
