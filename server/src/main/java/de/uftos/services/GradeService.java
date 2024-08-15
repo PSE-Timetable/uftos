@@ -53,7 +53,7 @@ public class GradeService {
   public List<GradeResponseDto> get(Sort sort, Optional<String> name,
                                     Optional<String[]> tags) {
     Specification<Grade> spec = new SpecificationBuilder<Grade>()
-        .optionalOrEquals(name, "name")
+        .optionalOrLike(name, "name")
         .optionalAndJoinIn(tags, "tags", "id")
         .build();
 

@@ -54,7 +54,7 @@ public class StudentGroupService {
    */
   public Page<StudentGroup> get(Pageable pageable, Optional<String> name, Optional<String[]> tags) {
     Specification<StudentGroup> spec = new SpecificationBuilder<StudentGroup>()
-        .optionalOrEquals(name, "name")
+        .optionalOrLike(name, "name")
         .optionalAndJoinIn(tags, "tags", "id")
         .build();
     return this.repository.findAll(spec, pageable);

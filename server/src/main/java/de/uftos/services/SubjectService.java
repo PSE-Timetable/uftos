@@ -39,7 +39,7 @@ public class SubjectService {
    */
   public List<Subject> get(Sort sort, Optional<String> name) {
     Specification<Subject> specification = new SpecificationBuilder<Subject>()
-        .optionalOrEquals(name, "name")
+        .optionalOrLike(name, "name")
         .build();
 
     return this.repository.findAll(specification, sort);

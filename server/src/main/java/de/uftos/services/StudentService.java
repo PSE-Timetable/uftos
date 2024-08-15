@@ -42,8 +42,8 @@ public class StudentService {
   public Page<Student> get(Pageable pageable, Optional<String> firstName,
                            Optional<String> lastName, Optional<String[]> tags) {
     Specification<Student> spec = new SpecificationBuilder<Student>()
-        .optionalOrEquals(firstName, "firstName")
-        .optionalOrEquals(lastName, "lastName")
+        .optionalOrLike(firstName, "firstName")
+        .optionalOrLike(lastName, "lastName")
         .optionalAndJoinIn(tags, "tags", "id")
         .build();
     return this.repository.findAll(spec, pageable);
