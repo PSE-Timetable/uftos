@@ -3,8 +3,10 @@ package de.uftos.entities;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * The timetable metadata object.

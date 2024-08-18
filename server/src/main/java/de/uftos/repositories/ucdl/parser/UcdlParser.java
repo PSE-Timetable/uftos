@@ -146,14 +146,21 @@ public class UcdlParser {
     }
 
     Object definitionObject = constraintDefinition.get("definition");
+    String definitionString = "";
 
-    if (definitionObject == null || !definitionObject.getClass().equals(String.class)) {
+    if (definitionObject == null) {
+      throw new ParseException("The definition requires code!");
+    } else if (definitionObject.getClass().equals(String.class)) {
+      definitionString = (String) definitionObject;
+    } else if (definitionObject.getClass().equals(Boolean.class)) {
+      definitionString = ((Boolean) definitionObject).toString();
+    } else {
       throw new ParseException("The definition requires code!");
     }
 
 
     AbstractSyntaxTreeDto definition =
-        DefinitionParser.parseDefinition((String) definitionObject,
+        DefinitionParser.parseDefinition(definitionString,
             parameters);
 
     return new ConstraintDefinitionDto(name, description, defaultType, parameters, definition);

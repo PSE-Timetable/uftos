@@ -54,7 +54,7 @@ public class RoomServiceTests {
 
 
   private static void assertResultArraysSizes(LessonResponseDto result, int teachers, int lessons,
-                                             int rooms, int grades) {
+                                              int rooms, int grades) {
     assertAll("Testing whether the sizes of the arrays are correct",
         () -> assertEquals(teachers, result.teachers().size()),
         () -> assertEquals(lessons, result.lessons().size()),
