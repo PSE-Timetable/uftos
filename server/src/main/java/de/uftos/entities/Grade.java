@@ -11,8 +11,10 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToOne;
 import java.util.List;
+import java.util.Objects;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * The database entity for grades.
@@ -59,5 +61,30 @@ public class Grade {
     this.name = name;
     this.studentGroups = studentGroupIds.stream().map(StudentGroup::new).toList();
     this.tags = tagIds.stream().map(Tag::new).toList();
+  }
+
+
+
+  @Override
+  public boolean equals(Object other) {
+    if (this == other) {
+      return true;
+    }
+    if (other == null || getClass() != other.getClass()) {
+      return false;
+    }
+    Grade that = (Grade) other;
+    return Objects.equals(id, that.id);
+  }
+
+  @Override
+  public int hashCode() {
+    int initialOddNumber = 17;
+    int multiplierOddNumber = 37;
+    return new HashCodeBuilder(initialOddNumber, multiplierOddNumber)
+        .append(id)
+        .append(name)
+        .append(tags)
+        .toHashCode();
   }
 }
