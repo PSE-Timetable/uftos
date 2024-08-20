@@ -24,6 +24,7 @@
 
   let data: Record<string, ComboBoxItem[]> = {};
   let selectedIds: Record<string, string> = {};
+  let selectedLabels: Record<string, string> = {};
 
   async function updateItems(value: string, name: string, parameterType: ParameterType) {
     const page: Pageable = { page: 0, size: 40 };
@@ -100,7 +101,12 @@
 </script>
 
 <div class="flex flex-col gap-8 bg-primary w-fit h-fit p-6 rounded-md text-white">
-  <p class="font-bold text-md">{constraintSignature.description}</p>
+  <p class="font-bold text-md">
+    {constraintSignature.description.replaceAll(
+      /{(?<paramName>.*?)}/gm,
+      (match, paramName) => selectedLabels[paramName] ?? match,
+    )}
+  </p>
 
   {#await initData() then}
     {#each constraintSignature.parameters as parameter (parameter.id)}
@@ -111,7 +117,11 @@
           <ComboBox
             onSearch={(value) => updateItems(value, parameter.parameterName, parameter.parameterType)}
             data={data[parameter.parameterName]}
-            bind:selectedId={selectedIds[parameter.parameterName]}
+            selectedId={selectedIds[parameter.parameterName]}
+            onSelectChange={(value, label) => {
+              selectedIds[parameter.parameterName] = value;
+              selectedLabels[parameter.parameterName] = label;
+            }}
           />
         </div>
       </div>
@@ -121,6 +131,6 @@
   <Button
     variant="outline"
     class="bg-accent border-0 text-md text-white py-6"
-    on:click={async () => addInstance(constraintSignature, selectedIds)}>Hinzufügen</Button
+    on:click={() => addInstance(constraintSignature, selectedIds)}>Hinzufügen</Button
   >
 </div>

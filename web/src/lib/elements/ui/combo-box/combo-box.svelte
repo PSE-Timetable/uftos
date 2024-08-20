@@ -12,16 +12,16 @@
   import { cn } from '$lib/utils.js';
 
   export let data: ComboBoxItem[] = [];
-  export let selectedId:string;
+  export let selectedId: string;
 
-  let open:boolean = false;
+  let open: boolean = false;
   let value = '';
   let searchedValue: string;
   let selectedValue = 'Ressource auswählen';
   let lastSearchedValued: string;
 
-  export let onSearch: (string: string) => void;
-  export let onSelectChange: () => void = () => {};
+  export let onSearch: (value: string) => void;
+  export let onSelectChange: (value: string, label: string) => void = () => {};
 
   $: searchedValue,
     data,
@@ -30,14 +30,15 @@
         onSearch(searchedValue);
         lastSearchedValued = searchedValue;
       }
-
-      if (value) {
-        let selected = data.find((f) => f.value === value);
-        selectedValue = selected?.label ?? 'Ressource auswählen';
-        selectedId = selected?.value ?? '';
-        onSelectChange();
-      }
     })();
+
+  const handleSelect = async (value: string, ids: { content: string; trigger: string }) => {
+    let selected = data.find((f) => f.value === value);
+    selectedValue = selected?.label ?? 'Ressource auswählen';
+    selectedId = selected?.value ?? '';
+    onSelectChange(selectedId, selectedValue);
+    await closeAndFocusTrigger(ids.trigger);
+  };
 
   // We want to refocus the trigger button when the user selects
   // an item from the list so users can continue navigating the
@@ -66,13 +67,7 @@
       <Command.Input bind:value={searchedValue} placeholder="Suche Ressource" />
       <Command.Empty>Keine Ressource gefunden</Command.Empty>
       {#each data as resource (resource.value)}
-        <Command.Item
-          value={resource.value}
-          onSelect={async (currentValue) => {
-            value = currentValue;
-            await closeAndFocusTrigger(ids.trigger);
-          }}
-        >
+        <Command.Item value={resource.value} onSelect={(value) => handleSelect(value, ids)}>
           <Check class={cn('mr-2 h-4 w-4', value !== resource.value && 'text-transparent')} />
           {resource.label}
         </Command.Item>
