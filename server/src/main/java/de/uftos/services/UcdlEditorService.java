@@ -1,8 +1,8 @@
 package de.uftos.services;
 
 import de.uftos.dto.ResourceType;
+import de.uftos.dto.SuccessResponse;
 import de.uftos.dto.ucdl.ConstraintDefinitionDto;
-import de.uftos.dto.ucdl.ParsingResponse;
 import de.uftos.entities.ConstraintParameter;
 import de.uftos.entities.ConstraintSignature;
 import de.uftos.repositories.database.ConstraintSignatureRepository;
@@ -51,7 +51,7 @@ public class UcdlEditorService {
    * @param file the file containing the new UCDL code.
    * @return a response whether parsing the file was successful or not.
    */
-  public ParsingResponse validate(MultipartFile file) {
+  public SuccessResponse validate(MultipartFile file) {
     try {
       return ucdlRepository.parseString(new String(file.getBytes()));
     } catch (IOException e) {
@@ -81,7 +81,7 @@ public class UcdlEditorService {
    * @param force whether inconsistencies should be ignored and the ucdl file forcefully updated.
    * @return a response whether parsing the file was successful or not.
    */
-  public ParsingResponse setUcdl(MultipartFile file, boolean force) {
+  public SuccessResponse setUcdl(MultipartFile file, boolean force) {
     if (force) {
       return forceSetUcdl(file);
     }
@@ -90,7 +90,7 @@ public class UcdlEditorService {
     try {
       ucdlCode = new String(file.getBytes());
     } catch (IOException e) {
-      return new ParsingResponse(false, e.getMessage());
+      return new SuccessResponse(false, e.getMessage());
     }
 
     List<ConstraintSignature> signatures = constraintSignatureRepository.findAll();
@@ -98,13 +98,13 @@ public class UcdlEditorService {
     try {
       definitions = ucdlRepository.getConstraintsFromString(ucdlCode);
     } catch (ParseException e) {
-      return new ParsingResponse(false, e.getMessage());
+      return new SuccessResponse(false, e.getMessage());
     }
 
     for (ConstraintSignature signature : signatures) {
       ConstraintDefinitionDto definition = definitions.get(signature.getName());
       if (!signature.getInstances().isEmpty() && signatureChanged(signature, definition)) {
-        return new ParsingResponse(false,
+        return new SuccessResponse(false,
             "Signatures of constraints changed!"
                 + " Constraint instances will be deleted if code is saved!");
       }
@@ -114,21 +114,21 @@ public class UcdlEditorService {
     try {
       ucdlRepository.setUcdl(ucdlCode);
     } catch (IOException e) {
-      return new ParsingResponse(false, e.getMessage());
+      return new SuccessResponse(false, e.getMessage());
     }
 
     removeDeletedSignatures(signatures, definitions); //signatures without new definitions
     updateDefinitionSignatures(signatures, definitions);
 
-    return new ParsingResponse(true, "Code saved successfully!");
+    return new SuccessResponse(true, "Code saved successfully!");
   }
 
-  private ParsingResponse forceSetUcdl(MultipartFile file) {
+  private SuccessResponse forceSetUcdl(MultipartFile file) {
     try {
       String ucdl = new String(file.getBytes());
       ucdlRepository.setUcdl(ucdl);
     } catch (IOException e) {
-      return new ParsingResponse(false, e.getMessage());
+      return new SuccessResponse(false, e.getMessage());
     }
 
     try {
@@ -147,10 +147,10 @@ public class UcdlEditorService {
 
       updateDefinitionSignatures(signatures, definitions);
 
-      return new ParsingResponse(true,
+      return new SuccessResponse(true,
           "Saved file forcefully and deleted inconsistent constraint instances!");
     } catch (ParseException | IOException e) {
-      return new ParsingResponse(true, "Saved file with invalid code forcefully!");
+      return new SuccessResponse(true, "Saved file with invalid code forcefully!");
     }
   }
 

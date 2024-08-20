@@ -1,7 +1,7 @@
 package de.uftos.repositories.ucdl;
 
+import de.uftos.dto.SuccessResponse;
 import de.uftos.dto.ucdl.ConstraintDefinitionDto;
-import de.uftos.dto.ucdl.ParsingResponse;
 import de.uftos.repositories.ucdl.parser.javacc.ParseException;
 import java.io.IOException;
 import java.util.HashMap;
@@ -30,14 +30,14 @@ public interface UcdlRepository {
    *
    * @return a ParsingResponse containing information about whether parsing was successful or not.
    */
-  ParsingResponse parseFile();
+  SuccessResponse parseFile();
 
   /**
    * Attempts to parse the given input and returns whether parsing was successful or not.
    *
    * @return a ParsingResponse containing information about whether parsing was successful or not.
    */
-  ParsingResponse parseString(String input);
+  SuccessResponse parseString(String input);
 
   /**
    * Parses the UCDL-file and returns all constraint definitions contained by the file.

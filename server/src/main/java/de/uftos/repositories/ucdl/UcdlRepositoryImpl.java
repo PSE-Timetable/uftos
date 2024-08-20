@@ -1,7 +1,7 @@
 package de.uftos.repositories.ucdl;
 
+import de.uftos.dto.SuccessResponse;
 import de.uftos.dto.ucdl.ConstraintDefinitionDto;
-import de.uftos.dto.ucdl.ParsingResponse;
 import de.uftos.repositories.ucdl.parser.UcdlParser;
 import de.uftos.repositories.ucdl.parser.javacc.ParseException;
 import java.io.IOException;
@@ -48,20 +48,20 @@ public class UcdlRepositoryImpl implements UcdlRepository {
   }
 
   @Override
-  public ParsingResponse parseFile() {
+  public SuccessResponse parseFile() {
     try {
       return parseString(this.getUcdl(), true);
     } catch (BadRequestException e) {
-      return new ParsingResponse(false, e.getMessage());
+      return new SuccessResponse(false, e.getMessage());
     }
   }
 
   @Override
-  public ParsingResponse parseString(String input) {
+  public SuccessResponse parseString(String input) {
     return parseString(input, false);
   }
 
-  private ParsingResponse parseString(String input, boolean doesSaveDefinitions) {
+  private SuccessResponse parseString(String input, boolean doesSaveDefinitions) {
     try {
       if (doesSaveDefinitions) {
         this.currentDefinitions = UcdlParser.getDefinitions(input);
@@ -69,9 +69,9 @@ public class UcdlRepositoryImpl implements UcdlRepository {
         UcdlParser.getDefinitions(input);
       }
     } catch (ParseException e) {
-      return new ParsingResponse(false, e.getMessage());
+      return new SuccessResponse(false, e.getMessage());
     }
-    return new ParsingResponse(true, "Parsing was successful!");
+    return new SuccessResponse(true, "Parsing was successful!");
   }
 
   @Override
