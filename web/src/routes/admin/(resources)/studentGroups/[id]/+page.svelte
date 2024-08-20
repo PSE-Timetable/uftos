@@ -52,6 +52,7 @@
   createEntity={data.create}
   tags={data.tags}
   subjects={data.subjects}
+  subjectsAvailable = {true}
   entitySubjectsIds={new Set(studentGroup.subjects.map((subject) => subject.id))}
   entityTags={studentGroup.tags}
 />

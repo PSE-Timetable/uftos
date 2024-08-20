@@ -27,8 +27,13 @@
       error(400, { message: 'Could not update tag' });
     }
   }
-
-  let tags: Tag[] = [];
 </script>
 
-<AddResource {descriptions} {values} {create} {update} createEntity={data.create} {tags} entityTags={tags} />
+<AddResource
+  {descriptions}
+  {values}
+  {create}
+  {update}
+  createEntity={data.create}
+  tagsAvailable={false}
+/>

@@ -149,5 +149,7 @@
         </div>
       {/key}
     </div>
+  {:else}
+    <div class="text-3xl font-semibold flex justify-center mt-14">Keine Gruppen vorhanden.</div>
   {/each}
 </div>
