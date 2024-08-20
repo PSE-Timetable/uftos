@@ -26,7 +26,7 @@ public class UcdlRepositoryImpl implements UcdlRepository {
     try {
       Files.createFile(UCDL_PATH);
     } catch (FileAlreadyExistsException e) {
-      System.out.println("Skipping creation of UCDL file");
+      //everything is fine here
     } catch (IOException e) {
       throw new BadRequestException(e);
     }
