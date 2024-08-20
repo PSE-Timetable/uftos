@@ -1,6 +1,5 @@
 package de.uftos.services;
 
-import de.uftos.dto.SuccessResponse;
 import de.uftos.dto.requestdtos.TimetableRequestDto;
 import de.uftos.dto.solver.ConstraintInstanceDto;
 import de.uftos.dto.solver.GradeProblemDto;
@@ -44,6 +43,8 @@ import de.uftos.repositories.database.TagRepository;
 import de.uftos.repositories.database.TeacherRepository;
 import de.uftos.repositories.database.TimeslotRepository;
 import de.uftos.repositories.database.TimetableRepository;
+import de.uftos.repositories.notifications.NotificationRepository;
+import de.uftos.repositories.notifications.NotificationType;
 import de.uftos.repositories.solver.SolverRepository;
 import de.uftos.repositories.ucdl.UcdlRepository;
 import de.uftos.repositories.ucdl.parser.javacc.ParseException;
@@ -67,73 +68,78 @@ import org.springframework.web.server.ResponseStatusException;
  */
 @Service
 public class TimetableService {
-  private final TimetableRepository timetableRepository;
-  private final CurriculumRepository curriculumRepository;
   private final ConstraintSignatureRepository constraintSignatureRepository;
+  private final CurriculumRepository curriculumRepository;
   private final GradeRepository gradeRepository;
   private final LessonRepository lessonRepository;
+  private final NotificationRepository notificationRepository;
   private final RoomRepository roomRepository;
+  private final ServerRepository serverRepository;
+  private final SolverRepository solverRepository;
   private final StudentGroupRepository studentGroupRepository;
   private final StudentRepository studentRepository;
   private final SubjectRepository subjectRepository;
   private final TagRepository tagRepository;
   private final TeacherRepository teacherRepository;
   private final TimeslotRepository timeslotRepository;
+  private final TimetableRepository timetableRepository;
   private final UcdlRepository ucdlRepository;
-  private final SolverRepository solverRepository;
-  private final ServerRepository serverRepository;
 
   /**
    * Creates a timetable service.
    *
-   * @param timetableRepository           the repository for accessing the timetable table.
-   * @param curriculumRepository          the repository for accessing the curriculum table.
    * @param constraintSignatureRepository the repository for accessing the constraint signature table.
+   * @param curriculumRepository          the repository for accessing the curriculum table.
    * @param gradeRepository               the repository for accessing the grade table.
    * @param lessonRepository              the repository for accessing the lesson table.
+   * @param notificationRepository        the repository for notifying users.
    * @param roomRepository                the repository for accessing the room table.
+   * @param serverRepository              the repository for accessing the server table.
+   * @param solverRepository              the repository for solving a timetable instance.
    * @param studentGroupRepository        the repository for accessing the student group table.
    * @param studentRepository             the repository for accessing the student table.
    * @param subjectRepository             the repository for accessing the subject table.
    * @param tagRepository                 the repository for accessing the tag table.
    * @param teacherRepository             the repository for accessing the teacher table.
    * @param timeslotRepository            the repository for accessing the timeslot table.
+   * @param timetableRepository           the repository for accessing the timetable table.
    * @param ucdlRepository                the repository for parsing constraints.
-   * @param solverRepository              the repository for solving a timetable instance.
-   * @param serverRepository              the repository for accessing the server table.
    */
   @Autowired
-  public TimetableService(TimetableRepository timetableRepository,
-                          CurriculumRepository curriculumRepository,
-                          ConstraintSignatureRepository constraintSignatureRepository,
-                          GradeRepository gradeRepository,
-                          LessonRepository lessonRepository,
-                          RoomRepository roomRepository,
-                          StudentGroupRepository studentGroupRepository,
-                          StudentRepository studentRepository,
-                          SubjectRepository subjectRepository,
-                          TagRepository tagRepository,
-                          TeacherRepository teacherRepository,
-                          TimeslotRepository timeslotRepository,
-                          UcdlRepository ucdlRepository,
-                          SolverRepository solverRepository,
-                          ServerRepository serverRepository
+  public TimetableService(
+      ConstraintSignatureRepository constraintSignatureRepository,
+      CurriculumRepository curriculumRepository,
+      GradeRepository gradeRepository,
+      LessonRepository lessonRepository,
+      NotificationRepository notificationRepository,
+      RoomRepository roomRepository,
+      ServerRepository serverRepository,
+      SolverRepository solverRepository,
+      StudentGroupRepository studentGroupRepository,
+      StudentRepository studentRepository,
+      SubjectRepository subjectRepository,
+      TagRepository tagRepository,
+      TeacherRepository teacherRepository,
+      TimeslotRepository timeslotRepository,
+      UcdlRepository ucdlRepository,
+      TimetableRepository timetableRepository
   ) {
-    this.timetableRepository = timetableRepository;
-    this.curriculumRepository = curriculumRepository;
     this.constraintSignatureRepository = constraintSignatureRepository;
+    this.curriculumRepository = curriculumRepository;
     this.gradeRepository = gradeRepository;
     this.lessonRepository = lessonRepository;
+    this.notificationRepository = notificationRepository;
     this.roomRepository = roomRepository;
+    this.serverRepository = serverRepository;
+    this.solverRepository = solverRepository;
     this.studentGroupRepository = studentGroupRepository;
     this.studentRepository = studentRepository;
     this.subjectRepository = subjectRepository;
     this.tagRepository = tagRepository;
     this.teacherRepository = teacherRepository;
     this.timeslotRepository = timeslotRepository;
+    this.timetableRepository = timetableRepository;
     this.ucdlRepository = ucdlRepository;
-    this.solverRepository = solverRepository;
-    this.serverRepository = serverRepository;
   }
 
   /**
@@ -167,20 +173,33 @@ public class TimetableService {
    * @return the created timetable which includes the ID that was assigned.
    * @throws ResponseStatusException is thrown if the name of the timetable is blank.
    */
-  public SuccessResponse create(TimetableRequestDto timetable) {
+  public Timetable create(TimetableRequestDto timetable) throws ResponseStatusException {
     if (timetable.name().isBlank()) {
-      return new SuccessResponse(false, "The name of the timetable is blank.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "The name of the timetable is blank.");
     }
-    Consumer<TimetableSolutionDto> solverFinishedEvent = this::saveSolution;
+    Consumer<TimetableSolutionDto> solverFinishedEvent = (solution) -> {
+      if (solution.hardScore() < 0) {
+        this.notificationRepository.notify(NotificationType.EMAIL,
+            "Stundenplan konnte nicht erstellt werden",
+            "%d Hard Constraint(s) und %d Soft Constraint(s) konnten nicht erfüllt werden".formatted(
+                -solution.hardScore(), -solution.softScore()));
+        return;
+      }
+      saveSolution(solution);
+      this.notificationRepository.notify(NotificationType.EMAIL, "Studenplan ist fertig!",
+          "Der Stundenplan wurde erfolgreich berechnet, wobei "
+              + "%d Soft Constraint(s) nicht erfüllt wurden.".formatted(-solution.softScore()));
+    };
     Timetable timetableEntity = timetable.map();
     timetableRepository.save(timetableEntity);
     try {
       TimetableProblemDto problemInstance = getProblemInstance(timetableEntity);
       solverRepository.solve(problemInstance, solverFinishedEvent).get();
     } catch (InterruptedException | ExecutionException | BadRequestException e) {
-      return new SuccessResponse(false, e.getMessage());
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
     }
-    return new SuccessResponse(true, "Solver wurde erfolgreich gestartet!");
+    return timetable.map(); //todo: change signature of method as this is a useless return value
   }
 
   @SuppressWarnings("checkstyle:VariableDeclarationUsageDistance")

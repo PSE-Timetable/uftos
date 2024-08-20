@@ -38,6 +38,10 @@ class UftosApplicationTests {
       .withEnv("DB_NAME", "uftos")
       .withEnv("DB_USER", "uftos")
       .withEnv("DB_PASSWORD", "superSecurePassword")
+      .withEnv("MAIL_HOST", "mail.example.org")
+      .withEnv("MAIL_USER", "myUser")
+      .withEnv("MAIL_PASSWORD", "highlySecurePassword")
+      .withEnv("MAIL_FROM", "uftos@example.com")
       .withExposedPorts(8080);
 
   @BeforeAll

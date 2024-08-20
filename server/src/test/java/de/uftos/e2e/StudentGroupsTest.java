@@ -122,6 +122,12 @@ public class StudentGroupsTest {
   static void deleteCreatedEntities() {
     given().contentType(ContentType.JSON)
         .when()
+        .delete("/grades/{id}", gradeId)
+        .then()
+        .statusCode(200);
+
+    given().contentType(ContentType.JSON)
+        .when()
         .delete("/student-groups/{id}", firstStudentGroup)
         .then()
         .statusCode(200);
@@ -130,17 +136,12 @@ public class StudentGroupsTest {
         .when()
         .delete("/student-groups/{id}", secondStudentGroup)
         .then()
+        .log().ifValidationFails(LogDetail.ALL)
         .statusCode(200);
 
     given().contentType(ContentType.JSON)
         .when()
         .delete("/students/{id}", studentId)
-        .then()
-        .statusCode(200);
-
-    given().contentType(ContentType.JSON)
-        .when()
-        .delete("/grades/{id}", gradeId)
         .then()
         .statusCode(200);
 

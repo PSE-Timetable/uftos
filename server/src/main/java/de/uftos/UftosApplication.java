@@ -54,7 +54,7 @@ public class UftosApplication {
                       new Break(false, 11, 5),
                       new Break(false, 12, 5),
                   }),
-              "2024"));
+              "2024", "test@uftos.de"));
     };
   }
 }

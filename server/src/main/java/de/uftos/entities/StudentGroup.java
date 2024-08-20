@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Objects;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * The database entity for student groups.
@@ -92,6 +93,9 @@ public class StudentGroup {
     this.subjects = subjectsIds.stream().map(Subject::new).toList();
   }
 
+
+
+
   @Override
   public boolean equals(Object other) {
     if (this == other) {
@@ -103,4 +107,17 @@ public class StudentGroup {
     StudentGroup that = (StudentGroup) other;
     return Objects.equals(id, that.id);
   }
+
+  @Override
+  public int hashCode() {
+    int initialOddNumber = 23;
+    int multiplierOddNumber = 59;
+    return new HashCodeBuilder(initialOddNumber, multiplierOddNumber)
+        .append(id)
+        .append(name)
+        .append(subjects)
+        .append(tags)
+        .toHashCode();
+  }
+
 }

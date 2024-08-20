@@ -1,6 +1,5 @@
 package de.uftos.repositories.database;
 
-import de.uftos.entities.Student;
 import de.uftos.entities.Timeslot;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.ListCrudRepository;

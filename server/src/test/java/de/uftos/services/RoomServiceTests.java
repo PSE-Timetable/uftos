@@ -102,7 +102,7 @@ public class RoomServiceTests {
     room1.setLessons(List.of(lesson1, lesson2, lesson3));
 
     Server server =
-        new Server(new TimetableMetadata(45, 8, "7:45", new Break[] {}), "2024");
+        new Server(new TimetableMetadata(45, 8, "7:45", new Break[] {}), "2024", "test@uftos.de");
     when(serverRepository.findAll()).thenReturn(List.of(server));
     when(roomRepository.findById("123")).thenReturn(Optional.of(room1));
     when(roomRepository.findById("456")).thenReturn(Optional.of(room2));
@@ -189,7 +189,7 @@ public class RoomServiceTests {
     );
 
     assertAll("Testing whether all the rooms are there",
-        () -> assertTrue(result.rooms().contains(room1))
+        () -> assertTrue(result.rooms().stream().map(room -> room.getId()).toList().contains(room1.getId()))
     );
 
     assertAll("Testing whether all the student groups are there",

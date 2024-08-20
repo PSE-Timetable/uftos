@@ -46,6 +46,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class StudentGroupServiceTests {
   @Mock
   private StudentGroupRepository studentGroupRepository;
+  
   @Mock
   private StudentRepository studentRepository;
 
@@ -225,7 +226,8 @@ public class StudentGroupServiceTests {
     when(studentRepository.findAll()).thenReturn(List.of(student, student1));
 
     Break[] breaks = {};
-    Server server = new Server(new TimetableMetadata(45, 8, "8:00", breaks), "2024");
+    Server server =
+        new Server(new TimetableMetadata(45, 8, "8:00", breaks), "2024", "test@uftos.de");
     when(serverRepository.findAll()).thenReturn(List.of(server));
     when(studentGroupRepository.findById("123")).thenReturn(Optional.of(studentGroup1));
     when(studentGroupRepository.findById("456")).thenReturn(Optional.of(studentGroup2));

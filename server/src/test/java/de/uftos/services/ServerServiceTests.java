@@ -57,7 +57,7 @@ public class ServerServiceTests {
   @BeforeEach
   void setUp() {
     Server server =
-        new Server(new TimetableMetadata(45, 8, "7:45", new Break[] {}), "2024");
+        new Server(new TimetableMetadata(45, 8, "7:45", new Break[] {}), "2024", "test@uftos.de");
     when(serverRepository.findAll()).thenReturn(List.of(server));
     when(studentRepository.count()).thenReturn(1L);
     when(teacherRepository.count()).thenReturn(2L);
