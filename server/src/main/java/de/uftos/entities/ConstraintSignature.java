@@ -55,8 +55,8 @@ public class ConstraintSignature {
 
   @Override
   public int hashCode() {
-    int initialOddNumber = 17;
-    int multiplierOddNumber = 37;
+    int initialOddNumber = 293;
+    int multiplierOddNumber = 307;
     return new HashCodeBuilder(initialOddNumber, multiplierOddNumber)
         .append(name)
         .append(description)
