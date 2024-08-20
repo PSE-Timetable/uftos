@@ -9,6 +9,7 @@ import jakarta.persistence.ManyToOne;
 import java.util.Objects;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * The database table for lesson counts.
@@ -50,4 +51,16 @@ public class LessonsCount {
     LessonsCount that = (LessonsCount) other;
     return Objects.equals(id, that.id);
   }
+
+  @Override
+  public int hashCode() {
+    int initialOddNumber = 43;
+    int multiplierOddNumber = 283;
+    return new HashCodeBuilder(initialOddNumber, multiplierOddNumber)
+        .append(id)
+        .append(subject)
+        .append(count)
+        .toHashCode();
+  }
+
 }

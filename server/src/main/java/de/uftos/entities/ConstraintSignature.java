@@ -11,6 +11,7 @@ import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Objects;
 import lombok.Data;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * The database table for constraint signatures.
@@ -38,6 +39,8 @@ public class ConstraintSignature {
   @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
   private List<ConstraintInstance> instances;
 
+
+
   @Override
   public boolean equals(Object other) {
     if (this == other) {
@@ -49,4 +52,16 @@ public class ConstraintSignature {
     ConstraintSignature that = (ConstraintSignature) other;
     return Objects.equals(name, that.name);
   }
+
+  @Override
+  public int hashCode() {
+    int initialOddNumber = 293;
+    int multiplierOddNumber = 307;
+    return new HashCodeBuilder(initialOddNumber, multiplierOddNumber)
+        .append(name)
+        .append(description)
+        .append(defaultType)
+        .toHashCode();
+  }
+
 }

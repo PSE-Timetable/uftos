@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Objects;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * The database entity for students.
@@ -95,7 +96,19 @@ public class Student {
     if (other == null || getClass() != other.getClass()) {
       return false;
     }
-    Student student = (Student) other;
-    return Objects.equals(id, student.id);
+    Student that = (Student) other;
+    return Objects.equals(id, that.id);
+  }
+
+  @Override
+  public int hashCode() {
+    int initialOddNumber = 89;
+    int multiplierOddNumber = 269;
+    return new HashCodeBuilder(initialOddNumber, multiplierOddNumber)
+        .append(id)
+        .append(firstName)
+        .append(lastName)
+        .append(tags)
+        .toHashCode();
   }
 }

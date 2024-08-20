@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Objects;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * The database entity for tags.
@@ -77,6 +78,8 @@ public class Tag {
     this.name = name;
   }
 
+
+
   @Override
   public boolean equals(Object other) {
     if (this == other) {
@@ -85,7 +88,18 @@ public class Tag {
     if (other == null || getClass() != other.getClass()) {
       return false;
     }
-    Tag tag = (Tag) other;
-    return Objects.equals(id, tag.id);
+    Tag that = (Tag) other;
+    return Objects.equals(id, that.id);
   }
+
+  @Override
+  public int hashCode() {
+    int initialOddNumber = 101;
+    int multiplierOddNumber = 211;
+    return new HashCodeBuilder(initialOddNumber, multiplierOddNumber)
+        .append(id)
+        .append(name)
+        .toHashCode();
+  }
+
 }

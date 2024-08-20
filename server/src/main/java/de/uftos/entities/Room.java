@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Objects;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * The database entity for rooms.
@@ -71,6 +72,9 @@ public class Room {
     this.id = id;
   }
 
+
+
+
   @Override
   public boolean equals(Object other) {
     if (this == other) {
@@ -79,7 +83,20 @@ public class Room {
     if (other == null || getClass() != other.getClass()) {
       return false;
     }
-    Room room = (Room) other;
-    return Objects.equals(id, room.id);
+    Room that = (Room) other;
+    return Objects.equals(id, that.id);
+  }
+
+  @Override
+  public int hashCode() {
+    int initialOddNumber = 73;
+    int multiplierOddNumber = 241;
+    return new HashCodeBuilder(initialOddNumber, multiplierOddNumber)
+        .append(id)
+        .append(name)
+        .append(buildingName)
+        .append(capacity)
+        .append(tags)
+        .toHashCode();
   }
 }

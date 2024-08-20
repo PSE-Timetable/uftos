@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Objects;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * The database entity for teachers.
@@ -84,6 +85,8 @@ public class Teacher {
     this.id = id;
   }
 
+
+
   @Override
   public boolean equals(Object other) {
     if (this == other) {
@@ -92,7 +95,21 @@ public class Teacher {
     if (other == null || getClass() != other.getClass()) {
       return false;
     }
-    Teacher teacher = (Teacher) other;
-    return Objects.equals(id, teacher.id);
+    Teacher that = (Teacher) other;
+    return Objects.equals(id, that.id);
+  }
+
+
+  @Override
+  public int hashCode() {
+    int initialOddNumber = 29;
+    int multiplierOddNumber = 271;
+    return new HashCodeBuilder(initialOddNumber, multiplierOddNumber)
+        .append(id)
+        .append(firstName)
+        .append(lastName)
+        .append(acronym)
+        .append(tags)
+        .toHashCode();
   }
 }

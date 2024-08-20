@@ -11,6 +11,7 @@ import jakarta.validation.constraints.NotNull;
 import java.util.Objects;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * The database table for constraint arguments.
@@ -55,5 +56,15 @@ public class ConstraintArgument {
     }
     ConstraintArgument that = (ConstraintArgument) other;
     return Objects.equals(id, that.id);
+  }
+
+  @Override
+  public int hashCode() {
+    int initialOddNumber = 151;
+    int multiplierOddNumber = 263;
+    return new HashCodeBuilder(initialOddNumber, multiplierOddNumber)
+        .append(id)
+        .append(value)
+        .toHashCode();
   }
 }
