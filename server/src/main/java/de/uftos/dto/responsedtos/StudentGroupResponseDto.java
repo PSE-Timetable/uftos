@@ -5,6 +5,7 @@ import de.uftos.entities.Student;
 import de.uftos.entities.StudentGroup;
 import de.uftos.entities.Subject;
 import de.uftos.entities.Tag;
+import java.util.Collections;
 import java.util.List;
 
 public record StudentGroupResponseDto(String id,
@@ -18,7 +19,9 @@ public record StudentGroupResponseDto(String id,
     this(studentGroup.getId(),
         studentGroup.getName(),
         studentGroup.getStudents(),
-        studentGroup.getGrades().stream().map(GradeResponseDto::createResponseDtoFromGrade).toList(),
+        studentGroup.getGrades() == null ?
+            Collections.emptyList()
+            : studentGroup.getGrades().stream().map(GradeResponseDto::createResponseDtoFromGrade).toList(),
         studentGroup.getTags(),
         studentGroup.getLessons(),
         studentGroup.getSubjects());

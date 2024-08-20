@@ -14,6 +14,7 @@ import static org.mockito.Mockito.when;
 
 import de.uftos.dto.requestdtos.StudentGroupRequestDto;
 import de.uftos.dto.responsedtos.LessonResponseDto;
+import de.uftos.dto.responsedtos.StudentGroupResponseDto;
 import de.uftos.entities.Break;
 import de.uftos.entities.Grade;
 import de.uftos.entities.Lesson;
@@ -79,7 +80,7 @@ public class StudentGroupServiceTests {
     LessonResponseDto result = studentGroupService.getLessonsById("123");
     assertResultArraySizes(result, 1, 2, 2, 1);
     assertAll("Testing whether the sizes of the arrays are correct",
-        () -> assertEquals(2, result.grades().getFirst().studentGroupIds().size()),
+        () -> assertEquals(3, result.grades().getFirst().studentGroupIds().size()),
         () -> assertEquals(4, result.grades().getFirst().studentIds().size())
     );
 
@@ -104,22 +105,22 @@ public class StudentGroupServiceTests {
 
   @Test
   void createGroup() {
-    StudentGroup studentGroup = studentGroupService.create(requestDto);
+    StudentGroupResponseDto studentGroup = studentGroupService.create(requestDto);
 
     assertNotNull(studentGroup);
-    assertEquals("testName", studentGroup.getName());
+    assertEquals("testName", studentGroup.name());
 
-    assertEquals(1, studentGroup.getStudents().size());
-    assertEquals("studentId1", studentGroup.getStudents().getFirst().getId());
+    assertEquals(1, studentGroup.students().size());
+    assertEquals("studentId1", studentGroup.students().getFirst().getId());
 
-    assertEquals(1, studentGroup.getGrades().size());
-    assertEquals("gradeId1", studentGroup.getGrades().getFirst().getId());
+    assertEquals(1, studentGroup.grades().size());
+    assertEquals("gradeId1", studentGroup.grades().getFirst().id());
 
-    assertEquals(1, studentGroup.getTags().size());
-    assertEquals("tagId1", studentGroup.getTags().getFirst().getId());
+    assertEquals(1, studentGroup.tags().size());
+    assertEquals("tagId1", studentGroup.tags().getFirst().getId());
 
-    assertEquals(1, studentGroup.getSubjects().size());
-    assertEquals("subjectId1", studentGroup.getSubjects().getFirst().getId());
+    assertEquals(1, studentGroup.subjects().size());
+    assertEquals("subjectId1", studentGroup.subjects().getFirst().getId());
   }
 
   @Test
@@ -195,13 +196,17 @@ public class StudentGroupServiceTests {
     studentGroup2.setId("456");
     studentGroup2.setLessons(Collections.emptyList());
 
+    StudentGroup studentGroup3 =
+        new StudentGroup("testName", List.of("studentId1"), List.of("tagId1"), List.of("subjectId1"));
+
     Grade grade1 = new Grade("gradeId1");
-    grade1.setStudentGroups(new ArrayList<>(List.of(studentGroup1, studentGroup2)));
+    grade1.setStudentGroups(new ArrayList<>(List.of(studentGroup1, studentGroup2, studentGroup3)));
 
     when(gradeRepository.findAllById(List.of("gradeId1"))).thenReturn(List.of(grade1));
 
     studentGroup1.setGrades(List.of(grade1));
     studentGroup2.setGrades(List.of(grade1));
+    studentGroup3.setGrades(List.of(grade1));
 
     Subject subject = new Subject("789");
 
@@ -233,9 +238,6 @@ public class StudentGroupServiceTests {
     when(studentGroupRepository.findById("123")).thenReturn(Optional.of(studentGroup1));
     when(studentGroupRepository.findById("456")).thenReturn(Optional.of(studentGroup2));
 
-    StudentGroup studentGroup3 =
-        new StudentGroup("testName", List.of("studentId1"), List.of("tagId1"), List.of("subjectId1"));
-    studentGroup3.setGrades(List.of(new Grade("gradeId1")));
     studentGroup3.setId("789");
     when(studentGroupRepository.save(any(StudentGroup.class))).thenReturn(studentGroup3);
     when(studentGroupRepository.findById("789")).thenReturn(Optional.of(studentGroup3));

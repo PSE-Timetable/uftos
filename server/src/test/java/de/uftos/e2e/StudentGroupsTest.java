@@ -99,7 +99,7 @@ public class StudentGroupsTest {
         .statusCode(200)
         .body("id", notNullValue())
         .body("name", equalTo(FIRST_STUDENT_GROUP_NAME))
-        .log().ifValidationFails()
+        .log().all()
         .extract()
         .body().jsonPath().getString("id");
 

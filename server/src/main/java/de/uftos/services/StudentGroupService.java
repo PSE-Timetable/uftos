@@ -162,7 +162,7 @@ public class StudentGroupService {
     studentsInGroup.addAll(studentIds.stream()
         .map(studentId -> studentRepository.findById(studentId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST))).toList());
-    studentGroup.setStudents(new ArrayList<Student>(studentsInGroup));
+    studentGroup.setStudents(new ArrayList<>(studentsInGroup));
     return new StudentGroupResponseDto(this.repository.save(studentGroup));
   }
 
