@@ -49,7 +49,7 @@ public class TimeslotServiceTests {
     timeslot1.setId("123");
 
     Server server =
-        new Server(new TimetableMetadata(45, 8, "7:45", new Break[] {}), "2024");
+        new Server(new TimetableMetadata(45, 8, "7:45", new Break[] {}), "2024", "test@uftos.de");
     when(serverRepository.findAll()).thenReturn(List.of(server));
     when(timeslotRepository.findById("123")).thenReturn(Optional.of(timeslot1));
   }

@@ -88,7 +88,7 @@ public class CurriculumServiceTests {
     StudentGroup group5 = new StudentGroup("group5", List.of(), List.of(), List.of(), List.of());
 
     Server server =
-        new Server(new TimetableMetadata(45, 8, "7:45", new Break[] {}), "2024");
+        new Server(new TimetableMetadata(45, 8, "7:45", new Break[] {}), "2024", "test@uftos.de");
     when(serverRepository.findAll()).thenReturn(List.of(server));
     when(testGrade.getStudentGroups()).thenReturn(List.of(group5));
     when(gradeRepository.findById("testGrade")).thenReturn(Optional.of(testGrade));
@@ -108,7 +108,7 @@ public class CurriculumServiceTests {
   void getByExistentId() {
     assertDoesNotThrow(() -> curriculumService.getById("123"));
     CurriculumResponseDto result = curriculumService.getById("123");
-    
+
     assertAll("Testing whether the response dto is correct",
         () -> assertEquals("123", result.id()),
         () -> assertEquals("EmptyCurriculum", result.name()),

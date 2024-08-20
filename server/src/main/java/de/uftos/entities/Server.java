@@ -27,13 +27,23 @@ public class Server {
 
   private String currentYear;
 
+  private String email;
+
   @Convert(converter = JsonbConverter.class)
   @Column(columnDefinition = "jsonb")
   private TimetableMetadata timetableMetadata;
 
-  public Server(TimetableMetadata timetableMetadata, String currentYear) {
+  /**
+   * Creates a new server config.
+   *
+   * @param timetableMetadata the timetable metadata, including information like start of the day.
+   * @param currentYear       the current year.
+   * @param email             the email address notifications should be send to.
+   */
+  public Server(TimetableMetadata timetableMetadata, String currentYear, String email) {
     this.timetableMetadata = timetableMetadata;
     this.currentYear = currentYear;
+    this.email = email;
   }
 
   @Override
