@@ -29,4 +29,12 @@
   }
 </script>
 
-<AddResource {descriptions} {values} {create} {update} createEntity={data.create} tagsAvailable={false} />
+<AddResource
+  {descriptions}
+  {values}
+  {create}
+  {update}
+  subjects={undefined}
+  tags={undefined}
+  createEntity={data.create}
+/>

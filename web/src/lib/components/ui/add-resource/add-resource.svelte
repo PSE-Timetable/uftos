@@ -12,14 +12,14 @@
   export let createEntity: boolean;
   export let create: (values: string[], tagIds: string[], subjectIds?: string[]) => Promise<void>;
   export let update: (values: string[], tagIds: string[], subjectIds?: string[]) => Promise<void>;
-  export let tags: Tag[] = [];
+  export let tags: Tag[] | undefined;
   export let entityTags: Tag[] = [];
-  export let subjects: Subject[] = [];
+  export let subjects: Subject[] | undefined;
   export let entitySubjectsIds: Set<string> = new Set();
-  export let subjectsAvailable: boolean = false;
-  export let tagsAvailable: boolean = true;
-  let selectedTagIds: string[] = tags.map((tag) => tag.id);
-  let selectedSubjects = subjects.map((subject) => ({ id: subject.id, selected: entitySubjectsIds.has(subject.id) }));
+  let selectedTagIds: string[] = tags ? tags.map((tag) => tag.id) : [];
+  let selectedSubjects = subjects
+    ? subjects.map((subject) => ({ id: subject.id, selected: entitySubjectsIds.has(subject.id) }))
+    : [];
   let saved: boolean = false;
 </script>
 
@@ -39,7 +39,7 @@
   </div>
 
   <div class="mx-7 flex flex-col">
-    {#if subjectsAvailable}
+    {#if subjects}
       <div class="flex flex-row mb-7 items-baseline">
         <div class="my-5 flex w-40 text-xl font-bold">Fächer:</div>
         {#if subjects.length > 0}
@@ -57,7 +57,7 @@
       </div>
     {/if}
 
-    {#if tagsAvailable}
+    {#if tags}
       <div class="flex flex-row items-baseline">
         <div class=" flex w-40 text-xl font-bold">Tags:</div>
         {#if tags.length > 0}

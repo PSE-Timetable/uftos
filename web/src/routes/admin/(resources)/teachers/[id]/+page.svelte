@@ -49,7 +49,6 @@
     tags={data.tags}
     entityTags={teacher.tags}
     subjects={data.subjects}
-    subjectsAvailable={true}
     entitySubjectsIds={new Set(teacher.subjects.map((subject) => subject.id))}
   />
 </div>
