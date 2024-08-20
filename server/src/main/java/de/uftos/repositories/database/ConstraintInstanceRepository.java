@@ -1,8 +1,6 @@
 package de.uftos.repositories.database;
 
 import de.uftos.entities.ConstraintInstance;
-import de.uftos.entities.ConstraintSignature;
-import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -18,7 +16,7 @@ public interface ConstraintInstanceRepository
     ListCrudRepository<ConstraintInstance, String>, JpaSpecificationExecutor<ConstraintInstance> {
 
   @Query(nativeQuery = true, value = """
-      SELECT instance.id, instance.signature_name, instance.type
+      SELECT instance.id, instance.type
            FROM constraint_instance instance
            LEFT OUTER JOIN constraint_instance_arguments constraint_instance_arguments
                    ON instance.id=constraint_instance_arguments.constraint_instance_id
@@ -49,7 +47,4 @@ public interface ConstraintInstanceRepository
                OR ro.name ILIKE cast(:arg as varchar) || '%'""")
   Page<ConstraintInstance> findByArguments(String arg, Pageable pageable);
 
-  Page<ConstraintInstance> findBySignatureName(String signatureName, Pageable pageable);
-
-  Optional<ConstraintInstance> findBySignatureAndId(ConstraintSignature signature, String id);
 }

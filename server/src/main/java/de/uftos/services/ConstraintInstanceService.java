@@ -141,10 +141,10 @@ public class ConstraintInstanceService {
                                             Optional<String> argument) {
     Page<ConstraintInstance> constraintInstances;
     if (argument.isPresent()) {
-      // TODO fix "like" search
       constraintInstances = this.repository.findByArguments(argument.get(), pageable);
     } else {
-      constraintInstances = this.repository.findBySignatureName(signatureId, pageable);
+      constraintInstances = this.signatureRepository
+          .findInstancesBySignatureId(signatureId, pageable);
     }
 
     Optional<ConstraintSignature> signature = this.signatureRepository.findById(signatureId);
