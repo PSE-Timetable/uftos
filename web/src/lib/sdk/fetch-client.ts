@@ -528,6 +528,11 @@ export function setUcdlFile(body?: {
         body
     })));
 }
+export function getDefaultUcdlFile(opts?: Oazapfts.RequestOpts) {
+    return oazapfts.ok(oazapfts.fetchText("/editor/default", {
+        ...opts
+    }));
+}
 export function validateUcdlFile(body?: {
     file: Blob;
 }, opts?: Oazapfts.RequestOpts) {
