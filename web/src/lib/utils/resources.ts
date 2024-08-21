@@ -253,16 +253,14 @@ export async function getStudentsFromGroup(
     throw error(400, { message: 'Invalid student group id' });
   }
   const studentGroup = await getStudentGroup(additionalId);
-  const dataItems: DataItem[] = studentGroup.students
-    ? studentGroup.students.map(
-        (student): DataItem => ({
-          id: student.id,
-          firstName: student.firstName,
-          lastName: student.lastName,
-          tags: student.tags.map(({ name }) => name),
-        }),
-      )
-    : [];
+  const dataItems: DataItem[] = studentGroup.students.map(
+    (student): DataItem => ({
+      id: student.id,
+      firstName: student.firstName,
+      lastName: student.lastName,
+      tags: student.tags.map(({ name }) => name),
+    }),
+  );
   return {
     data: dataItems,
     totalElements: Number(studentGroup.students ? studentGroup.students.length : 0),

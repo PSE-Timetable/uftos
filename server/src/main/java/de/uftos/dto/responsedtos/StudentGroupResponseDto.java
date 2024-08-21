@@ -5,6 +5,8 @@ import de.uftos.entities.Student;
 import de.uftos.entities.StudentGroup;
 import de.uftos.entities.Subject;
 import de.uftos.entities.Tag;
+import jakarta.validation.constraints.NotNull;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -19,13 +21,13 @@ import java.util.List;
  * @param lessons  the lessons of the student group
  * @param subjects the subjects of the student group
  */
-public record StudentGroupResponseDto(String id,
-                                      String name,
-                                      List<Student> students,
-                                      List<GradeResponseDto> grades,
-                                      List<Tag> tags,
-                                      List<Lesson> lessons,
-                                      List<Subject> subjects) {
+public record StudentGroupResponseDto(@NotNull String id,
+                                      @NotNull String name,
+                                      @NotNull List<Student> students,
+                                      @NotNull List<GradeResponseDto> grades,
+                                      @NotNull List<Tag> tags,
+                                      @NotNull List<Lesson> lessons,
+                                      @NotNull List<Subject> subjects) {
 
   /**
    * Creates a new StudentGroupResponseDto from a student group.

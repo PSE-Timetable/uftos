@@ -14,6 +14,7 @@ export const load = (async ({ params }) => {
       students: [],
       tags: [],
       subjects: [],
+      lessons: [],
     };
     return {
       studentGroup,
