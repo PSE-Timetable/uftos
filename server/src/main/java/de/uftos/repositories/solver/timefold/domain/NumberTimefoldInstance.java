@@ -23,4 +23,17 @@ public class NumberTimefoldInstance implements ResourceTimefoldInstance {
   public String getId() {
     return "number:" + value;
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (!(o instanceof NumberTimefoldInstance n)) {
+      return false;
+    }
+    return n.value == this.value;
+  }
+  
+  @Override
+  public int hashCode() {
+    return this.value;
+  }
 }

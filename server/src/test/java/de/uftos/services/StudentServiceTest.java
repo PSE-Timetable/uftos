@@ -2,7 +2,6 @@ package de.uftos.services;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.times;
@@ -10,10 +9,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import de.uftos.dto.requestdtos.StudentRequestDto;
-import de.uftos.dto.requestdtos.SubjectRequestDto;
 import de.uftos.entities.Student;
 import de.uftos.entities.StudentGroup;
-import de.uftos.entities.Subject;
 import de.uftos.entities.Tag;
 import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.StudentRepository;
@@ -48,7 +45,7 @@ public class StudentServiceTest {
     Tag tag = new Tag("", "tagName");
     tag.setId("tagId");
 
-    StudentGroup group = new StudentGroup("group", List.of("123"), List.of(), List.of(), List.of());
+    StudentGroup group = new StudentGroup("group", List.of("123"), List.of(), List.of());
     group.setId("groupId");
 
     Student student = new Student("123", "Max", "Mustermann", List.of(group), List.of(tag));

@@ -80,15 +80,13 @@ public class StudentGroup {
    *
    * @param name        the name of the student group.
    * @param studentIds  the IDs of the students that are part of the group.
-   * @param gradeIds    the IDs of the grade that are part of the student group.
    * @param tagIds      the IDs of the tags associated with the student group.
    * @param subjectsIds the IDs of the subjects associated with the student group.
    */
-  public StudentGroup(String name, List<String> studentIds, List<String> gradeIds,
+  public StudentGroup(String name, List<String> studentIds,
                       List<String> tagIds, List<String> subjectsIds) {
     this.name = name;
     this.students = studentIds.stream().map(Student::new).toList();
-    this.grades = gradeIds.stream().map(Grade::new).toList();
     this.tags = tagIds.stream().map(Tag::new).toList();
     this.subjects = subjectsIds.stream().map(Subject::new).toList();
   }

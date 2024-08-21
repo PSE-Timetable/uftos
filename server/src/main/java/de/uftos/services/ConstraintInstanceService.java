@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -138,10 +139,14 @@ public class ConstraintInstanceService {
    */
   public ConstraintInstancesResponseDto get(String signatureId, Pageable pageable,
                                             Optional<String> argument) {
-    // TODO search for "argument" in all resources relations and get all IDs of the resources
-    //  that fulfill the filter, then merge all the IDs with the IDs of the arguments of the
-    //  instances of this specific signature. THEN return the instances that own these arguments.
-    //  GOOD LUCK!
+    Page<ConstraintInstance> constraintInstances;
+    if (argument.isPresent()) {
+      constraintInstances = this.repository.findByArguments(argument.get(), pageable);
+    } else {
+      constraintInstances = this.signatureRepository
+          .findInstancesBySignatureId(signatureId, pageable);
+    }
+
     Optional<ConstraintSignature> signature = this.signatureRepository.findById(signatureId);
     if (signature.isEmpty()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
