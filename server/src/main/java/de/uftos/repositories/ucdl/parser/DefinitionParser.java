@@ -154,7 +154,8 @@ public class DefinitionParser {
         return buildBinaryOperator(UcdlToken.AND, root, parameters);
       }
       case "NOT" -> {
-        if (((SimpleNode) root).jjtGetFirstToken().image.equals("NOT")) {
+        if (((SimpleNode) root).jjtGetFirstToken().image.equals("not")
+            || ((SimpleNode) root).jjtGetFirstToken().image.equals("!")) {
           return buildUnaryOperator(UcdlToken.NOT, root, parameters);
         }
         return buildAst(root.jjtGetChild(0), parameters);
@@ -252,6 +253,7 @@ public class DefinitionParser {
 
         String image = ((SimpleNode) root).jjtGetFirstToken().image;
         if (image.equals("this")) {
+          //should be impossible to reach as "this" should be part of the parameters
           throw new ParseException("\"this\" is reserved and can't be used as variable!");
         }
         return new ValueDto<>(UcdlToken.VALUE_REFERENCE, image);
@@ -290,6 +292,7 @@ public class DefinitionParser {
                   }
                 }
                 modifiers.add(new OperatorDto(UcdlToken.FILTER, filters));
+                modifierList = modifierList.jjtGetChild(2);
               }
             }
             parameters.replace("this", thisType);
@@ -344,7 +347,7 @@ public class DefinitionParser {
                 params = new ArrayList<>();
                 params.add(ast);
                 params.add(buildAst(root.jjtGetChild(2).jjtGetChild(0), parameters));
-                return switch (((SimpleNode) root.jjtGetChild(2)).jjtGetFirstToken().image) {
+                return switch (((SimpleNode) root.jjtGetChild(1)).jjtGetLastToken().next.image) {
                   case "implies", "->" -> new OperatorDto(UcdlToken.IMPLIES, params);
                   case "or", "||" -> new OperatorDto(UcdlToken.OR, params);
                   case "and", "&&" -> new OperatorDto(UcdlToken.AND, params);
@@ -697,6 +700,7 @@ public class DefinitionParser {
         }
         yield ResourceType.TAG;
       }
+      //impossible to reach as it's already checked by the javacc parser
       default -> throw new ParseException("Illegal attribute name: " + attribute);
     };
   }

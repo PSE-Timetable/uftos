@@ -1,4 +1,4 @@
-package de.uftos.repositories.ucdl;
+package de.uftos.repositories.ucdl.parser;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -10,7 +10,6 @@ import de.uftos.dto.solver.RewardPenalize;
 import de.uftos.dto.ucdl.ConstraintDefinitionDto;
 import de.uftos.dto.ucdl.UcdlToken;
 import de.uftos.dto.ucdl.ast.ValueDto;
-import de.uftos.repositories.ucdl.parser.UcdlParser;
 import de.uftos.repositories.ucdl.parser.javacc.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
