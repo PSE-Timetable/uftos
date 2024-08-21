@@ -3,13 +3,13 @@
   import {
     createStudentGroup,
     updateStudentGroup,
-    type StudentGroup,
     type StudentGroupRequestDto,
+    type StudentGroupResponseDto,
   } from '$lib/sdk/fetch-client.js';
   import { error } from '@sveltejs/kit';
 
   export let data;
-  let studentGroup: StudentGroup = data.studentGroup;
+  let studentGroup: StudentGroupResponseDto = data.studentGroup;
   let values: string[] = [studentGroup.name];
   let descriptions: string[] = ['Name:'];
 

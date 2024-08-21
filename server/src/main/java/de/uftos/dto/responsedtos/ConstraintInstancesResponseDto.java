@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * A data transfer object used in the curriculum HTTP requests.
+ * A data transfer object used in the constraint instance HTTP requests.
  *
  * @param constraintInstances the instances of the constraints
  * @param displayNames        the display names of the arguments of the constraint instances
