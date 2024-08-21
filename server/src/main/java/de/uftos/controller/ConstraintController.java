@@ -54,7 +54,6 @@ public class ConstraintController {
   @GetMapping()
   public Page<ConstraintSignature> getConstraintSignatures(Pageable pageable,
                                                            Optional<String> name) {
-
     return this.constraintSignatureService.get(pageable, name);
   }
 
