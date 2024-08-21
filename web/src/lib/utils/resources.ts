@@ -263,7 +263,7 @@ export async function getStudentsFromGroup(
   );
   return {
     data: dataItems,
-    totalElements: Number(studentGroup.students ? studentGroup.students.length : 0),
+    totalElements: Number(studentGroup.students.length),
   };
 }
 
