@@ -140,7 +140,8 @@ public class ConstraintInstanceService {
   public ConstraintInstancesResponseDto get(String signatureId, Pageable pageable,
                                             Optional<String> argument) {
     Page<ConstraintInstance> constraintInstances;
-    if (argument.isPresent()) {
+    System.out.println(argument.isPresent());
+    if (argument.isPresent() && !argument.get().isBlank()) {
       constraintInstances = this.repository.findByArguments(argument.get(), pageable);
     } else {
       constraintInstances = this.signatureRepository
@@ -148,16 +149,14 @@ public class ConstraintInstanceService {
     }
 
     Optional<ConstraintSignature> signature = this.signatureRepository.findById(signatureId);
-    if (signature.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-    }
-    List<ConstraintInstance> instances = signature.get().getInstances();
+    List<ConstraintInstance> instances = constraintInstances.getContent();
     List<ConstraintArgumentDisplayName> displayNames =
         processConstraintInstances(instances);
     return new ConstraintInstancesResponseDto(
         instances,
         displayNames,
-        signature.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST))
+        signature.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST)),
+        constraintInstances.getTotalElements()
     );
   }
 
@@ -176,7 +175,8 @@ public class ConstraintInstanceService {
     return new ConstraintInstancesResponseDto(
         List.of(constraintInstance),
         displayNames,
-        signature.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST))
+        signature.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST)),
+        1
     );
   }
 

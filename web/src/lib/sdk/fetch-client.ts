@@ -75,6 +75,7 @@ export type ConstraintInstancesResponseDto = {
     constraintInstances: SlimInstance[];
     displayNames: ConstraintArgumentDisplayName[];
     parameters: ConstraintParameter[];
+    totalElements: number;
 };
 export type ConstraintArgumentRequestDto = {
     argumentId: string;

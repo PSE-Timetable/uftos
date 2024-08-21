@@ -2245,7 +2245,7 @@
         }
       },
       "ConstraintInstancesResponseDto" : {
-        "required" : [ "constraintInstances", "displayNames", "parameters" ],
+        "required" : [ "constraintInstances", "displayNames", "parameters", "totalElements" ],
         "type" : "object",
         "properties" : {
           "constraintInstances" : {
@@ -2265,6 +2265,10 @@
             "items" : {
               "$ref" : "#/components/schemas/ConstraintParameter"
             }
+          },
+          "totalElements" : {
+            "type" : "integer",
+            "format" : "int64"
           }
         }
       },
