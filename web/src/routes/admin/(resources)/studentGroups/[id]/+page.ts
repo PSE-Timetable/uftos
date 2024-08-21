@@ -1,4 +1,4 @@
-import { getStudentGroup, getSubjects, getTags, type Sort, type StudentGroup } from '$lib/sdk/fetch-client';
+import { getStudentGroup, getSubjects, getTags, type Sort, type StudentGroupResponseDto } from '$lib/sdk/fetch-client';
 import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
 
@@ -7,7 +7,14 @@ export const load = (async ({ params }) => {
   const tags = await getTags(sort);
   const subjects = await getSubjects(sort);
   if (params.id === 'new') {
-    const studentGroup: StudentGroup = { id: 'new', name: '', grades: [], students: [], tags: [], subjects: [] };
+    const studentGroup: StudentGroupResponseDto = {
+      id: 'new',
+      name: '',
+      grades: [],
+      students: [],
+      tags: [],
+      subjects: [],
+    };
     return {
       studentGroup,
       tags,

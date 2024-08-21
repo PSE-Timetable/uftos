@@ -8,6 +8,17 @@ import de.uftos.entities.Tag;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * A data transfer object used in the student group HTTP requests.
+ * 
+ * @param id       the id of the student group
+ * @param name     the name of the student group
+ * @param students the students in the student group
+ * @param grades   the grades of the student group
+ * @param tags     the tags of the student group
+ * @param lessons  the lessons of the student group
+ * @param subjects the subjects of the student group
+ */
 public record StudentGroupResponseDto(String id,
                                       String name,
                                       List<Student> students,
@@ -15,12 +26,18 @@ public record StudentGroupResponseDto(String id,
                                       List<Tag> tags,
                                       List<Lesson> lessons,
                                       List<Subject> subjects) {
+
+  /**
+   * Creates a new StudentGroupResponseDto from a student group.
+   * 
+   * @param studentGroup the student group
+   */
   public StudentGroupResponseDto(StudentGroup studentGroup) {
     this(studentGroup.getId(),
         studentGroup.getName(),
         studentGroup.getStudents(),
-        studentGroup.getGrades() == null ?
-            Collections.emptyList()
+        studentGroup.getGrades() == null 
+            ? Collections.emptyList()
             : studentGroup.getGrades().stream().map(GradeResponseDto::createResponseDtoFromGrade).toList(),
         studentGroup.getTags(),
         studentGroup.getLessons(),

@@ -1049,7 +1049,7 @@
             "content" : {
               "*/*" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/PageStudentGroup"
+                  "$ref" : "#/components/schemas/PageStudentGroupResponseDto"
                 }
               }
             },
@@ -1075,7 +1075,7 @@
             "content" : {
               "*/*" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/StudentGroup"
+                  "$ref" : "#/components/schemas/StudentGroupResponseDto"
                 }
               }
             },
@@ -1118,7 +1118,7 @@
             "content" : {
               "*/*" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/StudentGroup"
+                  "$ref" : "#/components/schemas/StudentGroupResponseDto"
                 }
               }
             },
@@ -1152,7 +1152,7 @@
             "content" : {
               "*/*" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/StudentGroup"
+                  "$ref" : "#/components/schemas/StudentGroupResponseDto"
                 }
               }
             },
@@ -1247,7 +1247,7 @@
             "content" : {
               "*/*" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/StudentGroup"
+                  "$ref" : "#/components/schemas/StudentGroupResponseDto"
                 }
               }
             },
@@ -2819,13 +2819,13 @@
           }
         }
       },
-      "PageStudentGroup" : {
+      "PageStudentGroupResponseDto" : {
         "type" : "object",
         "properties" : {
           "content" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/components/schemas/StudentGroup"
+              "$ref" : "#/components/schemas/StudentGroupResponseDto"
             }
           },
           "empty" : {
@@ -3252,6 +3252,47 @@
             "type" : "array",
             "items" : {
               "type" : "string"
+            }
+          }
+        }
+      },
+      "StudentGroupResponseDto" : {
+        "type" : "object",
+        "properties" : {
+          "grades" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/GradeResponseDto"
+            }
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "lessons" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Lesson"
+            }
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "students" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Student"
+            }
+          },
+          "subjects" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Subject"
+            }
+          },
+          "tags" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Tag"
             }
           }
         }

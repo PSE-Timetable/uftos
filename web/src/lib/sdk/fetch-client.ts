@@ -296,8 +296,17 @@ export type TimetableMetadata = {
     timeslotLength: number;
     timeslotsAmount: number;
 };
-export type PageStudentGroup = {
-    content?: StudentGroup[];
+export type StudentGroupResponseDto = {
+    grades?: GradeResponseDto[];
+    id?: string;
+    lessons?: Lesson[];
+    name?: string;
+    students?: Student[];
+    subjects?: Subject[];
+    tags?: Tag[];
+};
+export type PageStudentGroupResponseDto = {
+    content?: StudentGroupResponseDto[];
     empty?: boolean;
     first?: boolean;
     last?: boolean;
@@ -722,7 +731,7 @@ export function getStudentGroups(pageable: Pageable, { name, tags }: {
 } = {}, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
-        data: PageStudentGroup;
+        data: PageStudentGroupResponseDto;
     }>(`/student-groups${QS.query(QS.explode({
         pageable,
         name,
@@ -734,7 +743,7 @@ export function getStudentGroups(pageable: Pageable, { name, tags }: {
 export function createStudentGroup(studentGroupRequestDto: StudentGroupRequestDto, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
-        data: StudentGroup;
+        data: StudentGroupResponseDto;
     }>("/student-groups", oazapfts.json({
         ...opts,
         method: "POST",
@@ -750,7 +759,7 @@ export function deleteStudentGroup(id: string, opts?: Oazapfts.RequestOpts) {
 export function getStudentGroup(id: string, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
-        data: StudentGroup;
+        data: StudentGroupResponseDto;
     }>(`/student-groups/${encodeURIComponent(id)}`, {
         ...opts
     }));
@@ -758,7 +767,7 @@ export function getStudentGroup(id: string, opts?: Oazapfts.RequestOpts) {
 export function updateStudentGroup(id: string, studentGroupRequestDto: StudentGroupRequestDto, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
-        data: StudentGroup;
+        data: StudentGroupResponseDto;
     }>(`/student-groups/${encodeURIComponent(id)}`, oazapfts.json({
         ...opts,
         method: "PUT",
@@ -783,7 +792,7 @@ export function removeStudentsFromStudentGroup(id: string, body: string[], opts?
 export function addStudentsToStudentGroup(id: string, body: string[], opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
-        data: StudentGroup;
+        data: StudentGroupResponseDto;
     }>(`/student-groups/${encodeURIComponent(id)}/students`, oazapfts.json({
         ...opts,
         method: "POST",
