@@ -6,7 +6,6 @@ import de.uftos.entities.StudentGroup;
 import de.uftos.entities.Subject;
 import de.uftos.entities.Tag;
 import jakarta.validation.constraints.NotNull;
-
 import java.util.Collections;
 import java.util.List;
 
