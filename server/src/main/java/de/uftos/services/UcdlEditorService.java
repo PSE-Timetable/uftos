@@ -53,7 +53,7 @@ public class UcdlEditorService {
    */
   public ParsingResponse validate(MultipartFile file) {
     try {
-      return ucdlRepository.parseString(new String(file.getBytes()));
+      return this.ucdlRepository.parseString(new String(file.getBytes()));
     } catch (IOException e) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Could not validate file");
     }
@@ -66,12 +66,23 @@ public class UcdlEditorService {
    */
   public Resource getUcdl() {
     try {
-      String content = ucdlRepository.getUcdl();
+      String content = this.ucdlRepository.getUcdl();
       return new InputStreamResource(
           new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)));
     } catch (IOException e) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "UCDL file could not be loaded");
     }
+  }
+
+  /**
+   * Gets the default UCDL file.
+   *
+   * @return the default UCDL file.
+   */
+  public Resource getDefaultUcdl() {
+    String content = this.ucdlRepository.getDefaultUcdl();
+    return new InputStreamResource(
+        new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)));
   }
 
   /**
