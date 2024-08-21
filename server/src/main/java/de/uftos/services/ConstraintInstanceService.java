@@ -201,7 +201,7 @@ public class ConstraintInstanceService {
    * Deletes constraint instances by their IDs.
    *
    * @param signatureId the ID of the constraint signature.
-   * @param id          the IDs of the constraint instances.
+   * @param ids         the IDs of the constraint instances.
    */
   public void delete(String signatureId, List<String> ids) {
     ConstraintSignature signature = this.signatureRepository.findById(signatureId).orElseThrow(

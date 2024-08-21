@@ -6,7 +6,6 @@ import de.uftos.entities.ConstraintInstance;
 import de.uftos.entities.ConstraintSignature;
 import de.uftos.services.ConstraintInstanceService;
 import de.uftos.services.ConstraintSignatureService;
-
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -140,7 +139,7 @@ public class ConstraintController {
 
   /**
    * Maps the HTTP DELETE request to the
-   * {@link ConstraintInstanceService#delete(String, List<String>) delete} function of
+   * {@link ConstraintInstanceService#delete(String, List) delete} function of
    * the constraint instance service.
    *
    * @param signatureId the signature ID of the instances which are to be deleted.
