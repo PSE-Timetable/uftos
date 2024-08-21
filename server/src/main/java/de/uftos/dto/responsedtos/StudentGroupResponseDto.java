@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  * A data transfer object used in the student group HTTP requests.
- * 
+ *
  * @param id       the id of the student group
  * @param name     the name of the student group
  * @param students the students in the student group
@@ -29,7 +29,7 @@ public record StudentGroupResponseDto(String id,
 
   /**
    * Creates a new StudentGroupResponseDto from a student group.
-   * 
+   *
    * @param studentGroup the student group
    */
   public StudentGroupResponseDto(StudentGroup studentGroup) {
