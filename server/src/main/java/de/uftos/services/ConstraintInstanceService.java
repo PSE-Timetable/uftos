@@ -140,7 +140,6 @@ public class ConstraintInstanceService {
   public ConstraintInstancesResponseDto get(String signatureId, Pageable pageable,
                                             Optional<String> argument) {
     Page<ConstraintInstance> constraintInstances;
-    System.out.println(argument.isPresent());
     if (argument.isPresent() && !argument.get().isBlank()) {
       constraintInstances = this.repository.findByArguments(argument.get(), pageable);
     } else {
