@@ -39,7 +39,7 @@
     data: DataItem[];
     totalElements: number;
   }>;
-  export let deleteEntry: (id: string, additionalId?: string) => Promise<void>;
+  export let deleteEntries: (ids: string[], additionalId?: string) => Promise<void>;
   export let additionalId: string = '';
   export let sortable = true;
   export let addButton = true;
@@ -115,7 +115,7 @@
         cell: ({ value }) => {
           return createRender(DataTableActions, {
             id: value.toString(),
-            deleteEntry,
+            deleteEntry: deleteEntries,
             getData,
             additionalId,
             editAvailable,
@@ -172,13 +172,21 @@
   }
 
   async function deleteSelectedEntries() {
-    let promises: Promise<void>[] = [];
-    Object.keys($selectedDataIds).forEach((row) => {
-      promises.push(deleteEntry(row, additionalId));
-    });
-    await Promise.all(promises);
+    let amountDeleted;
+    if (additionalId) {
+      let toDelete = Object.keys($selectedDataIds);
+      await deleteEntries(toDelete, additionalId);
+      amountDeleted = toDelete.length;
+    } else {
+      let promises: Promise<void>[] = [];
+      Object.keys($selectedDataIds).forEach((row) => {
+        promises.push(deleteEntries([row], additionalId));
+      });
+      amountDeleted = promises.length;
+      await Promise.all(promises);
+    }
     $allRowsSelected = false;
-    currentPaginationPage = Math.ceil(($totalElementsStore - promises.length) / pageSize);
+    currentPaginationPage = Math.ceil(($totalElementsStore - amountDeleted) / pageSize);
     $pageIndex = currentPaginationPage - 1;
     serverSide = true;
     await getData();

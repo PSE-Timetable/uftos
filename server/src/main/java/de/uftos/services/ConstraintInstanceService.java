@@ -198,16 +198,16 @@ public class ConstraintInstanceService {
   }
 
   /**
-   * Deletes a constraintInstance by their ID.
+   * Deletes constraint instances by their IDs.
    *
    * @param signatureId the ID of the constraint signature.
-   * @param id          the ID of the constraintInstance.
+   * @param id          the IDs of the constraint instances.
    */
-  public void delete(String signatureId, String id) {
+  public void delete(String signatureId, List<String> ids) {
     ConstraintSignature signature = this.signatureRepository.findById(signatureId).orElseThrow(
         () -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
             "Could not find signature with this id."));
-    signature.getInstances().removeIf((instance) -> instance.getId().equals(id));
+    signature.getInstances().removeIf((instance) -> ids.contains(instance.getId()));
     this.signatureRepository.save(signature);
   }
 

@@ -3,21 +3,21 @@
   import {
     createStudentGroup,
     updateStudentGroup,
-    type StudentGroup,
     type StudentGroupRequestDto,
+    type StudentGroupResponseDto,
   } from '$lib/sdk/fetch-client.js';
   import { error } from '@sveltejs/kit';
 
   export let data;
-  let studentGroup: StudentGroup = data.studentGroup;
-  let values: string[] = [studentGroup.name];
+  let studentGroup: StudentGroupResponseDto = data.studentGroup;
+  let values: string[] = [studentGroup.name ?? ''];
   let descriptions: string[] = ['Name:'];
 
   async function create(values: string[], tagIds: string[], subjectIds?: string[]) {
     let studentGroupRequestDto: StudentGroupRequestDto = {
       name: values[0],
-      gradeIds: studentGroup.grades.map((grade) => String(grade.id)),
-      studentIds: studentGroup.students.map((student) => student.id),
+      gradeIds: studentGroup.grades ? studentGroup.grades.map((grade) => String(grade.id)) : [],
+      studentIds: studentGroup.students ? studentGroup.students.map((student) => student.id) : [],
       tagIds,
       subjectIds: subjectIds || [],
     };
@@ -31,13 +31,13 @@
   async function update(values: string[], tagIds: string[], subjectIds?: string[]) {
     let studentGroupRequestDto: StudentGroupRequestDto = {
       name: values[0],
-      gradeIds: studentGroup.grades.map((grade) => String(grade.id)),
-      studentIds: studentGroup.students.map((student) => student.id),
+      gradeIds: studentGroup.grades ? studentGroup.grades.map((grade) => String(grade.id)) : [],
+      studentIds: studentGroup.students ? studentGroup.students.map((student) => student.id) : [],
       tagIds,
       subjectIds: subjectIds || [],
     };
     try {
-      await updateStudentGroup(studentGroup.id, studentGroupRequestDto);
+      await updateStudentGroup(studentGroup.id ?? '', studentGroupRequestDto);
     } catch {
       error(400, { message: 'Could not update student group' });
     }
@@ -52,6 +52,6 @@
   createEntity={data.create}
   tags={data.tags}
   subjects={data.subjects}
-  entitySubjectsIds={new Set(studentGroup.subjects.map((subject) => subject.id))}
-  entityTags={studentGroup.tags}
+  entitySubjectsIds={new Set(studentGroup.subjects ? studentGroup.subjects.map((subject) => subject.id) : [])}
+  entityTags={studentGroup.tags ?? []}
 />
