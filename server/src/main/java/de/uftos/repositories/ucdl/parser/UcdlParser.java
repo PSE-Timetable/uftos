@@ -41,7 +41,10 @@ public class UcdlParser {
       if (!yamlCode.getClass().equals(LinkedHashMap.class)) {
         throw new ParseException("This is illegal code!");
       }
-      HashMap<String, Object> constraintDefinitions = (HashMap<String, Object>) yamlCode;
+      HashMap<String, Object> constraintDefinitions = new HashMap<>();
+      for (Map.Entry<?, ?> entry : ((LinkedHashMap<?, ?>) yamlCode).entrySet()) {
+        constraintDefinitions.put(entry.getKey().toString(), entry.getValue());
+      }
       for (Map.Entry<String, Object> entry : constraintDefinitions.entrySet()) {
         String name = entry.getKey();
         if (entry.getValue() == null || !entry.getValue().getClass().equals(LinkedHashMap.class)) {
@@ -146,7 +149,7 @@ public class UcdlParser {
     }
 
     Object definitionObject = constraintDefinition.get("definition");
-    String definitionString = "";
+    String definitionString;
 
     if (definitionObject == null) {
       throw new ParseException("The definition requires code!");
