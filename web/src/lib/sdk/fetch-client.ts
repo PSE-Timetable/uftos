@@ -145,7 +145,7 @@ export type CurriculumRequestDto = {
     lessonsCounts: LessonsCountRequestDto[];
     name: string;
 };
-export type ParsingResponse = {
+export type SuccessResponse = {
     message: string;
     success: boolean;
 };
@@ -510,7 +510,7 @@ export function setUcdlFile(body?: {
 } = {}, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
-        data: ParsingResponse;
+        data: SuccessResponse;
     }>(`/editor${QS.query(QS.explode({
         force
     }))}`, oazapfts.multipart({
@@ -524,7 +524,7 @@ export function validateUcdlFile(body?: {
 }, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
-        data: ParsingResponse;
+        data: SuccessResponse;
     }>("/editor/validate", oazapfts.multipart({
         ...opts,
         method: "PUT",
@@ -1060,7 +1060,7 @@ export function getTimetables(pageable: Pageable, { name }: {
 export function createTimetable(timetableRequestDto: TimetableRequestDto, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
-        data: Timetable;
+        data: SuccessResponse;
     }>("/timetables", oazapfts.json({
         ...opts,
         method: "POST",
