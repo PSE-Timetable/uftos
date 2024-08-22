@@ -9,7 +9,7 @@
   import DataTable from '$lib/elements/ui/dataTable/data-table.svelte';
   import * as DropdownMenu from '$lib/elements/ui/dropdown-menu/index.js';
   import { ChevronDown } from 'lucide-svelte';
-  import { createTimetable } from '$lib/sdk/fetch-client';
+  import { createTimetable, type SuccessResponse } from '$lib/sdk/fetch-client';
   import {
     deleteGradeEntry,
     deleteRoomEntry,
@@ -73,10 +73,16 @@
             class="text-lg"
             on:click={async () => {
               const name = new Date().getFullYear() + ':' + Date.now();
-              await createTimetable({ name });
-              toast.success('Erfolgreich', {
-                description: 'Die Erstellung eines Stundenplan wurde erfolgereich gestartet!',
-              });
+              const response = await createTimetable({ name });
+              if (response.success) {
+                toast.success('Erfolgreich', {
+                  description: response.message,
+                });
+              } else {
+                toast.error('Fehler', {
+                  description: response.message,
+                });
+              }
             }}>Stundenplan generieren</DropdownMenu.Item
           >
         </DropdownMenu.Group>
