@@ -55,11 +55,13 @@
   <LinkBar />
 </div>
 
-<div class="p-4">
+<div class="flex flex-col gap-8 p-8">
   {#await getConstraints() then { constraints }}
     {#each constraints || [] as constraint}
-      <div class="flex flex-row w-full gap-8 items-top my-5">
-        <ConstraintSignatureComp constraintSignature={constraint} {addInstance} />
+      <div class="flex flex-row w-full gap-8 items-top">
+        <div class="w-1/3">
+          <ConstraintSignatureComp constraintSignature={constraint} {addInstance} />
+        </div>
         {#key reloadTable}
           <div class="w-full">
             {#await getInstancesPage('', '', 0, 5, constraint.name) then initialData}
