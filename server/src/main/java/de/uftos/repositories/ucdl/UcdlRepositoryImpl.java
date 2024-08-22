@@ -1,7 +1,7 @@
 package de.uftos.repositories.ucdl;
 
+import de.uftos.dto.SuccessResponse;
 import de.uftos.dto.ucdl.ConstraintDefinitionDto;
-import de.uftos.dto.ucdl.ParsingResponse;
 import de.uftos.repositories.ucdl.parser.PredefinedConstraint;
 import de.uftos.repositories.ucdl.parser.UcdlParser;
 import de.uftos.repositories.ucdl.parser.javacc.ParseException;
