@@ -58,11 +58,11 @@
       class="w-[200px] justify-between bg-white text-primary hover:bg-accent hover:text-white"
       role="combobox"
     >
-      {selectedValue}
+      <p class="truncate">{selectedValue}</p>
       <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
     </Button>
   </Popover.Trigger>
-  <Popover.Content class="w-[200px] p-0">
+  <Popover.Content class="overflow-x-auto w-[200px] p-0">
     <Command.Root shouldFilter={false}>
       <Command.Input bind:value={searchedValue} placeholder="Suche Ressource" />
       <Command.Empty>Keine Ressource gefunden</Command.Empty>

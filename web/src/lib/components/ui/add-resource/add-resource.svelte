@@ -24,43 +24,37 @@
   let saved: boolean = false;
 </script>
 
-<div class="flex flex-col">
-  <div class="m-7 text-xl flex flex-col font-bold">
+<div class="grid grid-cols-[max-content,1fr] gap-8 p-4">
     {#each descriptions as description, i}
-      <div class="flex flex-row items-baseline">
-        <div class="my-5 flex w-40">{description}</div>
+        <div class="text-lg font-bold flex">{description}</div>
         <div class="flex flex-col gap-1 w-80">
           <Input bind:value={values[i]} background={true} class="rounded-none font-normal flex max-w-80" />
           {#if saved && !values[i].trim()}
             <p class="text-sm text-red-600">Dieses Feld darf nicht leer sein.</p>
           {/if}
         </div>
-      </div>
     {/each}
-  </div>
 
-  <div class="mx-7 flex flex-col">
     {#if subjects}
-      <div class="flex flex-row mb-7 items-baseline">
-        <div class="my-5 flex w-40 text-xl font-bold">Fächer:</div>
+        <div class="flex text-lg font-bold">Fächer:</div>
         {#if subjects.length > 0}
-          <div class="flex flex-wrap bg-white rounded-md p-4 shadow-custom max-w-80">
+          <div class="flex flex-wrap bg-white rounded-md gap-2 p-4 shadow-custom max-w-80">
             {#each subjects as subject, i}
-              <div class="flex items-center space-x-2 mx-1">
+              <div class="flex items-top space-x-2">
                 <Checkbox class="m-1" bind:checked={selectedSubjects[i].selected} />
-                {subject.name}
+                <p class="break-all w-full">
+                  {subject.name}
+                </p>
               </div>
             {/each}
           </div>
         {:else}
           <div class="text-lg font-semibold">Keine Fächer vorhanden.</div>
         {/if}
-      </div>
     {/if}
 
     {#if tags}
-      <div class="flex flex-row items-baseline">
-        <div class=" flex w-40 text-xl font-bold">Tags:</div>
+        <div class=" flex text-lg font-bold">Tags:</div>
         {#if tags.length > 0}
           <div class="w-80 flex">
             <TagsMultipleSelect {tags} {entityTags} bind:selectedTagIds />
@@ -68,10 +62,9 @@
         {:else}
           <div class="text-lg font-semibold">Keine Tags vorhanden.</div>
         {/if}
-      </div>
     {/if}
 
-    <div class="ml-40 mt-7 w-80 flex">
+    
       <Button
         on:click={async () => {
           for (let value of values) {
@@ -87,11 +80,9 @@
             : update(values, selectedTagIds, subjectIds));
           await goto('./');
         }}
-        class="max-w-52 bg-accent px-16 py-5 text-white hover:bg-accent flex"
+        class="col-start-2 p-8 text-lg w-80 bg-accent text-white hover:bg-accent flex"
         variant="secondary"
       >
         Speichern
       </Button>
-    </div>
-  </div>
 </div>
