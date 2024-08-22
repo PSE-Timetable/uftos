@@ -13,6 +13,6 @@
     {columnNames}
     {keys}
     loadPage={loadTeacherPage}
-    deleteEntry={deleteTeacherEntry}
+    deleteEntries={deleteTeacherEntry}
   />
 </div>

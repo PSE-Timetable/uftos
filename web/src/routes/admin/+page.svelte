@@ -105,7 +105,7 @@
         columnNames={studentColumnNames}
         keys={studentKeys}
         loadPage={loadStudentPage}
-        deleteEntry={deleteStudentEntry}
+        deleteEntries={deleteStudentEntry}
         pageSize={5}
         addButton={false}
         editAvailable={false}
@@ -118,7 +118,7 @@
         columnNames={teacherColumnNames}
         keys={teacherKeys}
         loadPage={loadTeacherPage}
-        deleteEntry={deleteTeacherEntry}
+        deleteEntries={deleteTeacherEntry}
         pageSize={5}
         addButton={false}
         editAvailable={false}
@@ -131,7 +131,7 @@
         columnNames={gradeColumnNames}
         keys={gradeKeys}
         loadPage={loadGrades}
-        deleteEntry={deleteGradeEntry}
+        deleteEntries={deleteGradeEntry}
         pageSize={5}
         addButton={false}
         editAvailable={false}
@@ -144,7 +144,7 @@
         columnNames={roomColumnNames}
         keys={roomKeys}
         loadPage={loadRoomPage}
-        deleteEntry={deleteRoomEntry}
+        deleteEntries={deleteRoomEntry}
         pageSize={5}
         addButton={false}
         editAvailable={false}

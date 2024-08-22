@@ -6,6 +6,7 @@ import de.uftos.entities.ConstraintInstance;
 import de.uftos.entities.ConstraintSignature;
 import de.uftos.services.ConstraintInstanceService;
 import de.uftos.services.ConstraintSignatureService;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -62,7 +63,7 @@ public class ConstraintController {
    * {@link ConstraintSignatureService#getById(String)}  getById} function of the
    * constraint signature service.
    *
-   * @param signatureId the ID of the student.
+   * @param signatureId the ID of the signature.
    * @return the constraint signature with the given ID.
    */
   @GetMapping("/{signatureId}")
@@ -77,7 +78,7 @@ public class ConstraintController {
    *
    * @param signatureId the constraint signature for which an instance is to be created.
    * @param request     the constraint instance values.
-   * @return the created student with the assigned ID.
+   * @return the created instance with the assigned ID.
    */
   @PostMapping("/{signatureId}/instances")
   public ConstraintInstance createConstraintInstance(@PathVariable String signatureId,
@@ -119,9 +120,9 @@ public class ConstraintController {
   }
 
   /**
-   * Maps the HTTP PUT request to update a student to the
+   * Maps the HTTP PUT request to update a constraint instance to the
    * {@link ConstraintInstanceService#update(String, String, ConstraintInstanceRequestDto) update}
-   * function of the student service.
+   * function of the constraint instance service.
    *
    * @param signatureId the constraint signature for which an instance is to be created.
    * @param id          the id of the instance to return.
@@ -138,16 +139,17 @@ public class ConstraintController {
 
   /**
    * Maps the HTTP DELETE request to the
-   * {@link ConstraintInstanceService#delete(String, String) delete} function of
-   * the student service.
+   * {@link ConstraintInstanceService#delete(String, List) delete} function of
+   * the constraint instance service.
    *
-   * @param id the ID of the student which is to be deleted.
+   * @param signatureId the signature ID of the instances which are to be deleted.
+   * @param ids the IDs of the instances which are to be deleted.
    */
-  @DeleteMapping("/{signatureId}/instances/{id}")
+  @DeleteMapping("/{signatureId}/instances")
   public void deleteConstraintInstance(@PathVariable String signatureId,
-                                       @PathVariable String id
+                                       @RequestBody List<String> ids
   ) {
-    this.constraintInstanceService.delete(signatureId, id);
+    this.constraintInstanceService.delete(signatureId, ids);
   }
 
 }

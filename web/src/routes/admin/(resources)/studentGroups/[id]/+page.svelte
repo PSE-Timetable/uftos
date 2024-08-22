@@ -16,7 +16,7 @@
   async function create(values: string[], tagIds: string[], subjectIds?: string[]) {
     let studentGroupRequestDto: StudentGroupRequestDto = {
       name: values[0],
-      gradeIds: studentGroup.grades.map((grade) => String(grade.id)),
+      gradeIds: studentGroup.grades.map((grade) => grade.id),
       studentIds: studentGroup.students.map((student) => student.id),
       tagIds,
       subjectIds: subjectIds || [],
@@ -31,7 +31,7 @@
   async function update(values: string[], tagIds: string[], subjectIds?: string[]) {
     let studentGroupRequestDto: StudentGroupRequestDto = {
       name: values[0],
-      gradeIds: studentGroup.grades.map((grade) => String(grade.id)),
+      gradeIds: studentGroup.grades.map((grade) => grade.id),
       studentIds: studentGroup.students.map((student) => student.id),
       tagIds,
       subjectIds: subjectIds || [],

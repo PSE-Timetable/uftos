@@ -158,10 +158,10 @@ public class UcdlEditorService {
 
       updateDefinitionSignatures(signatures, definitions);
 
-      return new SuccessResponse(true,
-          "Saved file forcefully and deleted inconsistent constraint instances!");
+      return new ParsingResponse(true,
+          "Änderungen gespeichert und inkonsistente Constraint Instanzen gelöscht!");
     } catch (ParseException | IOException e) {
-      return new SuccessResponse(true, "Saved file with invalid code forcefully!");
+      return new ParsingResponse(true, "Änderungen mit invalidem Code gespeichert!");
     }
   }
 

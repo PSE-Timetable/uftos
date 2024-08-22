@@ -414,6 +414,13 @@ export function getConstraintSignature(signatureId: string, opts?: Oazapfts.Requ
         ...opts
     }));
 }
+export function deleteConstraintInstance(signatureId: string, body: string[], opts?: Oazapfts.RequestOpts) {
+    return oazapfts.ok(oazapfts.fetchText(`/constraints/${encodeURIComponent(signatureId)}/instances`, oazapfts.json({
+        ...opts,
+        method: "DELETE",
+        body
+    })));
+}
 export function getConstraintInstances(signatureId: string, pageable: Pageable, { argument }: {
     argument?: string;
 } = {}, opts?: Oazapfts.RequestOpts) {
@@ -436,12 +443,6 @@ export function createConstraintInstance(signatureId: string, constraintInstance
         method: "POST",
         body: constraintInstanceRequestDto
     })));
-}
-export function deleteConstraintInstance(signatureId: string, id: string, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.ok(oazapfts.fetchText(`/constraints/${encodeURIComponent(signatureId)}/instances/${encodeURIComponent(id)}`, {
-        ...opts,
-        method: "DELETE"
-    }));
 }
 export function getConstraintInstanceById(signatureId: string, id: string, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
