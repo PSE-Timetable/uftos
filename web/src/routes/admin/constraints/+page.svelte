@@ -1,9 +1,7 @@
 <script lang="ts">
-  import { goto } from '$app/navigation';
   import ConstraintSignatureComp from '$lib/components/ui/constraintSignature/constraint-signature.svelte';
-  import LinkBar from '$lib/components/ui/link-bar/link-bar.svelte';
-  import { Button } from '$lib/elements/ui/button';
   import DataTable from '$lib/elements/ui/dataTable/data-table.svelte';
+  import Navbar from '$lib/elements/ui/navbar/navbar.svelte';
   import {
     type ConstraintArgumentRequestDto,
     type ConstraintInstanceRequestDto,
@@ -12,7 +10,6 @@
     getConstraintSignatures,
   } from '$lib/sdk/fetch-client';
   import { deleteInstances, getInstancesPage } from '$lib/utils/resources';
-  import { ChevronLeft } from 'lucide-svelte';
 
   let reloadTable = false;
 
@@ -48,12 +45,7 @@
   }
 </script>
 
-<div class="flex flex-row justify-start bg-foreground md:p-4 text-white">
-  <Button on:click={() => goto('./')} variant="secondary" size="icon" class="rounded-full bg-accent mr-6">
-    <ChevronLeft class="h-5 w-5 text-white" />
-  </Button>
-  <LinkBar />
-</div>
+<Navbar />
 
 <div class="flex flex-col gap-8 p-8">
   {#await getConstraints() then { constraints }}
