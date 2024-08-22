@@ -12,14 +12,15 @@
   export let createEntity: boolean;
   export let create: (values: string[], tagIds: string[], subjectIds?: string[]) => Promise<void>;
   export let update: (values: string[], tagIds: string[], subjectIds?: string[]) => Promise<void>;
-  export let tags: Tag[] | undefined;
+  export let tags: Tag[] | undefined = undefined;
   export let entityTags: Tag[] = [];
-  export let subjects: Subject[] | undefined;
+  export let subjects: Subject[] | undefined = undefined;
   export let entitySubjectsIds: Set<string> = new Set();
   let selectedTagIds: string[] = tags ? tags.map((tag) => tag.id) : [];
-  let selectedSubjects = subjects
-    ? subjects.map((subject) => ({ id: subject.id, selected: entitySubjectsIds.has(subject.id) }))
-    : [];
+  let selectedSubjects = (subjects || []).map((subject) => ({
+    id: subject.id,
+    selected: entitySubjectsIds.has(subject.id),
+  }));
   let saved: boolean = false;
 </script>
 

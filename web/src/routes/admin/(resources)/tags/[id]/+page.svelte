@@ -34,7 +34,5 @@
   {values}
   {create}
   {update}
-  subjects={undefined}
-  tags={undefined}
   createEntity={data.create}
 />

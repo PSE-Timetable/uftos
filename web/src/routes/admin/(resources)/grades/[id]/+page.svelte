@@ -41,7 +41,6 @@
   {create}
   {update}
   createEntity={data.create}
-  subjects={undefined}
   tags={data.tags}
   entityTags={grade.tags}
 />
