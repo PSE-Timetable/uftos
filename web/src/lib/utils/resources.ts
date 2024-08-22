@@ -30,6 +30,14 @@ export type DataItem = {
   [key: string]: string | string[] | number;
 };
 
+async function deleteMultiple(ids: string[], deleteEntry: (id: string) => Promise<void>) {
+  let promises: Promise<void>[] = [];
+  for (const id of ids) {
+    promises = [...promises, deleteEntry(id)];
+  }
+  return Promise.all(promises);
+}
+
 export const toast = (success: boolean, message: string) =>
   success ? _toast.success(message) : _toast.error(message, { important: true, duration: 4000 });
 
@@ -55,12 +63,12 @@ export async function loadStudentPage(sortString: string, filter: string, index?
   };
 }
 
-export async function deleteStudentEntry(id: string[]) {
+export async function deleteStudentEntry(ids: string[]) {
   try {
-    await deleteStudent(id[0]);
+    await deleteMultiple(ids, deleteStudent);
   } catch {
     toast(false, 'Beim Löschen des Schülers ist ein Fehler aufgetreten');
-    error(400, { message: `could not delete student with id ${id}` });
+    error(400, { message: `could not delete students` });
   }
 }
 
@@ -87,12 +95,12 @@ export async function loadRoomPage(sortString: string, filter: string, index?: n
   };
 }
 
-export async function deleteRoomEntry(id: string[]) {
+export async function deleteRoomEntry(ids: string[]) {
   try {
-    await deleteRoom(id[0]);
+    await deleteMultiple(ids, deleteRoom);
   } catch {
     toast(false, 'Beim Löschen des Raums ist ein Fehler aufgetreten');
-    error(400, { message: `could not delete room with id ${id}` });
+    error(400, { message: `could not delete rooms` });
   }
 }
 
@@ -114,12 +122,12 @@ export async function loadSubjects(sortString: string, filter: string) {
   };
 }
 
-export async function deleteSubjectEntry(id: string[]) {
+export async function deleteSubjectEntry(ids: string[]) {
   try {
-    await deleteSubject(id[0]);
+    await deleteMultiple(ids, deleteSubject);
   } catch {
     toast(false, 'Beim Löschen des Fachs ist ein Fehler aufgetreten');
-    error(400, { message: `could not delete subject with id ${id}` });
+    error(400, { message: `could not delete subjects` });
   }
 }
 
@@ -140,12 +148,12 @@ export async function loadTags(sortString: string, filter: string) {
   };
 }
 
-export async function deleteTagEntry(id: string[]) {
+export async function deleteTagEntry(ids: string[]) {
   try {
-    await deleteTag(id[0]);
+    await deleteMultiple(ids, deleteTag);
   } catch {
     toast(false, 'Beim Löschen des Fachs ist ein Fehler aufgetreten');
-    error(400, { message: `could not delete tag with id ${id}` });
+    error(400, { message: `could not delete tags` });
   }
 }
 
@@ -174,12 +182,12 @@ export async function loadTeacherPage(sortString: string, filter: string, index?
   };
 }
 
-export async function deleteTeacherEntry(id: string[]) {
+export async function deleteTeacherEntry(ids: string[]) {
   try {
-    await deleteTeacher(id[0]);
+    await deleteMultiple(ids, deleteTeacher);
   } catch {
     toast(false, 'Beim Löschen des Lehrers ist ein Fehler aufgetreten');
-    error(400, { message: `could not delete teacher with id ${id}` });
+    error(400, { message: `could not delete teachers` });
   }
 }
 
@@ -199,12 +207,12 @@ export async function loadGrades(sortString: string, filter: string) {
   };
 }
 
-export async function deleteGradeEntry(id: string[]) {
+export async function deleteGradeEntry(ids: string[]) {
   try {
-    await deleteGrade(id[0]);
+    await deleteMultiple(ids, deleteGrade);
   } catch {
     toast(false, 'Beim Löschen der Stufe ist ein Fehler aufgetreten');
-    error(400, { message: `could not delete grade with id ${id}` });
+    error(400, { message: `could not delete grades` });
   }
 }
 
@@ -252,20 +260,18 @@ export async function getStudentsFromGroup(
   if (!additionalId) {
     throw error(400, { message: 'Invalid student group id' });
   }
-  const studentGroup = await getStudentGroup(additionalId);
-  const dataItems: DataItem[] = studentGroup.students
-    ? studentGroup.students.map(
-        (student): DataItem => ({
-          id: student.id,
-          firstName: student.firstName,
-          lastName: student.lastName,
-          tags: student.tags.map(({ name }) => name),
-        }),
-      )
-    : [];
+  const { students } = await getStudentGroup(additionalId);
+  const dataItems: DataItem[] = students.map(
+    (student): DataItem => ({
+      id: student.id,
+      firstName: student.firstName,
+      lastName: student.lastName,
+      tags: student.tags.map(({ name }) => name),
+    }),
+  );
   return {
     data: dataItems,
-    totalElements: Number(studentGroup.students ? studentGroup.students.length : 0),
+    totalElements: Number(students.length),
   };
 }
 

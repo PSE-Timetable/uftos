@@ -297,13 +297,13 @@ export type TimetableMetadata = {
     timeslotsAmount: number;
 };
 export type StudentGroupResponseDto = {
-    grades?: GradeResponseDto[];
-    id?: string;
-    lessons?: Lesson[];
-    name?: string;
-    students?: Student[];
-    subjects?: Subject[];
-    tags?: Tag[];
+    grades: GradeResponseDto[];
+    id: string;
+    lessons: Lesson[];
+    name: string;
+    students: Student[];
+    subjects: Subject[];
+    tags: Tag[];
 };
 export type PageStudentGroupResponseDto = {
     content?: StudentGroupResponseDto[];

@@ -3263,6 +3263,7 @@
         }
       },
       "StudentGroupResponseDto" : {
+        "required" : [ "grades", "id", "lessons", "name", "students", "subjects", "tags" ],
         "type" : "object",
         "properties" : {
           "grades" : {

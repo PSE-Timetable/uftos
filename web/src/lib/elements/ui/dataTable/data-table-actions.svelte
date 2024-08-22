@@ -7,7 +7,7 @@
   import { toast } from '$lib/utils/resources';
 
   export let id: string;
-  export let deleteEntry: (id: string[], additionalId?: string) => Promise<void>;
+  export let deleteEntries: (id: string[], additionalId?: string) => Promise<void>;
   export let getData: () => Promise<void>;
   export let editAvailable: boolean;
   export let additionalId: string;
@@ -32,7 +32,7 @@
     <DropdownMenu.Item
       class="text-red-600"
       on:click={async () => {
-        await deleteEntry([id], additionalId);
+        await deleteEntries([id], additionalId);
         await getData();
         toast(true, 'Eintrag erfolgreich gelöscht.');
       }}

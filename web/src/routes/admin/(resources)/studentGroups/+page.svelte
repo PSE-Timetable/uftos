@@ -34,7 +34,7 @@
   let keys = ['id', 'firstName', 'lastName', 'tags'];
 
   async function addStudentToGroup(studentGroup: StudentGroupResponseDto, studentId: string) {
-    studentGroup = await addStudentsToStudentGroup(studentGroup.id ?? '', [studentId]);
+    studentGroup = await addStudentsToStudentGroup(studentGroup.id, [studentId]);
     reloadTable = !reloadTable;
   }
 
@@ -60,12 +60,12 @@
     let studentGroup = await getStudentGroup(studentGroupId); //studentGroups field doesn't contain newly added students
     let requestDto: StudentGroupRequestDto = {
       gradeIds: [gradeId],
-      name: studentGroup.name ?? '',
-      studentIds: studentGroup.students ? studentGroup.students.map((student) => student.id) : [],
-      tagIds: studentGroup.tags ? studentGroup.tags.map((tag) => tag.id) : [],
-      subjectIds: studentGroup.subjects ? studentGroup.subjects.map((subject) => subject.id) : [],
+      name: studentGroup.name,
+      studentIds: studentGroup.students.map((student) => student.id),
+      tagIds: studentGroup.tags.map((tag) => tag.id),
+      subjectIds: studentGroup.subjects.map((subject) => subject.id),
     };
-    await updateStudentGroup(studentGroup.id ?? '', requestDto);
+    await updateStudentGroup(studentGroup.id, requestDto);
   }
 
   async function deleteGroup(id: string) {
@@ -95,7 +95,7 @@
             <button type="button" on:click={() => goto(`${$page.url}/${studentGroup.id}`)}>
               <Pencil class="hover:stroke-accent" />
             </button>
-            <button type="button" on:click={() => deleteGroup(studentGroup.id ?? '')}>
+            <button type="button" on:click={() => deleteGroup(studentGroup.id)}>
               <Trash2 class="hover:stroke-accent" />
             </button>
           </div>
@@ -107,7 +107,7 @@
               onSearch={(value) => updateGrades(value)}
               data={grades.map((grade) => ({ value: grade.id, label: grade.name }))}
               bind:selectedId={selectedGradeId}
-              onSelectChange={() => saveGrade(selectedGradeId, studentGroup.id ?? '')}
+              onSelectChange={() => saveGrade(selectedGradeId, studentGroup.id)}
             />
           </div>
         </div>

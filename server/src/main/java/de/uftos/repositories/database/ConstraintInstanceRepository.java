@@ -40,7 +40,8 @@ public interface ConstraintInstanceRepository
            LEFT OUTER JOIN subjects su
                    ON su.id=args.value
            WHERE
-               te.first_name ILIKE cast(:arg as varchar) || '%' OR te.last_name ILIKE cast(:arg as varchar) || '%' OR te.acronym ILIKE cast(:arg as varchar) || '%'
+               te.first_name ILIKE cast(:arg as varchar) || '%' OR te.last_name ILIKE cast(:arg as varchar) || '%' 
+               OR te.acronym ILIKE cast(:arg as varchar) || '%'
                OR st.first_name ILIKE cast(:arg as varchar) || '%' OR st.last_name ILIKE cast(:arg as varchar) || '%'
                OR st_g.name ILIKE cast(:arg as varchar) || '%'
                OR gr.name ILIKE cast(:arg as varchar) || '%'

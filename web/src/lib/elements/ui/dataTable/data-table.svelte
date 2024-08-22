@@ -115,7 +115,7 @@
         cell: ({ value }) => {
           return createRender(DataTableActions, {
             id: value.toString(),
-            deleteEntry: deleteEntries,
+            deleteEntries,
             getData,
             additionalId,
             editAvailable,
@@ -172,21 +172,10 @@
   }
 
   async function deleteSelectedEntries() {
-    let amountDeleted;
-    if (additionalId) {
-      let toDelete = Object.keys($selectedDataIds);
-      await deleteEntries(toDelete, additionalId);
-      amountDeleted = toDelete.length;
-    } else {
-      let promises: Promise<void>[] = [];
-      Object.keys($selectedDataIds).forEach((row) => {
-        promises.push(deleteEntries([row], additionalId));
-      });
-      amountDeleted = promises.length;
-      await Promise.all(promises);
-    }
+    let toDelete = Object.keys($selectedDataIds);
+    await deleteEntries(toDelete, additionalId);
     $allRowsSelected = false;
-    currentPaginationPage = Math.ceil(($totalElementsStore - amountDeleted) / pageSize);
+    currentPaginationPage = Math.ceil(($totalElementsStore - toDelete.length) / pageSize);
     $pageIndex = currentPaginationPage - 1;
     serverSide = true;
     await getData();
