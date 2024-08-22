@@ -34,8 +34,7 @@
   async function updateStudents(value: string) {
     const pageable: Pageable = { page: 0, size: 40 };
     try {
-      students =
-        (await getStudents(pageable, { firstName: value, lastName: value }).then(({ content }) => content)) || [];
+      students = (await getStudents(pageable, { search: value }).then(({ content }) => content)) || [];
     } catch {
       error(400, { message: 'Could not fetch students' });
     }

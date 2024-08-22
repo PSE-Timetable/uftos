@@ -33,17 +33,14 @@ public class StudentService {
   /**
    * Gets a page of entries of the student table.
    *
-   * @param pageable  contains the parameters for the page.
-   * @param firstName the first name filter.
-   * @param lastName  the last name filter.
-   * @param tags      the tags filter.
+   * @param pageable contains the parameters for the page.
+   * @param search   the search filter.
+   * @param tags     the tags filter.
    * @return the page of the entries fitting the parameters.
    */
-  public Page<Student> get(Pageable pageable, Optional<String> firstName,
-                           Optional<String> lastName, Optional<String[]> tags) {
+  public Page<Student> get(Pageable pageable, Optional<String> search, Optional<String[]> tags) {
     Specification<Student> spec = new SpecificationBuilder<Student>()
-        .optionalOrLike(firstName, "firstName")
-        .optionalOrLike(lastName, "lastName")
+        .search(search)
         .optionalAndJoinIn(tags, "tags", "id")
         .build();
     return this.repository.findAll(spec, pageable);

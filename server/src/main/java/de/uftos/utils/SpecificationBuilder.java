@@ -34,6 +34,30 @@ public class SpecificationBuilder<T> {
   }
 
   /**
+   * Adds a search filter to the specification if the provided parameter is present.
+   *
+   * @param text The text to search for
+   * @return The current instance of {@code SpecificationBuilder} with the
+   *     search filter added if the parameter is present.
+   */
+  public SpecificationBuilder<T> search(Optional<String> text) {
+    if (text.isEmpty()) {
+      return this;
+    }
+
+    if (text.get().isBlank()) {
+      specification = specification.or((root, query, cb) -> cb.conjunction());
+    }
+
+    specification = specification.or((root, query, cb) -> cb.isTrue(
+        cb.function("tsvector_match", Boolean.class, root.get("searchVector"),
+            cb.function("websearch_to_tsquery", String.class, cb.literal("german"),
+                cb.literal(text.get())))));
+
+    return this;
+  }
+
+  /**
    * Adds an OR filter to the specification if the provided parameter is present.
    *
    * @param param     The optional parameter value to filter by.

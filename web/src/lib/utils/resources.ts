@@ -40,8 +40,7 @@ export const toast = (success: boolean, message: string) =>
 export async function loadStudentPage(sortString: string, filter: string, index?: number, pageSize?: number) {
   const pageable: Pageable = { page: index, size: pageSize, sort: [sortString] };
   const result: PageStudent = await getStudents(pageable, {
-    firstName: filter,
-    lastName: filter,
+    search: filter,
   });
   const dataItems: DataItem[] = result.content
     ? result.content.map(
@@ -71,8 +70,7 @@ export async function deleteStudentEntry(ids: string[]) {
 export async function loadRoomPage(sortString: string, filter: string, index?: number, pageSize?: number) {
   const pageable: Pageable = { page: index, size: pageSize, sort: [sortString] };
   const result = await getRooms(pageable, {
-    name: filter,
-    buildingName: filter,
+    search: filter,
   });
   const dataItems: DataItem[] = result.content
     ? result.content.map(
@@ -103,7 +101,7 @@ export async function deleteRoomEntry(ids: string[]) {
 export async function loadSubjects(sortString: string, filter: string) {
   const sort: Sort = { sort: [sortString] };
   const result = await getSubjects(sort, {
-    name: filter,
+    search: filter,
   });
   const dataItems: DataItem[] = result.map(
     (subject): DataItem => ({
@@ -131,7 +129,7 @@ export async function loadTags(sortString: string, filter: string) {
   const sort: Sort = { sort: [sortString] };
 
   const result = await getTags(sort, {
-    name: filter,
+    search: filter,
   });
   const dataItems: DataItem[] = result.map((tag) => ({
     id: tag.id,
@@ -156,9 +154,7 @@ export async function deleteTagEntry(ids: string[]) {
 export async function loadTeacherPage(sortString: string, filter: string, index?: number, pageSize?: number) {
   const pageable: Pageable = { page: index, size: pageSize, sort: [sortString] };
   const result: PageTeacher = await getTeachers(pageable, {
-    firstName: filter,
-    lastName: filter,
-    acronym: filter,
+    search: filter,
   });
   const dataItems: DataItem[] = result.content
     ? result.content.map(
@@ -190,7 +186,7 @@ export async function deleteTeacherEntry(ids: string[]) {
 export async function loadGrades(sortString: string, filter: string) {
   const sort: Sort = { sort: [sortString] };
   const result: GradeResponseDto[] = await getGrades(sort, {
-    name: filter,
+    search: filter,
   });
   const dataItems: DataItem[] = result.map((grade) => ({
     id: grade.id,

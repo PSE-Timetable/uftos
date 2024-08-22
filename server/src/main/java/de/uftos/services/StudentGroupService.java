@@ -53,13 +53,14 @@ public class StudentGroupService {
    * Gets a page of entries of the student group table.
    *
    * @param pageable contains the parameters for the page.
-   * @param name     the name filter.
+   * @param search   the search filter.
    * @param tags     the tags filter.
    * @return the page of the entries fitting the parameters.
    */
-  public Page<StudentGroupResponseDto> get(Pageable pageable, Optional<String> name, Optional<String[]> tags) {
+  public Page<StudentGroupResponseDto> get(Pageable pageable, Optional<String> search,
+                                Optional<String[]> tags) {
     Specification<StudentGroup> spec = new SpecificationBuilder<StudentGroup>()
-        .optionalOrLike(name, "name")
+        .search(search)
         .optionalAndJoinIn(tags, "tags", "id")
         .build();
     Page<StudentGroup> studentGroupPage = this.repository.findAll(spec, pageable);

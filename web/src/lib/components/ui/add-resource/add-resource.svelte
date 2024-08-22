@@ -30,7 +30,7 @@
 
   async function updateGrades(value: string) {
     try {
-      grades = await getGrades({ sort: ['name,asc'] }, { name: value });
+      grades = await getGrades({ sort: ['name,asc'] }, { search: value });
     } catch {
       error(400, { message: 'Could not fetch grades' });
     }

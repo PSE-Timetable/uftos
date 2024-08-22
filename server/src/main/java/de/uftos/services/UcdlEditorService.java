@@ -116,8 +116,8 @@ public class UcdlEditorService {
       ConstraintDefinitionDto definition = definitions.get(signature.getName());
       if (!signature.getInstances().isEmpty() && signatureChanged(signature, definition)) {
         return new ParsingResponse(false,
-            "Signatures of constraints changed!"
-                + " Constraint instances will be deleted if code is saved!");
+            "Signaturen von Constraints haben sich geändert!"
+                + " Constraint Instanzen werden gelöscht, wenn der Code gespeichert wird!");
       }
     }
 
@@ -131,7 +131,7 @@ public class UcdlEditorService {
     removeDeletedSignatures(signatures, definitions); //signatures without new definitions
     updateDefinitionSignatures(signatures, definitions);
 
-    return new ParsingResponse(true, "Code saved successfully!");
+    return new ParsingResponse(true, "Code erfolgreich gespeichert!");
   }
 
   private ParsingResponse forceSetUcdl(MultipartFile file) {
@@ -159,9 +159,9 @@ public class UcdlEditorService {
       updateDefinitionSignatures(signatures, definitions);
 
       return new ParsingResponse(true,
-          "Saved file forcefully and deleted inconsistent constraint instances!");
+          "Änderungen gespeichert und inkonsistente Constraint Instanzen gelöscht!");
     } catch (ParseException | IOException e) {
-      return new ParsingResponse(true, "Saved file with invalid code forcefully!");
+      return new ParsingResponse(true, "Änderungen mit invalidem Code gespeichert!");
     }
   }
 
