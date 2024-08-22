@@ -9,7 +9,7 @@
   import DataTable from '$lib/elements/ui/dataTable/data-table.svelte';
   import * as DropdownMenu from '$lib/elements/ui/dropdown-menu/index.js';
   import { ChevronDown } from 'lucide-svelte';
-  import { createTimetable, type SuccessResponse } from '$lib/sdk/fetch-client';
+  import { createTimetable } from '$lib/sdk/fetch-client';
   import {
     deleteGradeEntry,
     deleteRoomEntry,
