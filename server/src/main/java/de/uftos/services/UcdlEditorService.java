@@ -158,10 +158,10 @@ public class UcdlEditorService {
 
       updateDefinitionSignatures(signatures, definitions);
 
-      return new ParsingResponse(true,
+      return new SuccessResponse(true,
           "Änderungen gespeichert und inkonsistente Constraint Instanzen gelöscht!");
     } catch (ParseException | IOException e) {
-      return new ParsingResponse(true, "Änderungen mit invalidem Code gespeichert!");
+      return new SuccessResponse(true, "Änderungen mit invalidem Code gespeichert!");
     }
   }
 
