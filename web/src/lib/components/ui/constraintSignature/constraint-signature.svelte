@@ -100,7 +100,7 @@
   };
 </script>
 
-<div class="flex flex-col gap-8 bg-primary w-fit h-fit p-6 rounded-md text-white">
+<div class="flex flex-col gap-8 bg-primary w-full h-fit p-6 rounded-md text-white">
   <p class="font-bold text-md">
     {constraintSignature.description.replaceAll(
       /{(?<paramName>.*?)}/gm,
