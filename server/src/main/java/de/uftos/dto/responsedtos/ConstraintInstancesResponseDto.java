@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 public record ConstraintInstancesResponseDto(@NotNull List<SlimInstance> constraintInstances,
                                              @NotNull List<ConstraintArgumentDisplayName> displayNames,
                                              @NotNull List<ConstraintParameter> parameters,
-                                             @PositiveOrZero long totalElements) {
+                                             @PositiveOrZero @NotNull long totalElements) {
 
   /**
    * Creates a new ConstraintInstancesResponseDto instance with the standard entities
