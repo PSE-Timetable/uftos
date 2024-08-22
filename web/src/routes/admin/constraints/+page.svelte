@@ -1,8 +1,5 @@
 <script lang="ts">
-  import { goto } from '$app/navigation';
   import ConstraintSignatureComp from '$lib/components/ui/constraintSignature/constraint-signature.svelte';
-  import LinkBar from '$lib/components/ui/link-bar/link-bar.svelte';
-  import { Button } from '$lib/elements/ui/button';
   import DataTable from '$lib/elements/ui/dataTable/data-table.svelte';
   import Navbar from '$lib/elements/ui/navbar/navbar.svelte';
   import {
@@ -13,7 +10,6 @@
     getConstraintSignatures,
   } from '$lib/sdk/fetch-client';
   import { deleteInstances, getInstancesPage } from '$lib/utils/resources';
-  import { ChevronLeft } from 'lucide-svelte';
 
   let reloadTable = false;
 
