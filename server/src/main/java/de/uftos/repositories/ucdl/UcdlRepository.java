@@ -26,6 +26,13 @@ public interface UcdlRepository {
   void setUcdl(String ucdl) throws IOException;
 
   /**
+   * Gets the default UCDL-file.
+   *
+   * @return the default UCDL-code.
+   */
+  String getDefaultUcdl();
+
+  /**
    * Attempts to parse the UCDL-file and returns whether parsing was successful or not.
    *
    * @return a ParsingResponse containing information about whether parsing was successful or not.

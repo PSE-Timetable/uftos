@@ -1,7 +1,7 @@
 <script lang="ts">
   import { beforeNavigate } from '$app/navigation';
   import Button from '$lib/elements/ui/button/button.svelte';
-  import { getUcdlFile, setUcdlFile, validateUcdlFile } from '$lib/sdk/fetch-client';
+  import { getDefaultUcdlFile, getUcdlFile, setUcdlFile, validateUcdlFile } from '$lib/sdk/fetch-client';
   import { debounce } from 'lodash-es';
   import type { editor } from 'monaco-editor';
   import { onMount } from 'svelte';
@@ -27,8 +27,8 @@
     URL.revokeObjectURL(downloadElement.href);
   };
 
-  const onInsertTemplate = () => {
-    const template = 'foo';
+  const onInsertTemplate = async () => {
+    const template: string = await getDefaultUcdlFile();
     const lastLine = ucdlEditor.getModel()?.getLineCount() || 0;
 
     ucdlEditor.setValue(`${ucdlEditor.getValue()}\n\n${template}`);

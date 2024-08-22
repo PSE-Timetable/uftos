@@ -8,19 +8,22 @@ import de.uftos.entities.ConstraintParameter;
 import de.uftos.entities.ConstraintSignature;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * A data transfer object used in the curriculum HTTP requests.
+ * A data transfer object used in the constraint instance HTTP requests.
  *
  * @param constraintInstances the instances of the constraints
  * @param displayNames        the display names of the arguments of the constraint instances
+ * @param parameters          the parameters of the constraint signature.
+ * @param totalElements       the total amount of instances of the signature.
  */
 public record ConstraintInstancesResponseDto(@NotNull List<SlimInstance> constraintInstances,
-                                             @NotNull
-                                             List<ConstraintArgumentDisplayName> displayNames,
-                                             @NotNull List<ConstraintParameter> parameters) {
+                                             @NotNull List<ConstraintArgumentDisplayName> displayNames,
+                                             @NotNull List<ConstraintParameter> parameters,
+                                             @PositiveOrZero @NotNull long totalElements) {
 
   /**
    * Creates a new ConstraintInstancesResponseDto instance with the standard entities
@@ -29,14 +32,17 @@ public record ConstraintInstancesResponseDto(@NotNull List<SlimInstance> constra
    * @param constraintInstances the instances of the constraint
    * @param displayNames        the display names for the arguments
    * @param constraintSignature the signature from which to get the parameters
+   * @param totalElements       the total amount of instances of the signature.
    */
   public ConstraintInstancesResponseDto(List<ConstraintInstance> constraintInstances,
                                         List<ConstraintArgumentDisplayName> displayNames,
-                                        ConstraintSignature constraintSignature) {
+                                        ConstraintSignature constraintSignature,
+                                        long totalElements) {
     this(
         constraintInstances.stream().map(SlimInstance::new).collect(Collectors.toList()),
         displayNames,
-        constraintSignature.getParameters()
+        constraintSignature.getParameters(),
+        totalElements
     );
   }
 

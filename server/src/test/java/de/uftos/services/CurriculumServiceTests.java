@@ -85,7 +85,7 @@ public class CurriculumServiceTests {
     Curriculum testCurriculum =
         new Curriculum(testGrade, "testName", List.of(lessonsCount));
 
-    StudentGroup group5 = new StudentGroup("group5", List.of(), List.of(), List.of(), List.of());
+    StudentGroup group5 = new StudentGroup("group5", List.of(), List.of(), List.of());
 
     Server server =
         new Server(new TimetableMetadata(45, 8, "7:45", new Break[] {}), "2024", "test@uftos.de");

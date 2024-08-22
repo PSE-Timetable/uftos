@@ -229,7 +229,7 @@ export async function getInstancesPage(
   });
   return {
     data: dataItems,
-    totalElements: dataItems.length,
+    totalElements: result.totalElements,
   };
 }
 

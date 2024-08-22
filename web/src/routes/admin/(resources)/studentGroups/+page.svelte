@@ -15,8 +15,8 @@
     type GradeResponseDto,
     type Pageable,
     type Student,
-    type StudentGroup,
     type StudentGroupRequestDto,
+    type StudentGroupResponseDto,
   } from '$lib/sdk/fetch-client.js';
   import { getStudentsFromGroup, removeStudentFromGroup } from '$lib/utils/resources.js';
   import { error } from '@sveltejs/kit';
@@ -33,7 +33,7 @@
   let columnNames = ['Vorname', 'Nachname', 'Tags'];
   let keys = ['id', 'firstName', 'lastName', 'tags'];
 
-  async function addStudentToGroup(studentGroup: StudentGroup, studentId: string) {
+  async function addStudentToGroup(studentGroup: StudentGroupResponseDto, studentId: string) {
     studentGroup = await addStudentsToStudentGroup(studentGroup.id, [studentId]);
     reloadTable = !reloadTable;
   }
