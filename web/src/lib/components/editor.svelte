@@ -191,12 +191,8 @@
     </AlertDialog.Header>
     <AlertDialog.Footer>
       <AlertDialog.Cancel class="shadow-custom">Nein</AlertDialog.Cancel>
-      <AlertDialog.Action
-        on:click={async () => {
-          saveAlertOpen = false;
-          await onSave({ value: savedValue, force: true });
-        }}
-        class="text-red-600 shadow-custom">Ja</AlertDialog.Action
+      <AlertDialog.Action on:click={() => onSave({ value: savedValue, force: true })} class="text-red-600 shadow-custom"
+        >Ja</AlertDialog.Action
       >
     </AlertDialog.Footer>
   </AlertDialog.Content>
@@ -210,7 +206,7 @@
       <AlertDialog.Description>Du hast noch Änderungen. Sicher, dass du fortfahren möchtest?</AlertDialog.Description>
     </AlertDialog.Header>
     <AlertDialog.Footer>
-      <AlertDialog.Cancel on:click={() => (leavePageAlertOpen = false)} class="shadow-custom">Nein</AlertDialog.Cancel>
+      <AlertDialog.Cancel class="shadow-custom">Nein</AlertDialog.Cancel>
       <AlertDialog.Action
         on:click={async () => {
           const url = leavePageTo;
