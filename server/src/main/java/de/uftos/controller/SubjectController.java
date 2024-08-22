@@ -51,13 +51,13 @@ public class SubjectController {
    * Maps the HTTP GET request for a set of subjects from the database to the
    * {@link SubjectService#get(Sort, Optional) get} function of the subject service.
    *
-   * @param sort contains the sort parameters.
-   * @param name the name filter.
+   * @param sort   contains the sort parameters.
+   * @param search the search filter.
    * @return the page of subjects fitting the parameters.
    */
   @GetMapping()
-  public List<Subject> getSubjects(Sort sort, Optional<String> name) {
-    return this.subjectService.get(sort, name);
+  public List<Subject> getSubjects(Sort sort, Optional<String> search) {
+    return this.subjectService.get(sort, search);
   }
 
   /**

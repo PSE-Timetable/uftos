@@ -32,17 +32,17 @@
     try {
       switch (parameterType) {
         case ParameterType.Grade: {
-          const grades = await getGrades(sort, { name: value });
+          const grades = await getGrades(sort, { search: value });
           data[name] = grades.map((grade) => ({ value: grade.id, label: grade.name }));
           break;
         }
         case ParameterType.Subject: {
-          const subjects = await getSubjects(sort, { name: value });
+          const subjects = await getSubjects(sort, { search: value });
           data[name] = subjects.map((subject) => ({ value: subject.id, label: subject.name }));
           break;
         }
         case ParameterType.Room: {
-          const { content } = await getRooms(page, { name: value });
+          const { content } = await getRooms(page, { search: value });
           data[name] =
             content?.map((room) => ({
               value: room.id,
@@ -51,13 +51,12 @@
           break;
         }
         case ParameterType.StudentGroup: {
-          const { content } = await getStudentGroups(page, { name: value });
-          data[name] =
-            content?.map((studentGroup) => ({ value: studentGroup.id ?? '', label: studentGroup.name ?? '' })) || [];
+          const { content } = await getStudentGroups(page, { search: value });
+          data[name] = content?.map((studentGroup) => ({ value: studentGroup.id, label: studentGroup.name })) || [];
           break;
         }
         case ParameterType.Student: {
-          const { content } = await getStudents(page, { firstName: value });
+          const { content } = await getStudents(page, { search: value });
           data[name] =
             content?.map((student) => ({
               value: student.id,
@@ -66,12 +65,12 @@
           break;
         }
         case ParameterType.Tag: {
-          const tags = await getTags(sort, { name: value });
+          const tags = await getTags(sort, { search: value });
           data[name] = tags.map((tag) => ({ value: tag.id, label: tag.name }));
           break;
         }
         case ParameterType.Teacher: {
-          const { content } = await getTeachers(page, { firstName: value });
+          const { content } = await getTeachers(page, { search: value });
           data[name] =
             content?.map((teacher) => ({
               value: teacher.id,
