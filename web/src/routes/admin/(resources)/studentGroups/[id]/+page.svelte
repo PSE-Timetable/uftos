@@ -13,10 +13,10 @@
   let values: string[] = [studentGroup.name];
   let descriptions: string[] = ['Name:'];
 
-  async function create(values: string[], tagIds: string[], subjectIds?: string[]) {
+  async function create(values: string[], tagIds: string[], subjectIds?: string[], gradeId?: string) {
     let studentGroupRequestDto: StudentGroupRequestDto = {
       name: values[0],
-      gradeIds: studentGroup.grades.map((grade) => grade.id),
+      gradeIds: [gradeId ?? ''],
       studentIds: studentGroup.students.map((student) => student.id),
       tagIds,
       subjectIds: subjectIds || [],
@@ -28,10 +28,10 @@
     }
   }
 
-  async function update(values: string[], tagIds: string[], subjectIds?: string[]) {
+  async function update(values: string[], tagIds: string[], subjectIds?: string[], gradeId?: string) {
     let studentGroupRequestDto: StudentGroupRequestDto = {
       name: values[0],
-      gradeIds: studentGroup.grades.map((grade) => grade.id),
+      gradeIds: [gradeId ?? ''],
       studentIds: studentGroup.students.map((student) => student.id),
       tagIds,
       subjectIds: subjectIds || [],
@@ -54,4 +54,6 @@
   subjects={data.subjects}
   entitySubjectsIds={new Set(studentGroup.subjects.map((subject) => subject.id))}
   entityTags={studentGroup.tags}
+  grades={data.grades}
+  entityGradeId={studentGroup.grades.length > 0 ? studentGroup.grades[0].id : ''}
 />

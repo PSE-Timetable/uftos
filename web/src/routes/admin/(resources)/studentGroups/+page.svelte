@@ -7,15 +7,11 @@
   import {
     addStudentsToStudentGroup,
     deleteStudentGroup,
-    getGrades,
-    getStudentGroup,
     getStudentGroups,
     getStudents,
-    updateStudentGroup,
     type GradeResponseDto,
     type Pageable,
     type Student,
-    type StudentGroupRequestDto,
     type StudentGroupResponseDto,
   } from '$lib/sdk/fetch-client.js';
   import { getStudentsFromGroup, removeStudentFromGroup } from '$lib/utils/resources.js';
@@ -48,26 +44,6 @@
     }
   }
 
-  async function updateGrades(value: string) {
-    try {
-      grades = await getGrades({ sort: ['name,asc'] }, { name: value });
-    } catch {
-      error(400, { message: 'Could not fetch grades' });
-    }
-  }
-
-  async function saveGrade(gradeId: string, studentGroupId: string) {
-    let studentGroup = await getStudentGroup(studentGroupId); //studentGroups field doesn't contain newly added students
-    let requestDto: StudentGroupRequestDto = {
-      gradeIds: [gradeId],
-      name: studentGroup.name,
-      studentIds: studentGroup.students.map((student) => student.id),
-      tagIds: studentGroup.tags.map((tag) => tag.id),
-      subjectIds: studentGroup.subjects.map((subject) => subject.id),
-    };
-    await updateStudentGroup(studentGroup.id, requestDto);
-  }
-
   async function deleteGroup(id: string) {
     await deleteStudentGroup(id);
     studentGroups =
@@ -98,17 +74,6 @@
             <button type="button" on:click={() => deleteGroup(studentGroup.id)}>
               <Trash2 class="hover:stroke-accent" />
             </button>
-          </div>
-        </div>
-        <div class="flex flex-row items-center justify-between w-full gap-8">
-          <p>Stufe:</p>
-          <div class="text-primary">
-            <ComboBox
-              onSearch={(value) => updateGrades(value)}
-              data={grades.map((grade) => ({ value: grade.id, label: grade.name }))}
-              bind:selectedId={selectedGradeId}
-              onSelectChange={() => saveGrade(selectedGradeId, studentGroup.id)}
-            />
           </div>
         </div>
         <div class="flex flex-row items-center justify-between w-full gap-8">
