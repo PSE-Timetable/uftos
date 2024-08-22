@@ -9,7 +9,6 @@
     deleteStudentGroup,
     getStudentGroups,
     getStudents,
-    type GradeResponseDto,
     type Pageable,
     type Student,
     type StudentGroupResponseDto,
@@ -22,8 +21,6 @@
   let studentGroups = data.studentGroups || [];
   let students: Student[] = data.students || [];
   let selectedStudentId: string;
-  let grades: GradeResponseDto[] = data.grades;
-  let selectedGradeId: string;
   let reloadTable: boolean = false;
 
   let columnNames = ['Vorname', 'Nachname', 'Tags'];

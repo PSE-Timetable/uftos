@@ -8,7 +8,6 @@
   import TagsMultipleSelect from '$lib/components/ui/tags-multiple-select/tags-multiple-select.svelte';
   import ComboBox from '$lib/elements/ui/combo-box/combo-box.svelte';
   import { error } from '@sveltejs/kit';
-  import { onMount } from 'svelte';
 
   export let descriptions: string[];
   export let values: string[];
@@ -63,6 +62,7 @@
               onSearch={(value) => updateGrades(value)}
               data={grades.map((grade) => ({ value: grade.id, label: grade.name }))}
               bind:selectedId={entityGradeId}
+              shadow={true}
             />
             {#if saved && !entityGradeId}
               <p class="text-sm text-red-600 font-bold">Es muss eine Stufe ausgewählt werden.</p>
@@ -130,7 +130,7 @@
         }}
         class="max-w-52 bg-accent px-16 py-5 text-white hover:bg-accent flex"
         variant="secondary"
-        disabled={grades && grades.length == 0}
+        disabled={grades && grades.length === 0}
       >
         Speichern
       </Button>

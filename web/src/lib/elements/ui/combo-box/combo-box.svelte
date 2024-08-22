@@ -13,12 +13,13 @@
 
   export let data: ComboBoxItem[] = [];
   export let selectedId: string;
+  export let shadow: boolean = false;
 
   let open: boolean = false;
-  let value = '';
   let searchedValue: string;
-  let selectedValue = 'Ressource auswählen';
+  let selectedValue = data.find((f) => f.value === selectedId)?.label ?? 'Ressource auswählen';
   let lastSearchedValued: string;
+
 
   export let onSearch: (value: string) => void;
   export let onSelectChange: (value: string, label: string) => void = () => {};
@@ -55,7 +56,7 @@
     <Button
       aria-expanded={open}
       builders={[builder]}
-      class="w-[200px] justify-between bg-white text-primary hover:bg-accent hover:text-white"
+      class="w-[200px] justify-between bg-white text-primary hover:bg-accent hover:text-white {shadow ? 'shadow-custom' : ''}"
       role="combobox"
     >
       {selectedValue}
@@ -68,7 +69,7 @@
       <Command.Empty>Keine Ressource gefunden</Command.Empty>
       {#each data as resource (resource.value)}
         <Command.Item value={resource.value} onSelect={(value) => handleSelect(value, ids)}>
-          <Check class={cn('mr-2 h-4 w-4', value !== resource.value && 'text-transparent')} />
+          <Check class={cn('mr-2 h-4 w-4', selectedId !== resource.value && 'text-transparent')} />
           {resource.label}
         </Command.Item>
       {/each}
