@@ -1,9 +1,12 @@
 package de.uftos.services;
 
 import de.uftos.dto.requestdtos.SubjectRequestDto;
+import de.uftos.entities.StudentGroup;
 import de.uftos.entities.Curriculum;
 import de.uftos.entities.StudentGroup;
 import de.uftos.entities.Subject;
+import de.uftos.entities.Teacher;
+import de.uftos.repositories.database.StudentGroupRepository;
 import de.uftos.entities.Teacher;
 import de.uftos.repositories.database.CurriculumRepository;
 import de.uftos.repositories.database.StudentGroupRepository;
