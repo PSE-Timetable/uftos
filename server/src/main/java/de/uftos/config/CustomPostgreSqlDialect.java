@@ -3,8 +3,11 @@ package de.uftos.config;
 import org.hibernate.boot.model.FunctionContributions;
 import org.hibernate.dialect.PostgreSQLDialect;
 
-public class CustomPostgreSQLDialect extends PostgreSQLDialect {
-  public CustomPostgreSQLDialect() {
+/**
+ * A custom sql dialect adding a new function for full text search.
+ */
+public class CustomPostgreSqlDialect extends PostgreSQLDialect {
+  public CustomPostgreSqlDialect() {
     super();
   }
 
