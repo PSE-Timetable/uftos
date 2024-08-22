@@ -68,4 +68,15 @@ public class UcdlEditorController {
   public Resource getUcdlFile() {
     return this.editorService.getUcdl();
   }
+
+  /**
+   * Maps the HTTP GET request for the default UCDL code, to the
+   * {@link UcdlEditorService#getDefaultUcdl()} function of the editor service.
+   *
+   * @return a file containing the default UCDL code.
+   */
+  @GetMapping(value = "default", produces = "text/yaml")
+  public Resource getDefaultUcdlFile() {
+    return this.editorService.getDefaultUcdl();
+  }
 }

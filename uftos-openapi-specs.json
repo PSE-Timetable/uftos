@@ -436,6 +436,25 @@
         "tags" : [ "ucdl-editor-controller" ]
       }
     },
+    "/editor/default" : {
+      "get" : {
+        "operationId" : "getDefaultUcdlFile",
+        "responses" : {
+          "200" : {
+            "content" : {
+              "text/yaml" : {
+                "schema" : {
+                  "type" : "string",
+                  "format" : "binary"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "tags" : [ "ucdl-editor-controller" ]
+      }
+    },
     "/editor/validate" : {
       "put" : {
         "operationId" : "validateUcdlFile",
