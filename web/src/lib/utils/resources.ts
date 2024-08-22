@@ -31,11 +31,7 @@ export type DataItem = {
 };
 
 async function deleteMultiple(ids: string[], deleteEntry: (id: string) => Promise<void>) {
-  let promises: Promise<void>[] = [];
-  for (const id of ids) {
-    promises = [...promises, deleteEntry(id)];
-  }
-  return Promise.all(promises);
+  return Promise.all(ids.map((id) => deleteEntry(id)));
 }
 
 export const toast = (success: boolean, message: string) =>
