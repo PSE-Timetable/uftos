@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -12,7 +13,10 @@ import static org.mockito.Mockito.when;
 import de.uftos.dto.requestdtos.SubjectRequestDto;
 import de.uftos.entities.Subject;
 import de.uftos.entities.Tag;
+import de.uftos.repositories.database.StudentGroupRepository;
 import de.uftos.repositories.database.SubjectRepository;
+import de.uftos.repositories.database.TeacherRepository;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,6 +43,12 @@ public class SubjectServiceTests {
   @Mock
   private SubjectRepository subjectRepository;
 
+  @Mock
+  private TeacherRepository teacherRepository;
+
+  @Mock
+  private StudentGroupRepository studentGroupRepository;
+
   @InjectMocks
   private SubjectService subjectService;
 
@@ -55,6 +65,9 @@ public class SubjectServiceTests {
 
     when(subjectRepository.findAll()).thenReturn(List.of(subject));
     when(subjectRepository.findById(SUBJECT_ID)).thenReturn(Optional.of(subject));
+    when(teacherRepository.findBySubjects(any(Subject.class))).thenReturn(Collections.emptyList());
+    when(studentGroupRepository.findBySubjects(any(Subject.class))).thenReturn(
+        Collections.emptyList());
   }
 
   @Test
@@ -124,7 +137,4 @@ public class SubjectServiceTests {
   void deleteNonExistentSubject() {
     assertThrows(ResponseStatusException.class, () -> subjectService.delete("nonExistentId"));
   }
-
-
-
 }

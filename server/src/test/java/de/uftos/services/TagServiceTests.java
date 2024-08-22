@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -13,8 +14,16 @@ import de.uftos.entities.Break;
 import de.uftos.entities.Server;
 import de.uftos.entities.Tag;
 import de.uftos.entities.TimetableMetadata;
+import de.uftos.repositories.database.GradeRepository;
+import de.uftos.repositories.database.RoomRepository;
 import de.uftos.repositories.database.ServerRepository;
+import de.uftos.repositories.database.StudentGroupRepository;
+import de.uftos.repositories.database.StudentRepository;
+import de.uftos.repositories.database.SubjectRepository;
 import de.uftos.repositories.database.TagRepository;
+import de.uftos.repositories.database.TeacherRepository;
+import de.uftos.repositories.database.TimeslotRepository;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,6 +47,27 @@ public class TagServiceTests {
   @Mock
   private ServerRepository serverRepository;
 
+  @Mock
+  private TeacherRepository teacherRepository;
+
+  @Mock
+  private StudentGroupRepository studentGroupRepository;
+
+  @Mock
+  private StudentRepository studentRepository;
+
+  @Mock
+  private RoomRepository roomRepository;
+
+  @Mock
+  private SubjectRepository subjectRepository;
+
+  @Mock
+  private GradeRepository gradeRepository;
+
+  @Mock
+  private TimeslotRepository timeslotRepository;
+
   @InjectMocks
   private TagService tagService;
 
@@ -50,6 +80,13 @@ public class TagServiceTests {
         new Server(new TimetableMetadata(45, 8, "7:45", new Break[] {}), "2024", "test@uftos.de");
     when(serverRepository.findAll()).thenReturn(List.of(server));
     when(tagRepository.findById("123")).thenReturn(Optional.of(tag));
+    when(teacherRepository.findByTags(any(Tag.class))).thenReturn(Collections.emptyList());
+    when(studentGroupRepository.findByTags(any(Tag.class))).thenReturn(Collections.emptyList());
+    when(studentRepository.findByTags(any(Tag.class))).thenReturn(Collections.emptyList());
+    when(roomRepository.findByTags(any(Tag.class))).thenReturn(Collections.emptyList());
+    when(subjectRepository.findByTags(any(Tag.class))).thenReturn(Collections.emptyList());
+    when(gradeRepository.findByTags(any(Tag.class))).thenReturn(Collections.emptyList());
+    when(timeslotRepository.findByTags(any(Tag.class))).thenReturn(Collections.emptyList());
   }
 
   @Test
