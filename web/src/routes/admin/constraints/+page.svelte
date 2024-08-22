@@ -11,7 +11,7 @@
     createConstraintInstance,
     getConstraintSignatures,
   } from '$lib/sdk/fetch-client';
-  import { deleteInstance, getInstancesPage } from '$lib/utils/resources';
+  import { deleteInstances, getInstancesPage } from '$lib/utils/resources';
   import { ChevronLeft } from 'lucide-svelte';
 
   let reloadTable = false;
@@ -68,7 +68,7 @@
                 columnNames={createColumnNames(constraint)}
                 keys={createKeys(constraint)}
                 loadPage={getInstancesPage}
-                deleteEntry={deleteInstance}
+                deleteEntries={deleteInstances}
                 additionalId={constraint.name}
                 sortable={false}
                 addButton={false}

@@ -139,7 +139,7 @@
               {columnNames}
               {keys}
               loadPage={getStudentsFromGroup}
-              deleteEntry={removeStudentFromGroup}
+              deleteEntries={removeStudentFromGroup}
               additionalId={studentGroup.id}
               sortable={false}
               addButton={false}

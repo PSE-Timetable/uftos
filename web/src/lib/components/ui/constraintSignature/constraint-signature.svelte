@@ -52,7 +52,8 @@
         }
         case ParameterType.StudentGroup: {
           const { content } = await getStudentGroups(page, { name: value });
-          data[name] = content?.map((studentGroup) => ({ value: studentGroup.id, label: studentGroup.name })) || [];
+          data[name] =
+            content?.map((studentGroup) => ({ value: studentGroup.id ?? '', label: studentGroup.name ?? '' })) || [];
           break;
         }
         case ParameterType.Student: {
