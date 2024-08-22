@@ -8,6 +8,7 @@ import de.uftos.entities.ConstraintParameter;
 import de.uftos.entities.ConstraintSignature;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 public record ConstraintInstancesResponseDto(@NotNull List<SlimInstance> constraintInstances,
                                              @NotNull List<ConstraintArgumentDisplayName> displayNames,
                                              @NotNull List<ConstraintParameter> parameters,
-                                             @NotNull long totalElements) {
+                                             @PositiveOrZero long totalElements) {
 
   /**
    * Creates a new ConstraintInstancesResponseDto instance with the standard entities
