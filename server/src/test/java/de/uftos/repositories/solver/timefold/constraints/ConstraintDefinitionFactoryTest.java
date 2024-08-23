@@ -1843,5 +1843,28 @@ public class ConstraintDefinitionFactoryTest {
         () -> ConstraintDefinitionFactory.getConstraintDefinition(dtoThrows).evaluationFunction()
             .apply(List.of(new TimetableSolutionTimefoldInstance())));
   }
-  //todo: implement tests for sets and filters
+
+  @Test
+  void getConstraintDefinitionSet() {
+    AbstractSyntaxTreeDto trueAst = new ValueDto<>(UcdlToken.BOOL_VALUE, true);
+    AbstractSyntaxTreeDto elementName = new ValueDto<>(UcdlToken.VALUE_REFERENCE, "this");
+    AbstractSyntaxTreeDto element =
+        new ElementDto(UcdlToken.ELEMENT, elementName, List.of(), ResourceType.TIMETABLE);
+    AbstractSyntaxTreeDto filter = new OperatorDto(UcdlToken.FILTER, List.of(trueAst));
+    AbstractSyntaxTreeDto set =
+        new SetDto(UcdlToken.RESOURCE_SET, ResourceType.TIMETABLE, element, List.of(filter));
+    AbstractSyntaxTreeDto root = new OperatorDto(UcdlToken.IS_EMPTY, List.of(set));
+
+    ConstraintDefinitionDto dto =
+        new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+            new LinkedHashMap<>(), root);
+    ConstraintDefinitionTimefoldInstance definition =
+        ConstraintDefinitionFactory.getConstraintDefinition(dto);
+    assertFalse(
+        definition.evaluationFunction()
+            .apply(new ArrayList<>(List.of(new TimetableSolutionTimefoldInstance()))));
+
+
+  }
+  //todo: implement tests for filters
 }
