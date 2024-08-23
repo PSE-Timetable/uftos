@@ -251,6 +251,7 @@ public class ConstraintInstanceServiceTest {
     constraintSignature.setInstances(new ArrayList<>(List.of(constraintInstance)));
     constraintSignature.setParameters(List.of(constraintParameterTeacher));
 
+
     when(constraintInstanceRepository.findById("123")).thenReturn(
         Optional.of(constraintInstance));
     when(constraintInstanceRepository.findById(constraintInstanceManyArgs.getId())).thenReturn(
@@ -265,7 +266,8 @@ public class ConstraintInstanceServiceTest {
     when(constraintSignatureRepository.findById(constraintSignatureInvalid.getName())).thenReturn(
         Optional.of(constraintSignatureInvalid));
 
-
+    Timeslot timeslot = new Timeslot("timeslotId1");
+    timeslot.setDay(Weekday.TUESDAY);
     Teacher teacher = new Teacher("teacherId1");
     Tag tag = new Tag("tagId1");
     Room room = new Room("roomId1");
@@ -275,18 +277,16 @@ public class ConstraintInstanceServiceTest {
     Student student = new Student("studentId1");
     Subject subject = new Subject("subjectId1");
     StudentGroup group = new StudentGroup("groupId1");
-    Timeslot timeslot = new Timeslot("timeslotId1");
-    timeslot.setDay(Weekday.TUESDAY);
 
+    when(studentRepository.findById("studentId1")).thenReturn(Optional.of(student));
+    when(subjectRepository.findById("subjectId1")).thenReturn(Optional.of(subject));
+    when(studentGroupRepository.findById("groupId1")).thenReturn(Optional.of(group));
     when(teacherRepository.findById("teacherId1")).thenReturn(Optional.of(teacher));
     when(teacherRepository.findById("teacherId2")).thenReturn(Optional.empty());
     when(tagRepository.findById("tagId1")).thenReturn(Optional.of(tag));
     when(roomRepository.findById("roomId1")).thenReturn(Optional.of(room));
     when(gradeRepository.findById("gradeId1")).thenReturn(Optional.of(grade));
     when(lessonRepository.findById("lessonId1")).thenReturn(Optional.of(lesson));
-    when(studentRepository.findById("studentId1")).thenReturn(Optional.of(student));
-    when(subjectRepository.findById("subjectId1")).thenReturn(Optional.of(subject));
-    when(studentGroupRepository.findById("groupId1")).thenReturn(Optional.of(group));
     when(timeslotRepository.findById("timeslotId1")).thenReturn(Optional.of(timeslot));
   }
 
