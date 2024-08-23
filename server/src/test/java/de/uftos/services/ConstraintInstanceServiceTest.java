@@ -5,9 +5,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import de.uftos.dto.ResourceType;
+import de.uftos.dto.Weekday;
 import de.uftos.dto.requestdtos.ConstraintArgumentRequestDto;
 import de.uftos.dto.requestdtos.ConstraintInstanceRequestDto;
 import de.uftos.dto.responsedtos.ConstraintInstancesResponseDto;
@@ -16,7 +19,15 @@ import de.uftos.entities.ConstraintArgument;
 import de.uftos.entities.ConstraintInstance;
 import de.uftos.entities.ConstraintParameter;
 import de.uftos.entities.ConstraintSignature;
+import de.uftos.entities.Grade;
+import de.uftos.entities.Lesson;
+import de.uftos.entities.Room;
+import de.uftos.entities.Student;
+import de.uftos.entities.StudentGroup;
+import de.uftos.entities.Subject;
+import de.uftos.entities.Tag;
 import de.uftos.entities.Teacher;
+import de.uftos.entities.Timeslot;
 import de.uftos.repositories.database.ConstraintInstanceRepository;
 import de.uftos.repositories.database.ConstraintSignatureRepository;
 import de.uftos.repositories.database.GradeRepository;
@@ -34,6 +45,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -77,52 +89,205 @@ public class ConstraintInstanceServiceTest {
     ConstraintSignature constraintSignature = new ConstraintSignature();
     constraintSignature.setName("test constraint");
 
-    ConstraintParameter constraintParameter = new ConstraintParameter();
-    constraintParameter.setParameterType(ResourceType.TEACHER);
-    constraintParameter.setParameterName("teacher123");
-    constraintParameter.setId("456");
+    ConstraintSignature constraintSignatureManyParams = new ConstraintSignature();
+    constraintSignatureManyParams.setName("many params");
 
-    ConstraintArgument constraintArgument = new ConstraintArgument();
-    constraintArgument.setId("789");
-    constraintArgument.setValue("teacherId1");
-    constraintArgument.setConstraintParameter(constraintParameter);
+    ConstraintSignature constraintSignatureInvalid = new ConstraintSignature();
+    constraintSignatureInvalid.setName("invalid params");
 
-    constraintParameter.setConstraintArguments(List.of(constraintArgument));
+    //PARAMETERS
+
+    ConstraintParameter constraintParameterTeacher = new ConstraintParameter();
+    constraintParameterTeacher.setParameterType(ResourceType.TEACHER);
+    constraintParameterTeacher.setParameterName("teacher123");
+    constraintParameterTeacher.setId("teacherParamId");
+
+    ConstraintParameter constraintParameterTag = new ConstraintParameter();
+    constraintParameterTag.setParameterType(ResourceType.TAG);
+    constraintParameterTag.setParameterName("tag123");
+    constraintParameterTag.setId("tagParamId");
+
+    ConstraintParameter constraintParameterRoom = new ConstraintParameter();
+    constraintParameterRoom.setParameterType(ResourceType.ROOM);
+    constraintParameterRoom.setParameterName("room123");
+    constraintParameterRoom.setId("roomParamId");
+
+    ConstraintParameter constraintParameterStudent = new ConstraintParameter();
+    constraintParameterStudent.setParameterType(ResourceType.STUDENT);
+    constraintParameterStudent.setParameterName("student123");
+    constraintParameterStudent.setId("studentParamId");
+
+    ConstraintParameter constraintParameterLesson = new ConstraintParameter();
+    constraintParameterLesson.setParameterType(ResourceType.LESSON);
+    constraintParameterLesson.setParameterName("lesson123");
+    constraintParameterLesson.setId("lessonParamId");
+
+    ConstraintParameter constraintParameterGrade = new ConstraintParameter();
+    constraintParameterGrade.setParameterType(ResourceType.GRADE);
+    constraintParameterGrade.setParameterName("grade123");
+    constraintParameterGrade.setId("gradeParamId");
+
+    ConstraintParameter constraintParameterSubject = new ConstraintParameter();
+    constraintParameterSubject.setParameterType(ResourceType.SUBJECT);
+    constraintParameterSubject.setParameterName("subject123");
+    constraintParameterSubject.setId("subjectParamId");
+
+    ConstraintParameter constraintParameterGroup = new ConstraintParameter();
+    constraintParameterGroup.setParameterType(ResourceType.STUDENT_GROUP);
+    constraintParameterGroup.setParameterName("group123");
+    constraintParameterGroup.setId("groupParamId");
+
+    ConstraintParameter constraintParameterTimeslot = new ConstraintParameter();
+    constraintParameterTimeslot.setParameterType(ResourceType.TIMESLOT);
+    constraintParameterTimeslot.setParameterName("timeslot123");
+    constraintParameterTimeslot.setId("timeslotParamId");
+
+    ConstraintParameter constraintParameterNumber = new ConstraintParameter();
+    constraintParameterNumber.setParameterType(ResourceType.NUMBER);
+    constraintParameterNumber.setParameterName("number123");
+    constraintParameterNumber.setId("numberParamId");
+
+    //ARGUMENTS
+
+    ConstraintArgument constraintArgumentTeacher = new ConstraintArgument();
+    constraintArgumentTeacher.setId("teacherArgId");
+    constraintArgumentTeacher.setValue("teacherId1");
+    constraintArgumentTeacher.setConstraintParameter(constraintParameterTeacher);
+
+    constraintParameterTeacher.setConstraintArguments(List.of(constraintArgumentTeacher));
+
+    ConstraintArgument constraintArgumentTag = new ConstraintArgument();
+    constraintArgumentTag.setId("tagArgId");
+    constraintArgumentTag.setValue("tagId1");
+    constraintArgumentTag.setConstraintParameter(constraintParameterTag);
+
+    constraintParameterTag.setConstraintArguments(List.of(constraintArgumentTag));
+
+    ConstraintArgument constraintArgumentRoom = new ConstraintArgument();
+    constraintArgumentRoom.setId("roomArgId");
+    constraintArgumentRoom.setValue("roomId1");
+    constraintArgumentRoom.setConstraintParameter(constraintParameterRoom);
+
+    constraintParameterRoom.setConstraintArguments(List.of(constraintArgumentRoom));
+
+    ConstraintArgument constraintArgumentStudent = new ConstraintArgument();
+    constraintArgumentStudent.setId("studentArgId");
+    constraintArgumentStudent.setValue("studentId1");
+    constraintArgumentStudent.setConstraintParameter(constraintParameterStudent);
+
+    constraintParameterStudent.setConstraintArguments(List.of(constraintArgumentStudent));
+
+    ConstraintArgument constraintArgumentLesson = new ConstraintArgument();
+    constraintArgumentLesson.setId("lessonArgId");
+    constraintArgumentLesson.setValue("lessonId1");
+    constraintArgumentLesson.setConstraintParameter(constraintParameterLesson);
+
+    constraintParameterLesson.setConstraintArguments(List.of(constraintArgumentLesson));
+
+    ConstraintArgument constraintArgumentGrade = new ConstraintArgument();
+    constraintArgumentGrade.setId("gradeArgId");
+    constraintArgumentGrade.setValue("gradeId1");
+    constraintArgumentGrade.setConstraintParameter(constraintParameterGrade);
+
+    constraintParameterGrade.setConstraintArguments(List.of(constraintArgumentGrade));
+
+    ConstraintArgument constraintArgumentSubject = new ConstraintArgument();
+    constraintArgumentSubject.setId("subjectArgId");
+    constraintArgumentSubject.setValue("subjectId1");
+    constraintArgumentSubject.setConstraintParameter(constraintParameterSubject);
+
+    constraintParameterSubject.setConstraintArguments(List.of(constraintArgumentSubject));
+
+    ConstraintArgument constraintArgumentGroup = new ConstraintArgument();
+    constraintArgumentGroup.setId("groupArgId");
+    constraintArgumentGroup.setValue("groupId1");
+    constraintArgumentGroup.setConstraintParameter(constraintParameterGroup);
+
+    constraintParameterGroup.setConstraintArguments(List.of(constraintArgumentGroup));
+
+    ConstraintArgument constraintArgumentTimeslot = new ConstraintArgument();
+    constraintArgumentTimeslot.setId("timeslotArgId");
+    constraintArgumentTimeslot.setValue("timeslotId1");
+    constraintArgumentTimeslot.setConstraintParameter(constraintParameterTimeslot);
+
+    constraintParameterTimeslot.setConstraintArguments(List.of(constraintArgumentTimeslot));
+
+    ConstraintArgument constraintArgumentNumber = new ConstraintArgument();
+    constraintArgumentNumber.setId("numberArgId");
+    constraintArgumentNumber.setValue("numberId1");
+    constraintArgumentNumber.setConstraintParameter(constraintParameterNumber);
+
+    constraintParameterNumber.setConstraintArguments(List.of(constraintArgumentNumber));
+
 
     ConstraintInstance constraintInstance = new ConstraintInstance();
     constraintInstance.setId("123");
-    constraintInstance.setArguments(List.of(constraintArgument));
+    constraintInstance.setArguments(List.of(constraintArgumentTeacher));
+
+    ConstraintInstance constraintInstanceManyArgs = new ConstraintInstance();
+    constraintInstanceManyArgs.setId("manyArgs");
+    constraintInstanceManyArgs.setArguments(
+        List.of(constraintArgumentTeacher, constraintArgumentGrade,
+            constraintArgumentGroup, constraintArgumentLesson, constraintArgumentRoom,
+            constraintArgumentStudent, constraintArgumentSubject, constraintArgumentTag,
+            constraintArgumentTimeslot));
+
+    ConstraintInstance constraintInstanceInvalidArgs = new ConstraintInstance();
+    constraintInstanceInvalidArgs.setId("invalidArgs");
+    constraintInstanceInvalidArgs.setArguments(List.of(constraintArgumentNumber));
+
+    constraintSignatureManyParams.setInstances(
+        new ArrayList<>(List.of(constraintInstanceManyArgs)));
+    constraintSignatureManyParams.setParameters(
+        List.of(constraintParameterGrade, constraintParameterGroup,
+            constraintParameterLesson, constraintParameterTeacher, constraintParameterRoom,
+            constraintParameterStudent, constraintParameterSubject, constraintParameterTag,
+            constraintParameterTimeslot));
+
+    constraintSignatureInvalid.setInstances(
+        new ArrayList<>(List.of(constraintInstanceInvalidArgs)));
+    constraintSignatureInvalid.setParameters(List.of(constraintParameterNumber));
 
     constraintSignature.setInstances(new ArrayList<>(List.of(constraintInstance)));
-    constraintSignature.setParameters(List.of(constraintParameter));
+    constraintSignature.setParameters(List.of(constraintParameterTeacher));
 
     when(constraintInstanceRepository.findById("123")).thenReturn(
         Optional.of(constraintInstance));
+    when(constraintInstanceRepository.findById(constraintInstanceManyArgs.getId())).thenReturn(
+        Optional.of(constraintInstanceManyArgs));
+    when(constraintInstanceRepository.findById(constraintInstanceInvalidArgs.getId())).thenReturn(
+        Optional.of(constraintInstanceInvalidArgs));
     when(constraintSignatureRepository.findById(constraintSignature.getName())).thenReturn(
         Optional.of(constraintSignature));
-    when(constraintSignatureRepository.findById("test constraint")).thenReturn(
-        Optional.of(constraintSignature));
+    when(
+        constraintSignatureRepository.findById(constraintSignatureManyParams.getName())).thenReturn(
+        Optional.of(constraintSignatureManyParams));
+    when(constraintSignatureRepository.findById(constraintSignatureInvalid.getName())).thenReturn(
+        Optional.of(constraintSignatureInvalid));
+
 
     Teacher teacher = new Teacher("teacherId1");
+    Tag tag = new Tag("tagId1");
+    Room room = new Room("roomId1");
+    Grade grade = new Grade("gradeId1");
+    Lesson lesson = new Lesson(0, "teacher", "group", "room", "timeslot",
+        "subject", "timetable", "2024");
+    Student student = new Student("studentId1");
+    Subject subject = new Subject("subjectId1");
+    StudentGroup group = new StudentGroup("groupId1");
+    Timeslot timeslot = new Timeslot("timeslotId1");
+    timeslot.setDay(Weekday.TUESDAY);
 
     when(teacherRepository.findById("teacherId1")).thenReturn(Optional.of(teacher));
     when(teacherRepository.findById("teacherId2")).thenReturn(Optional.empty());
-    when(gradeRepository.findById("teacherId1")).thenReturn(Optional.empty());
-    when(gradeRepository.findById("teacherId2")).thenReturn(Optional.empty());
-    when(lessonRepository.findById("teacherId1")).thenReturn(Optional.empty());
-    when(lessonRepository.findById("teacherId2")).thenReturn(Optional.empty());
-    when(studentGroupRepository.findById("teacherId1")).thenReturn(Optional.empty());
-    when(studentGroupRepository.findById("teacherId2")).thenReturn(Optional.empty());
-    when(subjectRepository.findById("teacherId1")).thenReturn(Optional.empty());
-    when(subjectRepository.findById("teacherId2")).thenReturn(Optional.empty());
-    when(tagRepository.findById("teacherId1")).thenReturn(Optional.empty());
-    when(tagRepository.findById("teacherId2")).thenReturn(Optional.empty());
-    when(roomRepository.findById("teacherId1")).thenReturn(Optional.empty());
-    when(roomRepository.findById("teacherId2")).thenReturn(Optional.empty());
-    when(studentRepository.findById("teacherId1")).thenReturn(Optional.empty());
-    when(studentRepository.findById("teacherId2")).thenReturn(Optional.empty());
-    when(timeslotRepository.findById("teacherId1")).thenReturn(Optional.empty());
-    when(timeslotRepository.findById("teacherId2")).thenReturn(Optional.empty());
+    when(tagRepository.findById("tagId1")).thenReturn(Optional.of(tag));
+    when(roomRepository.findById("roomId1")).thenReturn(Optional.of(room));
+    when(gradeRepository.findById("gradeId1")).thenReturn(Optional.of(grade));
+    when(lessonRepository.findById("lessonId1")).thenReturn(Optional.of(lesson));
+    when(studentRepository.findById("studentId1")).thenReturn(Optional.of(student));
+    when(subjectRepository.findById("subjectId1")).thenReturn(Optional.of(subject));
+    when(studentGroupRepository.findById("groupId1")).thenReturn(Optional.of(group));
+    when(timeslotRepository.findById("timeslotId1")).thenReturn(Optional.of(timeslot));
   }
 
   @Test
@@ -135,6 +300,24 @@ public class ConstraintInstanceServiceTest {
         constraintInstanceResponse.constraintInstances().getFirst();
     assertEquals("123", constraintInstance1.id());
     assertFalse(constraintInstance1.arguments().isEmpty());
+  }
+
+  @Test
+  void constrainInstanceManyArgsById() {
+    ConstraintInstancesResponseDto constraintInstanceResponse =
+        constraintInstanceService.getById("many params", "manyArgs");
+    assertNotNull(constraintInstanceResponse);
+    assertEquals(1, constraintInstanceResponse.constraintInstances().size());
+    ConstraintInstancesResponseDto.SlimInstance constraintInstance1 =
+        constraintInstanceResponse.constraintInstances().getFirst();
+    assertEquals("manyArgs", constraintInstance1.id());
+    assertFalse(constraintInstance1.arguments().isEmpty());
+  }
+
+  @Test
+  void constrainInstanceInvalidById() {
+    assertThrows(ResponseStatusException.class,
+        () -> constraintInstanceService.getById("invalid params", "invalidArgs"));
   }
 
   @Test
@@ -170,5 +353,57 @@ public class ConstraintInstanceServiceTest {
 
     assertDoesNotThrow(
         () -> constraintInstanceService.create("test constraint", constraintInstanceRequestDto));
+  }
+
+  @Test
+  void createConstraintInstanceWrongParamName() {
+    ConstraintArgumentRequestDto arg =
+        new ConstraintArgumentRequestDto("wrongParamName", "teacherId1");
+    //this parameter name does not exist for the constraint signature
+    ConstraintInstanceRequestDto constraintInstanceRequestDto =
+        new ConstraintInstanceRequestDto(List.of(arg), RewardPenalize.HARD_PENALIZE);
+
+    assertThrows(ResponseStatusException.class,
+        () -> constraintInstanceService.create("test constraint", constraintInstanceRequestDto));
+  }
+
+  @Test
+  void updateConstraintInstance() {
+    ConstraintArgumentRequestDto arg =
+        new ConstraintArgumentRequestDto("teacher123", "newTeacherId");
+    ConstraintInstanceRequestDto constraintInstanceRequestDto =
+        new ConstraintInstanceRequestDto(List.of(arg), RewardPenalize.SOFT_PENALIZE);
+
+    constraintInstanceService.update("test constraint", "123", constraintInstanceRequestDto);
+
+    ArgumentCaptor<ConstraintInstance> constraintInstanceCap =
+        ArgumentCaptor.forClass(ConstraintInstance.class);
+    verify(constraintInstanceRepository, times(1)).save(constraintInstanceCap.capture());
+
+    ConstraintInstance constraintInstance = constraintInstanceCap.getValue();
+    assertNotNull(constraintInstance);
+
+    assertEquals(RewardPenalize.SOFT_PENALIZE, constraintInstance.getType());
+
+    assertEquals(1, constraintInstance.getArguments().size());
+    assertEquals("newTeacherId", constraintInstance.getArguments().getFirst().getValue());
+  }
+
+  @Test
+  void deleteExistentInstance() {
+    assertDoesNotThrow(() -> constraintInstanceService.delete("test constraint", List.of("123")));
+    //to delete an instance, it is simply removed from the signature's list of instances
+    ArgumentCaptor<ConstraintSignature> constraintSignatureCap =
+        ArgumentCaptor.forClass(ConstraintSignature.class);
+    verify(constraintSignatureRepository, times(1)).save(constraintSignatureCap.capture());
+
+    ConstraintSignature constraintSignature = constraintSignatureCap.getValue();
+    assertEquals(0, constraintSignature.getInstances().size());
+  }
+
+  @Test
+  void deleteNonExistentInstance() {
+    assertThrows(ResponseStatusException.class,
+        () -> constraintInstanceService.delete("nonExistentId", List.of("123")));
   }
 }
