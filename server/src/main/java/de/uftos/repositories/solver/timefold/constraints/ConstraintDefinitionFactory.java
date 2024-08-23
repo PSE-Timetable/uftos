@@ -824,9 +824,9 @@ public class ConstraintDefinitionFactory {
       setReference.add(name.apply(arguments));
 
       for (Function<
-          List<ResourceTimefoldInstance>,
-          Function<Set<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>>
-          > function : modifiers) {
+            List<ResourceTimefoldInstance>,
+            Function<Set<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>>
+            > function : modifiers) {
         setReference = function.apply(arguments).apply(setReference);
       }
       return setReference;
@@ -1137,9 +1137,9 @@ public class ConstraintDefinitionFactory {
       elementReference.add(name.apply(arguments));
 
       for (Function<
-          List<ResourceTimefoldInstance>,
-          Function<Set<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>>
-          > function : attributes) {
+            List<ResourceTimefoldInstance>,
+            Function<Set<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>>
+            > function : attributes) {
         elementReference = function.apply(arguments).apply(elementReference);
       }
       if (elementReference.size() != 1) {
