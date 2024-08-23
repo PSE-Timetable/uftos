@@ -16,6 +16,8 @@ import de.uftos.repositories.database.RoomRepository;
 import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.StudentRepository;
 import de.uftos.repositories.database.TeacherRepository;
+import de.uftos.repositories.database.TimeslotRepository;
+import de.uftos.repositories.database.TimetableRepository;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -50,6 +52,12 @@ public class ServerServiceTests {
   @Mock
   private ConstraintSignatureRepository constraintSignatureRepository;
 
+  @Mock
+  private TimeslotRepository timeslotRepository;
+
+  @Mock
+  private TimetableRepository timetableRepository;
+
   @InjectMocks
   private ServerService serverService;
 
@@ -64,6 +72,7 @@ public class ServerServiceTests {
     when(gradeRepository.count()).thenReturn(3L);
     when(roomRepository.count()).thenReturn(4L);
     when(constraintSignatureRepository.count()).thenReturn(0L);
+    when(timeslotRepository.findAll()).thenReturn(List.of());
   }
 
   @Test
