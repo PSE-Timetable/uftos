@@ -518,6 +518,19 @@ public class ConstraintDefinitionFactoryTest {
   }
 
   @Test
+  void getConstraintDefinitionsBool() {
+    AbstractSyntaxTreeDto root = new ValueDto<>(UcdlToken.NUMBER, 5);
+
+    ConstraintDefinitionDto dto =
+        new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+            new LinkedHashMap<>(), root);
+
+    assertThrows(IllegalStateException.class,
+        () -> ConstraintDefinitionFactory.getConstraintDefinition(dto).evaluationFunction()
+            .apply(new ArrayList<>()));
+  }
+
+  @Test
   void getConstraintDefinitionIsEmpty() {
     AbstractSyntaxTreeDto root;
     ConstraintDefinitionDto dto;
@@ -1363,7 +1376,7 @@ public class ConstraintDefinitionFactoryTest {
 
     AbstractSyntaxTreeDto numberSet =
         new ValueDto<>(UcdlToken.NUMBER_SET, new Integer[] {5});
-    ofAst = new OperatorDto(UcdlToken.OF, List.of(reference, number));
+    ofAst = new OperatorDto(UcdlToken.OF, List.of(reference, numberSet));
     AbstractSyntaxTreeDto forNumberSet =
         new ControlSequenceDto(UcdlToken.FOR, ofAst, List.of(ifTrueTrue), true);
 
@@ -1750,5 +1763,85 @@ public class ConstraintDefinitionFactoryTest {
             .apply(arguments));
   }
 
-  //todo: implement tests for elements, sets, size and filters
+  @Test
+  void getConstraintDefinitionElement() {
+    List<ResourceTimefoldInstance> arguments = new ArrayList<>();
+    arguments.add(new TimetableSolutionTimefoldInstance());
+    arguments.add(new GradeTimefoldInstance("grade"));
+    arguments.add(new LessonTimefoldInstance("lesson"));
+    arguments.add(new RoomTimefoldInstance("room"));
+    arguments.add(new SubjectTimefoldInstance("subject"));
+    arguments.add(new StudentTimefoldInstance("student"));
+    arguments.add(new StudentGroupTimefoldInstance("studentGroup"));
+    arguments.add(new TagTimefoldInstance("tag"));
+    arguments.add(new TeacherTimefoldInstance("teacher"));
+    arguments.add(new TimeslotTimefoldInstance("timeslot"));
+
+    LinkedHashMap<String, ResourceType> parameters = new LinkedHashMap<>();
+    for (ResourceTimefoldInstance resource : arguments) {
+      parameters.put(resource.getId(), resource.getResourceType());
+    }
+
+    AbstractSyntaxTreeDto name = new ValueDto<>(UcdlToken.VALUE_REFERENCE, "lesson");
+    AbstractSyntaxTreeDto attribute = new ValueDto<>(UcdlToken.ATTRIBUTE, "index");
+    AbstractSyntaxTreeDto element =
+        new ElementDto(UcdlToken.ELEMENT, name, List.of(attribute), ResourceType.NUMBER);
+
+    AbstractSyntaxTreeDto root = new OperatorDto(UcdlToken.IS_EMPTY, List.of(element));
+    ConstraintDefinitionDto dto =
+        new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+            parameters, root);
+    ConstraintDefinitionTimefoldInstance definition =
+        ConstraintDefinitionFactory.getConstraintDefinition(dto);
+
+    assertFalse(definition.evaluationFunction().apply(arguments));
+    assertEquals(definition.defaultType(), dto.defaultType());
+    assertEquals(definition.name(), dto.name());
+
+    AbstractSyntaxTreeDto nameThrows = new ValueDto<>(UcdlToken.VALUE_REFERENCE, "student");
+    AbstractSyntaxTreeDto attributeThrows = new ValueDto<>(UcdlToken.ATTRIBUTE, "studentGroups");
+    AbstractSyntaxTreeDto elementThrows =
+        new ElementDto(UcdlToken.ELEMENT, nameThrows, List.of(attributeThrows),
+            ResourceType.STUDENT_GROUP);
+
+    AbstractSyntaxTreeDto rootThrows = new OperatorDto(UcdlToken.IS_EMPTY, List.of(elementThrows));
+    ConstraintDefinitionDto dtoThrows =
+        new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+            parameters, rootThrows);
+
+    assertThrows(IllegalStateException.class,
+        () -> ConstraintDefinitionFactory.getConstraintDefinition(dtoThrows).evaluationFunction()
+            .apply(arguments));
+  }
+
+  @Test
+  void getConstraintDefinitionSize() {
+    AbstractSyntaxTreeDto number = new ValueDto<>(UcdlToken.NUMBER, -1);
+    AbstractSyntaxTreeDto elementName = new ValueDto<>(UcdlToken.VALUE_REFERENCE, "this");
+    AbstractSyntaxTreeDto element =
+        new ElementDto(UcdlToken.ELEMENT, elementName, new ArrayList<>(), ResourceType.TIMETABLE);
+    AbstractSyntaxTreeDto size = new OperatorDto(UcdlToken.SIZE, List.of(element));
+
+
+    AbstractSyntaxTreeDto root = new OperatorDto(UcdlToken.EQUALS, List.of(number, size));
+    ConstraintDefinitionDto dto =
+        new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+            new LinkedHashMap<>(), root);
+    ConstraintDefinitionTimefoldInstance definition =
+        ConstraintDefinitionFactory.getConstraintDefinition(dto);
+
+    assertFalse(
+        definition.evaluationFunction().apply(List.of(new TimetableSolutionTimefoldInstance())));
+
+    AbstractSyntaxTreeDto sizeThrows = new OperatorDto(UcdlToken.SIZE, List.of(element, element));
+    AbstractSyntaxTreeDto rootThrows =
+        new OperatorDto(UcdlToken.EQUALS, List.of(number, sizeThrows));
+    ConstraintDefinitionDto dtoThrows =
+        new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+            new LinkedHashMap<>(), rootThrows);
+    assertThrows(IllegalStateException.class,
+        () -> ConstraintDefinitionFactory.getConstraintDefinition(dtoThrows).evaluationFunction()
+            .apply(List.of(new TimetableSolutionTimefoldInstance())));
+  }
+  //todo: implement tests for sets and filters
 }
