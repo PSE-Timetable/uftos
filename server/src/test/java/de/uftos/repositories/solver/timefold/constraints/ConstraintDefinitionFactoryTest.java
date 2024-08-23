@@ -1254,6 +1254,352 @@ public class ConstraintDefinitionFactoryTest {
 
   }
 
-  //todo: implement tests for "if", "for", elements, sets, size, filters and attributes
+  @Test
+  void getConstraintDefinitionFor() {
+    AbstractSyntaxTreeDto trueAst = new ValueDto<>(UcdlToken.BOOL_VALUE, true);
+    AbstractSyntaxTreeDto falseAst = new ValueDto<>(UcdlToken.BOOL_VALUE, false);
+    AbstractSyntaxTreeDto returnTrue = new ValueDto<>(UcdlToken.RETURN, true);
+    AbstractSyntaxTreeDto returnFalse = new ValueDto<>(UcdlToken.RETURN, false);
+    AbstractSyntaxTreeDto ifTrueTrue =
+        new ControlSequenceDto(UcdlToken.IF, trueAst, List.of(returnTrue), true);
+    AbstractSyntaxTreeDto ifTrueFalse =
+        new ControlSequenceDto(UcdlToken.IF, trueAst, List.of(returnFalse), false);
+    AbstractSyntaxTreeDto ifFalse =
+        new ControlSequenceDto(UcdlToken.IF, falseAst, List.of(returnTrue), true);
+    AbstractSyntaxTreeDto root;
+    ConstraintDefinitionDto dto;
+    ConstraintDefinitionTimefoldInstance definition;
+    List<AbstractSyntaxTreeDto> params;
+
+
+    AbstractSyntaxTreeDto timetableName = new ValueDto<>(UcdlToken.VALUE_REFERENCE, "this");
+    AbstractSyntaxTreeDto timetable =
+        new ElementDto(UcdlToken.ELEMENT, timetableName, new ArrayList<>(), ResourceType.TIMETABLE);
+    AbstractSyntaxTreeDto reference = new ValueDto<>(UcdlToken.VALUE_REFERENCE, "x");
+    AbstractSyntaxTreeDto ofAst = new OperatorDto(UcdlToken.OF, List.of(reference, timetable));
+    AbstractSyntaxTreeDto forThis =
+        new ControlSequenceDto(UcdlToken.FOR, ofAst, List.of(ifTrueTrue), true);
+
+
+    params = new ArrayList<>();
+    params.add(forThis);
+    params.add(returnFalse);
+    root = new OperatorDto(UcdlToken.CODEBLOCK, params);
+
+    dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+        new LinkedHashMap<>(), root);
+
+    definition = ConstraintDefinitionFactory.getConstraintDefinition(dto);
+
+    assertTrue(
+        definition.evaluationFunction()
+            .apply(new ArrayList<>(List.of(new TimetableSolutionTimefoldInstance()))));
+    assertEquals(definition.defaultType(), dto.defaultType());
+    assertEquals(definition.name(), dto.name());
+
+
+    AbstractSyntaxTreeDto students =
+        new SetDto(UcdlToken.RESOURCE_SET, ResourceType.STUDENT, timetableName,
+            new ArrayList<>(List.of(new ValueDto<>(UcdlToken.ATTRIBUTE, "students"))));
+    ofAst = new OperatorDto(UcdlToken.OF, List.of(reference, students));
+    AbstractSyntaxTreeDto forStudents =
+        new ControlSequenceDto(UcdlToken.FOR, ofAst, List.of(ifTrueTrue), true);
+
+
+    params = new ArrayList<>();
+    params.add(forStudents);
+    params.add(returnFalse);
+    root = new OperatorDto(UcdlToken.CODEBLOCK, params);
+
+    dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+        new LinkedHashMap<>(), root);
+
+    definition = ConstraintDefinitionFactory.getConstraintDefinition(dto);
+
+    assertFalse(
+        definition.evaluationFunction()
+            .apply(new ArrayList<>(List.of(new TimetableSolutionTimefoldInstance()))));
+    TimetableSolutionTimefoldInstance timetableWithStudent =
+        new TimetableSolutionTimefoldInstance();
+    timetableWithStudent.getStudents().add(new StudentTimefoldInstance("student"));
+    assertTrue(
+        definition.evaluationFunction()
+            .apply(new ArrayList<>(List.of(timetableWithStudent))));
+    assertEquals(definition.defaultType(), dto.defaultType());
+    assertEquals(definition.name(), dto.name());
+
+
+    AbstractSyntaxTreeDto number =
+        new ValueDto<>(UcdlToken.NUMBER, 5);
+    ofAst = new OperatorDto(UcdlToken.OF, List.of(reference, number));
+    AbstractSyntaxTreeDto forNumber =
+        new ControlSequenceDto(UcdlToken.FOR, ofAst, List.of(ifTrueTrue), true);
+
+
+    params = new ArrayList<>();
+    params.add(forNumber);
+    params.add(returnFalse);
+    root = new OperatorDto(UcdlToken.CODEBLOCK, params);
+
+    dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+        new LinkedHashMap<>(), root);
+
+    definition = ConstraintDefinitionFactory.getConstraintDefinition(dto);
+
+    assertTrue(
+        definition.evaluationFunction()
+            .apply(new ArrayList<>()));
+    assertEquals(definition.defaultType(), dto.defaultType());
+    assertEquals(definition.name(), dto.name());
+
+
+    AbstractSyntaxTreeDto numberSet =
+        new ValueDto<>(UcdlToken.NUMBER_SET, new Integer[] {5});
+    ofAst = new OperatorDto(UcdlToken.OF, List.of(reference, number));
+    AbstractSyntaxTreeDto forNumberSet =
+        new ControlSequenceDto(UcdlToken.FOR, ofAst, List.of(ifTrueTrue), true);
+
+
+    params = new ArrayList<>();
+    params.add(forNumberSet);
+    params.add(returnFalse);
+    root = new OperatorDto(UcdlToken.CODEBLOCK, params);
+
+    dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+        new LinkedHashMap<>(), root);
+
+    definition = ConstraintDefinitionFactory.getConstraintDefinition(dto);
+
+    assertTrue(
+        definition.evaluationFunction()
+            .apply(new ArrayList<>()));
+    assertEquals(definition.defaultType(), dto.defaultType());
+    assertEquals(definition.name(), dto.name());
+
+
+    AbstractSyntaxTreeDto forNumberSetMultipleBodyFunctions =
+        new ControlSequenceDto(UcdlToken.FOR, ofAst, List.of(ifFalse, forNumberSet, ifTrueTrue),
+            true);
+
+
+    params = new ArrayList<>();
+    params.add(forNumberSetMultipleBodyFunctions);
+    params.add(returnFalse);
+    root = new OperatorDto(UcdlToken.CODEBLOCK, params);
+
+    dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+        new LinkedHashMap<>(), root);
+
+    definition = ConstraintDefinitionFactory.getConstraintDefinition(dto);
+
+    assertTrue(
+        definition.evaluationFunction()
+            .apply(new ArrayList<>()));
+    assertEquals(definition.defaultType(), dto.defaultType());
+    assertEquals(definition.name(), dto.name());
+
+
+    AbstractSyntaxTreeDto forFalse =
+        new ControlSequenceDto(UcdlToken.FOR, ofAst, List.of(ifFalse), true);
+
+
+    params = new ArrayList<>();
+    params.add(forFalse);
+    params.add(returnFalse);
+    root = new OperatorDto(UcdlToken.CODEBLOCK, params);
+
+    dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+        new LinkedHashMap<>(), root);
+
+    definition = ConstraintDefinitionFactory.getConstraintDefinition(dto);
+
+    assertFalse(
+        definition.evaluationFunction()
+            .apply(new ArrayList<>()));
+    assertEquals(definition.defaultType(), dto.defaultType());
+    assertEquals(definition.name(), dto.name());
+
+
+    AbstractSyntaxTreeDto ofThrows =
+        new OperatorDto(UcdlToken.OF, List.of(trueAst, trueAst, trueAst));
+    AbstractSyntaxTreeDto forThrows =
+        new ControlSequenceDto(UcdlToken.FOR, ofThrows, List.of(ifFalse), true);
+
+    params = new ArrayList<>();
+    params.add(forThrows);
+    params.add(returnFalse);
+    root = new OperatorDto(UcdlToken.CODEBLOCK, params);
+
+    dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+        new LinkedHashMap<>(), root);
+
+    ConstraintDefinitionDto finalDto = dto;
+    assertThrows(IllegalStateException.class,
+        () -> ConstraintDefinitionFactory.getConstraintDefinition(
+            finalDto).evaluationFunction().apply(new ArrayList<>()));
+
+
+    ofThrows = new OperatorDto(UcdlToken.OF, List.of(reference, trueAst));
+    forThrows = new ControlSequenceDto(UcdlToken.FOR, ofThrows, List.of(ifFalse), true);
+
+    params = new ArrayList<>();
+    params.add(forThrows);
+    params.add(returnFalse);
+    root = new OperatorDto(UcdlToken.CODEBLOCK, params);
+
+    dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+        new LinkedHashMap<>(), root);
+
+    ConstraintDefinitionDto finalDto2 = dto;
+    assertThrows(IllegalStateException.class,
+        () -> ConstraintDefinitionFactory.getConstraintDefinition(
+            finalDto2).evaluationFunction().apply(new ArrayList<>()));
+
+
+    forThrows = new ControlSequenceDto(UcdlToken.FOR, ofAst, List.of(trueAst), true);
+
+    params = new ArrayList<>();
+    params.add(forThrows);
+    params.add(returnFalse);
+    root = new OperatorDto(UcdlToken.CODEBLOCK, params);
+
+    dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+        new LinkedHashMap<>(), root);
+
+    ConstraintDefinitionDto finalDto3 = dto;
+    assertThrows(IllegalStateException.class,
+        () -> ConstraintDefinitionFactory.getConstraintDefinition(
+            finalDto3).evaluationFunction().apply(new ArrayList<>()));
+
+  }
+
+  @Test
+  void getConstraintDefinitionIf() {
+    AbstractSyntaxTreeDto trueAst = new ValueDto<>(UcdlToken.BOOL_VALUE, true);
+    AbstractSyntaxTreeDto falseAst = new ValueDto<>(UcdlToken.BOOL_VALUE, false);
+    AbstractSyntaxTreeDto returnTrue = new ValueDto<>(UcdlToken.RETURN, true);
+    AbstractSyntaxTreeDto returnFalse = new ValueDto<>(UcdlToken.RETURN, false);
+    AbstractSyntaxTreeDto ifTrueTrue =
+        new ControlSequenceDto(UcdlToken.IF, trueAst, List.of(returnTrue), true);
+    AbstractSyntaxTreeDto ifTrueFalse =
+        new ControlSequenceDto(UcdlToken.IF, trueAst, List.of(returnFalse), false);
+    AbstractSyntaxTreeDto ifFalse =
+        new ControlSequenceDto(UcdlToken.IF, falseAst, List.of(returnTrue), true);
+    AbstractSyntaxTreeDto timetableName = new ValueDto<>(UcdlToken.VALUE_REFERENCE, "this");
+    AbstractSyntaxTreeDto timetable =
+        new ElementDto(UcdlToken.ELEMENT, timetableName, new ArrayList<>(), ResourceType.TIMETABLE);
+    AbstractSyntaxTreeDto reference = new ValueDto<>(UcdlToken.VALUE_REFERENCE, "x");
+    AbstractSyntaxTreeDto ofAst = new OperatorDto(UcdlToken.OF, List.of(reference, timetable));
+    AbstractSyntaxTreeDto forThis =
+        new ControlSequenceDto(UcdlToken.FOR, ofAst, List.of(ifTrueTrue), true);
+    AbstractSyntaxTreeDto root;
+    ConstraintDefinitionDto dto;
+    ConstraintDefinitionTimefoldInstance definition;
+    List<AbstractSyntaxTreeDto> params;
+
+
+    params = new ArrayList<>();
+    params.add(
+        new ControlSequenceDto(UcdlToken.IF, trueAst, List.of(ifTrueTrue, ifTrueTrue, ifTrueTrue),
+            true));
+    params.add(returnFalse);
+    root = new OperatorDto(UcdlToken.CODEBLOCK, params);
+
+    dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+        new LinkedHashMap<>(), root);
+
+    definition = ConstraintDefinitionFactory.getConstraintDefinition(dto);
+
+    assertTrue(definition.evaluationFunction().apply(null));
+    assertEquals(definition.defaultType(), dto.defaultType());
+    assertEquals(definition.name(), dto.name());
+
+
+    params = new ArrayList<>();
+    params.add(new ControlSequenceDto(UcdlToken.IF, trueAst, List.of(forThis), true));
+    params.add(returnFalse);
+    root = new OperatorDto(UcdlToken.CODEBLOCK, params);
+
+    dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+        new LinkedHashMap<>(), root);
+
+    definition = ConstraintDefinitionFactory.getConstraintDefinition(dto);
+
+    assertTrue(definition.evaluationFunction()
+        .apply(new ArrayList<>(List.of(new TimetableSolutionTimefoldInstance()))));
+    assertEquals(definition.defaultType(), dto.defaultType());
+    assertEquals(definition.name(), dto.name());
+
+
+    params = new ArrayList<>();
+    params.add(
+        new ControlSequenceDto(UcdlToken.IF, falseAst, List.of(ifTrueTrue, ifTrueTrue, ifTrueTrue),
+            true));
+    params.add(returnFalse);
+    root = new OperatorDto(UcdlToken.CODEBLOCK, params);
+
+    dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+        new LinkedHashMap<>(), root);
+
+    definition = ConstraintDefinitionFactory.getConstraintDefinition(dto);
+
+    assertFalse(definition.evaluationFunction().apply(null));
+    assertEquals(definition.defaultType(), dto.defaultType());
+    assertEquals(definition.name(), dto.name());
+
+
+    params = new ArrayList<>();
+    params.add(new ControlSequenceDto(UcdlToken.IF, falseAst, List.of(forThis), true));
+    params.add(returnFalse);
+    root = new OperatorDto(UcdlToken.CODEBLOCK, params);
+
+    dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+        new LinkedHashMap<>(), root);
+
+    definition = ConstraintDefinitionFactory.getConstraintDefinition(dto);
+
+    assertFalse(definition.evaluationFunction()
+        .apply(new ArrayList<>(List.of(new TimetableSolutionTimefoldInstance()))));
+    assertEquals(definition.defaultType(), dto.defaultType());
+    assertEquals(definition.name(), dto.name());
+
+
+    params = new ArrayList<>();
+    params.add(
+        new ControlSequenceDto(UcdlToken.IF, trueAst, List.of(ifFalse),
+            true));
+    params.add(returnFalse);
+    root = new OperatorDto(UcdlToken.CODEBLOCK, params);
+
+    dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+        new LinkedHashMap<>(), root);
+
+    definition = ConstraintDefinitionFactory.getConstraintDefinition(dto);
+
+    assertFalse(definition.evaluationFunction().apply(null));
+    assertEquals(definition.defaultType(), dto.defaultType());
+    assertEquals(definition.name(), dto.name());
+
+
+    params = new ArrayList<>();
+    params.add(
+        new ControlSequenceDto(UcdlToken.IF, trueAst, List.of(trueAst),
+            true));
+    params.add(returnFalse);
+    root = new OperatorDto(UcdlToken.CODEBLOCK, params);
+
+    dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+        new LinkedHashMap<>(), root);
+
+    ConstraintDefinitionDto finalDto = dto;
+    assertThrows(IllegalStateException.class,
+        () -> ConstraintDefinitionFactory.getConstraintDefinition(finalDto).evaluationFunction()
+            .apply(null));
+    assertEquals(definition.defaultType(), dto.defaultType());
+    assertEquals(definition.name(), dto.name());
+  }
+
+
+  //todo: implement tests for elements, sets, size, filters and attributes
 
 }
