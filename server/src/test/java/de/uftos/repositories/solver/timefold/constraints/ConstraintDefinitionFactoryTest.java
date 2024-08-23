@@ -16,8 +16,16 @@ import de.uftos.dto.ucdl.ast.OperatorDto;
 import de.uftos.dto.ucdl.ast.QuantifierDto;
 import de.uftos.dto.ucdl.ast.SetDto;
 import de.uftos.dto.ucdl.ast.ValueDto;
+import de.uftos.repositories.solver.timefold.domain.GradeTimefoldInstance;
+import de.uftos.repositories.solver.timefold.domain.LessonTimefoldInstance;
 import de.uftos.repositories.solver.timefold.domain.ResourceTimefoldInstance;
+import de.uftos.repositories.solver.timefold.domain.RoomTimefoldInstance;
+import de.uftos.repositories.solver.timefold.domain.StudentGroupTimefoldInstance;
 import de.uftos.repositories.solver.timefold.domain.StudentTimefoldInstance;
+import de.uftos.repositories.solver.timefold.domain.SubjectTimefoldInstance;
+import de.uftos.repositories.solver.timefold.domain.TagTimefoldInstance;
+import de.uftos.repositories.solver.timefold.domain.TeacherTimefoldInstance;
+import de.uftos.repositories.solver.timefold.domain.TimeslotTimefoldInstance;
 import de.uftos.repositories.solver.timefold.domain.TimetableSolutionTimefoldInstance;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -1599,7 +1607,148 @@ public class ConstraintDefinitionFactoryTest {
     assertEquals(definition.name(), dto.name());
   }
 
+  @Test
+  void getConstraintDefinitionAttributes() {
+    testValidAttribute("this", "grades", ResourceType.GRADE, true);
+    testValidAttribute("this", "lessons", ResourceType.LESSON, true);
+    testValidAttribute("this", "rooms", ResourceType.ROOM, true);
+    testValidAttribute("this", "subjects", ResourceType.SUBJECT, true);
+    testValidAttribute("this", "students", ResourceType.STUDENT, true);
+    testValidAttribute("this", "studentGroups", ResourceType.STUDENT_GROUP, true);
+    testValidAttribute("this", "tags", ResourceType.TAG, true);
+    testValidAttribute("this", "teachers", ResourceType.TEACHER, true);
+    testValidAttribute("this", "timeslots", ResourceType.TIMESLOT, true);
 
-  //todo: implement tests for elements, sets, size, filters and attributes
+    testValidAttribute("grade", "studentGroups", ResourceType.STUDENT_GROUP, true);
+    testValidAttribute("grade", "tags", ResourceType.TAG, true);
 
+    testValidAttribute("lesson", "index", ResourceType.NUMBER, false);
+    testValidAttribute("lesson", "room", ResourceType.ROOM, false);
+    testValidAttribute("lesson", "subject", ResourceType.SUBJECT, false);
+    testValidAttribute("lesson", "studentGroup", ResourceType.STUDENT_GROUP, false);
+    testValidAttribute("lesson", "teacher", ResourceType.TEACHER, false);
+    testValidAttribute("lesson", "timeslot", ResourceType.TIMESLOT, false);
+
+    testValidAttribute("room", "lessons", ResourceType.LESSON, true);
+    testValidAttribute("room", "tags", ResourceType.TAG, true);
+
+    testValidAttribute("subject", "lessons", ResourceType.LESSON, true);
+    testValidAttribute("subject", "tags", ResourceType.TAG, true);
+    testValidAttribute("subject", "teachers", ResourceType.TEACHER, true);
+
+    testValidAttribute("student", "studentGroups", ResourceType.STUDENT_GROUP, true);
+    testValidAttribute("student", "tags", ResourceType.TAG, true);
+
+    testValidAttribute("studentGroup", "grade", ResourceType.GRADE, false);
+    testValidAttribute("studentGroup", "lessons", ResourceType.LESSON, true);
+    testValidAttribute("studentGroup", "students", ResourceType.STUDENT, true);
+    testValidAttribute("studentGroup", "tags", ResourceType.TAG, true);
+
+    testValidAttribute("tag", "grades", ResourceType.GRADE, true);
+    testValidAttribute("tag", "rooms", ResourceType.ROOM, true);
+    testValidAttribute("tag", "subjects", ResourceType.SUBJECT, true);
+    testValidAttribute("tag", "students", ResourceType.STUDENT, true);
+    testValidAttribute("tag", "studentGroups", ResourceType.STUDENT_GROUP, true);
+    testValidAttribute("tag", "teachers", ResourceType.TEACHER, true);
+    testValidAttribute("tag", "timeslots", ResourceType.TIMESLOT, true);
+
+    testValidAttribute("teacher", "lessons", ResourceType.LESSON, true);
+    testValidAttribute("teacher", "subjects", ResourceType.SUBJECT, true);
+    testValidAttribute("teacher", "tags", ResourceType.TAG, true);
+
+    testValidAttribute("timeslot", "day", ResourceType.NUMBER, false);
+    testValidAttribute("timeslot", "lessons", ResourceType.LESSON, true);
+    testValidAttribute("timeslot", "slot", ResourceType.NUMBER, false);
+    testValidAttribute("timeslot", "tags", ResourceType.TAG, true);
+
+    testInvalidAttribute("student", "index", ResourceType.NUMBER);
+    testInvalidAttribute("student", "teacher", ResourceType.TEACHER);
+    testInvalidAttribute("student", "timeslot", ResourceType.TIMESLOT);
+    testInvalidAttribute("student", "room", ResourceType.ROOM);
+    testInvalidAttribute("student", "subject", ResourceType.SUBJECT);
+    testInvalidAttribute("student", "studentGroup", ResourceType.STUDENT_GROUP);
+    testInvalidAttribute("student", "grade", ResourceType.GRADE);
+    testInvalidAttribute("student", "day", ResourceType.NUMBER);
+    testInvalidAttribute("student", "slot", ResourceType.NUMBER);
+    testInvalidAttribute("student", "students", ResourceType.STUDENT);
+    testInvalidAttribute("student", "teachers", ResourceType.TEACHER);
+    testInvalidAttribute("studentGroup", "studentGroups", ResourceType.STUDENT_GROUP);
+    testInvalidAttribute("student", "rooms", ResourceType.ROOM);
+    testInvalidAttribute("student", "subjects", ResourceType.SUBJECT);
+    testInvalidAttribute("student", "grades", ResourceType.GRADE);
+    testInvalidAttribute("student", "timeslots", ResourceType.TIMESLOT);
+    testInvalidAttribute("student", "lessons", ResourceType.LESSON);
+    testInvalidAttribute("tag", "tags", ResourceType.TAG);
+    testInvalidAttribute("student", "test", ResourceType.NUMBER);
+  }
+
+  private void testValidAttribute(String setName, String attributeName, ResourceType setType,
+                                  boolean isEmpty) {
+    List<ResourceTimefoldInstance> arguments = new ArrayList<>();
+    arguments.add(new TimetableSolutionTimefoldInstance());
+    arguments.add(new GradeTimefoldInstance("grade"));
+    arguments.add(new LessonTimefoldInstance("lesson"));
+    arguments.add(new RoomTimefoldInstance("room"));
+    arguments.add(new SubjectTimefoldInstance("subject"));
+    arguments.add(new StudentTimefoldInstance("student"));
+    arguments.add(new StudentGroupTimefoldInstance("studentGroup"));
+    arguments.add(new TagTimefoldInstance("tag"));
+    arguments.add(new TeacherTimefoldInstance("teacher"));
+    arguments.add(new TimeslotTimefoldInstance("timeslot"));
+
+    LinkedHashMap<String, ResourceType> parameters = new LinkedHashMap<>();
+    for (ResourceTimefoldInstance resource : arguments) {
+      parameters.put(resource.getId(), resource.getResourceType());
+    }
+
+    AbstractSyntaxTreeDto name = new ValueDto<>(UcdlToken.VALUE_REFERENCE, setName);
+    AbstractSyntaxTreeDto attribute = new ValueDto<>(UcdlToken.ATTRIBUTE, attributeName);
+    AbstractSyntaxTreeDto set =
+        new SetDto(UcdlToken.RESOURCE_SET, setType, name, List.of(attribute));
+
+    AbstractSyntaxTreeDto root = new OperatorDto(UcdlToken.IS_EMPTY, List.of(set));
+    ConstraintDefinitionDto dto =
+        new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+            parameters, root);
+    ConstraintDefinitionTimefoldInstance definition =
+        ConstraintDefinitionFactory.getConstraintDefinition(dto);
+
+    assertEquals(isEmpty, definition.evaluationFunction().apply(arguments));
+    assertEquals(definition.defaultType(), dto.defaultType());
+    assertEquals(definition.name(), dto.name());
+  }
+
+  private void testInvalidAttribute(String setName, String attributeName, ResourceType setType) {
+    List<ResourceTimefoldInstance> arguments = new ArrayList<>();
+    arguments.add(new TimetableSolutionTimefoldInstance());
+    arguments.add(new GradeTimefoldInstance("grade"));
+    arguments.add(new LessonTimefoldInstance("lesson"));
+    arguments.add(new RoomTimefoldInstance("room"));
+    arguments.add(new SubjectTimefoldInstance("subject"));
+    arguments.add(new StudentTimefoldInstance("student"));
+    arguments.add(new StudentGroupTimefoldInstance("studentGroup"));
+    arguments.add(new TagTimefoldInstance("tag"));
+    arguments.add(new TeacherTimefoldInstance("teacher"));
+    arguments.add(new TimeslotTimefoldInstance("timeslot"));
+
+    LinkedHashMap<String, ResourceType> parameters = new LinkedHashMap<>();
+    for (ResourceTimefoldInstance resource : arguments) {
+      parameters.put(resource.getId(), resource.getResourceType());
+    }
+
+    AbstractSyntaxTreeDto name = new ValueDto<>(UcdlToken.VALUE_REFERENCE, setName);
+    AbstractSyntaxTreeDto attribute = new ValueDto<>(UcdlToken.ATTRIBUTE, attributeName);
+    AbstractSyntaxTreeDto set =
+        new SetDto(UcdlToken.RESOURCE_SET, setType, name, List.of(attribute));
+
+    AbstractSyntaxTreeDto root = new OperatorDto(UcdlToken.IS_EMPTY, List.of(set));
+    ConstraintDefinitionDto dto =
+        new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+            parameters, root);
+    assertThrows(IllegalStateException.class,
+        () -> ConstraintDefinitionFactory.getConstraintDefinition(dto).evaluationFunction()
+            .apply(arguments));
+  }
+
+  //todo: implement tests for elements, sets, size and filters
 }
