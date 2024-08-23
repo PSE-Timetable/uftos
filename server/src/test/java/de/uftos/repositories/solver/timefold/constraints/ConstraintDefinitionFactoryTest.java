@@ -11,12 +11,14 @@ import de.uftos.dto.ucdl.ConstraintDefinitionDto;
 import de.uftos.dto.ucdl.UcdlToken;
 import de.uftos.dto.ucdl.ast.AbstractSyntaxTreeDto;
 import de.uftos.dto.ucdl.ast.ControlSequenceDto;
+import de.uftos.dto.ucdl.ast.ElementDto;
 import de.uftos.dto.ucdl.ast.OperatorDto;
 import de.uftos.dto.ucdl.ast.QuantifierDto;
 import de.uftos.dto.ucdl.ast.SetDto;
 import de.uftos.dto.ucdl.ast.ValueDto;
 import de.uftos.repositories.solver.timefold.domain.ResourceTimefoldInstance;
 import de.uftos.repositories.solver.timefold.domain.StudentTimefoldInstance;
+import de.uftos.repositories.solver.timefold.domain.TimetableSolutionTimefoldInstance;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -620,6 +622,9 @@ public class ConstraintDefinitionFactoryTest {
   void getConstraintDefinitionEquals() {
     AbstractSyntaxTreeDto number1 = new ValueDto<>(UcdlToken.NUMBER, 1);
     AbstractSyntaxTreeDto number2 = new ValueDto<>(UcdlToken.NUMBER, 2);
+    AbstractSyntaxTreeDto timetableName = new ValueDto<>(UcdlToken.VALUE_REFERENCE, "this");
+    AbstractSyntaxTreeDto timetable =
+        new ElementDto(UcdlToken.ELEMENT, timetableName, new ArrayList<>(), ResourceType.TIMETABLE);
     AbstractSyntaxTreeDto root;
     ConstraintDefinitionDto dto;
     ConstraintDefinitionTimefoldInstance definition;
@@ -664,12 +669,25 @@ public class ConstraintDefinitionFactoryTest {
     assertThrows(IllegalStateException.class,
         () -> ConstraintDefinitionFactory.getConstraintDefinition(
             finalDto2));
+
+
+    root = new OperatorDto(UcdlToken.EQUALS, List.of(number1, timetable));
+    dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+        new LinkedHashMap<>(), root);
+    ConstraintDefinitionDto finalDto3 = dto;
+    assertThrows(IllegalArgumentException.class,
+        () -> ConstraintDefinitionFactory.getConstraintDefinition(
+                finalDto3).evaluationFunction()
+            .apply(List.of(new TimetableSolutionTimefoldInstance())));
   }
 
   @Test
   void getConstraintDefinitionNotEquals() {
     AbstractSyntaxTreeDto number1 = new ValueDto<>(UcdlToken.NUMBER, 1);
     AbstractSyntaxTreeDto number2 = new ValueDto<>(UcdlToken.NUMBER, 2);
+    AbstractSyntaxTreeDto timetableName = new ValueDto<>(UcdlToken.VALUE_REFERENCE, "this");
+    AbstractSyntaxTreeDto timetable =
+        new ElementDto(UcdlToken.ELEMENT, timetableName, new ArrayList<>(), ResourceType.TIMETABLE);
     AbstractSyntaxTreeDto root;
     ConstraintDefinitionDto dto;
     ConstraintDefinitionTimefoldInstance definition;
@@ -714,12 +732,25 @@ public class ConstraintDefinitionFactoryTest {
     assertThrows(IllegalStateException.class,
         () -> ConstraintDefinitionFactory.getConstraintDefinition(
             finalDto2));
+
+
+    root = new OperatorDto(UcdlToken.NOT_EQUALS, List.of(number1, timetable));
+    dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+        new LinkedHashMap<>(), root);
+    ConstraintDefinitionDto finalDto3 = dto;
+    assertThrows(IllegalArgumentException.class,
+        () -> ConstraintDefinitionFactory.getConstraintDefinition(
+                finalDto3).evaluationFunction()
+            .apply(List.of(new TimetableSolutionTimefoldInstance())));
   }
 
   @Test
   void getConstraintDefinitionSmaller() {
     AbstractSyntaxTreeDto number1 = new ValueDto<>(UcdlToken.NUMBER, 1);
     AbstractSyntaxTreeDto number2 = new ValueDto<>(UcdlToken.NUMBER, 2);
+    AbstractSyntaxTreeDto timetableName = new ValueDto<>(UcdlToken.VALUE_REFERENCE, "this");
+    AbstractSyntaxTreeDto timetable =
+        new ElementDto(UcdlToken.ELEMENT, timetableName, new ArrayList<>(), ResourceType.TIMETABLE);
     AbstractSyntaxTreeDto root;
     ConstraintDefinitionDto dto;
     ConstraintDefinitionTimefoldInstance definition;
@@ -776,12 +807,35 @@ public class ConstraintDefinitionFactoryTest {
     assertThrows(IllegalStateException.class,
         () -> ConstraintDefinitionFactory.getConstraintDefinition(
             finalDto2));
+
+
+    root = new OperatorDto(UcdlToken.SMALLER, List.of(number1, timetable));
+    dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+        new LinkedHashMap<>(), root);
+    ConstraintDefinitionDto finalDto3 = dto;
+    assertThrows(IllegalArgumentException.class,
+        () -> ConstraintDefinitionFactory.getConstraintDefinition(
+                finalDto3).evaluationFunction()
+            .apply(List.of(new TimetableSolutionTimefoldInstance())));
+
+
+    root = new OperatorDto(UcdlToken.SMALLER, List.of(timetable, number1));
+    dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+        new LinkedHashMap<>(), root);
+    ConstraintDefinitionDto finalDto4 = dto;
+    assertThrows(IllegalArgumentException.class,
+        () -> ConstraintDefinitionFactory.getConstraintDefinition(
+                finalDto4).evaluationFunction()
+            .apply(List.of(new TimetableSolutionTimefoldInstance())));
   }
 
   @Test
   void getConstraintDefinitionSmallerEquals() {
     AbstractSyntaxTreeDto number1 = new ValueDto<>(UcdlToken.NUMBER, 1);
     AbstractSyntaxTreeDto number2 = new ValueDto<>(UcdlToken.NUMBER, 2);
+    AbstractSyntaxTreeDto timetableName = new ValueDto<>(UcdlToken.VALUE_REFERENCE, "this");
+    AbstractSyntaxTreeDto timetable =
+        new ElementDto(UcdlToken.ELEMENT, timetableName, new ArrayList<>(), ResourceType.TIMETABLE);
     AbstractSyntaxTreeDto root;
     ConstraintDefinitionDto dto;
     ConstraintDefinitionTimefoldInstance definition;
@@ -838,12 +892,35 @@ public class ConstraintDefinitionFactoryTest {
     assertThrows(IllegalStateException.class,
         () -> ConstraintDefinitionFactory.getConstraintDefinition(
             finalDto2));
+
+
+    root = new OperatorDto(UcdlToken.SMALLER_EQUALS, List.of(number1, timetable));
+    dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+        new LinkedHashMap<>(), root);
+    ConstraintDefinitionDto finalDto3 = dto;
+    assertThrows(IllegalArgumentException.class,
+        () -> ConstraintDefinitionFactory.getConstraintDefinition(
+                finalDto3).evaluationFunction()
+            .apply(List.of(new TimetableSolutionTimefoldInstance())));
+
+
+    root = new OperatorDto(UcdlToken.SMALLER_EQUALS, List.of(timetable, number1));
+    dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+        new LinkedHashMap<>(), root);
+    ConstraintDefinitionDto finalDto4 = dto;
+    assertThrows(IllegalArgumentException.class,
+        () -> ConstraintDefinitionFactory.getConstraintDefinition(
+                finalDto4).evaluationFunction()
+            .apply(List.of(new TimetableSolutionTimefoldInstance())));
   }
 
   @Test
   void getConstraintDefinitionGreater() {
     AbstractSyntaxTreeDto number1 = new ValueDto<>(UcdlToken.NUMBER, 1);
     AbstractSyntaxTreeDto number2 = new ValueDto<>(UcdlToken.NUMBER, 2);
+    AbstractSyntaxTreeDto timetableName = new ValueDto<>(UcdlToken.VALUE_REFERENCE, "this");
+    AbstractSyntaxTreeDto timetable =
+        new ElementDto(UcdlToken.ELEMENT, timetableName, new ArrayList<>(), ResourceType.TIMETABLE);
     AbstractSyntaxTreeDto root;
     ConstraintDefinitionDto dto;
     ConstraintDefinitionTimefoldInstance definition;
@@ -900,12 +977,35 @@ public class ConstraintDefinitionFactoryTest {
     assertThrows(IllegalStateException.class,
         () -> ConstraintDefinitionFactory.getConstraintDefinition(
             finalDto2));
+
+
+    root = new OperatorDto(UcdlToken.GREATER, List.of(number1, timetable));
+    dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+        new LinkedHashMap<>(), root);
+    ConstraintDefinitionDto finalDto3 = dto;
+    assertThrows(IllegalArgumentException.class,
+        () -> ConstraintDefinitionFactory.getConstraintDefinition(
+                finalDto3).evaluationFunction()
+            .apply(List.of(new TimetableSolutionTimefoldInstance())));
+
+
+    root = new OperatorDto(UcdlToken.GREATER, List.of(timetable, number1));
+    dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+        new LinkedHashMap<>(), root);
+    ConstraintDefinitionDto finalDto4 = dto;
+    assertThrows(IllegalArgumentException.class,
+        () -> ConstraintDefinitionFactory.getConstraintDefinition(
+                finalDto4).evaluationFunction()
+            .apply(List.of(new TimetableSolutionTimefoldInstance())));
   }
 
   @Test
   void getConstraintDefinitionGreaterEquals() {
     AbstractSyntaxTreeDto number1 = new ValueDto<>(UcdlToken.NUMBER, 1);
     AbstractSyntaxTreeDto number2 = new ValueDto<>(UcdlToken.NUMBER, 2);
+    AbstractSyntaxTreeDto timetableName = new ValueDto<>(UcdlToken.VALUE_REFERENCE, "this");
+    AbstractSyntaxTreeDto timetable =
+        new ElementDto(UcdlToken.ELEMENT, timetableName, new ArrayList<>(), ResourceType.TIMETABLE);
     AbstractSyntaxTreeDto root;
     ConstraintDefinitionDto dto;
     ConstraintDefinitionTimefoldInstance definition;
@@ -962,6 +1062,26 @@ public class ConstraintDefinitionFactoryTest {
     assertThrows(IllegalStateException.class,
         () -> ConstraintDefinitionFactory.getConstraintDefinition(
             finalDto2));
+
+
+    root = new OperatorDto(UcdlToken.GREATER_EQUALS, List.of(number1, timetable));
+    dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+        new LinkedHashMap<>(), root);
+    ConstraintDefinitionDto finalDto3 = dto;
+    assertThrows(IllegalArgumentException.class,
+        () -> ConstraintDefinitionFactory.getConstraintDefinition(
+                finalDto3).evaluationFunction()
+            .apply(List.of(new TimetableSolutionTimefoldInstance())));
+
+
+    root = new OperatorDto(UcdlToken.GREATER_EQUALS, List.of(timetable, number1));
+    dto = new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+        new LinkedHashMap<>(), root);
+    ConstraintDefinitionDto finalDto4 = dto;
+    assertThrows(IllegalArgumentException.class,
+        () -> ConstraintDefinitionFactory.getConstraintDefinition(
+                finalDto4).evaluationFunction()
+            .apply(List.of(new TimetableSolutionTimefoldInstance())));
   }
 
   @Test
