@@ -124,9 +124,19 @@ public class ConstraintDefinitionFactory {
         convertOf(of, params);
 
     ValueDto<String> variableReference = (ValueDto<String>) of.parameters().getFirst();
-    SetDto set = (SetDto) of.parameters().getLast();
+    ResourceType setType;
+    AbstractSyntaxTreeDto set = of.parameters().getLast();
+    if (set.getToken() == UcdlToken.RESOURCE_SET) {
+      setType = ((SetDto) set).type();
+    } else if (set.getToken() == UcdlToken.ELEMENT) {
+      setType = ((ElementDto) set).type();
+    } else if (set.getToken() == UcdlToken.NUMBER || set.getToken() == UcdlToken.NUMBER_SET) {
+      setType = ResourceType.NUMBER;
+    } else {
+      throw new IllegalStateException();
+    }
 
-    params.put(variableReference.value(), set.type());
+    params.put(variableReference.value(), setType);
 
     List<Function<List<ResourceTimefoldInstance>, Optional<Boolean>>> functions = new ArrayList<>();
 
@@ -760,11 +770,23 @@ public class ConstraintDefinitionFactory {
       Set<ResourceTimefoldInstance>
       > convertSet(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
-    return switch (ast.getToken()) {
-      case RESOURCE_SET -> convertResourceSet(ast, params);
-      case NUMBER_SET -> convertNumberSet(ast, params);
-      default -> throw new IllegalStateException();
-    };
+    switch (ast.getToken()) {
+      case RESOURCE_SET -> {
+        return convertResourceSet(ast, params);
+      }
+      case NUMBER_SET -> {
+        return convertNumberSet(ast, params);
+      }
+      default -> {
+        Function<List<ResourceTimefoldInstance>, ResourceTimefoldInstance> element =
+            convertElement(ast, params);
+        return arguments -> {
+          Set<ResourceTimefoldInstance> set = new HashSet<>();
+          set.add(element.apply(arguments));
+          return set;
+        };
+      }
+    }
   }
 
   private static Function<
@@ -802,9 +824,9 @@ public class ConstraintDefinitionFactory {
       setReference.add(name.apply(arguments));
 
       for (Function<
-            List<ResourceTimefoldInstance>,
-            Function<Set<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>>
-            > function : modifiers) {
+          List<ResourceTimefoldInstance>,
+          Function<Set<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>>
+          > function : modifiers) {
         setReference = function.apply(arguments).apply(setReference);
       }
       return setReference;
@@ -1115,9 +1137,9 @@ public class ConstraintDefinitionFactory {
       elementReference.add(name.apply(arguments));
 
       for (Function<
-            List<ResourceTimefoldInstance>,
-            Function<Set<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>>
-            > function : attributes) {
+          List<ResourceTimefoldInstance>,
+          Function<Set<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>>
+          > function : attributes) {
         elementReference = function.apply(arguments).apply(elementReference);
       }
       if (elementReference.size() != 1) {
