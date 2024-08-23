@@ -116,10 +116,6 @@ public class ConstraintDefinitionFactory {
 
     OperatorDto of = (OperatorDto) root.parenthesesContent();
 
-    if (of.parameters().size() != 2) {
-      throw new IllegalStateException();
-    }
-
     Function<List<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>> variableDefinition =
         convertOf(of, params);
 
@@ -133,6 +129,7 @@ public class ConstraintDefinitionFactory {
     } else if (set.getToken() == UcdlToken.NUMBER || set.getToken() == UcdlToken.NUMBER_SET) {
       setType = ResourceType.NUMBER;
     } else {
+      //should be impossible to reach as convertOf should already have thrown an exception
       throw new IllegalStateException();
     }
 
@@ -362,10 +359,6 @@ public class ConstraintDefinitionFactory {
 
     OperatorDto of = (OperatorDto) root.elements();
 
-    if (of.parameters().size() != 2) {
-      throw new IllegalStateException();
-    }
-
     Function<List<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>> variableDefinition =
         convertOf(of, params);
 
@@ -400,10 +393,6 @@ public class ConstraintDefinitionFactory {
 
     QuantifierDto root = (QuantifierDto) ast;
     OperatorDto of = (OperatorDto) root.elements();
-
-    if (of.parameters().size() != 2) {
-      throw new IllegalStateException();
-    }
 
     Function<List<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>> variableDefinition =
         convertOf(of, params);
@@ -694,7 +683,8 @@ public class ConstraintDefinitionFactory {
     List<Function<List<ResourceTimefoldInstance>, Boolean>> functions = new ArrayList<>();
 
     for (AbstractSyntaxTreeDto param : filter.parameters()) {
-      if (param.getToken() == UcdlToken.NUMBER_SET || param.getToken() == UcdlToken.RESOURCE_SET) {
+      if (param.getToken() == UcdlToken.NUMBER_SET || param.getToken() == UcdlToken.RESOURCE_SET
+          || param.getToken() == UcdlToken.ELEMENT || param.getToken() == UcdlToken.NUMBER) {
         Function<List<ResourceTimefoldInstance>, Set<ResourceTimefoldInstance>> set =
             convertSet(param, params);
         Function<List<ResourceTimefoldInstance>, ResourceTimefoldInstance> element =

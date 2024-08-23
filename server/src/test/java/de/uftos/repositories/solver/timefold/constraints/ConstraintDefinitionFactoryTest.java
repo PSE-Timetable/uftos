@@ -1283,8 +1283,6 @@ public class ConstraintDefinitionFactoryTest {
     AbstractSyntaxTreeDto returnFalse = new ValueDto<>(UcdlToken.RETURN, false);
     AbstractSyntaxTreeDto ifTrueTrue =
         new ControlSequenceDto(UcdlToken.IF, trueAst, List.of(returnTrue), true);
-    AbstractSyntaxTreeDto ifTrueFalse =
-        new ControlSequenceDto(UcdlToken.IF, trueAst, List.of(returnFalse), false);
     AbstractSyntaxTreeDto ifFalse =
         new ControlSequenceDto(UcdlToken.IF, falseAst, List.of(returnTrue), true);
     AbstractSyntaxTreeDto root;
@@ -1502,8 +1500,6 @@ public class ConstraintDefinitionFactoryTest {
     AbstractSyntaxTreeDto returnFalse = new ValueDto<>(UcdlToken.RETURN, false);
     AbstractSyntaxTreeDto ifTrueTrue =
         new ControlSequenceDto(UcdlToken.IF, trueAst, List.of(returnTrue), true);
-    AbstractSyntaxTreeDto ifTrueFalse =
-        new ControlSequenceDto(UcdlToken.IF, trueAst, List.of(returnFalse), false);
     AbstractSyntaxTreeDto ifFalse =
         new ControlSequenceDto(UcdlToken.IF, falseAst, List.of(returnTrue), true);
     AbstractSyntaxTreeDto timetableName = new ValueDto<>(UcdlToken.VALUE_REFERENCE, "this");
@@ -1866,5 +1862,128 @@ public class ConstraintDefinitionFactoryTest {
 
 
   }
-  //todo: implement tests for filters
+
+  @Test
+  void getConstraintDefinitionFilter() {
+    TimetableSolutionTimefoldInstance timetable = new TimetableSolutionTimefoldInstance();
+    TimeslotTimefoldInstance timeslot1 = new TimeslotTimefoldInstance("timeslot1", 0, 0);
+    TimeslotTimefoldInstance timeslot2 = new TimeslotTimefoldInstance("timeslot2", 0, 0);
+    TimeslotTimefoldInstance timeslot3 = new TimeslotTimefoldInstance("timeslot3", 0, 0);
+    TimeslotTimefoldInstance timeslot4 = new TimeslotTimefoldInstance("timeslot4", 0, 0);
+    TimeslotTimefoldInstance timeslot5 = new TimeslotTimefoldInstance("timeslot5", 0, 0);
+    timetable.getTimeslots().add(timeslot1);
+    timetable.getTimeslots().add(timeslot2);
+    timetable.getTimeslots().add(timeslot3);
+    timetable.getTimeslots().add(timeslot4);
+    timetable.getTimeslots().add(timeslot5);
+
+    AbstractSyntaxTreeDto elementName = new ValueDto<>(UcdlToken.VALUE_REFERENCE, "this");
+    AbstractSyntaxTreeDto element =
+        new ElementDto(UcdlToken.ELEMENT, elementName, List.of(), ResourceType.TIMETABLE);
+    AbstractSyntaxTreeDto filter = new OperatorDto(UcdlToken.FILTER, List.of(element));
+    AbstractSyntaxTreeDto set =
+        new SetDto(UcdlToken.RESOURCE_SET, ResourceType.TIMETABLE, element, List.of(filter));
+    AbstractSyntaxTreeDto root = new OperatorDto(UcdlToken.IS_EMPTY, List.of(set));
+
+    ConstraintDefinitionDto dto =
+        new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+            new LinkedHashMap<>(), root);
+    ConstraintDefinitionTimefoldInstance definition =
+        ConstraintDefinitionFactory.getConstraintDefinition(dto);
+    assertFalse(
+        definition.evaluationFunction()
+            .apply(new ArrayList<>(List.of(timetable))));
+
+
+    filter = new OperatorDto(UcdlToken.FILTER, List.of(new ValueDto<>(UcdlToken.BOOL_VALUE, true)));
+    set =
+        new SetDto(UcdlToken.RESOURCE_SET, ResourceType.TIMETABLE, element, List.of(filter));
+    root = new OperatorDto(UcdlToken.IS_EMPTY, List.of(set));
+
+    dto =
+        new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+            new LinkedHashMap<>(), root);
+    definition =
+        ConstraintDefinitionFactory.getConstraintDefinition(dto);
+    assertFalse(
+        definition.evaluationFunction()
+            .apply(new ArrayList<>(List.of(timetable))));
+
+
+    filter =
+        new OperatorDto(UcdlToken.FILTER, List.of(new ValueDto<>(UcdlToken.BOOL_VALUE, false)));
+    set =
+        new SetDto(UcdlToken.RESOURCE_SET, ResourceType.TIMETABLE, element, List.of(filter));
+    root = new OperatorDto(UcdlToken.IS_EMPTY, List.of(set));
+
+    dto =
+        new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+            new LinkedHashMap<>(), root);
+    definition =
+        ConstraintDefinitionFactory.getConstraintDefinition(dto);
+    assertTrue(
+        definition.evaluationFunction()
+            .apply(new ArrayList<>(List.of(timetable))));
+
+
+    AbstractSyntaxTreeDto number = new ValueDto<>(UcdlToken.NUMBER, 5);
+    filter = new OperatorDto(UcdlToken.FILTER, List.of(number));
+    set =
+        new SetDto(UcdlToken.RESOURCE_SET, ResourceType.NUMBER, number, List.of(filter));
+    root = new OperatorDto(UcdlToken.IS_EMPTY, List.of(set));
+
+    dto =
+        new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+            new LinkedHashMap<>(), root);
+    definition =
+        ConstraintDefinitionFactory.getConstraintDefinition(dto);
+    assertFalse(
+        definition.evaluationFunction()
+            .apply(new ArrayList<>(List.of(timetable))));
+
+
+    AbstractSyntaxTreeDto numberSet = new ValueDto<>(UcdlToken.NUMBER_SET, new Integer[] {5});
+    filter = new OperatorDto(UcdlToken.FILTER, List.of(numberSet));
+    set =
+        new SetDto(UcdlToken.RESOURCE_SET, ResourceType.NUMBER, number, List.of(filter));
+    root = new OperatorDto(UcdlToken.IS_EMPTY, List.of(set));
+
+    dto =
+        new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+            new LinkedHashMap<>(), root);
+    definition =
+        ConstraintDefinitionFactory.getConstraintDefinition(dto);
+    assertFalse(
+        definition.evaluationFunction()
+            .apply(new ArrayList<>(List.of(timetable))));
+
+
+    AbstractSyntaxTreeDto attribute = new ValueDto<>(UcdlToken.ATTRIBUTE, "timeslots");
+    AbstractSyntaxTreeDto filterElement =
+        new ElementDto(UcdlToken.ELEMENT, new ValueDto<>(UcdlToken.VALUE_REFERENCE, "timeslot1"),
+            List.of(), ResourceType.TIMESLOT);
+    filter = new OperatorDto(UcdlToken.FILTER, List.of(filterElement));
+    set =
+        new SetDto(UcdlToken.RESOURCE_SET, ResourceType.TIMESLOT, element,
+            List.of(attribute, filter));
+    root = new OperatorDto(UcdlToken.IS_EMPTY, List.of(set));
+
+    LinkedHashMap<String, ResourceType> parameter = new LinkedHashMap<>();
+    parameter.put("this", timetable.getResourceType());
+    for (TimeslotTimefoldInstance timeslot : timetable.getTimeslots()) {
+      parameter.put(timeslot.getId(), timeslot.getResourceType());
+    }
+
+    dto =
+        new ConstraintDefinitionDto("test", "test", RewardPenalize.HARD_PENALIZE,
+            parameter, root);
+    definition =
+        ConstraintDefinitionFactory.getConstraintDefinition(dto);
+    assertFalse(
+        definition.evaluationFunction()
+            .apply(new ArrayList<>(
+                List.of(timetable, timeslot1, timeslot2, timeslot3, timeslot4, timeslot5))));
+
+
+  }
 }
