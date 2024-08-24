@@ -134,14 +134,20 @@ public class JsonGenerator {
    * @return The requested JSON
    * @throws JSONException If something is malformed.
    */
-  public static String generateStudentJson(String firstName, String lastName, List<String> tags)
+  public static String generateStudentJson(String firstName, String lastName, List<String> groups, List<String> tags)
       throws JSONException {
-    JSONArray jsonArray = new JSONArray();
-    tags.forEach(jsonArray::put);
+    JSONArray groupArray = new JSONArray();
+    groups.forEach(groupArray::put);
+
+    JSONArray tagArray = new JSONArray();
+    tags.forEach(tagArray::put);
+
+
     return new JSONObject()
         .put("firstName", firstName)
         .put("lastName", lastName)
-        .put("tagIds", jsonArray)
+        .put("groupIds", groupArray)
+        .put("tagIds", tagArray)
         .toString();
   }
 
