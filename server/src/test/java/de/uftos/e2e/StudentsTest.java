@@ -45,29 +45,13 @@ class StudentsTest {
         .extract()
         .body().jsonPath().getString("id");
 
-
-
-    secondStudent = given().contentType(ContentType.JSON)
-        .body(generateStudentJson(SECOND_STUDENT_FIRST_NAME, SECOND_STUDENT_LAST_NAME, List.of(),
-            List.of(tagId)))
-        .when()
-        .post("/students")
-        .then()
-        .log().ifValidationFails(LogDetail.ALL)
-        .statusCode(200)
-        .body("id", notNullValue())
-        .body("firstName", equalTo(SECOND_STUDENT_FIRST_NAME))
-        .body("lastName", equalTo(SECOND_STUDENT_LAST_NAME))
-        .log().ifValidationFails()
-        .extract()
-        .body().jsonPath().getString("id");
-
     firstStudent = given().contentType(ContentType.JSON)
         .body(generateStudentJson(FIRST_STUDENT_FIRST_NAME, FIRST_STUDENT_LAST_NAME, List.of(),
             List.of()))
         .when()
         .post("/students")
         .then()
+        .log().ifValidationFails(LogDetail.ALL)
         .statusCode(200)
         .body("id", notNullValue())
         .body("firstName", equalTo(FIRST_STUDENT_FIRST_NAME))
@@ -76,8 +60,23 @@ class StudentsTest {
         .extract()
         .body().jsonPath().getString("id");
 
+    secondStudent = given().contentType(ContentType.JSON)
+        .body(generateStudentJson(SECOND_STUDENT_FIRST_NAME, SECOND_STUDENT_LAST_NAME, List.of(),
+            List.of(tagId)))
+        .when()
+        .post("/students")
+        .then()
+        .statusCode(200)
+        .body("id", notNullValue())
+        .body("firstName", equalTo(SECOND_STUDENT_FIRST_NAME))
+        .body("lastName", equalTo(SECOND_STUDENT_LAST_NAME))
+        .log().ifValidationFails()
+        .extract()
+        .body().jsonPath().getString("id");
+
     groupId = given().contentType(ContentType.JSON)
-        .body(generateStudentGroupJson(GROUP_NAME, List.of(secondStudent), List.of(), List.of(), List.of()))
+        .body(generateStudentGroupJson(GROUP_NAME, List.of(secondStudent), List.of(),
+            List.of(), List.of()))
         .when()
         .post("/student-groups")
         .then()
@@ -146,7 +145,7 @@ class StudentsTest {
   void getStudentsWithName() throws JSONException {
     given().contentType(ContentType.JSON)
         .body(generatePageJson(0, 10, Collections.emptyList()))
-        .param("firstName", FIRST_STUDENT_FIRST_NAME)
+        .param("search", FIRST_STUDENT_FIRST_NAME)
         .when()
         .get("/students")
         .then()

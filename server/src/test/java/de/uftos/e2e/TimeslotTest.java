@@ -1,6 +1,5 @@
 package de.uftos.e2e;
 
-import static de.uftos.utils.JsonGenerator.generatePageJson;
 import static de.uftos.utils.JsonGenerator.generateTagJson;
 import static de.uftos.utils.JsonGenerator.generateTimeslotJson;
 import static io.restassured.RestAssured.given;

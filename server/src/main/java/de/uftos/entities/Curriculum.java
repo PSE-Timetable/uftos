@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Objects;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * The database table for curriculums.
@@ -60,5 +61,15 @@ public class Curriculum {
     }
     Curriculum that = (Curriculum) other;
     return Objects.equals(id, that.id);
+  }
+
+  @Override
+  public int hashCode() {
+    int initialOddNumber = 79;
+    int multiplierOddNumber = 163;
+    return new HashCodeBuilder(initialOddNumber, multiplierOddNumber)
+        .append(id)
+        .append(name)
+        .toHashCode();
   }
 }

@@ -50,22 +50,19 @@ public class TeacherController {
 
   /**
    * Maps the HTTP GET request for a set of teachers from the database to the
-   * {@link TeacherService#get(Pageable, Optional, Optional, Optional, Optional, Optional) get}
+   * {@link TeacherService#get(Pageable, Optional, Optional, Optional) get}
    * function of the teacher service.
    *
-   * @param pageable  contains the parameters for the page.
-   * @param firstName the first name filter.
-   * @param lastName  the last name filter.
-   * @param acronym   the acronym filter.
-   * @param subjects  the subjects filter.
-   * @param tags      the tags filter.
+   * @param pageable contains the parameters for the page.
+   * @param search   the text to search across first and last name as well as the acronym.
+   * @param subjects the subjects filter.
+   * @param tags     the tags filter.
    * @return the page of teachers fitting the parameters.
    */
   @GetMapping()
-  public Page<Teacher> getTeachers(Pageable pageable, Optional<String> firstName,
-                                   Optional<String> lastName, Optional<String> acronym,
+  public Page<Teacher> getTeachers(Pageable pageable, Optional<String> search,
                                    Optional<String[]> subjects, Optional<String[]> tags) {
-    return this.teacherService.get(pageable, firstName, lastName, acronym, subjects, tags);
+    return this.teacherService.get(pageable, search, subjects, tags);
   }
 
   /**

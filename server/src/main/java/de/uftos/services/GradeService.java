@@ -45,15 +45,15 @@ public class GradeService {
   /**
    * Gets a page of entries of the grade table.
    *
-   * @param sort contains the sort parameters.
-   * @param name the name filter.
-   * @param tags the tags filter.
+   * @param sort   contains the sort parameters.
+   * @param search the search filter.
+   * @param tags   the tags filter.
    * @return the page of the entries fitting the parameters.
    */
-  public List<GradeResponseDto> get(Sort sort, Optional<String> name,
+  public List<GradeResponseDto> get(Sort sort, Optional<String> search,
                                     Optional<String[]> tags) {
     Specification<Grade> spec = new SpecificationBuilder<Grade>()
-        .optionalOrLike(name, "name")
+        .search(search)
         .optionalAndJoinIn(tags, "tags", "id")
         .build();
 

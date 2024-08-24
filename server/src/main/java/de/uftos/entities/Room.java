@@ -1,6 +1,8 @@
 package de.uftos.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.hypersistence.utils.hibernate.type.search.PostgreSQLTSVectorType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -17,6 +19,8 @@ import java.util.List;
 import java.util.Objects;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.hibernate.annotations.Type;
 
 /**
  * The database entity for rooms.
@@ -52,6 +56,11 @@ public class Room {
   @OneToMany(mappedBy = "room")
   private List<Lesson> lessons;
 
+  @JsonIgnore
+  @Type(PostgreSQLTSVectorType.class)
+  @Column(name = "search_vector", columnDefinition = "tsvector", insertable = false, updatable = false)
+  private String searchVector;
+
   /**
    * Creates a new room.
    *
@@ -71,6 +80,7 @@ public class Room {
     this.id = id;
   }
 
+
   @Override
   public boolean equals(Object other) {
     if (this == other) {
@@ -79,7 +89,20 @@ public class Room {
     if (other == null || getClass() != other.getClass()) {
       return false;
     }
-    Room room = (Room) other;
-    return Objects.equals(id, room.id);
+    Room that = (Room) other;
+    return Objects.equals(id, that.id);
+  }
+
+  @Override
+  public int hashCode() {
+    int initialOddNumber = 73;
+    int multiplierOddNumber = 241;
+    return new HashCodeBuilder(initialOddNumber, multiplierOddNumber)
+        .append(id)
+        .append(name)
+        .append(buildingName)
+        .append(capacity)
+        .append(tags)
+        .toHashCode();
   }
 }

@@ -9,23 +9,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import de.uftos.dto.Weekday;
-import de.uftos.dto.requestdtos.RoomRequestDto;
 import de.uftos.dto.requestdtos.TimeslotRequestDto;
 import de.uftos.entities.Break;
-import de.uftos.entities.Grade;
-import de.uftos.entities.Lesson;
-import de.uftos.entities.Room;
 import de.uftos.entities.Server;
-import de.uftos.entities.Student;
-import de.uftos.entities.StudentGroup;
-import de.uftos.entities.Subject;
-import de.uftos.entities.Teacher;
 import de.uftos.entities.Timeslot;
 import de.uftos.entities.TimetableMetadata;
-import de.uftos.repositories.database.RoomRepository;
 import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.TimeslotRepository;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -59,7 +49,7 @@ public class TimeslotServiceTests {
     timeslot1.setId("123");
 
     Server server =
-        new Server(new TimetableMetadata(45, 8, "7:45", new Break[] {}), "2024");
+        new Server(new TimetableMetadata(45, 8, "7:45", new Break[] {}), "2024", "test@uftos.de");
     when(serverRepository.findAll()).thenReturn(List.of(server));
     when(timeslotRepository.findById("123")).thenReturn(Optional.of(timeslot1));
   }

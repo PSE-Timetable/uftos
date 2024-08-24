@@ -40,21 +40,16 @@ public class TeacherService {
   /**
    * Gets a page of entries of the teacher entity.
    *
-   * @param pageable  contains the parameters for the page.
-   * @param firstName the first name filter.
-   * @param lastName  the last name filter.
-   * @param acronym   the acronym filter.
-   * @param subjects  the subjects filter.
-   * @param tags      the tags filter.
+   * @param pageable contains the parameters for the page.
+   * @param search   the text to search across first and last name as well as the acronym.
+   * @param subjects the subjects filter.
+   * @param tags     the tags filter.
    * @return the page of entries fitting the parameters.
    */
-  public Page<Teacher> get(Pageable pageable, Optional<String> firstName,
-                           Optional<String> lastName, Optional<String> acronym,
+  public Page<Teacher> get(Pageable pageable, Optional<String> search,
                            Optional<String[]> subjects, Optional<String[]> tags) {
     Specification<Teacher> spec = new SpecificationBuilder<Teacher>()
-        .optionalOrLike(firstName, "firstName")
-        .optionalOrLike(lastName, "lastName")
-        .optionalOrLike(acronym, "acronym")
+        .search(search)
         .optionalAndJoinIn(subjects, "subjects", "id")
         .optionalAndJoinIn(tags, "tags", "id")
         .build();

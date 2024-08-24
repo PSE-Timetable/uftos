@@ -1,6 +1,8 @@
 package de.uftos.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.hypersistence.utils.hibernate.type.search.PostgreSQLTSVectorType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -16,6 +18,8 @@ import java.util.List;
 import java.util.Objects;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.hibernate.annotations.Type;
 
 /**
  * The database entity for teachers.
@@ -56,6 +60,11 @@ public class Teacher {
   @OneToMany(mappedBy = "teacher")
   private List<Lesson> lessons;
 
+  @JsonIgnore
+  @Type(PostgreSQLTSVectorType.class)
+  @Column(name = "search_vector", columnDefinition = "tsvector", insertable = false, updatable = false)
+  private String searchVector;
+
   /**
    * Creates a new teacher.
    *
@@ -84,6 +93,7 @@ public class Teacher {
     this.id = id;
   }
 
+
   @Override
   public boolean equals(Object other) {
     if (this == other) {
@@ -92,7 +102,21 @@ public class Teacher {
     if (other == null || getClass() != other.getClass()) {
       return false;
     }
-    Teacher teacher = (Teacher) other;
-    return Objects.equals(id, teacher.id);
+    Teacher that = (Teacher) other;
+    return Objects.equals(id, that.id);
+  }
+
+
+  @Override
+  public int hashCode() {
+    int initialOddNumber = 29;
+    int multiplierOddNumber = 271;
+    return new HashCodeBuilder(initialOddNumber, multiplierOddNumber)
+        .append(id)
+        .append(firstName)
+        .append(lastName)
+        .append(acronym)
+        .append(tags)
+        .toHashCode();
   }
 }

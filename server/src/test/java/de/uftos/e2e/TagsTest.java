@@ -79,7 +79,7 @@ class TagsTest {
   void getTagsWithName() throws JSONException {
     given().contentType(ContentType.JSON)
         .body(generatePageJson(0, 10, Collections.emptyList()))
-        .param("name", FIRST_TAG_NAME)
+        .param("search", FIRST_TAG_NAME)
         .when()
         .get("/tags")
         .then()

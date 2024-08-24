@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Objects;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * The database entity for timeslots.
@@ -77,6 +78,8 @@ public class Timeslot {
     this.id = id;
   }
 
+
+
   @Override
   public boolean equals(Object other) {
     if (this == other) {
@@ -85,8 +88,18 @@ public class Timeslot {
     if (other == null || getClass() != other.getClass()) {
       return false;
     }
-    Timeslot timeslot = (Timeslot) other;
-    return Objects.equals(id, timeslot.id);
+    Timeslot that = (Timeslot) other;
+    return Objects.equals(id, that.id);
+  }
+
+  @Override
+  public int hashCode() {
+    int initialOddNumber = 41;
+    int multiplierOddNumber = 131;
+    return new HashCodeBuilder(initialOddNumber, multiplierOddNumber)
+        .append(id)
+        .append(slot)
+        .append(tags)
+        .toHashCode();
   }
 }
-

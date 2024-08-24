@@ -1,6 +1,8 @@
 package de.uftos.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.hypersistence.utils.hibernate.type.search.PostgreSQLTSVectorType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -16,6 +18,8 @@ import java.util.List;
 import java.util.Objects;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.hibernate.annotations.Type;
 
 /**
  * The database entity for student groups.
@@ -63,6 +67,11 @@ public class StudentGroup {
       inverseJoinColumns = @JoinColumn(name = "subjects_id"))
   private List<Subject> subjects;
 
+  @JsonIgnore
+  @Type(PostgreSQLTSVectorType.class)
+  @Column(name = "search_vector", columnDefinition = "tsvector", insertable = false, updatable = false)
+  private String searchVector;
+
   /**
    * Creates a new student group.
    * Used if the ID of the student group is known.
@@ -79,18 +88,17 @@ public class StudentGroup {
    *
    * @param name        the name of the student group.
    * @param studentIds  the IDs of the students that are part of the group.
-   * @param gradeIds    the IDs of the grade that are part of the student group.
    * @param tagIds      the IDs of the tags associated with the student group.
    * @param subjectsIds the IDs of the subjects associated with the student group.
    */
-  public StudentGroup(String name, List<String> studentIds, List<String> gradeIds,
+  public StudentGroup(String name, List<String> studentIds,
                       List<String> tagIds, List<String> subjectsIds) {
     this.name = name;
     this.students = studentIds.stream().map(Student::new).toList();
-    this.grades = gradeIds.stream().map(Grade::new).toList();
     this.tags = tagIds.stream().map(Tag::new).toList();
     this.subjects = subjectsIds.stream().map(Subject::new).toList();
   }
+
 
   @Override
   public boolean equals(Object other) {
@@ -103,4 +111,17 @@ public class StudentGroup {
     StudentGroup that = (StudentGroup) other;
     return Objects.equals(id, that.id);
   }
+
+  @Override
+  public int hashCode() {
+    int initialOddNumber = 23;
+    int multiplierOddNumber = 59;
+    return new HashCodeBuilder(initialOddNumber, multiplierOddNumber)
+        .append(id)
+        .append(name)
+        .append(subjects)
+        .append(tags)
+        .toHashCode();
+  }
+
 }

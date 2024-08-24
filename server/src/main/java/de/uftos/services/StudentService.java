@@ -39,29 +39,16 @@ public class StudentService {
   /**
    * Gets a page of entries of the student table.
    *
-   * @param pageable  contains the parameters for the page.
-   * @param firstName the first name filter.
-   * @param lastName  the last name filter.
-   * @param groups    the student groups filter.
-   * @param tags      the tags filter.
+   * @param pageable contains the parameters for the page.
+   * @param search   the search filter.
+   * @param groups   the student group filter.
+   * @param tags     the tags filter.
    * @return the page of the entries fitting the parameters.
    */
-  public Page<Student> get(Pageable pageable, Optional<String> firstName,
-                           Optional<String> lastName, Optional<String[]> groups,
-                           Optional<String[]> tags) {
-    if (!groups.isPresent()) {
-      System.out.println("no groups test");
-    }
-    if (groups.isPresent()) {
-      System.out.println("test with groups:");
-      for (String id : groups.get()) {
-        System.out.println(id);
-      }
-    }
-
+  public Page<Student> get(Pageable pageable, Optional<String> search,
+                           Optional<String[]> groups, Optional<String[]> tags) {
     Specification<Student> spec = new SpecificationBuilder<Student>()
-        .optionalOrLike(firstName, "firstName")
-        .optionalOrLike(lastName, "lastName")
+        .search(search)
         .optionalAndJoinIn(groups, "groups", "id")
         .optionalAndJoinIn(tags, "tags", "id")
         .build();
@@ -107,9 +94,7 @@ public class StudentService {
       this.studentGroupRepository.save(group);
     }
 
-    System.out.println("Student " + result.getFirstName() + " has groups " + result.getGroups());
     return result;
-    //return this.repository.save(student.map());
   }
 
   /**
