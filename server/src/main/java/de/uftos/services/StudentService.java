@@ -81,7 +81,7 @@ public class StudentService {
           "The first or last name of the student is blank.");
     }
     Student student = rawStudent.map();
-    Student result = this.repository.save(student);
+    String studentId = this.repository.save(student).getId();
 
     List<StudentGroup> studentGroups =
         this.studentGroupRepository.findAllById(rawStudent.groupIds());
@@ -94,7 +94,8 @@ public class StudentService {
       this.studentGroupRepository.save(group);
     }
 
-    return result;
+    //noinspection OptionalGetWithoutIsPresent
+    return this.repository.findById(studentId).get();
   }
 
   /**

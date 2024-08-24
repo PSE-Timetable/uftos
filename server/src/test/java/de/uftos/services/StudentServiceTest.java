@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -56,6 +57,7 @@ public class StudentServiceTest {
 
     when(studentRepository.findAll()).thenReturn(List.of(student));
     when(studentRepository.findById("123")).thenReturn(Optional.of(student));
+    when(studentRepository.save(any(Student.class))).thenReturn(student);
   }
 
 
