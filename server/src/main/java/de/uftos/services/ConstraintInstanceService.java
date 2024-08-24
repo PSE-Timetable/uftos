@@ -91,8 +91,10 @@ public class ConstraintInstanceService {
    * @return the newly created constraint instance.
    */
   public ConstraintInstance create(String signatureId, ConstraintInstanceRequestDto request) {
+
     ConstraintSignature signature = this.signatureRepository.findById(signatureId)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+
 
     if (signature.getParameters().size() != request.arguments().size()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
