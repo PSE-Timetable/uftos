@@ -114,10 +114,6 @@ public class StudentGroupService {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
           "Could not find all grades by id");
     }
-    List<Grade> allGrades = this.gradeRepository.findAll();
-    for (Grade grade : allGrades) {
-      grade.getStudentGroups().remove(studentGroup);
-    }
     for (Grade grade : grades) {
       grade.getStudentGroups().add(studentGroup);
       this.gradeRepository.save(grade);
