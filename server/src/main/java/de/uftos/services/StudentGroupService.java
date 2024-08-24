@@ -115,7 +115,7 @@ public class StudentGroupService {
           "Could not find all grades by id");
     }
     List<Grade> allGrades = this.gradeRepository.findAll();
-    for (Grade grade: allGrades) {
+    for (Grade grade : allGrades) {
       grade.getStudentGroups().remove(studentGroup);
     }
     for (Grade grade : grades) {
