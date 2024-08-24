@@ -52,7 +52,8 @@ public class StudentGroupsTest {
         .body().jsonPath().getString("id");
 
     studentId = given().contentType(ContentType.JSON)
-        .body(generateStudentJson(STUDENT_FIRST_NAME, STUDENT_LAST_NAME, Collections.emptyList(), Collections.emptyList()))
+        .body(generateStudentJson(STUDENT_FIRST_NAME, STUDENT_LAST_NAME, Collections.emptyList(),
+            Collections.emptyList()))
         .when()
         .post("/students")
         .then()
