@@ -53,7 +53,7 @@ public class UcdlEditorService {
    */
   public ParsingResponse validate(MultipartFile file) {
     try {
-      return ucdlRepository.parseString(new String(file.getBytes()));
+      return this.ucdlRepository.parseString(new String(file.getBytes()));
     } catch (IOException e) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Could not validate file");
     }
@@ -66,12 +66,23 @@ public class UcdlEditorService {
    */
   public Resource getUcdl() {
     try {
-      String content = ucdlRepository.getUcdl();
+      String content = this.ucdlRepository.getUcdl();
       return new InputStreamResource(
           new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)));
     } catch (IOException e) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "UCDL file could not be loaded");
     }
+  }
+
+  /**
+   * Gets the default UCDL file.
+   *
+   * @return the default UCDL file.
+   */
+  public Resource getDefaultUcdl() {
+    String content = this.ucdlRepository.getDefaultUcdl();
+    return new InputStreamResource(
+        new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)));
   }
 
   /**
@@ -105,22 +116,22 @@ public class UcdlEditorService {
       ConstraintDefinitionDto definition = definitions.get(signature.getName());
       if (!signature.getInstances().isEmpty() && signatureChanged(signature, definition)) {
         return new ParsingResponse(false,
-            "Signatures of constraints changed!"
-                + " Constraint instances will be deleted if code is saved!");
+            "Signaturen von Constraints haben sich geändert!"
+                + " Constraint Instanzen werden gelöscht, wenn der Code gespeichert wird!");
       }
     }
 
-    //no signatures changed
+    //no signatures with existing instances changed
     try {
       ucdlRepository.setUcdl(ucdlCode);
     } catch (IOException e) {
       return new ParsingResponse(false, e.getMessage());
     }
 
-    removeDeletedSignatures(signatures, definitions);
-    saveDefinitionSignatures(signatures, definitions);
+    removeDeletedSignatures(signatures, definitions); //signatures without new definitions
+    updateDefinitionSignatures(signatures, definitions);
 
-    return new ParsingResponse(true, "Code saved successfully!");
+    return new ParsingResponse(true, "Code erfolgreich gespeichert!");
   }
 
   private ParsingResponse forceSetUcdl(MultipartFile file) {
@@ -142,38 +153,72 @@ public class UcdlEditorService {
         if (signatureChanged(signature, definition)) {
           constraintSignatureRepository.delete(signature);
           signatures.remove(i--);
-        } else {
-          updateSignature(signature, definition);
         }
       }
 
-      saveDefinitionSignatures(signatures, definitions);
+      updateDefinitionSignatures(signatures, definitions);
 
       return new ParsingResponse(true,
-          "Saved file forcefully and deleted inconsistent constraint instances!");
+          "Änderungen gespeichert und inkonsistente Constraint Instanzen gelöscht!");
     } catch (ParseException | IOException e) {
-      return new ParsingResponse(true, "Saved file with invalid code forcefully!");
+      return new ParsingResponse(true, "Änderungen mit invalidem Code gespeichert!");
     }
   }
 
-  private void updateSignature(ConstraintSignature signature,
-                               ConstraintDefinitionDto definitionDto) {
-    if (!signature.getName().equals(definitionDto.name())) {
-      throw new IllegalArgumentException();
-    }
-    signature.setDefaultType(definitionDto.defaultType());
-    signature.setDescription(definitionDto.description());
-
-    constraintSignatureRepository.save(signature);
-  }
-
-  private void saveDefinitionSignatures(List<ConstraintSignature> signatures,
-                                        HashMap<String, ConstraintDefinitionDto> definitions) {
+  private void updateDefinitionSignatures(List<ConstraintSignature> signatures,
+                                          HashMap<String, ConstraintDefinitionDto> definitions) {
+    //signatures with potentially new definition
     for (ConstraintSignature signature : signatures) {
-      updateSignature(signature, definitions.get(signature.getName()));
-      definitions.remove(signature.getName());
+      updateSignature(signature, definitions.remove(signature.getName()));
     }
 
+    //new definitions without existing signature
+    saveDefinitionSignatures(definitions);
+  }
+
+  private void updateSignature(ConstraintSignature signature, ConstraintDefinitionDto definition) {
+    if (definition == null || signature == null || !definition.name().equals(signature.getName())) {
+      throw new IllegalStateException();
+    }
+
+    signature.setDescription(definition.description());
+    signature.setDefaultType(definition.defaultType());
+
+
+    List<ConstraintParameter> newParameters = new ArrayList<>();
+    for (Map.Entry<String, ResourceType> parameterEntry : definition.parameters()
+        .sequencedEntrySet()) {
+      if (parameterEntry.getKey().equals("this")) {
+        continue;
+      }
+      ConstraintParameter parameter = new ConstraintParameter();
+      parameter.setParameterName(parameterEntry.getKey());
+      parameter.setParameterType(parameterEntry.getValue());
+      newParameters.add(parameter);
+    }
+
+    //updating existing parameters
+    for (int i = 0; i < signature.getParameters().size() && i < newParameters.size(); i++) {
+      ConstraintParameter oldParameter = signature.getParameters().get(i);
+      ConstraintParameter newParameter = newParameters.get(i);
+      oldParameter.setParameterName(newParameter.getParameterName());
+      oldParameter.setParameterType(newParameter.getParameterType());
+    }
+
+    //deleting old parameters
+    for (int i = newParameters.size(); i < signature.getParameters().size(); ) {
+      signature.getParameters().remove(i);
+    }
+
+    //adding new parameters
+    for (int i = signature.getParameters().size(); i < newParameters.size(); i++) {
+      signature.getParameters().add(newParameters.get(i));
+    }
+
+    this.constraintSignatureRepository.save(signature);
+  }
+
+  private void saveDefinitionSignatures(HashMap<String, ConstraintDefinitionDto> definitions) {
     for (ConstraintDefinitionDto definition : definitions.values()) {
       saveDefinitionSignature(definition);
     }

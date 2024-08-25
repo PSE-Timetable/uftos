@@ -107,7 +107,7 @@ public class TeacherServiceTests {
     teacher1.setSubjects(List.of(subject));
 
     Server server =
-        new Server(new TimetableMetadata(45, 8, "7:45", new Break[] {}), "2024");
+        new Server(new TimetableMetadata(45, 8, "7:45", new Break[] {}), "2024", "test@uftos.de");
     when(serverRepository.findAll()).thenReturn(List.of(server));
     when(teacherRepository.findById("123")).thenReturn(Optional.of(teacher1));
     when(teacherRepository.findById("456")).thenReturn(Optional.of(teacher2));
@@ -199,8 +199,8 @@ public class TeacherServiceTests {
     );
 
     assertAll("Testing whether all the rooms are there",
-        () -> assertTrue(result.rooms().contains(room1)),
-        () -> assertTrue(result.rooms().contains(room2))
+        () -> assertTrue(result.rooms().stream().map(room -> room.getId()).toList().contains(room1.getId())),
+        () -> assertTrue(result.rooms().stream().map(room -> room.getId()).toList().contains(room2.getId()))
     );
 
     assertAll("Testing whether all the student groups are there",

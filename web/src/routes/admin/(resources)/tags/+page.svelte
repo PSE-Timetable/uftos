@@ -8,5 +8,5 @@
 </script>
 
 <div class="p-10 w-full">
-  <DataTable initialData={data.initialData} {columnNames} {keys} loadPage={loadTags} deleteEntry={deleteTagEntry} />
+  <DataTable initialData={data.initialData} {columnNames} {keys} loadPage={loadTags} deleteEntries={deleteTagEntry} />
 </div>

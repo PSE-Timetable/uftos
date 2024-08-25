@@ -8,5 +8,11 @@
 </script>
 
 <div class="mx-auto p-10 w-full">
-  <DataTable initialData={data.initialData} {columnNames} {keys} loadPage={loadGrades} deleteEntry={deleteGradeEntry} />
+  <DataTable
+    initialData={data.initialData}
+    {columnNames}
+    {keys}
+    loadPage={loadGrades}
+    deleteEntries={deleteGradeEntry}
+  />
 </div>

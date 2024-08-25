@@ -2,7 +2,7 @@ package de.uftos.controller;
 
 import de.uftos.dto.requestdtos.StudentGroupRequestDto;
 import de.uftos.dto.responsedtos.LessonResponseDto;
-import de.uftos.entities.StudentGroup;
+import de.uftos.dto.responsedtos.StudentGroupResponseDto;
 import de.uftos.services.StudentGroupService;
 import java.util.List;
 import java.util.Optional;
@@ -46,7 +46,7 @@ public class StudentGroupController {
    * @return the created student group with the assigned ID.
    */
   @PostMapping()
-  public StudentGroup createStudentGroup(@RequestBody StudentGroupRequestDto studentGroup) {
+  public StudentGroupResponseDto createStudentGroup(@RequestBody StudentGroupRequestDto studentGroup) {
     return this.studentGroupService.create(studentGroup);
   }
 
@@ -56,14 +56,14 @@ public class StudentGroupController {
    * function of the student group service.
    *
    * @param pageable contains the parameters for the page.
-   * @param name     the name filter.
+   * @param search   the search filter.
    * @param tags     the tags filter.
    * @return the page of student groups fitting the parameters.
    */
   @GetMapping()
-  public Page<StudentGroup> getStudentGroups(Pageable pageable, Optional<String> name,
+  public Page<StudentGroupResponseDto> getStudentGroups(Pageable pageable, Optional<String> search,
                                              Optional<String[]> tags) {
-    return this.studentGroupService.get(pageable, name, tags);
+    return this.studentGroupService.get(pageable, search, tags);
   }
 
   /**
@@ -74,7 +74,7 @@ public class StudentGroupController {
    * @return The student group with the given ID.
    */
   @GetMapping("/{id}")
-  public StudentGroup getStudentGroup(@PathVariable String id) {
+  public StudentGroupResponseDto getStudentGroup(@PathVariable String id) {
     return this.studentGroupService.getById(id);
   }
 
@@ -100,8 +100,8 @@ public class StudentGroupController {
    * @param studentIds the IDs of students which are to be added.
    */
   @PostMapping("/{id}/students")
-  public StudentGroup addStudentsToStudentGroup(@PathVariable String id,
-                                                @RequestBody List<String> studentIds) {
+  public StudentGroupResponseDto addStudentsToStudentGroup(@PathVariable String id,
+                                                           @RequestBody List<String> studentIds) {
     return this.studentGroupService.addStudents(id, studentIds);
   }
 
@@ -129,8 +129,8 @@ public class StudentGroupController {
    * @return the updated student group.
    */
   @PutMapping("/{id}")
-  public StudentGroup updateStudentGroup(@PathVariable String id,
-                                         @RequestBody StudentGroupRequestDto studentGroup) {
+  public StudentGroupResponseDto updateStudentGroup(@PathVariable String id,
+                                                    @RequestBody StudentGroupRequestDto studentGroup) {
     return this.studentGroupService.update(id, studentGroup);
   }
 

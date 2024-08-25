@@ -15,8 +15,8 @@
     type GradeResponseDto,
     type Pageable,
     type Student,
-    type StudentGroup,
     type StudentGroupRequestDto,
+    type StudentGroupResponseDto,
   } from '$lib/sdk/fetch-client.js';
   import { getStudentsFromGroup, removeStudentFromGroup } from '$lib/utils/resources.js';
   import { error } from '@sveltejs/kit';
@@ -33,7 +33,7 @@
   let columnNames = ['Vorname', 'Nachname', 'Tags'];
   let keys = ['id', 'firstName', 'lastName', 'tags'];
 
-  async function addStudentToGroup(studentGroup: StudentGroup, studentId: string) {
+  async function addStudentToGroup(studentGroup: StudentGroupResponseDto, studentId: string) {
     studentGroup = await addStudentsToStudentGroup(studentGroup.id, [studentId]);
     reloadTable = !reloadTable;
   }
@@ -41,8 +41,7 @@
   async function updateStudents(value: string) {
     const pageable: Pageable = { page: 0, size: 40 };
     try {
-      students =
-        (await getStudents(pageable, { firstName: value, lastName: value }).then(({ content }) => content)) || [];
+      students = (await getStudents(pageable, { search: value }).then(({ content }) => content)) || [];
     } catch {
       error(400, { message: 'Could not fetch students' });
     }
@@ -50,7 +49,7 @@
 
   async function updateGrades(value: string) {
     try {
-      grades = await getGrades({ sort: ['name,asc'] }, { name: value });
+      grades = await getGrades({ sort: ['name,asc'] }, { search: value });
     } catch {
       error(400, { message: 'Could not fetch grades' });
     }
@@ -139,7 +138,7 @@
               {columnNames}
               {keys}
               loadPage={getStudentsFromGroup}
-              deleteEntry={removeStudentFromGroup}
+              deleteEntries={removeStudentFromGroup}
               additionalId={studentGroup.id}
               sortable={false}
               addButton={false}
@@ -149,5 +148,7 @@
         </div>
       {/key}
     </div>
+  {:else}
+    <div class="text-3xl font-semibold flex justify-center mt-14">Keine Gruppen vorhanden.</div>
   {/each}
 </div>

@@ -2,6 +2,7 @@ package de.uftos.repositories.ucdl;
 
 import de.uftos.dto.ucdl.ConstraintDefinitionDto;
 import de.uftos.dto.ucdl.ParsingResponse;
+import de.uftos.repositories.ucdl.parser.PredefinedConstraint;
 import de.uftos.repositories.ucdl.parser.UcdlParser;
 import de.uftos.repositories.ucdl.parser.javacc.ParseException;
 import java.io.IOException;
@@ -9,7 +10,9 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Repository;
 
@@ -26,7 +29,7 @@ public class UcdlRepositoryImpl implements UcdlRepository {
     try {
       Files.createFile(UCDL_PATH);
     } catch (FileAlreadyExistsException e) {
-      System.out.println("Skipping creation of UCDL file");
+      //everything is fine here
     } catch (IOException e) {
       throw new BadRequestException(e);
     }
@@ -45,6 +48,12 @@ public class UcdlRepositoryImpl implements UcdlRepository {
     } catch (IOException e) {
       throw new BadRequestException(e);
     }
+  }
+
+  @Override
+  public String getDefaultUcdl() {
+    return Arrays.stream(PredefinedConstraint.values()).map(PredefinedConstraint::getCode)
+        .collect(Collectors.joining("\n"));
   }
 
   @Override

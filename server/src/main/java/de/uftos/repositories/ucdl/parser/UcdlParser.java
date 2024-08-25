@@ -41,7 +41,10 @@ public class UcdlParser {
       if (!yamlCode.getClass().equals(LinkedHashMap.class)) {
         throw new ParseException("This is illegal code!");
       }
-      HashMap<String, Object> constraintDefinitions = (HashMap<String, Object>) yamlCode;
+      HashMap<String, Object> constraintDefinitions = new HashMap<>();
+      for (Map.Entry<?, ?> entry : ((LinkedHashMap<?, ?>) yamlCode).entrySet()) {
+        constraintDefinitions.put(entry.getKey().toString(), entry.getValue());
+      }
       for (Map.Entry<String, Object> entry : constraintDefinitions.entrySet()) {
         String name = entry.getKey();
         if (entry.getValue() == null || !entry.getValue().getClass().equals(LinkedHashMap.class)) {
@@ -146,14 +149,21 @@ public class UcdlParser {
     }
 
     Object definitionObject = constraintDefinition.get("definition");
+    String definitionString;
 
-    if (definitionObject == null || !definitionObject.getClass().equals(String.class)) {
+    if (definitionObject == null) {
+      throw new ParseException("The definition requires code!");
+    } else if (definitionObject.getClass().equals(String.class)) {
+      definitionString = (String) definitionObject;
+    } else if (definitionObject.getClass().equals(Boolean.class)) {
+      definitionString = ((Boolean) definitionObject).toString();
+    } else {
       throw new ParseException("The definition requires code!");
     }
 
 
     AbstractSyntaxTreeDto definition =
-        DefinitionParser.parseDefinition((String) definitionObject,
+        DefinitionParser.parseDefinition(definitionString,
             parameters);
 
     return new ConstraintDefinitionDto(name, description, defaultType, parameters, definition);

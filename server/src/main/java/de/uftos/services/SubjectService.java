@@ -37,13 +37,13 @@ public class SubjectService {
   /**
    * Gets a page of entries of the subject table.
    *
-   * @param sort contains the sort parameters.
-   * @param name the name filter.
+   * @param sort   contains the sort parameters.
+   * @param search the search filter.
    * @return the page of the entries fitting the parameters.
    */
-  public List<Subject> get(Sort sort, Optional<String> name) {
+  public List<Subject> get(Sort sort, Optional<String> search) {
     Specification<Subject> specification = new SpecificationBuilder<Subject>()
-        .optionalOrLike(name, "name")
+        .search(search)
         .build();
 
     return this.repository.findAll(specification, sort);

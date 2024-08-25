@@ -48,17 +48,12 @@ public class ConstraintDefinitionFactory {
       ConstraintDefinitionDto definition) {
     String name = definition.name();
     RewardPenalize defaultType = definition.defaultType();
-    Function<List<ResourceTimefoldInstance>, Boolean> function;
 
     LinkedHashMap<String, ResourceType> params = definition.parameters();
 
     AbstractSyntaxTreeDto ast = definition.root();
 
-    if (ast.getToken() == UcdlToken.CODEBLOCK) {
-      function = convertCodeblock(ast, params);
-    } else {
-      function = convertBool(ast, params);
-    }
+    Function<List<ResourceTimefoldInstance>, Boolean> function = convertBool(ast, params);
 
     return new ConstraintDefinitionTimefoldInstance(name, defaultType, function);
   }
@@ -234,6 +229,7 @@ public class ConstraintDefinitionFactory {
       > convertBool(
       AbstractSyntaxTreeDto ast, LinkedHashMap<String, ResourceType> params) {
     return switch (ast.getToken()) {
+      case CODEBLOCK -> convertCodeblock(ast, params);
       case IMPLIES -> convertImplies(ast, params);
       case OR -> convertOr(ast, params);
       case AND -> convertAnd(ast, params);

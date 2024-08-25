@@ -53,8 +53,8 @@ public class RoomServiceTests {
   private RoomService roomService;
 
 
-  private static void assertResulArraysSizes(LessonResponseDto result, int teachers, int lessons,
-                                             int rooms, int grades) {
+  private static void assertResultArraysSizes(LessonResponseDto result, int teachers, int lessons,
+                                              int rooms, int grades) {
     assertAll("Testing whether the sizes of the arrays are correct",
         () -> assertEquals(teachers, result.teachers().size()),
         () -> assertEquals(lessons, result.lessons().size()),
@@ -102,7 +102,7 @@ public class RoomServiceTests {
     room1.setLessons(List.of(lesson1, lesson2, lesson3));
 
     Server server =
-        new Server(new TimetableMetadata(45, 8, "7:45", new Break[] {}), "2024");
+        new Server(new TimetableMetadata(45, 8, "7:45", new Break[] {}), "2024", "test@uftos.de");
     when(serverRepository.findAll()).thenReturn(List.of(server));
     when(roomRepository.findById("123")).thenReturn(Optional.of(room1));
     when(roomRepository.findById("456")).thenReturn(Optional.of(room2));
@@ -174,7 +174,7 @@ public class RoomServiceTests {
   void emptyLessons() {
     assertDoesNotThrow(() -> roomService.getLessonsById("456"));
     LessonResponseDto result = roomService.getLessonsById("456");
-    assertResulArraysSizes(result, 0, 0, 0, 0);
+    assertResultArraysSizes(result, 0, 0, 0, 0);
   }
 
   @Test
@@ -182,14 +182,14 @@ public class RoomServiceTests {
     Room room1 = roomRepository.findById("123").orElseThrow();
 
     LessonResponseDto result = roomService.getLessonsById("123");
-    assertResulArraysSizes(result, 1, 2, 1, 1);
+    assertResultArraysSizes(result, 1, 2, 1, 1);
     assertAll("Testing whether the sizes of the arrays are correct",
         () -> assertEquals(2, result.grades().getFirst().studentGroupIds().size()),
         () -> assertEquals(4, result.grades().getFirst().studentIds().size())
     );
 
     assertAll("Testing whether all the rooms are there",
-        () -> assertTrue(result.rooms().contains(room1))
+        () -> assertTrue(result.rooms().stream().map(room -> room.getId()).toList().contains(room1.getId()))
     );
 
     assertAll("Testing whether all the student groups are there",

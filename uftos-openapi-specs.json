@@ -69,6 +69,36 @@
       }
     },
     "/constraints/{signatureId}/instances" : {
+      "delete" : {
+        "operationId" : "deleteConstraintInstance",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "signatureId",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        },
+        "tags" : [ "constraint-controller" ]
+      },
       "get" : {
         "operationId" : "getConstraintInstances",
         "parameters" : [ {
@@ -143,30 +173,6 @@
       }
     },
     "/constraints/{signatureId}/instances/{id}" : {
-      "delete" : {
-        "operationId" : "deleteConstraintInstance",
-        "parameters" : [ {
-          "in" : "path",
-          "name" : "signatureId",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "in" : "path",
-          "name" : "id",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK"
-          }
-        },
-        "tags" : [ "constraint-controller" ]
-      },
       "get" : {
         "operationId" : "getConstraintInstanceById",
         "parameters" : [ {
@@ -436,6 +442,25 @@
         "tags" : [ "ucdl-editor-controller" ]
       }
     },
+    "/editor/default" : {
+      "get" : {
+        "operationId" : "getDefaultUcdlFile",
+        "responses" : {
+          "200" : {
+            "content" : {
+              "text/yaml" : {
+                "schema" : {
+                  "type" : "string",
+                  "format" : "binary"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "tags" : [ "ucdl-editor-controller" ]
+      }
+    },
     "/editor/validate" : {
       "put" : {
         "operationId" : "validateUcdlFile",
@@ -482,7 +507,7 @@
           }
         }, {
           "in" : "query",
-          "name" : "name",
+          "name" : "search",
           "required" : false,
           "schema" : {
             "type" : "string"
@@ -786,14 +811,7 @@
           }
         }, {
           "in" : "query",
-          "name" : "name",
-          "required" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "in" : "query",
-          "name" : "buildingName",
+          "name" : "search",
           "required" : false,
           "schema" : {
             "type" : "string"
@@ -1028,7 +1046,7 @@
           }
         }, {
           "in" : "query",
-          "name" : "name",
+          "name" : "search",
           "required" : false,
           "schema" : {
             "type" : "string"
@@ -1049,7 +1067,7 @@
             "content" : {
               "*/*" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/PageStudentGroup"
+                  "$ref" : "#/components/schemas/PageStudentGroupResponseDto"
                 }
               }
             },
@@ -1075,7 +1093,7 @@
             "content" : {
               "*/*" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/StudentGroup"
+                  "$ref" : "#/components/schemas/StudentGroupResponseDto"
                 }
               }
             },
@@ -1118,7 +1136,7 @@
             "content" : {
               "*/*" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/StudentGroup"
+                  "$ref" : "#/components/schemas/StudentGroupResponseDto"
                 }
               }
             },
@@ -1152,7 +1170,7 @@
             "content" : {
               "*/*" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/StudentGroup"
+                  "$ref" : "#/components/schemas/StudentGroupResponseDto"
                 }
               }
             },
@@ -1247,7 +1265,7 @@
             "content" : {
               "*/*" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/StudentGroup"
+                  "$ref" : "#/components/schemas/StudentGroupResponseDto"
                 }
               }
             },
@@ -1269,14 +1287,7 @@
           }
         }, {
           "in" : "query",
-          "name" : "firstName",
-          "required" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "in" : "query",
-          "name" : "lastName",
+          "name" : "search",
           "required" : false,
           "schema" : {
             "type" : "string"
@@ -1422,7 +1433,7 @@
           }
         }, {
           "in" : "query",
-          "name" : "name",
+          "name" : "search",
           "required" : false,
           "schema" : {
             "type" : "string"
@@ -1561,7 +1572,7 @@
           }
         }, {
           "in" : "query",
-          "name" : "name",
+          "name" : "search",
           "required" : false,
           "schema" : {
             "type" : "string"
@@ -1700,21 +1711,7 @@
           }
         }, {
           "in" : "query",
-          "name" : "firstName",
-          "required" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "in" : "query",
-          "name" : "lastName",
-          "required" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "in" : "query",
-          "name" : "acronym",
+          "name" : "search",
           "required" : false,
           "schema" : {
             "type" : "string"
@@ -2245,7 +2242,7 @@
         }
       },
       "ConstraintInstancesResponseDto" : {
-        "required" : [ "constraintInstances", "displayNames", "parameters" ],
+        "required" : [ "constraintInstances", "displayNames", "parameters", "totalElements" ],
         "type" : "object",
         "properties" : {
           "constraintInstances" : {
@@ -2265,6 +2262,10 @@
             "items" : {
               "$ref" : "#/components/schemas/ConstraintParameter"
             }
+          },
+          "totalElements" : {
+            "type" : "integer",
+            "format" : "int64"
           }
         }
       },
@@ -2819,13 +2820,13 @@
           }
         }
       },
-      "PageStudentGroup" : {
+      "PageStudentGroupResponseDto" : {
         "type" : "object",
         "properties" : {
           "content" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/components/schemas/StudentGroup"
+              "$ref" : "#/components/schemas/StudentGroupResponseDto"
             }
           },
           "empty" : {
@@ -3252,6 +3253,48 @@
             "type" : "array",
             "items" : {
               "type" : "string"
+            }
+          }
+        }
+      },
+      "StudentGroupResponseDto" : {
+        "required" : [ "grades", "id", "lessons", "name", "students", "subjects", "tags" ],
+        "type" : "object",
+        "properties" : {
+          "grades" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/GradeResponseDto"
+            }
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "lessons" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Lesson"
+            }
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "students" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Student"
+            }
+          },
+          "subjects" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Subject"
+            }
+          },
+          "tags" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Tag"
             }
           }
         }

@@ -33,12 +33,12 @@ public class TagService {
   /**
    * Gets a page of entries of the tag table.
    *
-   * @param name the name filter.
+   * @param search the search filter.
    * @return the page of entries fitting the parameters.
    */
-  public List<Tag> get(Sort sort, Optional<String> name) {
+  public List<Tag> get(Sort sort, Optional<String> search) {
     Specification<Tag> specification = new SpecificationBuilder<Tag>()
-        .optionalOrLike(name, "name")
+        .search(search)
         .build();
 
     return this.repository.findAll(specification, sort);

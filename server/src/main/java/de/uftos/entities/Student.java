@@ -1,6 +1,8 @@
 package de.uftos.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.hypersistence.utils.hibernate.type.search.PostgreSQLTSVectorType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -15,6 +17,8 @@ import java.util.List;
 import java.util.Objects;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.hibernate.annotations.Type;
 
 /**
  * The database entity for students.
@@ -45,6 +49,11 @@ public class Student {
       inverseJoinColumns = @JoinColumn(name = "tags_id"))
   private List<Tag> tags;
 
+  @JsonIgnore
+  @Type(PostgreSQLTSVectorType.class)
+  @Column(name = "search_vector", columnDefinition = "tsvector", insertable = false, updatable = false)
+  private String searchVector;
+
   /**
    * Creates a new student.
    * Used if the ID is known.
@@ -73,6 +82,7 @@ public class Student {
    * Creates a new student.
    * Used if the ID is known.
    *
+   * @param id        the ID of the student
    * @param firstName the first name of the student.
    * @param lastName  the last name of the student.
    * @param groups    the list of student groups in which the student is.
@@ -95,7 +105,19 @@ public class Student {
     if (other == null || getClass() != other.getClass()) {
       return false;
     }
-    Student student = (Student) other;
-    return Objects.equals(id, student.id);
+    Student that = (Student) other;
+    return Objects.equals(id, that.id);
+  }
+
+  @Override
+  public int hashCode() {
+    int initialOddNumber = 89;
+    int multiplierOddNumber = 269;
+    return new HashCodeBuilder(initialOddNumber, multiplierOddNumber)
+        .append(id)
+        .append(firstName)
+        .append(lastName)
+        .append(tags)
+        .toHashCode();
   }
 }

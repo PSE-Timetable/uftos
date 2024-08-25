@@ -3,20 +3,20 @@
   import {
     createStudentGroup,
     updateStudentGroup,
-    type StudentGroup,
     type StudentGroupRequestDto,
+    type StudentGroupResponseDto,
   } from '$lib/sdk/fetch-client.js';
   import { error } from '@sveltejs/kit';
 
   export let data;
-  let studentGroup: StudentGroup = data.studentGroup;
+  let studentGroup: StudentGroupResponseDto = data.studentGroup;
   let values: string[] = [studentGroup.name];
   let descriptions: string[] = ['Name:'];
 
   async function create(values: string[], tagIds: string[], subjectIds?: string[]) {
     let studentGroupRequestDto: StudentGroupRequestDto = {
       name: values[0],
-      gradeIds: studentGroup.grades.map((grade) => String(grade.id)),
+      gradeIds: studentGroup.grades.map((grade) => grade.id),
       studentIds: studentGroup.students.map((student) => student.id),
       tagIds,
       subjectIds: subjectIds || [],
@@ -31,7 +31,7 @@
   async function update(values: string[], tagIds: string[], subjectIds?: string[]) {
     let studentGroupRequestDto: StudentGroupRequestDto = {
       name: values[0],
-      gradeIds: studentGroup.grades.map((grade) => String(grade.id)),
+      gradeIds: studentGroup.grades.map((grade) => grade.id),
       studentIds: studentGroup.students.map((student) => student.id),
       tagIds,
       subjectIds: subjectIds || [],

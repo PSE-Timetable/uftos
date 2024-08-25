@@ -1,6 +1,9 @@
 package de.uftos.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.hypersistence.utils.hibernate.type.search.PostgreSQLTSVectorType;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -14,6 +17,8 @@ import java.util.List;
 import java.util.Objects;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.hibernate.annotations.Type;
 
 /**
  * The database entity for grades.
@@ -45,6 +50,11 @@ public class Grade {
       inverseJoinColumns = @JoinColumn(name = "tags_id"))
   private List<Tag> tags;
 
+  @JsonIgnore
+  @Type(PostgreSQLTSVectorType.class)
+  @Column(name = "search_vector", columnDefinition = "tsvector", insertable = false, updatable = false)
+  private String searchVector;
+
   public Grade(String id) {
     this.id = id;
   }
@@ -62,6 +72,7 @@ public class Grade {
     this.tags = tagIds.stream().map(Tag::new).toList();
   }
 
+
   @Override
   public boolean equals(Object other) {
     if (this == other) {
@@ -70,7 +81,18 @@ public class Grade {
     if (other == null || getClass() != other.getClass()) {
       return false;
     }
-    Grade grade = (Grade) other;
-    return Objects.equals(id, grade.id);
+    Grade that = (Grade) other;
+    return Objects.equals(id, that.id);
+  }
+
+  @Override
+  public int hashCode() {
+    int initialOddNumber = 17;
+    int multiplierOddNumber = 37;
+    return new HashCodeBuilder(initialOddNumber, multiplierOddNumber)
+        .append(id)
+        .append(name)
+        .append(tags)
+        .toHashCode();
   }
 }
