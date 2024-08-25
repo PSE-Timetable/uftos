@@ -82,6 +82,7 @@ public class Student {
    * Creates a new student.
    * Used if the ID is known.
    *
+   * @param id        the ID of the student
    * @param firstName the first name of the student.
    * @param lastName  the last name of the student.
    * @param groups    the list of student groups in which the student is.

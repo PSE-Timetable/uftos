@@ -115,7 +115,7 @@
         cell: ({ value }) => {
           return createRender(DataTableActions, {
             id: value.toString(),
-            deleteEntries,
+            actionMenuDelete,
             getData,
             additionalId,
             editAvailable,
@@ -169,6 +169,11 @@
     } else {
       tableData.set(allItems.slice($pageIndex * pageSize, $pageIndex * pageSize + pageSize));
     }
+  }
+
+  async function actionMenuDelete(id: string, additionalId?: string) {
+    await deleteEntries([id], additionalId);
+    $selectedDataIds[id] = false;
   }
 
   async function deleteSelectedEntries() {
@@ -291,7 +296,7 @@
   <div class="flex justify-center items-center relative">
     <div class=" text-sm text-muted-foreground absolute left-0 items-center">
       {Object.keys($selectedDataIds).length} von{' '}
-      {$rows.length} Zeile(n) ausgewählt.
+      {$totalElementsStore} Zeile(n) ausgewählt.
     </div>
     <div>
       <Pagination.Root bind:count={$totalElementsStore} perPage={pageSize} let:pages bind:page={currentPaginationPage}>

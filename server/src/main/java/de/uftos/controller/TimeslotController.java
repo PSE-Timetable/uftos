@@ -75,7 +75,7 @@ public class TimeslotController {
    * {@link TimeslotService#update(String, TimeslotRequestDto) update} function of the timeslot
    * service.
    *
-   * @param id       the ID of the timeslot which is to be updated.
+   * @param id      the ID of the timeslot which is to be updated.
    * @param timeslot the updated information of the timeslot.
    * @return the updated timeslot.
    */
