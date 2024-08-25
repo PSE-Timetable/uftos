@@ -1,7 +1,9 @@
 package de.uftos.services;
 
 import de.uftos.dto.requestdtos.SubjectRequestDto;
+import de.uftos.entities.Curriculum;
 import de.uftos.entities.Subject;
+import de.uftos.repositories.database.CurriculumRepository;
 import de.uftos.repositories.database.SubjectRepository;
 import de.uftos.utils.SpecificationBuilder;
 import java.util.List;
@@ -19,6 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class SubjectService {
   private final SubjectRepository repository;
+  private final CurriculumRepository curriculumRepository;
 
   /**
    * Creates a subject service.
@@ -26,8 +29,9 @@ public class SubjectService {
    * @param repository The repository for accessing the subject table.
    */
   @Autowired
-  public SubjectService(SubjectRepository repository) {
+  public SubjectService(SubjectRepository repository, CurriculumRepository curriculumRepository) {
     this.repository = repository;
+    this.curriculumRepository = curriculumRepository;
   }
 
   /**
@@ -82,7 +86,8 @@ public class SubjectService {
    */
   public Subject update(String id, SubjectRequestDto subjectRequest) {
     if (subjectRequest.name().isBlank()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The name of the subject is blank.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "The name of the subject is blank.");
     }
     Subject subject = subjectRequest.map();
     subject.setId(id);
@@ -97,11 +102,22 @@ public class SubjectService {
    * @throws ResponseStatusException is thrown if no subject exists with the given ID.
    */
   public void delete(String id) {
-    var subject = this.repository.findById(id);
-    if (subject.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The name of the subject is blank.");
+    Optional<Subject> subjectOptional = this.repository.findById(id);
+    if (subjectOptional.isEmpty()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "The name of the subject is blank.");
     }
 
-    this.repository.delete(subject.get());
+    Subject subject = subjectOptional.get();
+
+    List<Curriculum> curriculums = curriculumRepository.findAll();
+
+    for (Curriculum curriculum : curriculums) {
+      curriculum.getLessonsCounts()
+          .removeIf((lessonsCount) -> lessonsCount.getSubject().equals(subject));
+    }
+
+    curriculumRepository.saveAll(curriculums);
+    this.repository.delete(subject);
   }
 }
