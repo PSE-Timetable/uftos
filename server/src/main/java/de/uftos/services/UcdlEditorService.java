@@ -103,8 +103,7 @@ public class UcdlEditorService {
     } catch (IOException e) {
       return new ParsingResponse(false, e.getMessage());
     }
-
-    List<ConstraintSignature> signatures = constraintSignatureRepository.findAll();
+    List<ConstraintSignature> signatures = new ArrayList<>(constraintSignatureRepository.findAll());
     HashMap<String, ConstraintDefinitionDto> definitions;
     try {
       definitions = ucdlRepository.getConstraintsFromString(ucdlCode);
@@ -112,6 +111,8 @@ public class UcdlEditorService {
       return new ParsingResponse(false, e.getMessage());
     }
 
+    System.out.println(signatures);
+    System.out.println(definitions); //TODO
     for (ConstraintSignature signature : signatures) {
       ConstraintDefinitionDto definition = definitions.get(signature.getName());
       if (!signature.getInstances().isEmpty() && signatureChanged(signature, definition)) {
@@ -145,7 +146,9 @@ public class UcdlEditorService {
     try {
       HashMap<String, ConstraintDefinitionDto> definitions = ucdlRepository.getConstraints();
 
-      List<ConstraintSignature> signatures = constraintSignatureRepository.findAll();
+      List<ConstraintSignature> signatures =
+          new ArrayList<>(constraintSignatureRepository.findAll());
+      //apparently the list is immutable when you use it directly
 
       for (int i = 0; i < signatures.size(); i++) {
         ConstraintSignature signature = signatures.get(i);
@@ -266,6 +269,7 @@ public class UcdlEditorService {
     if (!definition.name().equals(signature.getName())) {
       throw new IllegalArgumentException();
     }
+
 
     Queue<ConstraintParameter> signatureParameters = new ArrayDeque<>(signature.getParameters());
     Queue<ResourceType> definitionParameters =
