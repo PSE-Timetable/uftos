@@ -353,6 +353,154 @@ public class UcdlEditorServiceTests {
   }
 
   @Test
+  void setUcdlSignatureChangedNoInstancesNoForce() throws ParseException, IOException {
+    String testDefinition = """
+        newConstraint:
+          description: "Ein neuer Constraint, der immer zu false auswertet."
+          default_type: HARD_PENALIZE
+          parameter:
+          definition: >-
+            if (false) {
+              return true
+            }
+            return false
+        """;
+    AbstractSyntaxTreeDto testAst = () -> null;
+    LinkedHashMap<String, ResourceType> parameters = new LinkedHashMap<>();
+    parameters.put("this", ResourceType.TIMETABLE);
+    parameters.put("testParam", ResourceType.TEACHER);
+    ConstraintDefinitionDto definition = new ConstraintDefinitionDto("different name",
+        "Ein neuer Constraint, der immer zu false auswertet.", RewardPenalize.HARD_PENALIZE,
+        parameters, testAst);
+    //name in definition dto does not match signature
+    HashMap<String, ConstraintDefinitionDto> getConstraintsResponse = new HashMap<>();
+    getConstraintsResponse.put("newConstraint", definition);
+
+    ConstraintParameter testParameter = new ConstraintParameter();
+    testParameter.setParameterName("testParam");
+    testParameter.setParameterType(ResourceType.STUDENT);
+    when(signatureMock.getParameters()).thenReturn(List.of(testParameter));
+    when(ucdlRepository.getConstraintsFromString(testDefinition)).thenReturn(
+        getConstraintsResponse);
+    when(constraintSignatureRepository.findAll()).thenReturn(List.of(signatureMock));
+
+    MultipartFile file = new MockMultipartFile("test file", """
+        newConstraint:
+          description: "Ein neuer Constraint, der immer zu false auswertet."
+          default_type: HARD_PENALIZE
+          parameter:
+          definition: >-
+            if (false) {
+              return true
+            }
+            return false
+        """.getBytes());
+    assertThrows(IllegalStateException.class, () -> ucdlEditorService.setUcdl(file, false));
+  }
+
+  @Test
+  void setUcdlNewParameterNoInstancesNoForce() throws ParseException, IOException {
+    String testDefinition = """
+        newConstraint:
+          description: "Ein neuer Constraint, der immer zu false auswertet."
+          default_type: HARD_PENALIZE
+          parameter:
+          definition: >-
+            if (false) {
+              return true
+            }
+            return false
+        """;
+    String successMessage =
+        "Code erfolgreich gespeichert!";
+    AbstractSyntaxTreeDto testAst = () -> null;
+    LinkedHashMap<String, ResourceType> parameters = new LinkedHashMap<>();
+    parameters.put("this", ResourceType.TIMETABLE);
+    parameters.put("testParam", ResourceType.TEACHER);
+    parameters.put("newParam", ResourceType.STUDENT);
+    //third parameter is not present in signature
+    ConstraintDefinitionDto definition = new ConstraintDefinitionDto("newConstraint",
+        "Ein neuer Constraint, der immer zu false auswertet.", RewardPenalize.HARD_PENALIZE,
+        parameters, testAst);
+    HashMap<String, ConstraintDefinitionDto> getConstraintsResponse = new HashMap<>();
+    getConstraintsResponse.put("newConstraint", definition);
+
+    ConstraintParameter testParameter = new ConstraintParameter();
+    testParameter.setParameterName("testParam");
+    testParameter.setParameterType(ResourceType.STUDENT);
+    when(signatureMock.getParameters()).thenReturn(List.of(testParameter));
+    when(ucdlRepository.getConstraintsFromString(testDefinition)).thenReturn(
+        getConstraintsResponse);
+    when(constraintSignatureRepository.findAll()).thenReturn(List.of(signatureMock));
+
+    MultipartFile file = new MockMultipartFile("test file", """
+        newConstraint:
+          description: "Ein neuer Constraint, der immer zu false auswertet."
+          default_type: HARD_PENALIZE
+          parameter:
+          definition: >-
+            if (false) {
+              return true
+            }
+            return false
+        """.getBytes());
+    ParsingResponse response = ucdlEditorService.setUcdl(file, false);
+    assertEquals(response.message(), successMessage);
+  }
+
+  @Test
+  void setUcdlDeletedParameterNoInstancesNoForce() throws ParseException, IOException {
+    String testDefinition = """
+        newConstraint:
+          description: "Ein neuer Constraint, der immer zu false auswertet."
+          default_type: HARD_PENALIZE
+          parameter:
+          definition: >-
+            if (false) {
+              return true
+            }
+            return false
+        """;
+    String successMessage =
+        "Code erfolgreich gespeichert!";
+    AbstractSyntaxTreeDto testAst = () -> null;
+    LinkedHashMap<String, ResourceType> parameters = new LinkedHashMap<>();
+    parameters.put("this", ResourceType.TIMETABLE);
+    //definition is missing a parameter from the signature
+    ConstraintDefinitionDto definition = new ConstraintDefinitionDto("newConstraint",
+        "Ein neuer Constraint, der immer zu false auswertet.", RewardPenalize.HARD_PENALIZE,
+        parameters, testAst);
+    HashMap<String, ConstraintDefinitionDto> getConstraintsResponse = new HashMap<>();
+    getConstraintsResponse.put("newConstraint", definition);
+
+    ConstraintParameter testParameter = new ConstraintParameter();
+    testParameter.setParameterName("testParam");
+    testParameter.setParameterType(ResourceType.STUDENT);
+    when(signatureMock.getParameters()).thenReturn(List.of(testParameter))
+        .thenReturn(List.of(testParameter))
+        .thenReturn(List.of(testParameter))
+        .thenReturn(List.of());
+    //on fourth call, the parameter has been removed from the list and is no longer returned
+    when(ucdlRepository.getConstraintsFromString(testDefinition)).thenReturn(
+        getConstraintsResponse);
+    when(constraintSignatureRepository.findAll()).thenReturn(List.of(signatureMock));
+
+    MultipartFile file = new MockMultipartFile("test file", """
+        newConstraint:
+          description: "Ein neuer Constraint, der immer zu false auswertet."
+          default_type: HARD_PENALIZE
+          parameter:
+          definition: >-
+            if (false) {
+              return true
+            }
+            return false
+        """.getBytes());
+    ParsingResponse response = ucdlEditorService.setUcdl(file, false);
+    assertEquals(response.message(), successMessage);
+  }
+
+  @Test
   void setUcdlInvalidConstraintNoForce() {
     MultipartFile file = new MockMultipartFile("test file", invalidUcdlCode.getBytes());
     ParsingResponse response = ucdlEditorService.setUcdl(file, false);
