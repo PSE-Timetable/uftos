@@ -142,6 +142,10 @@ public class StudentGroupService {
 
     List<Grade> grades =
         this.gradeRepository.findAllById(groupRequest.gradeIds());
+    List<Grade> allGrades = this.gradeRepository.findAll();
+    for (Grade grade : allGrades) {
+      grade.getStudentGroups().remove(group);
+    }
     for (Grade grade : grades) {
       grade.getStudentGroups().add(group);
       this.gradeRepository.save(grade);
