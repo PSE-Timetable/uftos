@@ -25,6 +25,8 @@ import de.uftos.entities.StudentGroup;
 import de.uftos.entities.Subject;
 import de.uftos.entities.Teacher;
 import de.uftos.entities.TimetableMetadata;
+import de.uftos.repositories.database.ConstraintInstanceRepository;
+import de.uftos.repositories.database.ConstraintSignatureRepository;
 import de.uftos.repositories.database.GradeRepository;
 import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.StudentGroupRepository;
@@ -51,14 +53,25 @@ public class StudentGroupServiceTests {
   private final StudentGroupRequestDto requestDto =
       new StudentGroupRequestDto("testName", List.of("studentId1"), List.of("gradeId1"),
           List.of("tagId1"), List.of("subjectId1"));
+
   @Mock
   private StudentGroupRepository studentGroupRepository;
+
   @Mock
   private StudentRepository studentRepository;
+
   @Mock
   private GradeRepository gradeRepository;
+
   @Mock
   private ServerRepository serverRepository;
+
+  @Mock
+  private ConstraintSignatureRepository signatureRepository;
+
+  @Mock
+  private ConstraintInstanceRepository instanceRepository;
+
   @InjectMocks
   private StudentGroupService studentGroupService;
 
@@ -197,7 +210,8 @@ public class StudentGroupServiceTests {
     studentGroup2.setLessons(Collections.emptyList());
 
     StudentGroup studentGroup3 =
-        new StudentGroup("testName", List.of("studentId1"), List.of("tagId1"), List.of("subjectId1"));
+        new StudentGroup("testName", List.of("studentId1"), List.of("tagId1"),
+            List.of("subjectId1"));
 
     Grade grade1 = new Grade("gradeId1");
     grade1.setStudentGroups(new ArrayList<>(List.of(studentGroup1, studentGroup2, studentGroup3)));

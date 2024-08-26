@@ -6,12 +6,15 @@ import de.uftos.entities.Curriculum;
 import de.uftos.entities.StudentGroup;
 import de.uftos.entities.Subject;
 import de.uftos.entities.Teacher;
+import de.uftos.repositories.database.ConstraintInstanceRepository;
+import de.uftos.repositories.database.ConstraintSignatureRepository;
 import de.uftos.repositories.database.StudentGroupRepository;
 import de.uftos.entities.Teacher;
 import de.uftos.repositories.database.CurriculumRepository;
 import de.uftos.repositories.database.StudentGroupRepository;
 import de.uftos.repositories.database.SubjectRepository;
 import de.uftos.repositories.database.TeacherRepository;
+import de.uftos.utils.ConstraintInstanceDeleter;
 import de.uftos.utils.SpecificationBuilder;
 import java.util.Arrays;
 import java.util.List;
@@ -32,23 +35,31 @@ public class SubjectService {
   private final CurriculumRepository curriculumRepository;
   private final TeacherRepository teacherRepository;
   private final StudentGroupRepository studentGroupRepository;
+  private final ConstraintSignatureRepository constraintSignatureRepository;
+  private final ConstraintInstanceRepository constraintInstanceRepository;
 
   /**
    * Creates a subject service.
    *
-   * @param repository             The repository for accessing the subject table.
-   * @param curriculumRepository   The repository for accessing the curriculum table.
-   * @param teacherRepository      The repository for accessing the teacher table.
-   * @param studentGroupRepository The repository for accessing the student group table.
+   * @param repository                    The repository for accessing the subject table.
+   * @param curriculumRepository          The repository for accessing the curriculum table.
+   * @param teacherRepository             The repository for accessing the teacher table.
+   * @param studentGroupRepository        The repository for accessing the student group table.
+   * @param constraintSignatureRepository the repository for accessing the constraint signature table.
+   * @param constraintInstanceRepository  the repository for accessing the constraint instance table.
    */
   @Autowired
   public SubjectService(SubjectRepository repository, CurriculumRepository curriculumRepository,
                         TeacherRepository teacherRepository,
-                        StudentGroupRepository studentGroupRepository) {
+                        StudentGroupRepository studentGroupRepository,
+                        ConstraintSignatureRepository constraintSignatureRepository,
+                        ConstraintInstanceRepository constraintInstanceRepository) {
     this.repository = repository;
     this.curriculumRepository = curriculumRepository;
     this.teacherRepository = teacherRepository;
     this.studentGroupRepository = studentGroupRepository;
+    this.constraintSignatureRepository = constraintSignatureRepository;
+    this.constraintInstanceRepository = constraintInstanceRepository;
   }
 
   /**
@@ -149,6 +160,9 @@ public class SubjectService {
 
     studentGroupRepository.saveAll(studentGroups);
     curriculumRepository.saveAll(curriculums);
+
+    new ConstraintInstanceDeleter(constraintSignatureRepository, constraintInstanceRepository)
+        .removeAllInstancesWithArgumentValue(new String[] {id});
 
     this.repository.delete(subject);
   }

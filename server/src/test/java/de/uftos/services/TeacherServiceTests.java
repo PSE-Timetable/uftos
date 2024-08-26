@@ -22,6 +22,8 @@ import de.uftos.entities.StudentGroup;
 import de.uftos.entities.Subject;
 import de.uftos.entities.Teacher;
 import de.uftos.entities.TimetableMetadata;
+import de.uftos.repositories.database.ConstraintInstanceRepository;
+import de.uftos.repositories.database.ConstraintSignatureRepository;
 import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.TeacherRepository;
 import java.util.Collections;
@@ -48,6 +50,12 @@ public class TeacherServiceTests {
 
   @Mock
   private ServerRepository serverRepository;
+
+  @Mock
+  private ConstraintSignatureRepository signatureRepository;
+
+  @Mock
+  private ConstraintInstanceRepository instanceRepository;
 
   @InjectMocks
   private TeacherService teacherService;
@@ -199,8 +207,10 @@ public class TeacherServiceTests {
     );
 
     assertAll("Testing whether all the rooms are there",
-        () -> assertTrue(result.rooms().stream().map(room -> room.getId()).toList().contains(room1.getId())),
-        () -> assertTrue(result.rooms().stream().map(room -> room.getId()).toList().contains(room2.getId()))
+        () -> assertTrue(
+            result.rooms().stream().map(room -> room.getId()).toList().contains(room1.getId())),
+        () -> assertTrue(
+            result.rooms().stream().map(room -> room.getId()).toList().contains(room2.getId()))
     );
 
     assertAll("Testing whether all the student groups are there",

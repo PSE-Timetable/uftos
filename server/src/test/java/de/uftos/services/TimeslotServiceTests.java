@@ -14,6 +14,8 @@ import de.uftos.entities.Break;
 import de.uftos.entities.Server;
 import de.uftos.entities.Timeslot;
 import de.uftos.entities.TimetableMetadata;
+import de.uftos.repositories.database.ConstraintInstanceRepository;
+import de.uftos.repositories.database.ConstraintSignatureRepository;
 import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.TimeslotRepository;
 import java.util.List;
@@ -38,6 +40,12 @@ public class TimeslotServiceTests {
 
   @Mock
   private ServerRepository serverRepository;
+
+  @Mock
+  private ConstraintSignatureRepository signatureRepository;
+
+  @Mock
+  private ConstraintInstanceRepository instanceRepository;
 
   @InjectMocks
   private TimeslotService timeslotService;

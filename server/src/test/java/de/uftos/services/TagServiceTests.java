@@ -14,6 +14,8 @@ import de.uftos.entities.Break;
 import de.uftos.entities.Server;
 import de.uftos.entities.Tag;
 import de.uftos.entities.TimetableMetadata;
+import de.uftos.repositories.database.ConstraintInstanceRepository;
+import de.uftos.repositories.database.ConstraintSignatureRepository;
 import de.uftos.repositories.database.GradeRepository;
 import de.uftos.repositories.database.RoomRepository;
 import de.uftos.repositories.database.ServerRepository;
@@ -67,6 +69,12 @@ public class TagServiceTests {
 
   @Mock
   private TimeslotRepository timeslotRepository;
+
+  @Mock
+  private ConstraintSignatureRepository signatureRepository;
+
+  @Mock
+  private ConstraintInstanceRepository instanceRepository;
 
   @InjectMocks
   private TagService tagService;

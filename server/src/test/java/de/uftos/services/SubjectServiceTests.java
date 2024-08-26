@@ -13,6 +13,8 @@ import static org.mockito.Mockito.when;
 import de.uftos.dto.requestdtos.SubjectRequestDto;
 import de.uftos.entities.Subject;
 import de.uftos.entities.Tag;
+import de.uftos.repositories.database.ConstraintInstanceRepository;
+import de.uftos.repositories.database.ConstraintSignatureRepository;
 import de.uftos.repositories.database.CurriculumRepository;
 import de.uftos.repositories.database.StudentGroupRepository;
 import de.uftos.repositories.database.SubjectRepository;
@@ -55,6 +57,12 @@ public class SubjectServiceTests {
 
   @Mock
   private StudentGroupRepository studentGroupRepository;
+
+  @Mock
+  private ConstraintSignatureRepository signatureRepository;
+
+  @Mock
+  private ConstraintInstanceRepository instanceRepository;
 
   @InjectMocks
   private SubjectService subjectService;

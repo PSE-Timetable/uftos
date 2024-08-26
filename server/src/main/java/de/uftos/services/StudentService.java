@@ -3,8 +3,11 @@ package de.uftos.services;
 import de.uftos.dto.requestdtos.StudentRequestDto;
 import de.uftos.entities.Student;
 import de.uftos.entities.StudentGroup;
+import de.uftos.repositories.database.ConstraintInstanceRepository;
+import de.uftos.repositories.database.ConstraintSignatureRepository;
 import de.uftos.repositories.database.StudentGroupRepository;
 import de.uftos.repositories.database.StudentRepository;
+import de.uftos.utils.ConstraintInstanceDeleter;
 import de.uftos.utils.SpecificationBuilder;
 import java.util.Arrays;
 import java.util.List;
@@ -24,18 +27,26 @@ import org.springframework.web.server.ResponseStatusException;
 public class StudentService {
   private final StudentRepository repository;
   private final StudentGroupRepository studentGroupRepository;
+  private final ConstraintSignatureRepository constraintSignatureRepository;
+  private final ConstraintInstanceRepository constraintInstanceRepository;
 
   /**
    * Creates a student service.
    *
-   * @param repository             the repository for accessing the student table.
-   * @param studentGroupRepository the repository for accessing the student group table.
+   * @param repository                    the repository for accessing the student table.
+   * @param studentGroupRepository        the repository for accessing the student group table.
+   * @param constraintSignatureRepository the repository for accessing the constraint signature table.
+   * @param constraintInstanceRepository  the repository for accessing the constraint instance table.
    */
   @Autowired
   public StudentService(StudentRepository repository,
-                        StudentGroupRepository studentGroupRepository) {
+                        StudentGroupRepository studentGroupRepository,
+                        ConstraintSignatureRepository constraintSignatureRepository,
+                        ConstraintInstanceRepository constraintInstanceRepository) {
     this.repository = repository;
     this.studentGroupRepository = studentGroupRepository;
+    this.constraintSignatureRepository = constraintSignatureRepository;
+    this.constraintInstanceRepository = constraintInstanceRepository;
   }
 
   /**
@@ -151,7 +162,10 @@ public class StudentService {
     }
 
     studentGroupRepository.saveAll(studentGroups);
-    this.repository.deleteAllById(Arrays.stream(ids).toList());
 
+    new ConstraintInstanceDeleter(constraintSignatureRepository, constraintInstanceRepository)
+        .removeAllInstancesWithArgumentValue(ids);
+
+    this.repository.deleteAllById(Arrays.stream(ids).toList());
   }
 }

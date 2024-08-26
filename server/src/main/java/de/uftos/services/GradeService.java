@@ -7,11 +7,12 @@ import de.uftos.dto.responsedtos.LessonResponseDto;
 import de.uftos.entities.Grade;
 import de.uftos.entities.Lesson;
 import de.uftos.entities.StudentGroup;
+import de.uftos.repositories.database.ConstraintInstanceRepository;
+import de.uftos.repositories.database.ConstraintSignatureRepository;
 import de.uftos.repositories.database.GradeRepository;
 import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.StudentGroupRepository;
 import de.uftos.utils.SpecificationBuilder;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -32,6 +33,8 @@ import org.springframework.web.server.ResponseStatusException;
 public class GradeService {
   private final GradeRepository repository;
   private final ServerRepository serverRepository;
+  private final ConstraintSignatureRepository constraintSignatureRepository;
+  private final ConstraintInstanceRepository constraintInstanceRepository;
   private final StudentGroupRepository studentGroupRepository;
 
   /**
@@ -39,12 +42,19 @@ public class GradeService {
    *
    * @param repository             the repository for accessing the grade table.
    * @param studentGroupRepository the repository for accessing the student group table.
+   * @param repository                    the repository for accessing the grade table.
+   * @param constraintSignatureRepository the repository for accessing the constraint signature table.
+   * @param constraintInstanceRepository  the repository for accessing the constraint instance table.
    */
   @Autowired
   public GradeService(GradeRepository repository, ServerRepository serverRepository,
+                      ConstraintSignatureRepository constraintSignatureRepository,
+                      ConstraintInstanceRepository constraintInstanceRepository,
                       StudentGroupRepository studentGroupRepository) {
     this.repository = repository;
     this.serverRepository = serverRepository;
+    this.constraintSignatureRepository = constraintSignatureRepository;
+    this.constraintInstanceRepository = constraintInstanceRepository;
     this.studentGroupRepository = studentGroupRepository;
   }
 
@@ -157,6 +167,8 @@ public class GradeService {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
           "This grade is still associated with a student group.");
     }
+    new ConstraintInstanceDeleter(constraintSignatureRepository, constraintInstanceRepository)
+        .removeAllInstancesWithArgumentValue(new String[] {id});
 
     this.repository.delete(grade.get());
   }

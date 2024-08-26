@@ -4,8 +4,11 @@ import de.uftos.dto.requestdtos.TeacherRequestDto;
 import de.uftos.dto.responsedtos.LessonResponseDto;
 import de.uftos.entities.Lesson;
 import de.uftos.entities.Teacher;
+import de.uftos.repositories.database.ConstraintInstanceRepository;
+import de.uftos.repositories.database.ConstraintSignatureRepository;
 import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.TeacherRepository;
+import de.uftos.utils.ConstraintInstanceDeleter;
 import de.uftos.utils.SpecificationBuilder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,16 +29,24 @@ import org.springframework.web.server.ResponseStatusException;
 public class TeacherService {
   private final TeacherRepository repository;
   private final ServerRepository serverRepository;
+  private final ConstraintSignatureRepository constraintSignatureRepository;
+  private final ConstraintInstanceRepository constraintInstanceRepository;
 
   /**
    * Creates a teacher service.
    *
-   * @param repository the repository for accessing the teacher table.
+   * @param repository                    the repository for accessing the teacher table.
+   * @param constraintSignatureRepository the repository for accessing the constraint signature table.
+   * @param constraintInstanceRepository  the repository for accessing the constraint instance table.
    */
   @Autowired
-  public TeacherService(TeacherRepository repository, ServerRepository serverRepository) {
+  public TeacherService(TeacherRepository repository, ServerRepository serverRepository,
+                        ConstraintSignatureRepository constraintSignatureRepository,
+                        ConstraintInstanceRepository constraintInstanceRepository) {
     this.repository = repository;
     this.serverRepository = serverRepository;
+    this.constraintSignatureRepository = constraintSignatureRepository;
+    this.constraintInstanceRepository = constraintInstanceRepository;
   }
 
   /**
@@ -133,6 +144,9 @@ public class TeacherService {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
           "Could not find a teacher with this id");
     }
+
+    new ConstraintInstanceDeleter(constraintSignatureRepository, constraintInstanceRepository)
+        .removeAllInstancesWithArgumentValue(new String[] {id});
 
     this.repository.delete(teacher.get());
   }

@@ -9,6 +9,8 @@ import de.uftos.entities.Subject;
 import de.uftos.entities.Tag;
 import de.uftos.entities.Teacher;
 import de.uftos.entities.Timeslot;
+import de.uftos.repositories.database.ConstraintInstanceRepository;
+import de.uftos.repositories.database.ConstraintSignatureRepository;
 import de.uftos.repositories.database.GradeRepository;
 import de.uftos.repositories.database.RoomRepository;
 import de.uftos.repositories.database.StudentGroupRepository;
@@ -17,6 +19,7 @@ import de.uftos.repositories.database.SubjectRepository;
 import de.uftos.repositories.database.TagRepository;
 import de.uftos.repositories.database.TeacherRepository;
 import de.uftos.repositories.database.TimeslotRepository;
+import de.uftos.utils.ConstraintInstanceDeleter;
 import de.uftos.utils.SpecificationBuilder;
 import java.util.Arrays;
 import java.util.List;
@@ -41,25 +44,31 @@ public class TagService {
   private final SubjectRepository subjectRepository;
   private final GradeRepository gradeRepository;
   private final TimeslotRepository timeslotRepository;
+  private final ConstraintSignatureRepository constraintSignatureRepository;
+  private final ConstraintInstanceRepository constraintInstanceRepository;
 
   /**
    * Creates a tag service.
    *
-   * @param repository             the repository for accessing the tag table.
-   * @param studentRepository      the repository for accessing the student table.
-   * @param teacherRepository      the repository for accessing the teacher table.
-   * @param studentGroupRepository the repository for accessing the student group table.
-   * @param roomRepository         the repository for accessing the room table.
-   * @param subjectRepository      the repository for accessing the subject table.
-   * @param gradeRepository        the repository for accessing the grade table.
-   * @param timeslotRepository     the repository for accessing the timeslot table.
+   * @param repository                    the repository for accessing the tag table.
+   * @param studentRepository             the repository for accessing the student table.
+   * @param teacherRepository             the repository for accessing the teacher table.
+   * @param studentGroupRepository        the repository for accessing the student group table.
+   * @param roomRepository                the repository for accessing the room table.
+   * @param subjectRepository             the repository for accessing the subject table.
+   * @param gradeRepository               the repository for accessing the grade table.
+   * @param timeslotRepository            the repository for accessing the timeslot table.
+   * @param constraintSignatureRepository the repository for accessing the constraint signature table.
+   * @param constraintInstanceRepository  the repository for accessing the constraint instance table.
    */
   @Autowired
   public TagService(TagRepository repository, StudentRepository studentRepository,
                     TeacherRepository teacherRepository,
                     StudentGroupRepository studentGroupRepository, RoomRepository roomRepository,
                     SubjectRepository subjectRepository, GradeRepository gradeRepository,
-                    TimeslotRepository timeslotRepository) {
+                    TimeslotRepository timeslotRepository,
+                    ConstraintSignatureRepository constraintSignatureRepository,
+                    ConstraintInstanceRepository constraintInstanceRepository) {
     this.repository = repository;
     this.studentRepository = studentRepository;
     this.teacherRepository = teacherRepository;
@@ -68,6 +77,8 @@ public class TagService {
     this.subjectRepository = subjectRepository;
     this.gradeRepository = gradeRepository;
     this.timeslotRepository = timeslotRepository;
+    this.constraintSignatureRepository = constraintSignatureRepository;
+    this.constraintInstanceRepository = constraintInstanceRepository;
   }
 
   /**
@@ -184,6 +195,9 @@ public class TagService {
       timeslot.getTags().removeIf(tag1 -> tag1.getId().equals(id));
     }
     timeslotRepository.saveAll(timeslots);
+
+    new ConstraintInstanceDeleter(constraintSignatureRepository, constraintInstanceRepository)
+        .removeAllInstancesWithArgumentValue(new String[] {id});
 
     this.repository.delete(tag.get());
   }
