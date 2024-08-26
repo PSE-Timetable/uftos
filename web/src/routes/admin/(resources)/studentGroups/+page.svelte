@@ -142,6 +142,7 @@
               additionalId={studentGroup.id}
               sortable={false}
               addButton={false}
+              editAvailable={false}
               pageSize={5}
             />
           {/await}
