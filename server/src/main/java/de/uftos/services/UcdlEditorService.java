@@ -111,9 +111,9 @@ public class UcdlEditorService {
       return new ParsingResponse(false, e.getMessage());
     }
 
-
     for (ConstraintSignature signature : signatures) {
       ConstraintDefinitionDto definition = definitions.get(signature.getName());
+
       if (!signature.getInstances().isEmpty() && signatureChanged(signature, definition)) {
         return new ParsingResponse(false,
             "Signaturen von Constraints haben sich geändert!"
@@ -146,7 +146,6 @@ public class UcdlEditorService {
 
       List<ConstraintSignature> signatures =
           new ArrayList<>(constraintSignatureRepository.findAll());
-      //apparently the list is immutable when you use it directly
 
       for (int i = 0; i < signatures.size(); i++) {
         ConstraintSignature signature = signatures.get(i);
@@ -178,6 +177,7 @@ public class UcdlEditorService {
   }
 
   private void updateSignature(ConstraintSignature signature, ConstraintDefinitionDto definition) {
+
     if (definition == null || signature == null || !definition.name().equals(signature.getName())) {
       throw new IllegalStateException();
     }

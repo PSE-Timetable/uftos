@@ -270,6 +270,30 @@ public class UcdlEditorServiceTests {
   }
 
   @Test
+  void setUcdlOneConstraintWithInstancesNoForce() throws ParseException, IOException {
+    LinkedHashMap<String, ResourceType> parameters = new LinkedHashMap<>();
+    parameters.put("this", ResourceType.TIMETABLE);
+    parameters.put(testParameterName, ResourceType.TEACHER);
+    ConstraintDefinitionDto definition = new ConstraintDefinitionDto(constraintName,
+        constraintDescription, RewardPenalize.HARD_PENALIZE,
+        parameters, testAst);
+    HashMap<String, ConstraintDefinitionDto> getConstraintsResponse = new HashMap<>();
+    getConstraintsResponse.put(constraintName, definition);
+
+    testParameter.setParameterName(testParameterName);
+    testParameter.setParameterType(ResourceType.TEACHER);
+    ConstraintInstance instance = new ConstraintInstance();
+    when(signatureMock.getInstances()).thenReturn(List.of(instance));
+    when(signatureMock.getParameters()).thenReturn(List.of(testParameter));
+    when(ucdlRepository.getConstraintsFromString(any(String.class))).thenReturn(
+        getConstraintsResponse);
+    when(constraintSignatureRepository.findAll()).thenReturn(List.of(signatureMock));
+
+    ParsingResponse response = ucdlEditorService.setUcdl(validUcdlFile, false);
+    assertEquals(successMessageNoForceSet, response.message());
+  }
+
+  @Test
   void setUcdlSignatureChangedNoForce() throws ParseException, IOException {
     LinkedHashMap<String, ResourceType> parameters = new LinkedHashMap<>();
     parameters.put("this", ResourceType.TIMETABLE);
@@ -295,6 +319,7 @@ public class UcdlEditorServiceTests {
         response.message());
   }
 
+
   @Test
   void setUcdlSignatureChangedNoInstancesNoForce() throws ParseException, IOException {
     LinkedHashMap<String, ResourceType> parameters = new LinkedHashMap<>();
@@ -318,6 +343,7 @@ public class UcdlEditorServiceTests {
     assertThrows(IllegalStateException.class,
         () -> ucdlEditorService.setUcdl(validUcdlFile, false));
   }
+
 
   @Test
   void setUcdlNewParameterNoInstancesNoForce() throws ParseException, IOException {
