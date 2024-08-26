@@ -2,6 +2,7 @@ package de.uftos.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.hypersistence.utils.hibernate.type.search.PostgreSQLTSVectorType;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -56,7 +57,7 @@ public class Subject {
   private List<Lesson> lessons;
 
   @JsonIgnore
-  @OneToMany(mappedBy = "subject")
+  @OneToMany(mappedBy = "subject", cascade = CascadeType.REMOVE)
   private List<LessonsCount> lessonsCounts;
 
   @JsonIgnore

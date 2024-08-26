@@ -1,9 +1,11 @@
 package de.uftos.services;
 
 import de.uftos.dto.requestdtos.SubjectRequestDto;
+import de.uftos.entities.Curriculum;
 import de.uftos.entities.StudentGroup;
 import de.uftos.entities.Subject;
 import de.uftos.entities.Teacher;
+import de.uftos.repositories.database.CurriculumRepository;
 import de.uftos.repositories.database.StudentGroupRepository;
 import de.uftos.repositories.database.SubjectRepository;
 import de.uftos.repositories.database.TeacherRepository;
@@ -23,6 +25,7 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class SubjectService {
   private final SubjectRepository repository;
+  private final CurriculumRepository curriculumRepository;
   private final TeacherRepository teacherRepository;
   private final StudentGroupRepository studentGroupRepository;
 
@@ -30,13 +33,16 @@ public class SubjectService {
    * Creates a subject service.
    *
    * @param repository             The repository for accessing the subject table.
+   * @param curriculumRepository   The repository for accessing the curriculum table.
    * @param teacherRepository      The repository for accessing the teacher table.
    * @param studentGroupRepository The repository for accessing the student group table.
    */
   @Autowired
-  public SubjectService(SubjectRepository repository, TeacherRepository teacherRepository,
+  public SubjectService(SubjectRepository repository, CurriculumRepository curriculumRepository,
+                        TeacherRepository teacherRepository,
                         StudentGroupRepository studentGroupRepository) {
     this.repository = repository;
+    this.curriculumRepository = curriculumRepository;
     this.teacherRepository = teacherRepository;
     this.studentGroupRepository = studentGroupRepository;
   }
@@ -109,24 +115,34 @@ public class SubjectService {
    * @throws ResponseStatusException is thrown if no subject exists with the given ID.
    */
   public void delete(String id) {
-    Optional<Subject> subject = this.repository.findById(id);
-    if (subject.isEmpty()) {
+    Optional<Subject> subjectOptional = this.repository.findById(id);
+    if (subjectOptional.isEmpty()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
           "The name of the subject is blank.");
     }
 
-    List<Teacher> teachers = teacherRepository.findBySubjects(subject.get());
+    Subject subject = subjectOptional.get();
+
+    List<Curriculum> curriculums = curriculumRepository.findAll();
+
+    for (Curriculum curriculum : curriculums) {
+      curriculum.getLessonsCounts()
+          .removeIf((lessonsCount) -> lessonsCount.getSubject().equals(subject));
+    }
+
+    List<Teacher> teachers = teacherRepository.findBySubjects(subject);
     for (Teacher teacher : teachers) {
       teacher.getSubjects().removeIf(subject1 -> subject1.getId().equals(id));
     }
     teacherRepository.saveAll(teachers);
 
-    List<StudentGroup> studentGroups = studentGroupRepository.findBySubjects(subject.get());
+    List<StudentGroup> studentGroups = studentGroupRepository.findBySubjects(subject);
     for (StudentGroup studentGroup : studentGroups) {
       studentGroup.getSubjects().removeIf(subject1 -> subject1.getId().equals(id));
     }
     studentGroupRepository.saveAll(studentGroups);
 
-    this.repository.delete(subject.get());
+    curriculumRepository.saveAll(curriculums);
+    this.repository.delete(subject);
   }
 }
