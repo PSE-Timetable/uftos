@@ -1,12 +1,18 @@
 package de.uftos.services;
 
+import de.uftos.dto.ResourceType;
 import de.uftos.dto.Weekday;
 import de.uftos.dto.responsedtos.ServerStatisticsResponseDto;
+import de.uftos.entities.ConstraintArgument;
+import de.uftos.entities.ConstraintInstance;
+import de.uftos.entities.ConstraintParameter;
+import de.uftos.entities.ConstraintSignature;
 import de.uftos.entities.Lesson;
 import de.uftos.entities.Server;
 import de.uftos.entities.Timeslot;
 import de.uftos.entities.Timetable;
 import de.uftos.entities.TimetableMetadata;
+import de.uftos.repositories.database.ConstraintInstanceRepository;
 import de.uftos.repositories.database.ConstraintSignatureRepository;
 import de.uftos.repositories.database.GradeRepository;
 import de.uftos.repositories.database.RoomRepository;
@@ -15,6 +21,7 @@ import de.uftos.repositories.database.StudentRepository;
 import de.uftos.repositories.database.TeacherRepository;
 import de.uftos.repositories.database.TimeslotRepository;
 import de.uftos.repositories.database.TimetableRepository;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +37,7 @@ public class ServerService {
   private final TeacherRepository teacherRepository;
   private final GradeRepository gradeRepository;
   private final RoomRepository roomRepository;
+  private final ConstraintInstanceRepository constraintInstanceRepository;
   private final ConstraintSignatureRepository constraintSignatureRepository;
   private final TimeslotRepository timeslotRepository;
   private final TimetableRepository timetableRepository;
@@ -42,6 +50,7 @@ public class ServerService {
    * @param teacherRepository             the repository for accessing the teacher table.
    * @param gradeRepository               the repository for accessing the student group table.
    * @param roomRepository                the repository for accessing the room table.
+   * @param constraintInstanceRepository  the repository for accessing the constraint instance table.
    * @param constraintSignatureRepository the repository for accessing the constraint signature table.
    * @param timeslotRepository            the repository for accessing the timeslot table.
    * @param timetableRepository           the repository for accessing the timetable table.
@@ -51,6 +60,7 @@ public class ServerService {
                        TeacherRepository teacherRepository,
                        GradeRepository gradeRepository,
                        RoomRepository roomRepository,
+                       ConstraintInstanceRepository constraintInstanceRepository,
                        ConstraintSignatureRepository constraintSignatureRepository,
                        TimeslotRepository timeslotRepository,
                        TimetableRepository timetableRepository) {
@@ -59,6 +69,7 @@ public class ServerService {
     this.teacherRepository = teacherRepository;
     this.gradeRepository = gradeRepository;
     this.roomRepository = roomRepository;
+    this.constraintInstanceRepository = constraintInstanceRepository;
     this.constraintSignatureRepository = constraintSignatureRepository;
     this.timeslotRepository = timeslotRepository;
     this.timetableRepository = timetableRepository;
@@ -125,8 +136,38 @@ public class ServerService {
     List<Timetable> timetables = currentSlots.stream()
         .flatMap(timeslot -> timeslot.getLessons().stream().map(Lesson::getTimetable)).distinct()
         .toList();
+
+    List<String> timeslotIds = currentSlots.stream().map(Timeslot::getId).toList();
+    List<ConstraintSignature> constraintSignatures = constraintSignatureRepository.findAll();
+
+    constraintSignatures.removeIf(constraintSignature -> {
+      for (ConstraintParameter constraintParameter : constraintSignature.getParameters()) {
+        if (constraintParameter.getParameterType().equals(ResourceType.TIMESLOT)) {
+          return false;
+        }
+      }
+      return true;
+    });
+
+    List<ConstraintInstance> constraintInstances = new ArrayList<>(constraintSignatures.stream()
+        .flatMap(constraintSignature -> constraintSignature.getInstances().stream()).toList());
+
+    constraintInstances.removeIf(constraintInstance -> {
+      for (String argumentId : constraintInstance.getArguments().stream()
+          .map(ConstraintArgument::getValue).toList()) {
+        System.out.println(argumentId);
+        if (timeslotIds.contains(argumentId)) {
+          return false;
+        }
+      }
+      return true;
+    });
+
     this.timeslotRepository.deleteAll(currentSlots);
     this.timetableRepository.deleteAll(timetables);
+    this.constraintInstanceRepository.deleteAll(
+        constraintInstances); //TODO: deleteAll doesn't delete instance
+
 
     // TODO delete instances that used timeslots that don't exist anymore
   }
