@@ -16,16 +16,11 @@ test.describe('Students page', () => {
     await page.getByRole('row').first().waitFor();
     await page.getByRole('row', { name: 'Vorname Nachname Tags' }).getByRole('checkbox').waitFor();
     await page.waitForTimeout(500); //not ideal, but helps to load the page fully
-
-    while (
-      (await page.getByRole('cell', { name: 'Open menu' }).first().isVisible()) &&
-      (await page.getByRole('row', { name: 'Vorname Nachname Tags' }).getByRole('checkbox').isVisible()) &&
-      (await page.getByRole('row').count()) > 1
-    ) {
+    while (!(await page.getByRole('row').first().getByRole('checkbox').isChecked())) {
       await page.getByRole('row', { name: 'Vorname Nachname Tags' }).getByRole('checkbox').check();
       await page.keyboard.press('Delete');
       await page.getByRole('button', { name: 'Löschen' }).click();
-      await page.waitForTimeout(100);
+      await expect(page.getByText('Zeile(n) ausgewählt')).toContainText('0 von');
     }
   });
 
@@ -121,6 +116,7 @@ test.describe('Students page', () => {
     await expect(page.getByLabel('Previous')).toBeDisabled();
     await expect(page.getByLabel('Page 1')).toHaveCSS('border-color', 'rgb(43, 109, 136)');
     await expect(page.getByLabel('Page 2')).not.toHaveCSS('border-color', 'rgb(43, 109, 136)');
+    await expect(page.getByLabel('Next')).toBeEnabled();
     await page.getByLabel('Next').click();
     await expect(page.getByRole('row')).toHaveCount(11);
     await expect(page.getByLabel('Previous')).toBeEnabled();
