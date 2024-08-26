@@ -17,6 +17,8 @@ import de.uftos.repositories.database.CurriculumRepository;
 import de.uftos.repositories.database.StudentGroupRepository;
 import de.uftos.repositories.database.SubjectRepository;
 import de.uftos.repositories.database.TeacherRepository;
+import de.uftos.repositories.database.TeacherRepository;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.ArrayList;
 import java.util.List;
