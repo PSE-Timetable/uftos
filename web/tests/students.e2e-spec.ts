@@ -199,14 +199,23 @@ test.describe('Students page', () => {
     await page.getByRole('option', { name: 'BTag' }).click();
     await page.getByRole('combobox').click();
     await page.getByRole('button', { name: 'Speichern' }).click();
-    
-    await expect(page.locator('tbody')).toContainText('ATag,BTag');
+
+    await expect(page.getByRole('row').nth(1)).toContainText('ATag,BTag');
     await page.getByRole('row').nth(2).getByRole('button').click();
     await page.getByRole('menuitem', { name: 'Editieren' }).click();
     await page.getByRole('combobox').click();
     await page.getByRole('option', { name: 'BTag' }).click();
     await page.getByText('Vorname: Nachname: Tags: BTag').click();
     await page.getByRole('button', { name: 'Speichern' }).click();
-    await expect(page.locator('tbody')).toContainText(/BTag/);
-  })
+    await expect(page.getByRole('row').nth(2)).toContainText('BTag');
+    await page.getByRole('row').nth(1).getByRole('button').click();
+    await page.getByRole('menuitem', { name: 'Editieren' }).click();
+    await expect(page.getByRole('combobox')).toContainText('ATag, BTag');
+    await page.getByRole('combobox').click();
+    await expect(page.getByRole('option', { name: 'BTag' }).getByRole('img')).toBeVisible();
+    await page.getByRole('option', { name: 'BTag' }).click();
+    await page.getByRole('combobox').click();
+    await page.getByRole('button', { name: 'Speichern' }).click();
+    await expect(page.getByRole('row').nth(1)).toContainText('ATag');
+  });
 });
