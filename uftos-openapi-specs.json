@@ -1454,6 +1454,28 @@
       }
     },
     "/subjects" : {
+      "delete" : {
+        "operationId" : "deleteSubjects",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        },
+        "tags" : [ "subject-controller" ]
+      },
       "get" : {
         "operationId" : "getSubjects",
         "parameters" : [ {

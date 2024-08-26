@@ -124,12 +124,18 @@ public class StudentService {
     this.repository.delete(student.get());
   }
 
+  /**
+   * Deletes the students with the given IDs.
+   *
+   * @param ids the IDs of the students which are to be deleted.
+   * @throws ResponseStatusException is thrown if no students exist with the given IDs.
+   */
   public void deleteStudents(String[] ids) {
     Specification<Student> studentSpecification = new SpecificationBuilder<Student>()
         .andIn(ids, "id")
         .build();
     List<Student> students = this.repository.findAll(studentSpecification);
-    if (students.isEmpty()) {
+    if (students.isEmpty() || students.size() != ids.length) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
           "There exist no students with the given id(s).");
     }

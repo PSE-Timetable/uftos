@@ -15,12 +15,9 @@ import de.uftos.entities.Subject;
 import de.uftos.entities.Tag;
 import de.uftos.repositories.database.CurriculumRepository;
 import de.uftos.repositories.database.StudentGroupRepository;
-import de.uftos.repositories.database.StudentGroupRepository;
 import de.uftos.repositories.database.SubjectRepository;
 import de.uftos.repositories.database.TeacherRepository;
 import java.util.ArrayList;
-import java.util.Collections;
-import de.uftos.repositories.database.TeacherRepository;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -146,7 +143,6 @@ public class SubjectServiceTests {
   void deleteNonExistentSubject() {
     assertThrows(ResponseStatusException.class, () -> subjectService.delete("nonExistentId"));
   }
-
 
 
 }

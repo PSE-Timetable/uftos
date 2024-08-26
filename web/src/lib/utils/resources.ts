@@ -3,7 +3,7 @@ import {
   deleteGrade,
   deleteRoom,
   deleteStudents,
-  deleteSubject,
+  deleteSubjects,
   deleteTag,
   deleteTeacher,
   getConstraintInstances,
@@ -118,7 +118,7 @@ export async function loadSubjects(sortString: string, filter: string) {
 
 export async function deleteSubjectEntry(ids: string[]) {
   try {
-    await deleteMultiple(ids, deleteSubject);
+    await deleteSubjects(ids);
   } catch {
     toast(false, 'Beim Löschen des Fachs ist ein Fehler aufgetreten');
     error(400, { message: `could not delete subjects` });

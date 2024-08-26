@@ -109,8 +109,32 @@ public class SpecificationBuilder<T> {
       return this;
     }
     specification = specification.and(
-        (root, query, cb) -> root.join(relationName).get(attributeName)
+        (root, query, cb) -> root
+            .join(relationName)
+            .get(attributeName)
             .in(Arrays.stream(attributeValue.get()).toList())
+    );
+    return this;
+  }
+
+  /**
+   * Adds a filter to the specification by joining two times with another relation.
+   *
+   * @param attributeValue     The optional array of attribute values to filter by.
+   * @param firstRelationName  The name of the first relation to join.
+   * @param secondRelationName The name of the second relation to join.
+   * @param attributeName      The name of the attribute in the joined relation to filter on.
+   * @return The current instance of {@code SpecificationBuilder} with the join filter
+   *     added if the attribute value array is present.
+   */
+  public SpecificationBuilder<T> andDoubleJoinIn(String[] attributeValue, String firstRelationName,
+                                                 String secondRelationName, String attributeName) {
+    specification = specification.and(
+        (root, query, cb) -> root
+            .join(firstRelationName)
+            .join(secondRelationName)
+            .get(attributeName)
+            .in(Arrays.stream(attributeValue).toList())
     );
     return this;
   }
