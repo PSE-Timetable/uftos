@@ -37,80 +37,76 @@
   }
 </script>
 
-<div class="flex flex-col p-4 gap-4">
-  <div class="flex flex-row text-xl font-bold items-baseline">
-    <div class="w-28 mr-7">Stufe:</div>
-    <Select.Root bind:selected={selectedGradeId}>
-      <Select.Trigger class="shadow-custom w-[10vw]">
-        <Select.Value placeholder="Stufe auswählen" />
-      </Select.Trigger>
-      <Select.Content>
-        <Select.Group>
-          {#each selectGrades as grade}
-            <Select.Item value={grade.value} label={grade.label}>{grade.label}</Select.Item>
-          {/each}
-        </Select.Group>
-      </Select.Content>
-    </Select.Root>
-  </div>
+<div class="grid grid-cols-[max-content,1fr] p-4 gap-8">
+  <div class="text-lg font-bold">Stufe:</div>
+  <Select.Root bind:selected={selectedGradeId}>
+    <Select.Trigger class="shadow-custom w-[15vw]">
+      <Select.Value placeholder="Stufe auswählen" />
+    </Select.Trigger>
+    <Select.Content>
+      <Select.Group>
+        {#each selectGrades as grade}
+          <Select.Item value={grade.value} label={grade.label}>{grade.label}</Select.Item>
+        {/each}
+      </Select.Group>
+    </Select.Content>
+  </Select.Root>
+
   {#if selectedGrade}
     {#key selectedGradeId}
       {#await getCurriculumFromGrade() then}
-        <div class="flex flex-row items-center">
-          <div class="w-28 text-xl font-bold mr-6">Anzahl an Stunden pro Fach:</div>
-          <div class="grid grid-cols-4 gap-1">
-            {#each lessonsCounts as lessonCount}
-              <div
-                class="bg-white shadow-custom p-4 max-w-[13vw] break-words rounded-md flex flex-col gap-2 justify-between m-1"
-              >
-                <div class="text-center m-1">{lessonCount.subject?.name}</div>
-                <div class="flex-row flex justify-center gap-2">
-                  <button
-                    type="button"
-                    on:click={() => {
-                      if (lessonCount.count) {
-                        lessonCount.count--;
-                      } else {
-                        lessonCount.count = 0;
-                      }
-                    }}
-                    ><CircleMinus />
-                  </button>
-                  <div class="mx-3">{lessonCount.count}</div>
-                  <button
-                    type="button"
-                    on:click={() => {
-                      if (lessonCount.count) {
-                        lessonCount.count++;
-                      } else {
-                        lessonCount.count = 1;
-                      }
-                    }}
-                    ><CirclePlus />
-                  </button>
-                </div>
+        <div class="w-[10vw] text-lg font-bold">Anzahl an Stunden pro Fach:</div>
+        <div class="grid grid-cols-4 w-fit gap-8">
+          {#each lessonsCounts as lessonCount}
+            <div class="bg-white shadow-custom p-4 w-[15vw] break-words rounded-md flex flex-col gap-2 justify-between">
+              <div class="text-center m-1">{lessonCount.subject?.name}</div>
+              <div class="flex-row flex justify-center gap-2">
+                <button
+                  type="button"
+                  on:click={() => {
+                    if (lessonCount.count) {
+                      lessonCount.count--;
+                    } else {
+                      lessonCount.count = 0;
+                    }
+                  }}
+                  ><CircleMinus />
+                </button>
+                <div class="mx-3">{lessonCount.count}</div>
+                <button
+                  type="button"
+                  on:click={() => {
+                    if (lessonCount.count) {
+                      lessonCount.count++;
+                    } else {
+                      lessonCount.count = 1;
+                    }
+                  }}
+                  ><CirclePlus />
+                </button>
               </div>
-            {/each}
-          </div>
+            </div>
+          {/each}
         </div>
-        <Button
-          on:click={async () => {
-            if (selectedGrade) {
-              let test = {
-                gradeId: selectedGrade.id,
-                lessonsCounts: curriculum.lessonsCounts.map((lessonsCount) => ({
-                  count: lessonsCount.count || 0,
-                  subjectId: lessonsCount.subject ? lessonsCount.subject.id : '',
-                })),
-                name: selectedGrade.name,
-              };
-              await updateCurriculum(curriculum.id, test);
-            }
-          }}
-          class="w-[10%] p-8 text-lg bg-accent text-white"
-          variant="secondary">Speichern</Button
-        >
       {/await}
     {/key}
   {/if}
+
+  <Button
+    on:click={async () => {
+      if (selectedGrade) {
+        let test = {
+          gradeId: selectedGrade.id,
+          lessonsCounts: curriculum.lessonsCounts.map((lessonsCount) => ({
+            count: lessonsCount.count || 0,
+            subjectId: lessonsCount.subject ? lessonsCount.subject.id : '',
+          })),
+          name: selectedGrade.name,
+        };
+        await updateCurriculum(curriculum.id, test);
+      }
+    }}
+    class="col-start-2 w-[15vw] p-8 text-lg bg-accent text-white"
+    variant="secondary">Speichern</Button
+  >
 </div>

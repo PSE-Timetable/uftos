@@ -52,7 +52,8 @@ public class StudentGroupsTest {
         .body().jsonPath().getString("id");
 
     studentId = given().contentType(ContentType.JSON)
-        .body(generateStudentJson(STUDENT_FIRST_NAME, STUDENT_LAST_NAME, Collections.emptyList()))
+        .body(generateStudentJson(STUDENT_FIRST_NAME, STUDENT_LAST_NAME, Collections.emptyList(),
+            Collections.emptyList()))
         .when()
         .post("/students")
         .then()
@@ -147,6 +148,12 @@ public class StudentGroupsTest {
 
     given().contentType(ContentType.JSON)
         .when()
+        .delete("/subjects/{id}", subjectId)
+        .then()
+        .statusCode(200);
+
+    given().contentType(ContentType.JSON)
+        .when()
         .delete("/tags/{id}", tagId)
         .then()
         .statusCode(200);
@@ -182,7 +189,7 @@ public class StudentGroupsTest {
   void getStudentGroupsWithName() throws JSONException {
     given().contentType(ContentType.JSON)
         .body(generatePageJson(0, 10, Collections.emptyList()))
-        .param("name", FIRST_STUDENT_GROUP_NAME)
+        .param("search", FIRST_STUDENT_GROUP_NAME)
         .when()
         .get("/student-groups")
         .then()

@@ -507,7 +507,7 @@
           }
         }, {
           "in" : "query",
-          "name" : "name",
+          "name" : "search",
           "required" : false,
           "schema" : {
             "type" : "string"
@@ -811,14 +811,7 @@
           }
         }, {
           "in" : "query",
-          "name" : "name",
-          "required" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "in" : "query",
-          "name" : "buildingName",
+          "name" : "search",
           "required" : false,
           "schema" : {
             "type" : "string"
@@ -1053,7 +1046,7 @@
           }
         }, {
           "in" : "query",
-          "name" : "name",
+          "name" : "search",
           "required" : false,
           "schema" : {
             "type" : "string"
@@ -1294,17 +1287,20 @@
           }
         }, {
           "in" : "query",
-          "name" : "firstName",
+          "name" : "search",
           "required" : false,
           "schema" : {
             "type" : "string"
           }
         }, {
           "in" : "query",
-          "name" : "lastName",
+          "name" : "groups",
           "required" : false,
           "schema" : {
-            "type" : "string"
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
           }
         }, {
           "in" : "query",
@@ -1447,7 +1443,7 @@
           }
         }, {
           "in" : "query",
-          "name" : "name",
+          "name" : "search",
           "required" : false,
           "schema" : {
             "type" : "string"
@@ -1586,7 +1582,7 @@
           }
         }, {
           "in" : "query",
-          "name" : "name",
+          "name" : "search",
           "required" : false,
           "schema" : {
             "type" : "string"
@@ -1725,21 +1721,7 @@
           }
         }, {
           "in" : "query",
-          "name" : "firstName",
-          "required" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "in" : "query",
-          "name" : "lastName",
-          "required" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "in" : "query",
-          "name" : "acronym",
+          "name" : "search",
           "required" : false,
           "schema" : {
             "type" : "string"
@@ -3316,11 +3298,17 @@
         }
       },
       "StudentRequestDto" : {
-        "required" : [ "firstName", "lastName", "tagIds" ],
+        "required" : [ "firstName", "groupIds", "lastName", "tagIds" ],
         "type" : "object",
         "properties" : {
           "firstName" : {
             "type" : "string"
+          },
+          "groupIds" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
           },
           "lastName" : {
             "type" : "string"

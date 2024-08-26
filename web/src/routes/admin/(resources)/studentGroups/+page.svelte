@@ -7,15 +7,10 @@
   import {
     addStudentsToStudentGroup,
     deleteStudentGroup,
-    getGrades,
-    getStudentGroup,
     getStudentGroups,
     getStudents,
-    updateStudentGroup,
-    type GradeResponseDto,
     type Pageable,
     type Student,
-    type StudentGroupRequestDto,
     type StudentGroupResponseDto,
   } from '$lib/sdk/fetch-client.js';
   import { getStudentsFromGroup, removeStudentFromGroup } from '$lib/utils/resources.js';
@@ -26,8 +21,6 @@
   let studentGroups = data.studentGroups || [];
   let students: Student[] = data.students || [];
   let selectedStudentId: string;
-  let grades: GradeResponseDto[] = data.grades;
-  let selectedGradeId: string;
   let reloadTable: boolean = false;
 
   let columnNames = ['Vorname', 'Nachname', 'Tags'];
@@ -41,31 +34,10 @@
   async function updateStudents(value: string) {
     const pageable: Pageable = { page: 0, size: 40 };
     try {
-      students =
-        (await getStudents(pageable, { firstName: value, lastName: value }).then(({ content }) => content)) || [];
+      students = (await getStudents(pageable, { search: value }).then(({ content }) => content)) || [];
     } catch {
       error(400, { message: 'Could not fetch students' });
     }
-  }
-
-  async function updateGrades(value: string) {
-    try {
-      grades = await getGrades({ sort: ['name,asc'] }, { name: value });
-    } catch {
-      error(400, { message: 'Could not fetch grades' });
-    }
-  }
-
-  async function saveGrade(gradeId: string, studentGroupId: string) {
-    let studentGroup = await getStudentGroup(studentGroupId); //studentGroups field doesn't contain newly added students
-    let requestDto: StudentGroupRequestDto = {
-      gradeIds: [gradeId],
-      name: studentGroup.name,
-      studentIds: studentGroup.students.map((student) => student.id),
-      tagIds: studentGroup.tags.map((tag) => tag.id),
-      subjectIds: studentGroup.subjects.map((subject) => subject.id),
-    };
-    await updateStudentGroup(studentGroup.id, requestDto);
   }
 
   async function deleteGroup(id: string) {
@@ -101,17 +73,6 @@
           </div>
         </div>
         <div class="flex flex-row items-center justify-between w-full gap-8">
-          <p>Stufe:</p>
-          <div class="text-primary">
-            <ComboBox
-              onSearch={(value) => updateGrades(value)}
-              data={grades.map((grade) => ({ value: grade.id, label: grade.name }))}
-              bind:selectedId={selectedGradeId}
-              onSelectChange={() => saveGrade(selectedGradeId, studentGroup.id)}
-            />
-          </div>
-        </div>
-        <div class="flex flex-row items-center justify-between w-full gap-8">
           <p>Schüler:</p>
           <div class="text-primary">
             <ComboBox
@@ -143,6 +104,7 @@
               additionalId={studentGroup.id}
               sortable={false}
               addButton={false}
+              editAvailable={false}
               pageSize={5}
             />
           {/await}

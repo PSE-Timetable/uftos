@@ -52,16 +52,16 @@ public class StudentController {
    * {@link StudentService#get(Pageable, Optional, Optional, Optional)  get} function of
    * the student service.
    *
-   * @param pageable  contains the parameters for the page.
-   * @param firstName the first name filter.
-   * @param lastName  the last name filter.
-   * @param tags      the tags filter.
+   * @param pageable contains the parameters for the page.
+   * @param search   the search filter.
+   * @param groups   the student group filter.
+   * @param tags     the tags filter.
    * @return the page of students fitting the parameters.
    */
   @GetMapping()
-  public Page<Student> getStudents(Pageable pageable, Optional<String> firstName,
-                                   Optional<String> lastName, Optional<String[]> tags) {
-    return this.studentService.get(pageable, firstName, lastName, tags);
+  public Page<Student> getStudents(Pageable pageable, Optional<String> search,
+                                   Optional<String[]> groups, Optional<String[]> tags) {
+    return this.studentService.get(pageable, search, groups, tags);
   }
 
   /**

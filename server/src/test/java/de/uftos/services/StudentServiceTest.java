@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -12,8 +13,11 @@ import de.uftos.dto.requestdtos.StudentRequestDto;
 import de.uftos.entities.Student;
 import de.uftos.entities.StudentGroup;
 import de.uftos.entities.Tag;
+import de.uftos.repositories.database.StudentGroupRepository;
 import de.uftos.repositories.database.ServerRepository;
+import de.uftos.repositories.database.StudentGroupRepository;
 import de.uftos.repositories.database.StudentRepository;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,10 +36,10 @@ import org.springframework.web.server.ResponseStatusException;
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class StudentServiceTest {
   @Mock
-  private StudentRepository studentRepository;
+  StudentGroupRepository studentGroupRepository;
 
   @Mock
-  private ServerRepository serverRepository;
+  private StudentRepository studentRepository;
 
   @InjectMocks
   private StudentService studentService;
@@ -52,6 +56,8 @@ public class StudentServiceTest {
 
     when(studentRepository.findAll()).thenReturn(List.of(student));
     when(studentRepository.findById("123")).thenReturn(Optional.of(student));
+    when(studentGroupRepository.findByStudents(any(Student.class))).thenReturn(Collections.emptyList());
+    when(studentRepository.save(any(Student.class))).thenReturn(student);
   }
 
 
@@ -77,7 +83,7 @@ public class StudentServiceTest {
   @Test
   void createStudent() {
     StudentRequestDto requestDto =
-        new StudentRequestDto("Max", "Mustermann", List.of("tagId"));
+        new StudentRequestDto("Max", "Mustermann", List.of(), List.of("tagId"));
     studentService.create(requestDto);
 
     ArgumentCaptor<Student> studentCap = ArgumentCaptor.forClass(Student.class);
@@ -95,14 +101,16 @@ public class StudentServiceTest {
 
   @Test
   void createEmptyFirstNameStudent() {
-    StudentRequestDto requestDto = new StudentRequestDto("", "Mustermann", List.of());
+    StudentRequestDto requestDto = new StudentRequestDto("", "Mustermann",
+        List.of(), List.of());
     assertThrows(ResponseStatusException.class,
         () -> studentService.create(requestDto));
   }
 
   @Test
   void createEmptyLastNameStudent() {
-    StudentRequestDto requestDto = new StudentRequestDto("Max", "", List.of());
+    StudentRequestDto requestDto = new StudentRequestDto("Max", "", List.of(),
+        List.of());
     assertThrows(ResponseStatusException.class,
         () -> studentService.create(requestDto));
   }
@@ -110,7 +118,8 @@ public class StudentServiceTest {
   @Test
   void updateStudent() {
     StudentRequestDto requestDto =
-        new StudentRequestDto("newFirstName", "newLastName", List.of());
+        new StudentRequestDto("newFirstName", "newLastName", List.of(),
+            List.of());
     studentService.update("123", requestDto);
 
     ArgumentCaptor<Student> studentCap = ArgumentCaptor.forClass(Student.class);
@@ -127,14 +136,16 @@ public class StudentServiceTest {
 
   @Test
   void updateEmptyFirstNameStudent() {
-    StudentRequestDto requestDto = new StudentRequestDto("", "Mustermann", List.of());
+    StudentRequestDto requestDto = new StudentRequestDto("", "Mustermann",
+        List.of(), List.of());
     assertThrows(ResponseStatusException.class,
         () -> studentService.update("123", requestDto));
   }
 
   @Test
   void updateEmptyLastNameStudent() {
-    StudentRequestDto requestDto = new StudentRequestDto("Max", "", List.of());
+    StudentRequestDto requestDto = new StudentRequestDto("Max", "",
+        List.of(), List.of());
     assertThrows(ResponseStatusException.class,
         () -> studentService.update("123", requestDto));
   }

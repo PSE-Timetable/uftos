@@ -1,6 +1,9 @@
 package de.uftos.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.hypersistence.utils.hibernate.type.search.PostgreSQLTSVectorType;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -15,6 +18,7 @@ import java.util.Objects;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.hibernate.annotations.Type;
 
 /**
  * The database entity for grades.
@@ -46,6 +50,11 @@ public class Grade {
       inverseJoinColumns = @JoinColumn(name = "tags_id"))
   private List<Tag> tags;
 
+  @JsonIgnore
+  @Type(PostgreSQLTSVectorType.class)
+  @Column(name = "search_vector", columnDefinition = "tsvector", insertable = false, updatable = false)
+  private String searchVector;
+
   public Grade(String id) {
     this.id = id;
   }
@@ -62,7 +71,6 @@ public class Grade {
     this.studentGroups = studentGroupIds.stream().map(StudentGroup::new).toList();
     this.tags = tagIds.stream().map(Tag::new).toList();
   }
-
 
 
   @Override

@@ -341,6 +341,7 @@ export type PageStudent = {
 };
 export type StudentRequestDto = {
     firstName: string;
+    groupIds: string[];
     lastName: string;
     tagIds: string[];
 };
@@ -547,8 +548,8 @@ export function validateUcdlFile(body?: {
         body
     })));
 }
-export function getGrades(sort: Sort, { name, tags }: {
-    name?: string;
+export function getGrades(sort: Sort, { search, tags }: {
+    search?: string;
     tags?: string[];
 } = {}, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
@@ -556,7 +557,7 @@ export function getGrades(sort: Sort, { name, tags }: {
         data: GradeResponseDto[];
     }>(`/grades${QS.query(QS.explode({
         sort,
-        name,
+        search,
         tags
     }))}`, {
         ...opts
@@ -648,9 +649,8 @@ export function updateLesson(id: string, lessonRequestDto: LessonRequestDto, opt
         body: lessonRequestDto
     })));
 }
-export function getRooms(pageable: Pageable, { name, buildingName, capacity, tags }: {
-    name?: string;
-    buildingName?: string;
+export function getRooms(pageable: Pageable, { search, capacity, tags }: {
+    search?: string;
     capacity?: number;
     tags?: string[];
 } = {}, opts?: Oazapfts.RequestOpts) {
@@ -659,8 +659,7 @@ export function getRooms(pageable: Pageable, { name, buildingName, capacity, tag
         data: PageRoom;
     }>(`/rooms${QS.query(QS.explode({
         pageable,
-        name,
-        buildingName,
+        search,
         capacity,
         tags
     }))}`, {
@@ -732,8 +731,8 @@ export function setTimetableMetadata(timetableMetadata: TimetableMetadata, opts?
         body: timetableMetadata
     })));
 }
-export function getStudentGroups(pageable: Pageable, { name, tags }: {
-    name?: string;
+export function getStudentGroups(pageable: Pageable, { search, tags }: {
+    search?: string;
     tags?: string[];
 } = {}, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
@@ -741,7 +740,7 @@ export function getStudentGroups(pageable: Pageable, { name, tags }: {
         data: PageStudentGroupResponseDto;
     }>(`/student-groups${QS.query(QS.explode({
         pageable,
-        name,
+        search,
         tags
     }))}`, {
         ...opts
@@ -806,9 +805,9 @@ export function addStudentsToStudentGroup(id: string, body: string[], opts?: Oaz
         body
     })));
 }
-export function getStudents(pageable: Pageable, { firstName, lastName, tags }: {
-    firstName?: string;
-    lastName?: string;
+export function getStudents(pageable: Pageable, { search, groups, tags }: {
+    search?: string;
+    groups?: string[];
     tags?: string[];
 } = {}, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
@@ -816,8 +815,8 @@ export function getStudents(pageable: Pageable, { firstName, lastName, tags }: {
         data: PageStudent;
     }>(`/students${QS.query(QS.explode({
         pageable,
-        firstName,
-        lastName,
+        search,
+        groups,
         tags
     }))}`, {
         ...opts
@@ -857,15 +856,15 @@ export function updateStudent(id: string, studentRequestDto: StudentRequestDto, 
         body: studentRequestDto
     })));
 }
-export function getSubjects(sort: Sort, { name }: {
-    name?: string;
+export function getSubjects(sort: Sort, { search }: {
+    search?: string;
 } = {}, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
         data: Subject[];
     }>(`/subjects${QS.query(QS.explode({
         sort,
-        name
+        search
     }))}`, {
         ...opts
     }));
@@ -904,15 +903,15 @@ export function updateSubject(id: string, subjectRequestDto: SubjectRequestDto, 
         body: subjectRequestDto
     })));
 }
-export function getTags(sort: Sort, { name }: {
-    name?: string;
+export function getTags(sort: Sort, { search }: {
+    search?: string;
 } = {}, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
         data: Tag[];
     }>(`/tags${QS.query(QS.explode({
         sort,
-        name
+        search
     }))}`, {
         ...opts
     }));
@@ -951,10 +950,8 @@ export function updateTag(id: string, tagRequestDto: TagRequestDto, opts?: Oazap
         body: tagRequestDto
     })));
 }
-export function getTeachers(pageable: Pageable, { firstName, lastName, acronym, subjects, tags }: {
-    firstName?: string;
-    lastName?: string;
-    acronym?: string;
+export function getTeachers(pageable: Pageable, { search, subjects, tags }: {
+    search?: string;
     subjects?: string[];
     tags?: string[];
 } = {}, opts?: Oazapfts.RequestOpts) {
@@ -963,9 +960,7 @@ export function getTeachers(pageable: Pageable, { firstName, lastName, acronym, 
         data: PageTeacher;
     }>(`/teachers${QS.query(QS.explode({
         pageable,
-        firstName,
-        lastName,
-        acronym,
+        search,
         subjects,
         tags
     }))}`, {

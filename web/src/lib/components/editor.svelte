@@ -1,23 +1,32 @@
 <script lang="ts">
-  import { beforeNavigate } from '$app/navigation';
+  import { beforeNavigate, goto } from '$app/navigation';
+  import * as AlertDialog from '$lib/elements/ui/alert-dialog';
   import Button from '$lib/elements/ui/button/button.svelte';
   import { getDefaultUcdlFile, getUcdlFile, setUcdlFile, validateUcdlFile } from '$lib/sdk/fetch-client';
+  import { toast } from '$lib/utils/resources';
   import { debounce } from 'lodash-es';
   import type { editor } from 'monaco-editor';
   import { onMount } from 'svelte';
-  import { toast as _toast } from 'svelte-sonner';
 
+  let saveAlertOpen: boolean = false;
+  let saveAlertMessage: string;
+  let savedValue: string;
+  let leavePageAlertOpen: boolean = false;
+  let leavePageTo: URL;
   let uploadElement: HTMLDivElement;
   let downloadElement: HTMLAnchorElement;
   let element: HTMLDivElement;
   let ucdlEditor: editor.IStandaloneCodeEditor;
   let ucdl: string;
 
-  const toast = (success: boolean, message: string) =>
-    success ? _toast.success(message) : _toast.error(message, { important: true, duration: 4000 });
-
   const onUpload = async (file?: File | null) => {
-    await onSave(await file?.text());
+    const text = (await file?.text()) || '';
+    const lastLine = text.split('\n').length;
+
+    ucdlEditor.executeEdits(null, [
+      { text, range: { startColumn: 1, endColumn: 1, startLineNumber: 1, endLineNumber: lastLine } },
+    ]);
+    ucdlEditor.pushUndoStop();
   };
 
   const onDownload = () => {
@@ -29,10 +38,22 @@
 
   const onInsertTemplate = async () => {
     const template: string = await getDefaultUcdlFile();
-    const lastLine = ucdlEditor.getModel()?.getLineCount() || 0;
+    const lineCount = ucdlEditor.getModel()?.getLineCount() || 1;
+    const lastLine = lineCount === 1 ? 1 : lineCount + 1;
 
-    ucdlEditor.setValue(`${ucdlEditor.getValue()}\n\n${template}`);
-    ucdlEditor.revealLineInCenter(lastLine + 2);
+    ucdlEditor.executeEdits(null, [
+      {
+        text: `${lastLine > 1 ? '\n' : ''}${template}`,
+        range: {
+          startColumn: 1,
+          endColumn: 1,
+          startLineNumber: lastLine,
+          endLineNumber: lastLine + template.split('\n').length + 1,
+        },
+      },
+    ]);
+    ucdlEditor.pushUndoStop();
+    ucdlEditor.revealLineInCenter(lastLine + 1);
   };
 
   const onValidate = async () => {
@@ -42,15 +63,36 @@
     toast(success, message);
   };
 
-  const onSave = async (value: string = ucdlEditor.getValue()) => {
-    const { success, message } = await setUcdlFile({
-      file: new Blob([value]),
-    });
-    toast(success, message);
+  const onSave = async ({ value = ucdlEditor.getValue(), force = false }: { value?: string; force?: boolean }) => {
+    const { success, message } = await setUcdlFile(
+      {
+        file: new Blob([value]),
+      },
+      { force },
+    );
+    if (success) {
+      toast(success, message);
+      ucdl = await getUcdlFile();
+    } else {
+      saveAlertMessage = message;
+      savedValue = value;
+      saveAlertOpen = true;
+    }
   };
 
-  beforeNavigate(({ cancel }) => {
-    if (ucdlEditor.getValue() !== ucdl && !confirm('Du hast noch Änderungen. Sicher, dass du fortfahren möchtest?')) {
+  beforeNavigate(({ cancel, to }) => {
+    if (!to) {
+      return;
+    }
+
+    if (to.url.searchParams.get('force')) {
+      to.url.searchParams.delete('force');
+      return;
+    }
+
+    if (ucdlEditor.getValue() !== ucdl) {
+      leavePageAlertOpen = true;
+      leavePageTo = to?.url;
       cancel();
     }
   });
@@ -76,7 +118,7 @@
       id: 'save',
       label: 'Save File',
       keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS],
-      run: () => onSave(),
+      run: () => onSave({}),
     });
 
     ucdlEditor.addAction({
@@ -98,6 +140,13 @@
       label: 'Validate Code',
       run: onValidate,
     });
+
+    ucdlEditor.addAction({
+      id: 'insertTemplate',
+      label: 'Insert Template',
+      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyI],
+      run: onInsertTemplate,
+    });
   });
 </script>
 
@@ -106,7 +155,7 @@
     <div class="flex gap-4">
       <Button class="hover:bg-accent text-white" on:click={() => onInsertTemplate()}>Template einfügen</Button>
       <Button class="hover:bg-accent text-white" on:click={() => onValidate()}>Code überprüfen</Button>
-      <Button class="hover:bg-accent text-white" on:click={() => onSave()}>Speichern</Button>
+      <Button class="hover:bg-accent text-white" on:click={() => onSave({})}>Speichern</Button>
     </div>
     <div class="flex gap-4">
       <input
@@ -132,3 +181,40 @@
   </div>
   <div bind:this={element} class="h-[800px]" />
 </div>
+
+<AlertDialog.Root bind:open={saveAlertOpen}>
+  <AlertDialog.Trigger />
+  <AlertDialog.Content>
+    <AlertDialog.Header>
+      <AlertDialog.Title>Datei konnte nicht gespeichert werden</AlertDialog.Title>
+      <AlertDialog.Description>"{saveAlertMessage}" Trotzdem speichern?</AlertDialog.Description>
+    </AlertDialog.Header>
+    <AlertDialog.Footer>
+      <AlertDialog.Cancel class="shadow-custom">Nein</AlertDialog.Cancel>
+      <AlertDialog.Action on:click={() => onSave({ value: savedValue, force: true })} class="text-red-600 shadow-custom"
+        >Ja</AlertDialog.Action
+      >
+    </AlertDialog.Footer>
+  </AlertDialog.Content>
+</AlertDialog.Root>
+
+<AlertDialog.Root bind:open={leavePageAlertOpen}>
+  <AlertDialog.Trigger />
+  <AlertDialog.Content>
+    <AlertDialog.Header>
+      <AlertDialog.Title>Seite verlassen</AlertDialog.Title>
+      <AlertDialog.Description>Du hast noch Änderungen. Sicher, dass du fortfahren möchtest?</AlertDialog.Description>
+    </AlertDialog.Header>
+    <AlertDialog.Footer>
+      <AlertDialog.Cancel class="shadow-custom">Nein</AlertDialog.Cancel>
+      <AlertDialog.Action
+        on:click={async () => {
+          const url = leavePageTo;
+          url?.searchParams.append('force', 'true');
+          await goto(url);
+        }}
+        class="text-red-600 shadow-custom">Ja</AlertDialog.Action
+      >
+    </AlertDialog.Footer>
+  </AlertDialog.Content>
+</AlertDialog.Root>
