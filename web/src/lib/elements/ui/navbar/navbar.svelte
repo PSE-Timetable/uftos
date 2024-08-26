@@ -9,9 +9,6 @@
   import { createTimetable } from '$lib/sdk/fetch-client';
 
   const settings = [
-    { value: 'edit_constraints', label: 'Constraints ändern', url: '/admin/constraints' },
-    { value: 'edit_curriculum', label: 'Curriculum anpassen', url: '/admin/curriculums' },
-    { value: 'edit_ucdl', label: 'UCDL Editor', url: '/admin/editor' },
     { value: 'general_settings', label: 'Allgemeine Einstell.', url: '/admin/settings' },
   ];
 
