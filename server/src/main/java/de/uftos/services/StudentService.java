@@ -27,7 +27,8 @@ public class StudentService {
   /**
    * Creates a student service.
    *
-   * @param repository the repository for accessing the student table.
+   * @param repository      the repository for accessing the student table.
+   * @param studentGroupRepository the repository for accessing the student group table.
    */
   @Autowired
   public StudentService(StudentRepository repository,
@@ -133,10 +134,15 @@ public class StudentService {
    * @throws ResponseStatusException is thrown if no student exists with the given ID.
    */
   public void delete(String id) {
-    var student = this.repository.findById(id);
+    Optional<Student> student = this.repository.findById(id);
     if (student.isEmpty()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
     }
+    List<StudentGroup> studentGroups = studentGroupRepository.findByStudents(student.get());
+    for (StudentGroup group : studentGroups) {
+      group.getStudents().removeIf(student1 -> student1.getId().equals(id));
+    }
+    studentGroupRepository.saveAll(studentGroups);
 
     this.repository.delete(student.get());
   }
