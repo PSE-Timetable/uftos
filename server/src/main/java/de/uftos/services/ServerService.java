@@ -109,6 +109,7 @@ public class ServerService {
     this.repository.save(server);
   }
 
+  @SuppressWarnings("checkstyle:VariableDeclarationUsageDistance")
   private void updateTimeslots(TimetableMetadata timetableMetadata) {
     List<Timeslot> timeslots = new LinkedList<>();
 
@@ -155,7 +156,6 @@ public class ServerService {
     constraintInstances.removeIf(constraintInstance -> {
       for (String argumentId : constraintInstance.getArguments().stream()
           .map(ConstraintArgument::getValue).toList()) {
-        System.out.println(argumentId);
         if (timeslotIds.contains(argumentId)) {
           return false;
         }
@@ -165,10 +165,12 @@ public class ServerService {
 
     this.timeslotRepository.deleteAll(currentSlots);
     this.timetableRepository.deleteAll(timetables);
-    this.constraintInstanceRepository.deleteAll(
-        constraintInstances); //TODO: deleteAll doesn't delete instance
 
+    for (ConstraintSignature constraintSignature : constraintSignatures) {
+      constraintSignature.getInstances().removeAll(constraintInstances);
+    }
 
-    // TODO delete instances that used timeslots that don't exist anymore
+    this.constraintSignatureRepository.saveAll(constraintSignatures);
+    this.constraintInstanceRepository.deleteAll(constraintInstances);
   }
 }
