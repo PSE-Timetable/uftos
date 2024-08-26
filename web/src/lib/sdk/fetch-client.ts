@@ -341,6 +341,7 @@ export type PageStudent = {
 };
 export type StudentRequestDto = {
     firstName: string;
+    groupIds: string[];
     lastName: string;
     tagIds: string[];
 };
@@ -804,8 +805,9 @@ export function addStudentsToStudentGroup(id: string, body: string[], opts?: Oaz
         body
     })));
 }
-export function getStudents(pageable: Pageable, { search, tags }: {
+export function getStudents(pageable: Pageable, { search, groups, tags }: {
     search?: string;
+    groups?: string[];
     tags?: string[];
 } = {}, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
@@ -814,6 +816,7 @@ export function getStudents(pageable: Pageable, { search, tags }: {
     }>(`/students${QS.query(QS.explode({
         pageable,
         search,
+        groups,
         tags
     }))}`, {
         ...opts

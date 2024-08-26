@@ -1294,6 +1294,16 @@
           }
         }, {
           "in" : "query",
+          "name" : "groups",
+          "required" : false,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "in" : "query",
           "name" : "tags",
           "required" : false,
           "schema" : {
@@ -3300,11 +3310,17 @@
         }
       },
       "StudentRequestDto" : {
-        "required" : [ "firstName", "lastName", "tagIds" ],
+        "required" : [ "firstName", "groupIds", "lastName", "tagIds" ],
         "type" : "object",
         "properties" : {
           "firstName" : {
             "type" : "string"
+          },
+          "groupIds" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
           },
           "lastName" : {
             "type" : "string"

@@ -7,9 +7,9 @@ export const load = (async () => {
   try {
     return {
       initialGrades: await loadGrades('', ''),
-      initialRooms: await loadRoomPage('', '', 0, 15),
-      initialStudents: await loadStudentPage('', '', 0, 15),
-      initialTeachers: await loadTeacherPage('', '', 0, 15),
+      initialRooms: await loadRoomPage('', '', 0, 5),
+      initialStudents: await loadStudentPage('', '', 0, 5),
+      initialTeachers: await loadTeacherPage('', '', 0, 5),
       stats: await getServerStats(),
       meta: {
         title: 'Übersicht',
