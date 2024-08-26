@@ -12,6 +12,7 @@
     let studentRequestDto: StudentRequestDto = {
       firstName: values[0],
       lastName: values[1],
+      groupIds: [],
       tagIds,
     };
     try {
@@ -25,6 +26,7 @@
     let studentRequestDto: StudentRequestDto = {
       firstName: values[0],
       lastName: values[1],
+      groupIds: [],
       tagIds,
     };
     try {

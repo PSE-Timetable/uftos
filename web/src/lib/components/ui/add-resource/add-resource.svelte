@@ -3,25 +3,38 @@
   import { Button } from '$lib/elements/ui/button';
   import { Checkbox } from '$lib/elements/ui/checkbox';
   import { Input } from '$lib/elements/ui/input';
-  import type { Subject, Tag } from '$lib/sdk/fetch-client';
+  import { getGrades, type GradeResponseDto, type Subject, type Tag } from '$lib/sdk/fetch-client';
   import { toast } from '$lib/utils/resources';
   import TagsMultipleSelect from '$lib/components/ui/tags-multiple-select/tags-multiple-select.svelte';
+  import ComboBox from '$lib/elements/ui/combo-box/combo-box.svelte';
+  import { error } from '@sveltejs/kit';
 
   export let descriptions: string[];
   export let values: string[];
   export let createEntity: boolean;
-  export let create: (values: string[], tagIds: string[], subjectIds?: string[]) => Promise<void>;
-  export let update: (values: string[], tagIds: string[], subjectIds?: string[]) => Promise<void>;
+  export let create: (values: string[], tagIds: string[], subjectIds?: string[], gradeId?: string) => Promise<void>;
+  export let update: (values: string[], tagIds: string[], subjectIds?: string[], gradeId?: string) => Promise<void>;
   export let tags: Tag[] | undefined = undefined;
   export let entityTags: Tag[] = [];
   export let subjects: Subject[] | undefined = undefined;
   export let entitySubjectsIds: Set<string> = new Set();
+  export let grades: GradeResponseDto[] | undefined = undefined;
+  export let entityGradeId: string = '';
   let selectedTagIds: string[] = tags ? tags.map((tag) => tag.id) : [];
   let selectedSubjects = (subjects || []).map((subject) => ({
     id: subject.id,
     selected: entitySubjectsIds.has(subject.id),
   }));
   let saved: boolean = false;
+  let gradesAvailable: boolean = (grades || []).length > 0;
+
+  async function updateGrades(value: string) {
+    try {
+      grades = await getGrades({ sort: ['name,asc'] }, { search: value });
+    } catch {
+      error(400, { message: 'Could not fetch grades' });
+    }
+  }
 </script>
 
 <div class="grid grid-cols-[max-content,1fr] gap-8 p-4">
@@ -34,6 +47,25 @@
       {/if}
     </div>
   {/each}
+
+  {#if grades}
+    <div class="flex text-lg font-bold">Stufe:</div>
+    {#if gradesAvailable}
+      <div class="flex flex-col">
+        <ComboBox
+          onSearch={(value) => updateGrades(value)}
+          data={grades.map((grade) => ({ value: grade.id, label: grade.name }))}
+          bind:selectedId={entityGradeId}
+          shadow={true}
+        />
+        {#if saved && !entityGradeId}
+          <p class="text-sm text-red-600">Es muss eine Stufe ausgewählt werden.</p>
+        {/if}
+      </div>
+    {:else}
+      <div class="text-lg font-semibold text-red-600">Es müssen Grades vorhanden sein.</div>
+    {/if}
+  {/if}
 
   {#if subjects}
     <div class="flex text-lg font-bold">Fächer:</div>
@@ -73,12 +105,20 @@
           return;
         }
       }
+      if (grades && !entityGradeId) {
+        saved = true;
+        toast(false, 'Die Eingabefelder dürfen nicht leer sein.');
+        return;
+      }
       let subjectIds = selectedSubjects.filter((subject) => subject.selected).map((subject) => subject.id);
-      await (createEntity ? create(values, selectedTagIds, subjectIds) : update(values, selectedTagIds, subjectIds));
+      await (createEntity
+        ? create(values, selectedTagIds, subjectIds, entityGradeId)
+        : update(values, selectedTagIds, subjectIds, entityGradeId));
       await goto('./');
     }}
     class="col-start-2 p-8 text-lg w-80 bg-accent text-white hover:bg-accent flex"
     variant="secondary"
+    disabled={grades && !gradesAvailable}
   >
     Speichern
   </Button>

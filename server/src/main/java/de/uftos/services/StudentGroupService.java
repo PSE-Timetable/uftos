@@ -38,7 +38,10 @@ public class StudentGroupService {
   /**
    * Creates a student group service.
    *
-   * @param repository the repository for accessing the student group table.
+   * @param repository        the repository for accessing the student group table.
+   * @param serverRepository  the repository for accessing the server table.
+   * @param studentRepository the repository for accessing the student table.
+   * @param gradeRepository   the repository for accessing the grade table.
    */
   @Autowired
   public StudentGroupService(StudentGroupRepository repository, ServerRepository serverRepository,
@@ -58,7 +61,7 @@ public class StudentGroupService {
    * @return the page of the entries fitting the parameters.
    */
   public Page<StudentGroupResponseDto> get(Pageable pageable, Optional<String> search,
-                                Optional<String[]> tags) {
+                                           Optional<String[]> tags) {
     Specification<StudentGroup> spec = new SpecificationBuilder<StudentGroup>()
         .search(search)
         .optionalAndJoinIn(tags, "tags", "id")
@@ -142,6 +145,10 @@ public class StudentGroupService {
 
     List<Grade> grades =
         this.gradeRepository.findAllById(groupRequest.gradeIds());
+    List<Grade> allGrades = this.gradeRepository.findAll();
+    for (Grade grade : allGrades) {
+      grade.getStudentGroups().remove(group);
+    }
     for (Grade grade : grades) {
       grade.getStudentGroups().add(group);
       this.gradeRepository.save(grade);
@@ -188,10 +195,16 @@ public class StudentGroupService {
    * @throws ResponseStatusException is thrown if the given ID is not present in the database.
    */
   public void delete(String id) {
-    var group = this.repository.findById(id);
+    Optional<StudentGroup> group = this.repository.findById(id);
     if (group.isEmpty()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
     }
+
+    List<Grade> grades = gradeRepository.findByStudentGroups(group.get());
+    for (Grade grade : grades) {
+      grade.getStudentGroups().removeIf(group1 -> group1.getId().equals(id));
+    }
+    gradeRepository.saveAll(grades);
 
     this.repository.delete(group.get());
   }

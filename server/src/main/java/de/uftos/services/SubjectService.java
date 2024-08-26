@@ -4,7 +4,10 @@ import de.uftos.dto.requestdtos.SubjectRequestDto;
 import de.uftos.entities.Curriculum;
 import de.uftos.entities.Subject;
 import de.uftos.repositories.database.CurriculumRepository;
+import de.uftos.entities.Teacher;
+import de.uftos.repositories.database.StudentGroupRepository;
 import de.uftos.repositories.database.SubjectRepository;
+import de.uftos.repositories.database.TeacherRepository;
 import de.uftos.utils.SpecificationBuilder;
 import java.util.List;
 import java.util.Optional;
@@ -22,16 +25,24 @@ import org.springframework.web.server.ResponseStatusException;
 public class SubjectService {
   private final SubjectRepository repository;
   private final CurriculumRepository curriculumRepository;
+  private final TeacherRepository teacherRepository;
+  private final StudentGroupRepository studentGroupRepository;
 
   /**
    * Creates a subject service.
    *
-   * @param repository The repository for accessing the subject table.
+   * @param repository             The repository for accessing the subject table.
+   * @param teacherRepository      The repository for accessing the teacher table.
+   * @param studentGroupRepository The repository for accessing the student group table.
    */
   @Autowired
   public SubjectService(SubjectRepository repository, CurriculumRepository curriculumRepository) {
+  public SubjectService(SubjectRepository repository, TeacherRepository teacherRepository,
+                        StudentGroupRepository studentGroupRepository) {
     this.repository = repository;
     this.curriculumRepository = curriculumRepository;
+    this.teacherRepository = teacherRepository;
+    this.studentGroupRepository = studentGroupRepository;
   }
 
   /**
@@ -115,7 +126,23 @@ public class SubjectService {
     for (Curriculum curriculum : curriculums) {
       curriculum.getLessonsCounts()
           .removeIf((lessonsCount) -> lessonsCount.getSubject().equals(subject));
+    Optional<Subject> subject = this.repository.findById(id);
+    if (subject.isEmpty()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "The name of the subject is blank.");
     }
+
+    List<Teacher> teachers = teacherRepository.findBySubjects(subject.get());
+    for (Teacher teacher : teachers) {
+      teacher.getSubjects().removeIf(subject1 -> subject1.getId().equals(id));
+    }
+    teacherRepository.saveAll(teachers);
+
+    List<StudentGroup> studentGroups = studentGroupRepository.findBySubjects(subject.get());
+    for (StudentGroup studentGroup : studentGroups) {
+      studentGroup.getSubjects().removeIf(subject1 -> subject1.getId().equals(id));
+    }
+    studentGroupRepository.saveAll(studentGroups);
 
     curriculumRepository.saveAll(curriculums);
     this.repository.delete(subject);
