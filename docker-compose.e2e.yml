@@ -1,0 +1,47 @@
+services:
+  db:
+    image: postgres:16.3-alpine3.18
+    container_name: uftos-db
+    restart: unless-stopped
+    ports:
+      - 5432:5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: uftos
+      POSTGRES_PASSWORD: superSecurePassword
+      POSTGRES_DB: uftos
+  api:
+    image: uftos-server-dev:latest
+    container_name: uftos-api
+    build:
+      context: ./
+      dockerfile: server/Dockerfile
+    restart: unless-stopped
+    ports:
+      - 8080:8080
+    volumes:
+      - ./server:/app
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: uftos
+      DB_PASSWORD: superSecurePassword
+      DB_NAME: uftos
+      MAIL_HOST: mail.example.org
+      MAIL_USER: myUser
+      MAIL_PASSWORD: highlySecurePassword
+      MAIL_FROM: uftos@example.com
+  web:
+    image: uftos-web-dev:latest
+    container_name: uftos-web
+    build:
+      context: ./web
+    ports:
+      - 5173:5173
+    restart: unless-stopped
+
+volumes:
+  pgdata:
