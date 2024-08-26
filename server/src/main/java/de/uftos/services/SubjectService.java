@@ -1,8 +1,12 @@
 package de.uftos.services;
 
 import de.uftos.dto.requestdtos.SubjectRequestDto;
+import de.uftos.entities.StudentGroup;
 import de.uftos.entities.Subject;
+import de.uftos.entities.Teacher;
+import de.uftos.repositories.database.StudentGroupRepository;
 import de.uftos.repositories.database.SubjectRepository;
+import de.uftos.repositories.database.TeacherRepository;
 import de.uftos.utils.SpecificationBuilder;
 import java.util.List;
 import java.util.Optional;
@@ -19,15 +23,22 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class SubjectService {
   private final SubjectRepository repository;
+  private final TeacherRepository teacherRepository;
+  private final StudentGroupRepository studentGroupRepository;
 
   /**
    * Creates a subject service.
    *
-   * @param repository The repository for accessing the subject table.
+   * @param repository             The repository for accessing the subject table.
+   * @param teacherRepository      The repository for accessing the teacher table.
+   * @param studentGroupRepository The repository for accessing the student group table.
    */
   @Autowired
-  public SubjectService(SubjectRepository repository) {
+  public SubjectService(SubjectRepository repository, TeacherRepository teacherRepository,
+                        StudentGroupRepository studentGroupRepository) {
     this.repository = repository;
+    this.teacherRepository = teacherRepository;
+    this.studentGroupRepository = studentGroupRepository;
   }
 
   /**
@@ -82,7 +93,8 @@ public class SubjectService {
    */
   public Subject update(String id, SubjectRequestDto subjectRequest) {
     if (subjectRequest.name().isBlank()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The name of the subject is blank.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "The name of the subject is blank.");
     }
     Subject subject = subjectRequest.map();
     subject.setId(id);
@@ -97,10 +109,23 @@ public class SubjectService {
    * @throws ResponseStatusException is thrown if no subject exists with the given ID.
    */
   public void delete(String id) {
-    var subject = this.repository.findById(id);
+    Optional<Subject> subject = this.repository.findById(id);
     if (subject.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The name of the subject is blank.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "The name of the subject is blank.");
     }
+
+    List<Teacher> teachers = teacherRepository.findBySubjects(subject.get());
+    for (Teacher teacher : teachers) {
+      teacher.getSubjects().removeIf(subject1 -> subject1.getId().equals(id));
+    }
+    teacherRepository.saveAll(teachers);
+
+    List<StudentGroup> studentGroups = studentGroupRepository.findBySubjects(subject.get());
+    for (StudentGroup studentGroup : studentGroups) {
+      studentGroup.getSubjects().removeIf(subject1 -> subject1.getId().equals(id));
+    }
+    studentGroupRepository.saveAll(studentGroups);
 
     this.repository.delete(subject.get());
   }
