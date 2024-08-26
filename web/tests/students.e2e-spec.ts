@@ -1,3 +1,4 @@
+import { createStudent, type StudentRequestDto } from '$lib/sdk/fetch-client';
 import { expect, test, type Page } from '@playwright/test';
 
 let page: Page;
@@ -11,11 +12,15 @@ test.describe('Students page', () => {
     await page.goto('http://localhost:5173/');
     await page.getByRole('link').first().click();
     await page.locator('div:nth-child(2) > .bg-accent').first().click();
+    await expect(page).toHaveURL('http://localhost:5173/admin/students');
+    await page.getByRole('row').first().waitFor();
+    await page.getByRole('row', { name: 'Vorname Nachname Tags' }).getByRole('checkbox').waitFor();
     await page.waitForTimeout(500); //not ideal, but helps to load the page fully
 
     while (
       (await page.getByRole('cell', { name: 'Open menu' }).first().isVisible()) &&
-      (await page.getByRole('row', { name: 'Vorname Nachname Tags' }).getByRole('checkbox').isVisible())
+      (await page.getByRole('row', { name: 'Vorname Nachname Tags' }).getByRole('checkbox').isVisible()) &&
+      (await page.getByRole('row').count()) > 1
     ) {
       await page.getByRole('row', { name: 'Vorname Nachname Tags' }).getByRole('checkbox').check();
       await page.keyboard.press('Delete');
@@ -27,6 +32,7 @@ test.describe('Students page', () => {
   test('create entities', async () => {
     await expect(page.locator('body')).toContainText('Hinzufügen');
     await page.getByRole('button', { name: 'Hinzufügen' }).click();
+    await expect(page).toHaveURL('http://localhost:5173/admin/students/new');
     await page.getByRole('textbox').first().click();
     await page.getByRole('textbox').first().fill('odgsogdpnpowad');
     await page.getByRole('textbox').nth(1).click();
@@ -100,25 +106,27 @@ test.describe('Students page', () => {
 
   test('pagination', async () => {
     for (let i = 0; i < 25; i++) {
-      await expect(page.locator('body')).toContainText('Hinzufügen');
-      await page.getByRole('button', { name: 'Hinzufügen' }).click();
-      await page.getByRole('textbox').first().click();
-      await page.getByRole('textbox').first().fill(`Max${i}`);
-      await page.getByRole('textbox').nth(1).click();
-      await page.getByRole('textbox').nth(1).fill(`Mustermann${i}`);
-      await page.getByRole('button', { name: 'Speichern' }).click();
+      const requestDto: StudentRequestDto = {
+        firstName: `Max${i}`,
+        lastName: `Mustermann${i}`,
+        groupIds: [],
+        tagIds: [],
+      };
+      await createStudent(requestDto);
     }
+    await page.reload();
+    await page.waitForTimeout(500);
     await expect(page.getByRole('row')).toHaveCount(16);
     await expect(page.locator('body')).toContainText('0 von 25 Zeile(n) ausgewählt.');
     await expect(page.getByLabel('Previous')).toBeDisabled();
     await expect(page.getByLabel('Page 1')).toHaveCSS('border-color', 'rgb(43, 109, 136)');
     await expect(page.getByLabel('Page 2')).not.toHaveCSS('border-color', 'rgb(43, 109, 136)');
     await page.getByLabel('Next').click();
+    await expect(page.getByRole('row')).toHaveCount(11);
     await expect(page.getByLabel('Previous')).toBeEnabled();
     await expect(page.getByLabel('Next')).toBeDisabled();
     await expect(page.getByLabel('Page 1')).not.toHaveCSS('border-color', 'rgb(43, 109, 136)');
     await expect(page.getByLabel('Page 2')).toHaveCSS('border-color', 'rgb(43, 109, 136)');
-    await expect(page.getByRole('row')).toHaveCount(11);
     await page.getByPlaceholder('Suche...').fill('Max1 Mustermann1');
     await expect(page.getByRole('row')).toHaveCount(2);
     await expect(page.getByLabel('Previous')).toBeDisabled();
