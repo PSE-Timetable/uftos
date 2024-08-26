@@ -6,6 +6,7 @@ import de.uftos.entities.StudentGroup;
 import de.uftos.repositories.database.StudentGroupRepository;
 import de.uftos.repositories.database.StudentRepository;
 import de.uftos.utils.SpecificationBuilder;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class StudentService {
   /**
    * Creates a student service.
    *
-   * @param repository      the repository for accessing the student table.
+   * @param repository             the repository for accessing the student table.
    * @param studentGroupRepository the repository for accessing the student group table.
    */
   @Autowired
@@ -82,21 +83,7 @@ public class StudentService {
           "The first or last name of the student is blank.");
     }
     Student student = rawStudent.map();
-    String studentId = this.repository.save(student).getId();
-
-    List<StudentGroup> studentGroups =
-        this.studentGroupRepository.findAllById(rawStudent.groupIds());
-    if (studentGroups.size() != rawStudent.groupIds().size()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "Could not find all student groups by id");
-    }
-    for (StudentGroup group : studentGroups) {
-      group.getStudents().add(student);
-      this.studentGroupRepository.save(group);
-    }
-
-    //noinspection OptionalGetWithoutIsPresent
-    return this.repository.findById(studentId).get();
+    return this.repository.save(student);
   }
 
   /**
@@ -114,17 +101,7 @@ public class StudentService {
     }
     Student student = studentRequest.map();
     student.setId(id);
-    this.repository.save(student);
-
-    List<StudentGroup> studentGroups =
-        this.studentGroupRepository.findAllById(studentRequest.groupIds());
-    for (StudentGroup group : studentGroups) {
-      group.getStudents().add(student);
-      this.studentGroupRepository.save(group);
-    }
-
-    //noinspection OptionalGetWithoutIsPresent
-    return this.repository.findById(id).get();
+    return this.repository.save(student);
   }
 
   /**
@@ -145,5 +122,28 @@ public class StudentService {
     studentGroupRepository.saveAll(studentGroups);
 
     this.repository.delete(student.get());
+  }
+
+  public void deleteStudents(String[] ids) {
+    Specification<Student> studentSpecification = new SpecificationBuilder<Student>()
+        .andIn(ids, "id")
+        .build();
+    List<Student> students = this.repository.findAll(studentSpecification);
+    if (students.isEmpty()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "There exist no students with the given id(s).");
+    }
+    Specification<StudentGroup> groupSpecification = new SpecificationBuilder<StudentGroup>()
+        .optionalAndJoinIn(Optional.of(ids), "students", "id")
+        .build();
+
+    List<StudentGroup> studentGroups = this.studentGroupRepository.findAll(groupSpecification);
+    for (StudentGroup group : studentGroups) {
+      group.getStudents().removeIf(students::contains);
+    }
+
+    studentGroupRepository.saveAll(studentGroups);
+    this.repository.deleteAllById(Arrays.stream(ids).toList());
+
   }
 }

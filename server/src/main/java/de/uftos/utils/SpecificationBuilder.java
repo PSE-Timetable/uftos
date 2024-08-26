@@ -76,22 +76,19 @@ public class SpecificationBuilder<T> {
     return this;
   }
 
-
   /**
-   * Adds an OR filter to the specification if the provided parameter is present.
+   * Adds an AND filter to the specification that checks whether the parameter
+   * is present in the array.
    *
-   * @param param     The optional parameter value to filter by.
+   * @param param     The parameter value to filter by.
    * @param paramName The name of the parameter to filter on.
    * @return The current instance of {@code SpecificationBuilder} with the
-   *     OR filter added if the parameter is present.
+   *     AND filter added if the parameter is present.
    */
-  public SpecificationBuilder<T> optionalAndIn(Optional<String[]> param, String paramName) {
-    if (param.isEmpty()) {
-      return this;
-    }
+  public SpecificationBuilder<T> andIn(String[] param, String paramName) {
     specification =
         specification.and(
-            (root, query, cb) -> cb.equal(root.get(paramName), param)
+            (root, query, cb) -> root.get(paramName).in(Arrays.stream(param).toList())
         );
     return this;
   }

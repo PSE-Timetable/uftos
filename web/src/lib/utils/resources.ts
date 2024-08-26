@@ -2,7 +2,7 @@ import {
   deleteConstraintInstance,
   deleteGrade,
   deleteRoom,
-  deleteStudent,
+  deleteStudents,
   deleteSubject,
   deleteTag,
   deleteTeacher,
@@ -60,7 +60,7 @@ export async function loadStudentPage(sortString: string, filter: string, index?
 
 export async function deleteStudentEntry(ids: string[]) {
   try {
-    await deleteMultiple(ids, deleteStudent);
+    await deleteStudents(ids);
   } catch {
     toast(false, 'Beim Löschen des Schülers ist ein Fehler aufgetreten');
     error(400, { message: `could not delete students` });

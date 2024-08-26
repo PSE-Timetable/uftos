@@ -341,7 +341,6 @@ export type PageStudent = {
 };
 export type StudentRequestDto = {
     firstName: string;
-    groupIds: string[];
     lastName: string;
     tagIds: string[];
 };
@@ -802,6 +801,13 @@ export function addStudentsToStudentGroup(id: string, body: string[], opts?: Oaz
     }>(`/student-groups/${encodeURIComponent(id)}/students`, oazapfts.json({
         ...opts,
         method: "POST",
+        body
+    })));
+}
+export function deleteStudents(body: string[], opts?: Oazapfts.RequestOpts) {
+    return oazapfts.ok(oazapfts.fetchText("/students", oazapfts.json({
+        ...opts,
+        method: "DELETE",
         body
     })));
 }
