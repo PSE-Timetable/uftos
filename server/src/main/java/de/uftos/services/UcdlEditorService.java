@@ -103,8 +103,7 @@ public class UcdlEditorService {
     } catch (IOException e) {
       return new ParsingResponse(false, e.getMessage());
     }
-
-    List<ConstraintSignature> signatures = constraintSignatureRepository.findAll();
+    List<ConstraintSignature> signatures = new ArrayList<>(constraintSignatureRepository.findAll());
     HashMap<String, ConstraintDefinitionDto> definitions;
     try {
       definitions = ucdlRepository.getConstraintsFromString(ucdlCode);
@@ -114,13 +113,13 @@ public class UcdlEditorService {
 
     for (ConstraintSignature signature : signatures) {
       ConstraintDefinitionDto definition = definitions.get(signature.getName());
+
       if (!signature.getInstances().isEmpty() && signatureChanged(signature, definition)) {
         return new ParsingResponse(false,
             "Signaturen von Constraints haben sich geändert!"
                 + " Constraint Instanzen werden gelöscht, wenn der Code gespeichert wird!");
       }
     }
-
     //no signatures with existing instances changed
     try {
       ucdlRepository.setUcdl(ucdlCode);
@@ -145,7 +144,8 @@ public class UcdlEditorService {
     try {
       HashMap<String, ConstraintDefinitionDto> definitions = ucdlRepository.getConstraints();
 
-      List<ConstraintSignature> signatures = constraintSignatureRepository.findAll();
+      List<ConstraintSignature> signatures =
+          new ArrayList<>(constraintSignatureRepository.findAll());
 
       for (int i = 0; i < signatures.size(); i++) {
         ConstraintSignature signature = signatures.get(i);
@@ -177,6 +177,7 @@ public class UcdlEditorService {
   }
 
   private void updateSignature(ConstraintSignature signature, ConstraintDefinitionDto definition) {
+
     if (definition == null || signature == null || !definition.name().equals(signature.getName())) {
       throw new IllegalStateException();
     }
@@ -207,12 +208,16 @@ public class UcdlEditorService {
 
     //deleting old parameters
     for (int i = newParameters.size(); i < signature.getParameters().size(); ) {
-      signature.getParameters().remove(i);
+      List<ConstraintParameter> parameterList = new ArrayList<>(signature.getParameters());
+      parameterList.remove(i);
+      signature.setParameters(parameterList);
     }
 
     //adding new parameters
     for (int i = signature.getParameters().size(); i < newParameters.size(); i++) {
-      signature.getParameters().add(newParameters.get(i));
+      List<ConstraintParameter> parameterList = new ArrayList<>(signature.getParameters());
+      parameterList.add(newParameters.get(i));
+      signature.setParameters(parameterList);
     }
 
     this.constraintSignatureRepository.save(signature);
@@ -266,6 +271,7 @@ public class UcdlEditorService {
     if (!definition.name().equals(signature.getName())) {
       throw new IllegalArgumentException();
     }
+
 
     Queue<ConstraintParameter> signatureParameters = new ArrayDeque<>(signature.getParameters());
     Queue<ResourceType> definitionParameters =
