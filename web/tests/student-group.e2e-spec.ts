@@ -12,8 +12,8 @@ import {
   type SubjectRequestDto,
   type TagRequestDto,
 } from '$lib/sdk/fetch-client';
-import { deleteGradeEntry, deleteStudentEntry, deleteSubjectEntry, deleteTagEntry } from '$lib/utils/resources';
 import { expect, test, type Page } from '@playwright/test';
+import { first } from 'lodash-es';
 
 let page: Page;
 
@@ -26,9 +26,15 @@ test.describe('Student group page', () => {
     await page.getByRole('link').first().click();
     await page.getByRole('link', { name: 'Gruppe' }).click();
     await expect(page).toHaveURL('http://localhost:5173/admin/studentGroups');
-    while (await page.getByText('Keine Gruppen vorhanden.').isHidden()) {
-      await page.locator('.flex > .flex > button:nth-child(2)').first().click();
+    while (await page.getByRole('button', { name: 'Schüler hinzufügen' }).first().isVisible()) {
+      try {
+        await page.locator('.flex > .flex > button:nth-child(2)').first().click({ timeout: 500 });
+      } catch {
+        // this timeout is fine, can happen sometimes
+      }
     }
+    // doesn't work, change to fetch-client functions when #377 is merged.
+    /*
     const students = await getStudents({}).then(({ content }) => content ?? []);
     await deleteStudentEntry(students.map((student) => student.id));
     const grades = await getGrades({});
@@ -37,6 +43,7 @@ test.describe('Student group page', () => {
     await deleteTagEntry(tags.map((tag) => tag.id));
     const subjects = await getSubjects({});
     await deleteSubjectEntry(subjects.map((subject) => subject.id));
+    
     for (let i = 0; i < 25; i++) {
       const requestDto: StudentRequestDto = {
         firstName: `Max${i}`,
@@ -46,6 +53,7 @@ test.describe('Student group page', () => {
       };
       await createStudent(requestDto);
     }
+    */
   });
 
   test('empty create', async () => {
@@ -75,12 +83,19 @@ test.describe('Student group page', () => {
     await page.getByRole('checkbox').nth(1).click();
     await page.getByRole('checkbox').nth(4).click();
     await page.getByRole('combobox').click();
-    await page.getByRole('option', { name: 'subjects1' }).click();
-    await page.getByRole('option', { name: 'subjects2' }).click();
+    await page.getByRole('option', { name: 'tag1' }).click();
+    await page.getByRole('option', { name: 'tag2' }).click();
     await page.getByRole('combobox').click();
     await page.getByText('Speichern').click();
     await expect(page.getByText('Keine Gruppen vorhanden.')).toBeHidden();
     await expect(page.getByText('Group1')).toBeVisible();
+    await page.locator('.flex > div > .flex > button').first().click();
+    await expect(page.locator('body')).toContainText('grade2');
+    await expect(page.getByRole('checkbox').nth(3)).toBeChecked();
+    await expect(page.getByRole('checkbox').nth(1)).toBeChecked();
+    await expect(page.getByRole('checkbox').nth(4)).toBeChecked();
+    await expect(page.locator('body')).toContainText('tag1, tag2');
+    await page.getByText('Speichern').click();
   });
 
   test('create no selected', async () => {
@@ -89,6 +104,43 @@ test.describe('Student group page', () => {
     await expect(page.locator('body')).toContainText('Dieses Feld darf nicht leer sein.');
     await expect(page.locator('body')).toContainText('Es muss eine Stufe ausgewählt werden.');
     await page.getByRole('button').first().click();
-    await page.getByRole('button').first().click();
+  });
+
+  test('add students to group', async () => {
+    await page.getByRole('combobox').first().click();
+    await page.getByRole('combobox').first().click();
+    await page.getByRole('option', { name: 'Max2 Mustermann2' }).click();
+    await page.getByRole('button', { name: 'Schüler hinzufügen' }).first().click();
+    await page.locator('button').filter({ hasText: 'Max2 Mustermann2' }).click();
+    await page.getByRole('option', { name: 'Max9 Mustermann9' }).click();
+    await page.getByRole('button', { name: 'Schüler hinzufügen' }).first().click();
+    await page.locator('button').filter({ hasText: 'Max9 Mustermann9' }).click();
+    await page.getByRole('option', { name: 'Max15 Mustermann15' }).click();
+    await page.getByRole('button', { name: 'Schüler hinzufügen' }).first().click();
+    await page.locator('button').filter({ hasText: 'Max15 Mustermann15' }).click();
+    await page.getByRole('option', { name: 'Max5 Mustermann5' }).click();
+    await page.getByRole('button', { name: 'Schüler hinzufügen' }).first().click();
+    await page.locator('button').filter({ hasText: 'Max5 Mustermann5' }).click();
+    await page.getByRole('option', { name: 'Max1 Mustermann1' }).click();
+    await page.getByRole('button', { name: 'Schüler hinzufügen' }).first().click();
+    await page.locator('button').filter({ hasText: 'Max1 Mustermann1' }).click();
+    await page.getByRole('option', { name: 'Max4 Mustermann4' }).click();
+    await page.getByRole('button', { name: 'Schüler hinzufügen' }).first().click();
+
+    await expect(page.locator('tbody').first().getByRole('row').first()).toContainText('Max1 Mustermann1');
+    await expect(page.locator('tbody').first().getByRole('row').nth(1)).toContainText('Max2 Mustermann2');
+    await expect(page.locator('tbody').first().getByRole('row').nth(2)).toContainText('Max4 Mustermann4');
+    await expect(page.locator('tbody').first().getByRole('row').nth(3)).toContainText('Max5 Mustermann5');
+    await expect(page.locator('tbody').first().getByRole('row').nth(4)).toContainText('Max9 Mustermann9');
+    await page.getByText('Weiter').first().click();
+    await expect(page.locator('tbody').first().getByRole('row').first()).toContainText('Max15 Mustermann15');
+  });
+
+  test('search', async () => {
+    await page.getByPlaceholder('Suche...').first().click();
+    await page.getByPlaceholder('Suche...').first().fill('Max1');
+    await expect(page.locator('tbody').first().getByRole('row').first()).toContainText('Max1 Mustermann1');
+    await expect(page.locator('tbody').first().getByRole('row')).toHaveCount(1);
+    await page.getByPlaceholder('Suche...').first().fill('');
   });
 });
