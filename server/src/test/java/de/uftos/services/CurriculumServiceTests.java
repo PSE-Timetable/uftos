@@ -37,7 +37,7 @@ import org.mockito.quality.Strictness;
 import org.springframework.web.server.ResponseStatusException;
 
 
-@SuppressWarnings("checkstyle:MissingJavadocType")
+@SuppressWarnings("checkstyle:all")
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class CurriculumServiceTests {
