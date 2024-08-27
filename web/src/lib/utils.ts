@@ -39,8 +39,6 @@ export enum WeekDay {
   WEDNESDAY = 'Mittwoch',
   THURSDAY = 'Donnerstag',
   FRIDAY = 'Freitag',
-  SATURDAY = 'Samstag',
-  SUNDAY = 'Sonntag',
 }
 
 export interface TimeInterval {
