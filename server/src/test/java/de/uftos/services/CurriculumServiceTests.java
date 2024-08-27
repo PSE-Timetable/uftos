@@ -81,6 +81,8 @@ public class CurriculumServiceTests {
     curriculum1.setId("123");
     Curriculum curriculum2 = new Curriculum(grade2, "TestCurriculum", List.of(lessonsCount));
     curriculum2.setId("456");
+    Curriculum curriculum3 = new Curriculum(grade2, "UpdateCurriculum", List.of(lessonsCount));
+    curriculum2.setId("234");
 
     Curriculum testCurriculum =
         new Curriculum(testGrade, "testName", List.of(lessonsCount));
@@ -95,6 +97,7 @@ public class CurriculumServiceTests {
     when(gradeRepository.findById("newGrade")).thenReturn(Optional.of(newGrade));
     when(curriculumRepository.findById("123")).thenReturn(Optional.of(curriculum1));
     when(curriculumRepository.findById("456")).thenReturn(Optional.of(curriculum2));
+    when(curriculumRepository.findById("234")).thenReturn(Optional.of(curriculum3));
     when(curriculumRepository.save(any(Curriculum.class))).thenReturn(testCurriculum);
   }
 
