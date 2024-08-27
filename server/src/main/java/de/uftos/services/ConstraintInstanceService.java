@@ -289,7 +289,7 @@ public class ConstraintInstanceService {
         Timeslot timeslot = timeslotRepository.findById(id)
               .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
         yield new ConstraintArgumentDisplayName(id,
-            "%s: %d".formatted(timeslot.getDay().toString(),timeslot.getSlot()));
+            "%s: %d".formatted(timeslot.getDay().toString(), timeslot.getSlot()));
       }
       case TIMETABLE, NUMBER -> throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
     };
