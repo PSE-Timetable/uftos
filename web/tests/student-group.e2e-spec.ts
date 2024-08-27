@@ -13,7 +13,6 @@ import {
   type TagRequestDto,
 } from '$lib/sdk/fetch-client';
 import { expect, test, type Page } from '@playwright/test';
-import { first } from 'lodash-es';
 
 let page: Page;
 
@@ -82,10 +81,10 @@ test.describe('Student group page', () => {
     await page.getByRole('checkbox').nth(3).click();
     await page.getByRole('checkbox').nth(1).click();
     await page.getByRole('checkbox').nth(4).click();
-    await page.getByRole('combobox').click();
+    await page.getByRole('combobox').nth(1).click();
     await page.getByRole('option', { name: 'tag1' }).click();
     await page.getByRole('option', { name: 'tag2' }).click();
-    await page.getByRole('combobox').click();
+    await page.getByRole('combobox').nth(1).click();
     await page.getByText('Speichern').click();
     await expect(page.getByText('Keine Gruppen vorhanden.')).toBeHidden();
     await expect(page.getByText('Group1')).toBeVisible();
