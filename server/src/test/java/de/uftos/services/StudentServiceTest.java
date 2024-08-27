@@ -14,8 +14,6 @@ import de.uftos.entities.Student;
 import de.uftos.entities.StudentGroup;
 import de.uftos.entities.Tag;
 import de.uftos.repositories.database.StudentGroupRepository;
-import de.uftos.repositories.database.ServerRepository;
-import de.uftos.repositories.database.StudentGroupRepository;
 import de.uftos.repositories.database.StudentRepository;
 import java.util.Collections;
 import java.util.List;
@@ -56,7 +54,8 @@ public class StudentServiceTest {
 
     when(studentRepository.findAll()).thenReturn(List.of(student));
     when(studentRepository.findById("123")).thenReturn(Optional.of(student));
-    when(studentGroupRepository.findByStudents(any(Student.class))).thenReturn(Collections.emptyList());
+    when(studentGroupRepository.findByStudents(any(Student.class))).thenReturn(
+        Collections.emptyList());
     when(studentRepository.save(any(Student.class))).thenReturn(student);
   }
 

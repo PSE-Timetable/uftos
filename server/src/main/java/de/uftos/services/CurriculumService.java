@@ -78,7 +78,8 @@ public class CurriculumService {
    */
   public CurriculumResponseDto create(CurriculumRequestDto curriculum) {
     if (curriculum.name().isBlank()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The name of the curriculum is blank.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "The name of the curriculum is blank.");
     }
     Grade grade = gradeRepository.findById(curriculum.gradeId())
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
@@ -102,7 +103,8 @@ public class CurriculumService {
     Grade grade = gradeRepository.findById(curriculumRequest.gradeId())
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
     Curriculum curriculum = curriculumRequest.map(grade);
-    curriculum.setId(id);
+    this.repository.delete(this.repository.findById(id)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST)));
     return new CurriculumResponseDto(this.repository.save(curriculum));
   }
 
