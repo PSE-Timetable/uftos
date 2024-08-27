@@ -12,6 +12,7 @@ import de.uftos.entities.ConstraintSignature;
 import de.uftos.entities.Room;
 import de.uftos.entities.Student;
 import de.uftos.entities.Teacher;
+import de.uftos.entities.Timeslot;
 import de.uftos.repositories.database.ConstraintInstanceRepository;
 import de.uftos.repositories.database.ConstraintSignatureRepository;
 import de.uftos.repositories.database.GradeRepository;
@@ -284,10 +285,12 @@ public class ConstraintInstanceService {
           studentGroupRepository.findById(id)
               .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST))
               .getName());
-      case TIMESLOT -> new ConstraintArgumentDisplayName(id,
-          timeslotRepository.findById(id)
-              .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST))
-              .getDay().toString());
+      case TIMESLOT -> {
+        Timeslot timeslot = timeslotRepository.findById(id)
+              .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+        yield new ConstraintArgumentDisplayName(id,
+            "%s: %d".formatted(timeslot.getDay().toString(), timeslot.getSlot()));
+      }
       case TIMETABLE, NUMBER -> throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
     };
   }
