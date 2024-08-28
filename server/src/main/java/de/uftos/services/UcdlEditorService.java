@@ -116,7 +116,7 @@ public class UcdlEditorService {
 
       if (!signature.getInstances().isEmpty() && signatureChanged(signature, definition)) {
         return new SuccessResponse(false,
-            "Signaturen von Constraints haben sich geändert!"
+            "Signaturen von Constraints haben sich geändert! "
                 + "Constraint Instanzen werden gelöscht, wenn der Code gespeichert wird!");
       }
     }
