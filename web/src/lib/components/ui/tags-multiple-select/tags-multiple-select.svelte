@@ -2,17 +2,14 @@
   import * as Select from '$lib/elements/ui/select';
   import type { Tag } from '$lib/sdk/fetch-client';
   import type { Selected } from 'bits-ui';
-  import { onMount } from 'svelte';
 
   export let tags: Tag[];
   let selectedTags: Selected<string>[] = [];
-  export let selectedTagIds: unknown[];
-  export let entityTags: Tag[];
-
-  onMount(() => {
-    selectedTags = entityTags.map((tag) => ({ label: tag.name, value: tag.id }));
-    selectedTagIds = selectedTags.map((tag) => tag.value);
-  });
+  export let selectedTagIds: string[];
+  selectedTags = tags
+    .filter((tag) => selectedTagIds.includes(tag.id))
+    .map((tag) => ({ label: tag.name, value: tag.id }));
+  selectedTagIds = selectedTags.map((tag) => tag.value);
 </script>
 
 {#if tags.length > 0}

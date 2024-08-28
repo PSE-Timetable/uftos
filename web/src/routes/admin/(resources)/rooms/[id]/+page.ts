@@ -1,32 +1,45 @@
-import { getRoom, getTags, type Room, type Sort } from '$lib/sdk/fetch-client';
+import { getRoom, getTags, type Sort } from '$lib/sdk/fetch-client';
 import { error } from '@sveltejs/kit';
+import { superValidate } from 'sveltekit-superforms';
+import { zod } from 'sveltekit-superforms/adapters';
+import { z } from 'zod';
 import type { PageLoad } from './$types';
+
+export const _schema = z.object({
+  id: z.string(),
+  name: z.string().trim().min(1, { message: 'Der Name darf nicht leer sein.' }),
+  buildingName: z.string().trim().min(1, { message: 'Der Gebäudename darf nicht leer sein.' }),
+  capacity: z.coerce.number().int().positive({ message: 'Die Kapazität darf nicht 0 sein' }),
+  tags: z.string().array(),
+});
 
 export const load = (async ({ params }) => {
   const sort: Sort = { sort: ['name,asc'] };
   const tags = await getTags(sort);
+  let formRoom, title;
   if (params.id === 'new') {
-    const room: Room = { id: 'new', name: '', buildingName: '', capacity: 0, tags: [] };
-    return {
-      room,
-      tags,
-      create: true,
-      meta: {
-        title: 'Raum — Hinzufügen',
-      },
-    };
+    formRoom = { id: 'new', name: '', buildingName: '', capacity: 0, tags: [] };
+    title = 'Raum — Hinzufügen';
+  } else {
+    try {
+      const room = await getRoom(params.id);
+      title = `Raum — ${room.name}`;
+      formRoom = {
+        id: room.id,
+        name: room.name,
+        buildingName: room.buildingName,
+        capacity: room.capacity,
+        tags: room.tags.map((tag) => tag.id),
+      };
+    } catch {
+      error(404, { message: `Room with id ${params.id} not found` });
+    }
   }
-  try {
-    const room = await getRoom(params.id);
-    return {
-      room,
-      tags,
-      create: false,
-      meta: {
-        title: `Raum — ${room.name}`,
-      },
-    };
-  } catch {
-    error(404, { message: `Room with id ${params.id} not found` });
-  }
+  return {
+    form: await superValidate(formRoom, zod(_schema), { errors: false }),
+    tags,
+    meta: {
+      title,
+    },
+  };
 }) satisfies PageLoad;
