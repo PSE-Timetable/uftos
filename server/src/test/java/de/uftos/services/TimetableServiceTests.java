@@ -121,9 +121,7 @@ public class TimetableServiceTests {
 
     BlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<>(1);
     ExecutorService es = new ThreadPoolExecutor(1, 1, 1, TimeUnit.SECONDS, workQueue);
-    Future<TimetableSolutionDto> solutionFuture = es.submit(() -> {
-      return timetableSolutionDto;
-    });
+    Future<TimetableSolutionDto> solutionFuture = es.submit(() -> timetableSolutionDto);
 
     when(timetableRepository.findAll()).thenReturn(List.of(timetable));
     when(timetableRepository.findById("timetable123")).thenReturn(Optional.of(timetable));
