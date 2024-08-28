@@ -116,8 +116,8 @@ public class UcdlEditorService {
 
       if (!signature.getInstances().isEmpty() && signatureChanged(signature, definition)) {
         return new SuccessResponse(false,
-            "Signatures of constraints changed!"
-                + " Constraint instances will be deleted if code is saved!");
+            "Signaturen von Constraints haben sich geändert! "
+                + "Constraint Instanzen werden gelöscht, wenn der Code gespeichert wird!");
       }
     }
     //no signatures with existing instances changed
@@ -130,7 +130,7 @@ public class UcdlEditorService {
     removeDeletedSignatures(signatures, definitions); //signatures without new definitions
     updateDefinitionSignatures(signatures, definitions);
 
-    return new SuccessResponse(true, "Code saved successfully!");
+    return new SuccessResponse(true, "Code erfolgreich gespeichert!");
   }
 
   private SuccessResponse forceSetUcdl(MultipartFile file) {
