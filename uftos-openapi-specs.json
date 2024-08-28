@@ -432,7 +432,7 @@
             "content" : {
               "*/*" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/ParsingResponse"
+                  "$ref" : "#/components/schemas/SuccessResponse"
                 }
               }
             },
@@ -485,7 +485,7 @@
             "content" : {
               "*/*" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/ParsingResponse"
+                  "$ref" : "#/components/schemas/SuccessResponse"
                 }
               }
             },
@@ -2075,7 +2075,7 @@
             "content" : {
               "*/*" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/Timetable"
+                  "$ref" : "#/components/schemas/SuccessResponse"
                 }
               }
             },
@@ -3027,18 +3027,6 @@
           }
         }
       },
-      "ParsingResponse" : {
-        "required" : [ "message", "success" ],
-        "type" : "object",
-        "properties" : {
-          "message" : {
-            "type" : "string"
-          },
-          "success" : {
-            "type" : "boolean"
-          }
-        }
-      },
       "RewardPenalize" : {
         "type" : "string",
         "enum" : [ "SOFT_REWARD", "HARD_REWARD", "SOFT_PENALIZE", "HARD_PENALIZE" ]
@@ -3369,6 +3357,18 @@
             "items" : {
               "type" : "string"
             }
+          }
+        }
+      },
+      "SuccessResponse" : {
+        "required" : [ "message", "success" ],
+        "type" : "object",
+        "properties" : {
+          "message" : {
+            "type" : "string"
+          },
+          "success" : {
+            "type" : "boolean"
           }
         }
       },

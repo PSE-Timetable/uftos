@@ -1,5 +1,6 @@
 package de.uftos.controller;
 
+import de.uftos.dto.SuccessResponse;
 import de.uftos.dto.requestdtos.TimetableRequestDto;
 import de.uftos.entities.Timetable;
 import de.uftos.services.TimetableService;
@@ -42,7 +43,7 @@ public class TimetableController {
    * @return the created timetable with the assigned ID.
    */
   @PostMapping()
-  public Timetable createTimetable(@RequestBody TimetableRequestDto timetable) {
+  public SuccessResponse createTimetable(@RequestBody TimetableRequestDto timetable) {
     return this.timetablesService.create(timetable);
   }
 

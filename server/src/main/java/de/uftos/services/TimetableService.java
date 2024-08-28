@@ -1,5 +1,6 @@
 package de.uftos.services;
 
+import de.uftos.dto.SuccessResponse;
 import de.uftos.dto.requestdtos.TimetableRequestDto;
 import de.uftos.dto.solver.ConstraintInstanceDto;
 import de.uftos.dto.solver.GradeProblemDto;
@@ -173,10 +174,9 @@ public class TimetableService {
    * @return the created timetable which includes the ID that was assigned.
    * @throws ResponseStatusException is thrown if the name of the timetable is blank.
    */
-  public Timetable create(TimetableRequestDto timetable) throws ResponseStatusException {
+  public SuccessResponse create(TimetableRequestDto timetable) throws ResponseStatusException {
     if (timetable.name().isBlank()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "The name of the timetable is blank.");
+      return new SuccessResponse(false, "The name of the timetable is blank.");
     }
     Consumer<TimetableSolutionDto> solverFinishedEvent = (solution) -> {
       if (solution.hardScore() < 0) {
@@ -197,9 +197,9 @@ public class TimetableService {
       TimetableProblemDto problemInstance = getProblemInstance(timetableEntity);
       solverRepository.solve(problemInstance, solverFinishedEvent).get();
     } catch (InterruptedException | ExecutionException | BadRequestException e) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+      return new SuccessResponse(false, e.getMessage());
     }
-    return timetable.map(); //todo: change signature of method as this is a useless return value
+    return new SuccessResponse(true, "Solver erfolgreich gestartet!");
   }
 
   @SuppressWarnings("checkstyle:VariableDeclarationUsageDistance")
