@@ -1,6 +1,5 @@
 package de.uftos.dto.responsedtos;
 
-import de.uftos.entities.Lesson;
 import de.uftos.entities.Student;
 import de.uftos.entities.StudentGroup;
 import de.uftos.entities.Subject;
@@ -26,7 +25,7 @@ public record StudentGroupResponseDto(@NotEmpty String id,
                                       @NotNull List<Student> students,
                                       @NotNull List<GradeResponseDto> grades,
                                       @NotNull List<Tag> tags,
-                                      @NotNull List<Lesson> lessons,
+                                      @NotNull LessonResponseDto lessons,
                                       @NotNull List<Subject> subjects) {
 
   /**
@@ -38,11 +37,15 @@ public record StudentGroupResponseDto(@NotEmpty String id,
     this(studentGroup.getId(),
         studentGroup.getName(),
         studentGroup.getStudents(),
-        studentGroup.getGrades() == null 
+        studentGroup.getGrades() == null
             ? Collections.emptyList()
-            : studentGroup.getGrades().stream().map(GradeResponseDto::createResponseDtoFromGrade).toList(),
+            : studentGroup.getGrades().stream().map(GradeResponseDto::createResponseDtoFromGrade)
+            .toList(),
         studentGroup.getTags(),
-        studentGroup.getLessons(),
+        LessonResponseDto.createResponseDtoFromLessons(studentGroup.getLessons() == null
+            ? Collections.emptyList()
+            : studentGroup.getLessons()
+        ),
         studentGroup.getSubjects());
   }
 }

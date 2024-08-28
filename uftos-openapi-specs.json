@@ -3269,10 +3269,7 @@
             "type" : "string"
           },
           "lessons" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/Lesson"
-            }
+            "$ref" : "#/components/schemas/LessonResponseDto"
           },
           "name" : {
             "type" : "string"

@@ -300,7 +300,7 @@ export type TimetableMetadata = {
 export type StudentGroupResponseDto = {
     grades: GradeResponseDto[];
     id: string;
-    lessons: Lesson[];
+    lessons: LessonResponseDto;
     name: string;
     students: Student[];
     subjects: Subject[];
