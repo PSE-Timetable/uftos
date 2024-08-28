@@ -8,9 +8,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import de.uftos.dto.ResourceType;
+import de.uftos.dto.SuccessResponse;
 import de.uftos.dto.solver.RewardPenalize;
 import de.uftos.dto.ucdl.ConstraintDefinitionDto;
-import de.uftos.dto.ucdl.ParsingResponse;
 import de.uftos.dto.ucdl.ast.AbstractSyntaxTreeDto;
 import de.uftos.entities.ConstraintInstance;
 import de.uftos.entities.ConstraintParameter;
@@ -42,28 +42,13 @@ import org.springframework.web.multipart.MultipartFile;
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class UcdlEditorServiceTests {
-  @Mock
-  private UcdlRepository ucdlRepository;
-
-  @Mock
-  private ConstraintSignatureRepository constraintSignatureRepository;
-
-  @Mock
-  private ConstraintSignature signatureMock;
-
-  @InjectMocks
-  private UcdlEditorService ucdlEditorService;
-
   private final String content =
       Arrays.stream(PredefinedConstraint.values()).map(PredefinedConstraint::getCode)
           .collect(Collectors.joining("\n"));
-
   private final String successMessageForceSet = "Änderungen gespeichert und inkonsistente"
       + " Constraint Instanzen gelöscht!";
   private final String successMessageNoForceSet = "Code erfolgreich gespeichert!";
-
   private final MultipartFile emptyFile = new MockMultipartFile("test file", "".getBytes());
-
   private final String invalidUcdlCode = """
       newConstraint:
         description: "Ein neuer Constraint, der immer zu false auswertet."
@@ -75,7 +60,6 @@ public class UcdlEditorServiceTests {
           }
           return kasjhdfkja false
       """;
-
   private final MultipartFile validUcdlFile = new MockMultipartFile("test file", """
       newConstraint:
         description: "Ein neuer Constraint, der immer zu false auswertet."
@@ -87,11 +71,8 @@ public class UcdlEditorServiceTests {
           }
           return false
       """.getBytes());
-
-
   private final MultipartFile invalidUcdlFile =
       new MockMultipartFile("test file", invalidUcdlCode.getBytes());
-
   private final String testDefinition = """
       newConstraint:
         description: "Ein neuer Constraint, der immer zu false auswertet."
@@ -103,18 +84,20 @@ public class UcdlEditorServiceTests {
           }
           return false
       """;
-
   private final String constraintName = "newConstraint";
-
   private final String constraintDescription =
       "Ein neuer Constraint, der immer zu false auswertet.";
-
   private final ConstraintParameter testParameter = new ConstraintParameter();
-
   private final String testParameterName = "testParam";
-
   private final AbstractSyntaxTreeDto testAst = () -> null;
-
+  @Mock
+  private UcdlRepository ucdlRepository;
+  @Mock
+  private ConstraintSignatureRepository constraintSignatureRepository;
+  @Mock
+  private ConstraintSignature signatureMock;
+  @InjectMocks
+  private UcdlEditorService ucdlEditorService;
 
   @BeforeEach
   void setup() throws IOException, ParseException {
@@ -142,13 +125,13 @@ public class UcdlEditorServiceTests {
 
   @Test
   void setUcdlEmptyForce() {
-    ParsingResponse response = ucdlEditorService.setUcdl(emptyFile, true);
+    SuccessResponse response = ucdlEditorService.setUcdl(emptyFile, true);
     assertEquals(successMessageForceSet, response.message());
   }
 
   @Test
   void setUcdlEmptyNoForce() {
-    ParsingResponse response = ucdlEditorService.setUcdl(emptyFile, false);
+    SuccessResponse response = ucdlEditorService.setUcdl(emptyFile, false);
     assertEquals(successMessageNoForceSet, response.message());
   }
 
@@ -169,7 +152,7 @@ public class UcdlEditorServiceTests {
     when(ucdlRepository.getConstraints()).thenReturn(getConstraintsResponse);
     when(constraintSignatureRepository.findAll()).thenReturn(List.of(signatureMock));
 
-    ParsingResponse response = ucdlEditorService.setUcdl(validUcdlFile, true);
+    SuccessResponse response = ucdlEditorService.setUcdl(validUcdlFile, true);
     assertEquals(successMessageForceSet, response.message());
   }
 
@@ -189,7 +172,7 @@ public class UcdlEditorServiceTests {
     when(constraintSignatureRepository.findAll()).thenReturn(List.of(signatureMock));
 
 
-    ParsingResponse response = ucdlEditorService.setUcdl(validUcdlFile, true);
+    SuccessResponse response = ucdlEditorService.setUcdl(validUcdlFile, true);
     assertEquals(successMessageForceSet, response.message());
   }
 
@@ -211,7 +194,7 @@ public class UcdlEditorServiceTests {
     when(ucdlRepository.getConstraints()).thenReturn(getConstraintsResponse);
     when(constraintSignatureRepository.findAll()).thenReturn(List.of(signatureMock));
 
-    ParsingResponse response = ucdlEditorService.setUcdl(validUcdlFile, true);
+    SuccessResponse response = ucdlEditorService.setUcdl(validUcdlFile, true);
     assertEquals(successMessageForceSet, response.message());
   }
 
@@ -265,7 +248,7 @@ public class UcdlEditorServiceTests {
     when(ucdlRepository.getConstraints()).thenReturn(getConstraintsResponse);
     when(constraintSignatureRepository.findAll()).thenReturn(List.of(signatureMock));
 
-    ParsingResponse response = ucdlEditorService.setUcdl(validUcdlFile, false);
+    SuccessResponse response = ucdlEditorService.setUcdl(validUcdlFile, false);
     assertEquals(successMessageNoForceSet, response.message());
   }
 
@@ -289,7 +272,7 @@ public class UcdlEditorServiceTests {
         getConstraintsResponse);
     when(constraintSignatureRepository.findAll()).thenReturn(List.of(signatureMock));
 
-    ParsingResponse response = ucdlEditorService.setUcdl(validUcdlFile, false);
+    SuccessResponse response = ucdlEditorService.setUcdl(validUcdlFile, false);
     assertEquals(successMessageNoForceSet, response.message());
   }
 
@@ -313,7 +296,7 @@ public class UcdlEditorServiceTests {
         getConstraintsResponse);
     when(constraintSignatureRepository.findAll()).thenReturn(List.of(signatureMock));
 
-    ParsingResponse response = ucdlEditorService.setUcdl(validUcdlFile, false);
+    SuccessResponse response = ucdlEditorService.setUcdl(validUcdlFile, false);
     assertEquals("Signaturen von Constraints haben sich geändert! "
             + "Constraint Instanzen werden gelöscht, wenn der Code gespeichert wird!",
         response.message());
@@ -366,7 +349,7 @@ public class UcdlEditorServiceTests {
         getConstraintsResponse);
     when(constraintSignatureRepository.findAll()).thenReturn(List.of(signatureMock));
 
-    ParsingResponse response = ucdlEditorService.setUcdl(validUcdlFile, false);
+    SuccessResponse response = ucdlEditorService.setUcdl(validUcdlFile, false);
     assertEquals(response.message(), successMessageNoForceSet);
   }
 
@@ -394,13 +377,13 @@ public class UcdlEditorServiceTests {
         getConstraintsResponse);
     when(constraintSignatureRepository.findAll()).thenReturn(List.of(signatureMock));
 
-    ParsingResponse response = ucdlEditorService.setUcdl(validUcdlFile, false);
+    SuccessResponse response = ucdlEditorService.setUcdl(validUcdlFile, false);
     assertEquals(response.message(), successMessageNoForceSet);
   }
 
   @Test
   void setUcdlInvalidConstraintNoForce() {
-    ParsingResponse response = ucdlEditorService.setUcdl(invalidUcdlFile, false);
+    SuccessResponse response = ucdlEditorService.setUcdl(invalidUcdlFile, false);
     assertFalse(response.success());
   }
 
@@ -408,7 +391,7 @@ public class UcdlEditorServiceTests {
   void setUcdlInvalidConstraintForce() throws ParseException, IOException {
     when(ucdlRepository.getConstraints()).thenThrow(ParseException.class);
 
-    ParsingResponse response = ucdlEditorService.setUcdl(invalidUcdlFile, true);
+    SuccessResponse response = ucdlEditorService.setUcdl(invalidUcdlFile, true);
     assertEquals("Änderungen mit invalidem Code gespeichert!", response.message());
   }
 
