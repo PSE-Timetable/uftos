@@ -18,20 +18,22 @@ import java.util.Set;
 /**
  * A data transfer object used in the lessons HTTP responses.
  *
- * @param lessons   the lessons that are given as a response.
- * @param teachers  the teachers of the lessons.
- * @param grades    the grades of which the lessons are a part of.
- * @param rooms     the room in which the lessons take part.
- * @param subjects  the subjects of which lessons take place.
- * @param timetable the timetable of which the lessons are a part of.
+ * @param lessons    the lessons that are given as a response.
+ * @param teachers   the teachers of the lessons.
+ * @param grades     the grades of which the lessons are a part of.
+ * @param rooms      the room in which the lessons take part.
+ * @param subjects   the subjects of which lessons take place.
+ * @param timetables the timetables of which the lessons are a part of.
  */
 public record LessonResponseDto(@NotNull List<BulkLesson> lessons,
-                                @NotNull List<Teacher> teachers,
-                                @NotNull List<StudentGroupResponseDto> groups,
-                                @NotNull List<GradeResponseDto> grades, @NotNull List<Room> rooms,
-                                @NotNull List<Subject> subjects, @NotNull Timetable timetable) {
+    @NotNull List<Teacher> teachers,
+    @NotNull List<StudentGroupResponseDto> groups,
+    @NotNull List<GradeResponseDto> grades, @NotNull List<Room> rooms,
+    @NotNull List<Subject> subjects, @NotNull List<Timetable> timetables) {
+
   /**
-   * Creates a LessonResponseDto from a list of lessons. Each lesson has to be in the same
+   * Creates a LessonResponseDto from a list of lessons. Each lesson has to be in
+   * the same
    * timetable.
    *
    * @param lessons the list of lessons.
@@ -44,8 +46,8 @@ public record LessonResponseDto(@NotNull List<BulkLesson> lessons,
     List<GradeResponseDto> gradeResponseDtos = new ArrayList<>();
     Set<Room> rooms = new HashSet<>();
     Set<Subject> subjects = new HashSet<>();
-    Set<StudentGroupResponseDto> groups = new HashSet<>(); 
-    Timetable timetable = lessons.isEmpty() ? null : lessons.getFirst().getTimetable();
+    Set<StudentGroupResponseDto> groups = new HashSet<>();
+    Set<Timetable> timetables = new HashSet<>();
 
     for (Lesson lesson : lessons) {
       List<String> gradeIds = new ArrayList<>();
@@ -58,26 +60,26 @@ public record LessonResponseDto(@NotNull List<BulkLesson> lessons,
       rooms.add(lesson.getRoom());
       subjects.add(lesson.getSubject());
       groups.add(new StudentGroupResponseDto(lesson.getStudentGroup()));
+      timetables.add(lesson.getTimetable());
     }
 
     grades.stream().map(GradeResponseDto::createResponseDtoFromGrade)
         .forEach(gradeResponseDtos::add);
 
     return new LessonResponseDto(bulkLessons, teachers.stream().toList(), groups.stream().toList(), gradeResponseDtos,
-        rooms.stream().toList(), subjects.stream().toList(), timetable);
+        rooms.stream().toList(), subjects.stream().toList(), timetables.stream().toList());
   }
 
   private record BulkLesson(@NotEmpty String id, @PositiveOrZero int index,
-                            @NotEmpty String teacherId,
-                            @NotEmpty String roomId,
-                            @NotEmpty String groupId,
-                            @NotNull List<String> gradeIds, @NotNull Timeslot timeslot,
-                            @NotEmpty String subjectId, @NotNull Timetable timetable) {
+      @NotEmpty String teacherId,
+      @NotEmpty String roomId,
+      @NotEmpty String groupId,
+      @NotNull List<String> gradeIds, @NotNull Timeslot timeslot,
+      @NotEmpty String subjectId, @NotEmpty String timetableId) {
     private BulkLesson(Lesson lesson, List<String> gradesId) {
       this(lesson.getId(), lesson.getIndex(), lesson.getTeacher().getId(),
           lesson.getRoom().getId(), lesson.getStudentGroup().getId(), gradesId, lesson.getTimeslot(),
-          lesson.getSubject().getId(), lesson.getTimetable());
+          lesson.getSubject().getId(), lesson.getTimetable().getId());
     }
   }
 }
-
