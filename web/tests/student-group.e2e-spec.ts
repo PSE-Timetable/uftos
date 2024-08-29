@@ -3,6 +3,10 @@ import {
   createStudent,
   createSubject,
   createTag,
+  deleteGrades,
+  deleteStudents,
+  deleteSubjects,
+  deleteTags,
   getGrades,
   getStudents,
   getSubjects,
@@ -33,26 +37,25 @@ test.describe('Student group page', () => {
       }
     }
     // doesn't work, change to fetch-client functions when #377 is merged.
-    /*
+    
     const students = await getStudents({}).then(({ content }) => content ?? []);
-    await deleteStudentEntry(students.map((student) => student.id));
+    await deleteStudents(students.map((student) => student.id));
     const grades = await getGrades({});
-    await deleteGradeEntry(grades.map((grade) => grade.id));
+    await deleteGrades(grades.map((grade) => grade.id));
     const tags = await getTags({});
-    await deleteTagEntry(tags.map((tag) => tag.id));
+    await deleteTags(tags.map((tag) => tag.id));
     const subjects = await getSubjects({});
-    await deleteSubjectEntry(subjects.map((subject) => subject.id));
+    await deleteSubjects(subjects.map((subject) => subject.id));
     
     for (let i = 0; i < 25; i++) {
       const requestDto: StudentRequestDto = {
         firstName: `Max${i}`,
         lastName: `Mustermann${i}`,
-        groupIds: [],
         tagIds: [],
       };
       await createStudent(requestDto);
     }
-    */
+    
   });
 
   test('empty create', async () => {
