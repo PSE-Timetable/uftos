@@ -2,7 +2,7 @@ import { devices, type PlaywrightTestConfig } from '@playwright/test';
 
 const config: PlaywrightTestConfig = {
   webServer: {
-    command: 'docker compose -f ../docker-compose.yml up --build -V --remove-orphans',
+    command: 'docker compose -f ../docker-compose.e2e.yml up',
     url: 'http://localhost:5173',
     reuseExistingServer: true,
   },

@@ -66,7 +66,8 @@ public class RoomService {
   public Room getById(String id) {
     Optional<Room> room = this.repository.findById(id);
 
-    return room.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+    return room.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+        "Could not find a room with this id"));
   }
 
   /**
@@ -125,9 +126,10 @@ public class RoomService {
    * @throws ResponseStatusException is thrown if no room exists with the given ID.
    */
   public void delete(String id) {
-    var room = this.repository.findById(id);
+    Optional<Room> room = this.repository.findById(id);
     if (room.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "Could not find a room with this id");
     }
 
     this.repository.delete(room.get());

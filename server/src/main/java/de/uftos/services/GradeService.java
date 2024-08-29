@@ -76,7 +76,8 @@ public class GradeService {
    */
   public GradeResponseDto getById(String id) {
     Grade grade = this.repository.findById(id)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+            "Could not find a grade with this id"));
 
     return this.mapResponseDto(grade);
   }
@@ -90,7 +91,8 @@ public class GradeService {
    */
   public LessonResponseDto getLessonsById(String id) {
     Grade grade = this.repository.findById(id)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+            "Could not find a grade with this id"));
 
     Stream<StudentGroup> studentGroupStream =
         Stream.of(grade.getStudentGroups()).flatMap(Collection::stream);
