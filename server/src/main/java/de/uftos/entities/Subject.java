@@ -13,6 +13,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
@@ -49,7 +50,8 @@ public class Subject {
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(name = "subjects_tags",
       joinColumns = @JoinColumn(name = "subjects_id"),
-      inverseJoinColumns = @JoinColumn(name = "tags_id"))
+      inverseJoinColumns = @JoinColumn(name = "tags_id"),
+      uniqueConstraints = @UniqueConstraint(columnNames = {"subjects_id", "tags_id"}))
   private List<Tag> tags;
 
   @JsonIgnore
