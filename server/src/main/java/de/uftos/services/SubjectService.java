@@ -1,20 +1,20 @@
 package de.uftos.services;
 
 import de.uftos.dto.requestdtos.SubjectRequestDto;
-import de.uftos.entities.StudentGroup;
 import de.uftos.entities.Curriculum;
 import de.uftos.entities.StudentGroup;
 import de.uftos.entities.Subject;
 import de.uftos.entities.Teacher;
 import de.uftos.repositories.database.ConstraintInstanceRepository;
 import de.uftos.repositories.database.ConstraintSignatureRepository;
-import de.uftos.repositories.database.StudentGroupRepository;
-import de.uftos.entities.Teacher;
 import de.uftos.repositories.database.CurriculumRepository;
+import de.uftos.repositories.database.LessonRepository;
 import de.uftos.repositories.database.StudentGroupRepository;
 import de.uftos.repositories.database.SubjectRepository;
 import de.uftos.repositories.database.TeacherRepository;
+import de.uftos.repositories.database.TimetableRepository;
 import de.uftos.utils.ConstraintInstanceDeleter;
+import de.uftos.utils.LessonsDeleter;
 import de.uftos.utils.SpecificationBuilder;
 import java.util.Arrays;
 import java.util.List;
@@ -37,6 +37,8 @@ public class SubjectService {
   private final StudentGroupRepository studentGroupRepository;
   private final ConstraintSignatureRepository constraintSignatureRepository;
   private final ConstraintInstanceRepository constraintInstanceRepository;
+  private final LessonRepository lessonRepository;
+  private final TimetableRepository timetableRepository;
 
   /**
    * Creates a subject service.
@@ -47,19 +49,25 @@ public class SubjectService {
    * @param studentGroupRepository        The repository for accessing the student group table.
    * @param constraintSignatureRepository the repository for accessing the constraint signature table.
    * @param constraintInstanceRepository  the repository for accessing the constraint instance table.
+   * @param lessonRepository              the repository for accessing the lesson table.
+   * @param timetableRepository           the repository for accessing the timetable table.
    */
   @Autowired
   public SubjectService(SubjectRepository repository, CurriculumRepository curriculumRepository,
                         TeacherRepository teacherRepository,
                         StudentGroupRepository studentGroupRepository,
                         ConstraintSignatureRepository constraintSignatureRepository,
-                        ConstraintInstanceRepository constraintInstanceRepository) {
+                        ConstraintInstanceRepository constraintInstanceRepository,
+                        LessonRepository lessonRepository,
+                        TimetableRepository timetableRepository) {
     this.repository = repository;
     this.curriculumRepository = curriculumRepository;
     this.teacherRepository = teacherRepository;
     this.studentGroupRepository = studentGroupRepository;
     this.constraintSignatureRepository = constraintSignatureRepository;
     this.constraintInstanceRepository = constraintInstanceRepository;
+    this.lessonRepository = lessonRepository;
+    this.timetableRepository = timetableRepository;
   }
 
   /**
@@ -164,6 +172,8 @@ public class SubjectService {
     new ConstraintInstanceDeleter(constraintSignatureRepository, constraintInstanceRepository)
         .removeAllInstancesWithArgumentValue(new String[] {id});
 
+    new LessonsDeleter(lessonRepository, timetableRepository).fromSubjects(List.of(subject));
+
     this.repository.delete(subject);
   }
 
@@ -213,6 +223,8 @@ public class SubjectService {
       studentGroup.getSubjects().removeIf(subject1 -> subjectIds.contains(subject1.getId()));
     }
     studentGroupRepository.saveAll(studentGroups);
+
+    new LessonsDeleter(lessonRepository, timetableRepository).fromSubjects(subjects);
 
     this.repository.deleteAll(subjects);
   }

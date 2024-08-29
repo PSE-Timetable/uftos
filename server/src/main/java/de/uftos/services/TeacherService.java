@@ -6,9 +6,12 @@ import de.uftos.entities.Lesson;
 import de.uftos.entities.Teacher;
 import de.uftos.repositories.database.ConstraintInstanceRepository;
 import de.uftos.repositories.database.ConstraintSignatureRepository;
+import de.uftos.repositories.database.LessonRepository;
 import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.TeacherRepository;
+import de.uftos.repositories.database.TimetableRepository;
 import de.uftos.utils.ConstraintInstanceDeleter;
+import de.uftos.utils.LessonsDeleter;
 import de.uftos.utils.SpecificationBuilder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,6 +34,8 @@ public class TeacherService {
   private final ServerRepository serverRepository;
   private final ConstraintSignatureRepository constraintSignatureRepository;
   private final ConstraintInstanceRepository constraintInstanceRepository;
+  private final LessonRepository lessonRepository;
+  private final TimetableRepository timetableRepository;
 
   /**
    * Creates a teacher service.
@@ -38,15 +43,21 @@ public class TeacherService {
    * @param repository                    the repository for accessing the teacher table.
    * @param constraintSignatureRepository the repository for accessing the constraint signature table.
    * @param constraintInstanceRepository  the repository for accessing the constraint instance table.
+   * @param lessonRepository              the repository for accessing the lesson table.
+   * @param timetableRepository           the repository for accessing the timetable table.
    */
   @Autowired
   public TeacherService(TeacherRepository repository, ServerRepository serverRepository,
                         ConstraintSignatureRepository constraintSignatureRepository,
-                        ConstraintInstanceRepository constraintInstanceRepository) {
+                        ConstraintInstanceRepository constraintInstanceRepository,
+                        LessonRepository lessonRepository,
+                        TimetableRepository timetableRepository) {
     this.repository = repository;
     this.serverRepository = serverRepository;
     this.constraintSignatureRepository = constraintSignatureRepository;
     this.constraintInstanceRepository = constraintInstanceRepository;
+    this.lessonRepository = lessonRepository;
+    this.timetableRepository = timetableRepository;
   }
 
   /**
@@ -105,8 +116,8 @@ public class TeacherService {
    * @throws ResponseStatusException is thrown if the first name, last name or the acronym of the teacher is blank.
    */
   public Teacher create(TeacherRequestDto teacher) {
-    if (teacher.firstName().isBlank() || teacher.lastName().isBlank() ||
-        teacher.acronym().isBlank()) {
+    if (teacher.firstName().isBlank() || teacher.lastName().isBlank()
+        || teacher.acronym().isBlank()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
           "The first name, last name or the acronym of the teacher is blank.");
     }
@@ -148,6 +159,8 @@ public class TeacherService {
     new ConstraintInstanceDeleter(constraintSignatureRepository, constraintInstanceRepository)
         .removeAllInstancesWithArgumentValue(new String[] {id});
 
+    new LessonsDeleter(lessonRepository, timetableRepository).fromTeachers(List.of(teacher.get()));
+
     this.repository.delete(teacher.get());
   }
 
@@ -161,8 +174,11 @@ public class TeacherService {
     List<String> teacherIds = Arrays.asList(ids);
     List<Teacher> teachers = this.repository.findAllById(teacherIds);
     if (teachers.size() != teacherIds.size()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Could not find a teacher with this id!");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "Could not find a teacher with this id!");
     }
+
+    new LessonsDeleter(lessonRepository, timetableRepository).fromTeachers(teachers);
 
     this.repository.deleteAll(teachers);
   }

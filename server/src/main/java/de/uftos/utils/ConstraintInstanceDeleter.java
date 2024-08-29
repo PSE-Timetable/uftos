@@ -19,6 +19,12 @@ public class ConstraintInstanceDeleter {
   private final ConstraintSignatureRepository constraintSignatureRepository;
   private final ConstraintInstanceRepository constraintInstanceRepository;
 
+  /**
+   * Creates the constraint instance deleter.
+   *
+   * @param constraintSignatureRepository the repository for accessing the constraint signature table.
+   * @param constraintInstanceRepository  the repository for accessing the constraint instance table.
+   */
   public ConstraintInstanceDeleter(ConstraintSignatureRepository constraintSignatureRepository,
                                    ConstraintInstanceRepository constraintInstanceRepository) {
     this.constraintSignatureRepository = constraintSignatureRepository;
@@ -41,11 +47,11 @@ public class ConstraintInstanceDeleter {
     List<ConstraintInstance> constraintInstances = new ArrayList<>(constraintSignatures.stream()
         .flatMap(constraintSignature -> constraintSignature.getInstances().stream()).toList());
 
-    List<String> studentIds = Arrays.stream(ids).toList();
+    List<String> resourceIds = Arrays.stream(ids).toList();
     constraintInstances.removeIf(constraintInstance -> {
       List<ConstraintArgument> args = constraintInstance.getArguments();
       for (String argumentId : args.stream().map(ConstraintArgument::getValue).toList()) {
-        if (studentIds.contains(argumentId)) {
+        if (resourceIds.contains(argumentId)) {
           return false;
         }
       }

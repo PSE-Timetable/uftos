@@ -6,9 +6,12 @@ import de.uftos.entities.Lesson;
 import de.uftos.entities.Room;
 import de.uftos.repositories.database.ConstraintInstanceRepository;
 import de.uftos.repositories.database.ConstraintSignatureRepository;
+import de.uftos.repositories.database.LessonRepository;
 import de.uftos.repositories.database.RoomRepository;
 import de.uftos.repositories.database.ServerRepository;
+import de.uftos.repositories.database.TimetableRepository;
 import de.uftos.utils.ConstraintInstanceDeleter;
+import de.uftos.utils.LessonsDeleter;
 import de.uftos.utils.SpecificationBuilder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,6 +34,8 @@ public class RoomService {
   private final ServerRepository serverRepository;
   private final ConstraintSignatureRepository constraintSignatureRepository;
   private final ConstraintInstanceRepository constraintInstanceRepository;
+  private final LessonRepository lessonRepository;
+  private final TimetableRepository timetableRepository;
 
   /**
    * Creates a lesson service.
@@ -38,15 +43,20 @@ public class RoomService {
    * @param repository                    the repository for accessing the lesson table.
    * @param constraintSignatureRepository the repository for accessing the constraint signature table.
    * @param constraintInstanceRepository  the repository for accessing the constraint instance table.
+   * @param lessonRepository              the repository for accessing the lesson table.
+   * @param timetableRepository           the repository for accessing the timetable table.
    */
   @Autowired
   public RoomService(RoomRepository repository, ServerRepository serverRepository,
                      ConstraintSignatureRepository constraintSignatureRepository,
-                     ConstraintInstanceRepository constraintInstanceRepository) {
+                     ConstraintInstanceRepository constraintInstanceRepository,
+                     LessonRepository lessonRepository, TimetableRepository timetableRepository) {
     this.repository = repository;
     this.serverRepository = serverRepository;
     this.constraintSignatureRepository = constraintSignatureRepository;
     this.constraintInstanceRepository = constraintInstanceRepository;
+    this.lessonRepository = lessonRepository;
+    this.timetableRepository = timetableRepository;
   }
 
   /**
@@ -146,6 +156,8 @@ public class RoomService {
     new ConstraintInstanceDeleter(constraintSignatureRepository, constraintInstanceRepository)
         .removeAllInstancesWithArgumentValue(new String[] {id});
 
+    new LessonsDeleter(lessonRepository, timetableRepository).fromRooms(List.of(room.get()));
+
     this.repository.delete(room.get());
   }
 
@@ -162,6 +174,9 @@ public class RoomService {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
           "Could not found a room with this id to be deleted");
     }
+
+    new LessonsDeleter(lessonRepository, timetableRepository).fromRooms(rooms);
+
 
     this.repository.deleteAll(rooms);
   }
