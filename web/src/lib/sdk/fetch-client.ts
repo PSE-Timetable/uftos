@@ -341,7 +341,6 @@ export type PageStudent = {
 };
 export type StudentRequestDto = {
     firstName: string;
-    groupIds: string[];
     lastName: string;
     tagIds: string[];
 };
@@ -548,6 +547,13 @@ export function validateUcdlFile(body?: {
         body
     })));
 }
+export function deleteGrades(body: string[], opts?: Oazapfts.RequestOpts) {
+    return oazapfts.ok(oazapfts.fetchText("/grades", oazapfts.json({
+        ...opts,
+        method: "DELETE",
+        body
+    })));
+}
 export function getGrades(sort: Sort, { search, tags }: {
     search?: string;
     tags?: string[];
@@ -647,6 +653,13 @@ export function updateLesson(id: string, lessonRequestDto: LessonRequestDto, opt
         ...opts,
         method: "PUT",
         body: lessonRequestDto
+    })));
+}
+export function deleteRooms(body: string[], opts?: Oazapfts.RequestOpts) {
+    return oazapfts.ok(oazapfts.fetchText("/rooms", oazapfts.json({
+        ...opts,
+        method: "DELETE",
+        body
     })));
 }
 export function getRooms(pageable: Pageable, { search, capacity, tags }: {
@@ -805,6 +818,13 @@ export function addStudentsToStudentGroup(id: string, body: string[], opts?: Oaz
         body
     })));
 }
+export function deleteStudents(body: string[], opts?: Oazapfts.RequestOpts) {
+    return oazapfts.ok(oazapfts.fetchText("/students", oazapfts.json({
+        ...opts,
+        method: "DELETE",
+        body
+    })));
+}
 export function getStudents(pageable: Pageable, { search, groups, tags }: {
     search?: string;
     groups?: string[];
@@ -856,6 +876,13 @@ export function updateStudent(id: string, studentRequestDto: StudentRequestDto, 
         body: studentRequestDto
     })));
 }
+export function deleteSubjects(body: string[], opts?: Oazapfts.RequestOpts) {
+    return oazapfts.ok(oazapfts.fetchText("/subjects", oazapfts.json({
+        ...opts,
+        method: "DELETE",
+        body
+    })));
+}
 export function getSubjects(sort: Sort, { search }: {
     search?: string;
 } = {}, opts?: Oazapfts.RequestOpts) {
@@ -903,6 +930,13 @@ export function updateSubject(id: string, subjectRequestDto: SubjectRequestDto, 
         body: subjectRequestDto
     })));
 }
+export function deleteTags(body: string[], opts?: Oazapfts.RequestOpts) {
+    return oazapfts.ok(oazapfts.fetchText("/tags", oazapfts.json({
+        ...opts,
+        method: "DELETE",
+        body
+    })));
+}
 export function getTags(sort: Sort, { search }: {
     search?: string;
 } = {}, opts?: Oazapfts.RequestOpts) {
@@ -948,6 +982,13 @@ export function updateTag(id: string, tagRequestDto: TagRequestDto, opts?: Oazap
         ...opts,
         method: "PUT",
         body: tagRequestDto
+    })));
+}
+export function deleteTeachers(body: string[], opts?: Oazapfts.RequestOpts) {
+    return oazapfts.ok(oazapfts.fetchText("/teachers", oazapfts.json({
+        ...opts,
+        method: "DELETE",
+        body
     })));
 }
 export function getTeachers(pageable: Pageable, { search, subjects, tags }: {

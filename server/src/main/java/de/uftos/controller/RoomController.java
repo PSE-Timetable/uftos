@@ -112,4 +112,15 @@ public class RoomController {
   public void deleteRoom(@PathVariable String id) {
     this.roomService.delete(id);
   }
+
+  /**
+   * Maps the HTTP DELETE request to the {@link RoomService#deleteRooms(String[]) delete} function of the
+   * room service.
+   *
+   * @param ids the IsD of the rooms which are to be deleted.
+   */
+  @DeleteMapping()
+  public void deleteRooms(@RequestBody String[] ids) {
+    this.roomService.deleteRooms(ids);
+  }
 }

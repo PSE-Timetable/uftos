@@ -25,6 +25,7 @@ import de.uftos.entities.Teacher;
 import de.uftos.entities.TimetableMetadata;
 import de.uftos.repositories.database.GradeRepository;
 import de.uftos.repositories.database.ServerRepository;
+import de.uftos.repositories.database.StudentGroupRepository;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,6 +51,9 @@ public class GradeServiceTests {
 
   @Mock
   private ServerRepository serverRepository;
+
+  @Mock
+  private StudentGroupRepository studentGroupRepository;
 
   @Mock
   private Grade grade1Mock;

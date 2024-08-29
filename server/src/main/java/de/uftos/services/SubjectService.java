@@ -10,6 +10,7 @@ import de.uftos.repositories.database.StudentGroupRepository;
 import de.uftos.repositories.database.SubjectRepository;
 import de.uftos.repositories.database.TeacherRepository;
 import de.uftos.utils.SpecificationBuilder;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -113,8 +114,8 @@ public class SubjectService {
   /**
    * Deletes the subject with the given ID.
    *
-   * @param id the ID of the subject. which to be deleted.
-   * @throws ResponseStatusException is thrown if no subject exists with the given ID.
+   * @param id the ID of the subject which is to be deleted.
+   * @throws ResponseStatusException is thrown if no subjects exist with the given IDs.
    */
   public void delete(String id) {
     Optional<Subject> subjectOptional = this.repository.findById(id);
@@ -142,9 +143,60 @@ public class SubjectService {
     for (StudentGroup studentGroup : studentGroups) {
       studentGroup.getSubjects().removeIf(subject1 -> subject1.getId().equals(id));
     }
+
+    studentGroupRepository.saveAll(studentGroups);
+    curriculumRepository.saveAll(curriculums);
+
+    this.repository.delete(subject);
+  }
+
+  /**
+   * Deletes the subjects with the given IDs.
+   *
+   * @param ids the IDs of the subjects which are to be deleted.
+   * @throws ResponseStatusException is thrown if no subject exists with the given ID.
+   */
+  public void deleteSubjects(String[] ids) {
+    Specification<Subject> subjectSpecification = new SpecificationBuilder<Subject>()
+        .andIn(ids, "id")
+        .build();
+    List<Subject> subjects = this.repository.findAll(subjectSpecification);
+
+    if (subjects.isEmpty() || subjects.size() != ids.length) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "There exist no subjects with the given id(s).");
+    }
+
+    List<String> subjectIds = Arrays.stream(ids).toList();
+
+    Specification<Curriculum> curriculumSpecification = new SpecificationBuilder<Curriculum>()
+        .andDoubleJoinIn(ids, "lessonsCounts", "subject", "id")
+        .build();
+    List<Curriculum> curricula = curriculumRepository.findAll(curriculumSpecification);
+
+    for (Curriculum curriculum : curricula) {
+      curriculum.getLessonsCounts()
+          .removeIf((lessonsCount) -> subjectIds.contains(lessonsCount.getSubject().getId()));
+    }
+    curriculumRepository.saveAll(curricula);
+
+    Specification<Teacher> teacherSpecification = new SpecificationBuilder<Teacher>()
+        .optionalAndJoinIn(Optional.of(ids), "subjects", "id")
+        .build();
+    List<Teacher> teachers = teacherRepository.findAll(teacherSpecification);
+    for (Teacher teacher : teachers) {
+      teacher.getSubjects().removeIf(subject1 -> subjectIds.contains(subject1.getId()));
+    }
+
+    Specification<StudentGroup> studentGroupSpecification = new SpecificationBuilder<StudentGroup>()
+        .optionalAndJoinIn(Optional.of(ids), "subjects", "id")
+        .build();
+    List<StudentGroup> studentGroups = studentGroupRepository.findAll(studentGroupSpecification);
+    for (StudentGroup studentGroup : studentGroups) {
+      studentGroup.getSubjects().removeIf(subject1 -> subjectIds.contains(subject1.getId()));
+    }
     studentGroupRepository.saveAll(studentGroups);
 
-    curriculumRepository.saveAll(curriculums);
-    this.repository.delete(subject);
+    this.repository.deleteAll(subjects);
   }
 }
