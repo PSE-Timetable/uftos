@@ -19,7 +19,7 @@ test.describe('Students page', () => {
       while (!(await page.getByRole('row').first().getByRole('checkbox').isChecked())) {
         await page.getByRole('row', { name: 'Vorname Nachname Tags' }).getByRole('checkbox').check();
         await page.keyboard.press('Delete');
-        await page.getByRole('button', { name: 'Löschen' }).click();
+        await page.getByRole('button', { name: 'Löschen' }).click({timeout: 250});
         await expect(page.getByText('Zeile(n) ausgewählt')).toContainText('0 von');
       }
     }).toPass();
