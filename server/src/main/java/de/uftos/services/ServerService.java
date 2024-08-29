@@ -17,7 +17,6 @@ import de.uftos.repositories.database.TimeslotRepository;
 import de.uftos.repositories.database.TimetableRepository;
 import de.uftos.utils.ConstraintInstanceDeleter;
 import de.uftos.utils.LessonsDeleter;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -131,20 +130,13 @@ public class ServerService {
       return;
     }
 
-    List<Timeslot> deletedSlots = new ArrayList<>();
-
-    currentSlots.removeIf(slot -> {
-      if (slot.getSlot() < timeslots.size() / Weekday.values().length) {
-        deletedSlots.add(slot);
-        return true;
-      }
-      return false;
-    });
+    // currentSlots now contains all the slots that have to be deleted
+    currentSlots.removeIf(slot -> slot.getSlot() < timeslots.size() / Weekday.values().length);
 
     new LessonsDeleter(lessonRepository, timetableRepository)
-        .fromTimeSlots(deletedSlots);
+        .fromTimeSlots(currentSlots);
 
-    List<String> timeslotIds = deletedSlots.stream().map(Timeslot::getId).toList();
+    List<String> timeslotIds = currentSlots.stream().map(Timeslot::getId).toList();
     new ConstraintInstanceDeleter(constraintSignatureRepository, constraintInstanceRepository)
         .removeAllInstancesWithArgumentValue(timeslotIds.toArray(new String[0]));
 

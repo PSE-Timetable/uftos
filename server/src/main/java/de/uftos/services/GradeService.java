@@ -195,6 +195,7 @@ public class GradeService {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
           "This grade is still associated with a student group.");
     }
+
     new ConstraintInstanceDeleter(constraintSignatureRepository, constraintInstanceRepository)
         .removeAllInstancesWithArgumentValue(ids);
 
