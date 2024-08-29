@@ -12,7 +12,9 @@ import de.uftos.repositories.database.ConstraintSignatureRepository;
 import de.uftos.repositories.database.GradeRepository;
 import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.StudentGroupRepository;
+import de.uftos.utils.ConstraintInstanceDeleter;
 import de.uftos.utils.SpecificationBuilder;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -40,8 +42,8 @@ public class GradeService {
   /**
    * Creates a grade service.
    *
-   * @param repository             the repository for accessing the grade table.
-   * @param studentGroupRepository the repository for accessing the student group table.
+   * @param repository                    the repository for accessing the grade table.
+   * @param studentGroupRepository        the repository for accessing the student group table.
    * @param repository                    the repository for accessing the grade table.
    * @param constraintSignatureRepository the repository for accessing the constraint signature table.
    * @param constraintInstanceRepository  the repository for accessing the constraint instance table.

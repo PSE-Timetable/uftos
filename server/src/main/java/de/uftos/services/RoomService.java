@@ -8,6 +8,7 @@ import de.uftos.repositories.database.ConstraintInstanceRepository;
 import de.uftos.repositories.database.ConstraintSignatureRepository;
 import de.uftos.repositories.database.RoomRepository;
 import de.uftos.repositories.database.ServerRepository;
+import de.uftos.utils.ConstraintInstanceDeleter;
 import de.uftos.utils.SpecificationBuilder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -103,7 +104,7 @@ public class RoomService {
    * @throws ResponseStatusException is thrown if the name, building name are blank or the capacity is 0.
    */
   public Room create(RoomRequestDto room) {
-    if (room.name().isBlank() || room.buildingName().isBlank() || room.capacity() == 0) {
+    if (room.name().isBlank() || room.buildingName().isBlank()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
           "The name, building name are blank or the capacity is 0.");
     }
