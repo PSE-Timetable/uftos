@@ -27,7 +27,7 @@ public class StudentService {
   /**
    * Creates a student service.
    *
-   * @param repository      the repository for accessing the student table.
+   * @param repository             the repository for accessing the student table.
    * @param studentGroupRepository the repository for accessing the student group table.
    */
   @Autowired
@@ -66,7 +66,8 @@ public class StudentService {
   public Student getById(String id) {
     Optional<Student> student = this.repository.findById(id);
 
-    return student.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+    return student.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+        "Could not find a student with this id"));
   }
 
   /**
@@ -136,7 +137,8 @@ public class StudentService {
   public void delete(String id) {
     Optional<Student> student = this.repository.findById(id);
     if (student.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "Could not find a student with this id");
     }
     List<StudentGroup> studentGroups = studentGroupRepository.findByStudents(student.get());
     for (StudentGroup group : studentGroups) {

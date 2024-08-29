@@ -169,7 +169,8 @@ public class StudentGroupService {
     Set<Student> studentsInGroup = new HashSet<>(studentGroup.getStudents());
     studentsInGroup.addAll(studentIds.stream()
         .map(studentId -> studentRepository.findById(studentId)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST))).toList());
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                "Could not find a student with this id"))).toList());
     studentGroup.setStudents(new ArrayList<>(studentsInGroup));
     return new StudentGroupResponseDto(this.repository.save(studentGroup));
   }
@@ -197,7 +198,8 @@ public class StudentGroupService {
   public void delete(String id) {
     Optional<StudentGroup> group = this.repository.findById(id);
     if (group.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "Could not find a grade with this id");
     }
 
     List<Grade> grades = gradeRepository.findByStudentGroups(group.get());
@@ -211,6 +213,7 @@ public class StudentGroupService {
 
   private StudentGroup getStudentGroupById(String id) {
     Optional<StudentGroup> studentGroup = this.repository.findById(id);
-    return studentGroup.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+    return studentGroup.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+        "Could not find a student group with this id"));
   }
 }

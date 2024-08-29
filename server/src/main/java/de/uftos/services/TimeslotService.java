@@ -51,9 +51,10 @@ public class TimeslotService {
    * @throws ResponseStatusException is thrown if the ID doesn't have a corresponding timeslot.
    */
   public Timeslot getById(String id) {
-    var timeslot = this.repository.findById(id);
+    Optional<Timeslot> timeslot = this.repository.findById(id);
 
-    return timeslot.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+    return timeslot.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+        "Could not find a timesot with this id"));
   }
 
   /**
@@ -89,9 +90,10 @@ public class TimeslotService {
    * @throws ResponseStatusException is thrown if no timeslot exists with the given ID.
    */
   public void delete(String id) {
-    var timeslot = this.repository.findById(id);
+    Optional<Timeslot> timeslot = this.repository.findById(id);
     if (timeslot.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "Could not find a timeslot with this id");
     }
 
     this.repository.delete(timeslot.get());

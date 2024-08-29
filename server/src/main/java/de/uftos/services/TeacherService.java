@@ -66,7 +66,8 @@ public class TeacherService {
   public Teacher getById(String id) {
     Optional<Teacher> teacher = this.repository.findById(id);
 
-    return teacher.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+    return teacher.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+        "Could not find a teacher with this id"));
   }
 
   /**
@@ -92,7 +93,8 @@ public class TeacherService {
    * @throws ResponseStatusException is thrown if the first name, last name or the acronym of the teacher is blank.
    */
   public Teacher create(TeacherRequestDto teacher) {
-    if (teacher.firstName().isBlank() || teacher.lastName().isBlank() || teacher.acronym().isBlank()) {
+    if (teacher.firstName().isBlank() || teacher.lastName().isBlank() ||
+        teacher.acronym().isBlank()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
           "The first name, last name or the acronym of the teacher is blank.");
     }
@@ -125,9 +127,10 @@ public class TeacherService {
    * @throws ResponseStatusException is thrown if no teacher exists with the given ID.
    */
   public void delete(String id) {
-    var teacher = this.repository.findById(id);
+    Optional<Teacher> teacher = this.repository.findById(id);
     if (teacher.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "Could not find a teacher with this id");
     }
 
     this.repository.delete(teacher.get());

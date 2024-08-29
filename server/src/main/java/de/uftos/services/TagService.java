@@ -91,9 +91,10 @@ public class TagService {
    * @throws ResponseStatusException is thrown if the ID doesn't have a corresponding tag.
    */
   public Tag getById(String id) {
-    var tag = this.repository.findById(id);
+    Optional<Tag> tag = this.repository.findById(id);
 
-    return tag.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+    return tag.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+        "Could not find a tag with this id"));
   }
 
   /**
@@ -137,7 +138,8 @@ public class TagService {
   public void delete(String id) {
     Optional<Tag> tag = this.repository.findById(id);
     if (tag.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "Could not find a tag with this id");
     }
 
     List<Student> students = studentRepository.findByTags(tag.get());

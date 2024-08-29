@@ -72,7 +72,8 @@ public class SubjectService {
   public Subject getById(String id) {
     Optional<Subject> subject = this.repository.findById(id);
 
-    return subject.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+    return subject.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+        "Could not find a subject with this id"));
   }
 
   /**
@@ -84,7 +85,8 @@ public class SubjectService {
    */
   public Subject create(SubjectRequestDto subject) {
     if (subject.name().isBlank()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "The name of the subject can not be empty!");
     }
     return this.repository.save(subject.map());
   }
