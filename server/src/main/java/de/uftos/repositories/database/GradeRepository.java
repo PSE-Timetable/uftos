@@ -16,6 +16,8 @@ public interface GradeRepository extends ListPagingAndSortingRepository<Grade, S
 
   List<Grade> findByTags(Tag tag);
 
+  List<Grade> findAllByTags(List<Tag> tags);
+
   List<Grade> findByStudentGroups(StudentGroup studentGroup);
 
 }

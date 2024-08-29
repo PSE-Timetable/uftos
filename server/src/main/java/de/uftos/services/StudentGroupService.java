@@ -143,16 +143,23 @@ public class StudentGroupService {
     group.setId(id);
     this.repository.save(group);
 
-    List<Grade> grades =
-        this.gradeRepository.findAllById(groupRequest.gradeIds());
-    List<Grade> allGrades = this.gradeRepository.findAll();
-    for (Grade grade : allGrades) {
-      grade.getStudentGroups().remove(group);
+    List<Grade> oldGrades = this.gradeRepository.findByStudentGroups(group);
+    for (Grade oldGrade : oldGrades) {
+      if (!groupRequest.gradeIds().contains(oldGrade.getId())) {
+        oldGrade.getStudentGroups().remove(group);
+      }
     }
+    this.gradeRepository.saveAll(oldGrades);
+
+    List<Grade> grades = this.gradeRepository.findAllById(groupRequest.gradeIds());
+
     for (Grade grade : grades) {
+      if (grade.getStudentGroups().contains(group)) {
+        continue;
+      }
       grade.getStudentGroups().add(group);
-      this.gradeRepository.save(grade);
     }
+    this.gradeRepository.saveAll(grades);
 
     //noinspection OptionalGetWithoutIsPresent
     return new StudentGroupResponseDto(this.repository.findById(id).get());
@@ -169,7 +176,8 @@ public class StudentGroupService {
     Set<Student> studentsInGroup = new HashSet<>(studentGroup.getStudents());
     studentsInGroup.addAll(studentIds.stream()
         .map(studentId -> studentRepository.findById(studentId)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST))).toList());
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                "Could not find a student with this id"))).toList());
     studentGroup.setStudents(new ArrayList<>(studentsInGroup));
     return new StudentGroupResponseDto(this.repository.save(studentGroup));
   }
@@ -184,7 +192,7 @@ public class StudentGroupService {
     StudentGroup studentGroup = getStudentGroupById(id);
     List<Student> filteredStudents = studentGroup.getStudents().stream()
         .filter(student -> !studentIds.contains(student.getId())).toList();
-    studentGroup.setStudents(new ArrayList<Student>(filteredStudents)); //make list mutable
+    studentGroup.setStudents(new ArrayList<>(filteredStudents)); //make list mutable
     this.repository.save(studentGroup);
   }
 
@@ -197,7 +205,8 @@ public class StudentGroupService {
   public void delete(String id) {
     Optional<StudentGroup> group = this.repository.findById(id);
     if (group.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "Could not find a grade with this id");
     }
 
     List<Grade> grades = gradeRepository.findByStudentGroups(group.get());
@@ -211,6 +220,7 @@ public class StudentGroupService {
 
   private StudentGroup getStudentGroupById(String id) {
     Optional<StudentGroup> studentGroup = this.repository.findById(id);
-    return studentGroup.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+    return studentGroup.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+        "Could not find a student group with this id"));
   }
 }

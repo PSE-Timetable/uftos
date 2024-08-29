@@ -20,7 +20,7 @@
   export let data;
   let studentGroups = data.studentGroups || [];
   let students: Student[] = data.students || [];
-  let selectedStudentId: string;
+  let selectedStudentIds: string[] = [];
   let reloadTable: boolean = false;
 
   let columnNames = ['Vorname', 'Nachname', 'Tags'];
@@ -58,7 +58,7 @@
 </div>
 
 <div class="flex flex-col gap-8 p-4">
-  {#each studentGroups as studentGroup}
+  {#each studentGroups as studentGroup, i}
     <div class="flex flex-row w-full gap-8 items-top my-5">
       <div class="flex flex-col gap-8 bg-primary w-fit h-fit p-6 rounded-md text-white">
         <div class="flex flex-row justify-between">
@@ -81,14 +81,14 @@
                 value: student.id,
                 label: `${student.firstName} ${student.lastName}`,
               }))}
-              bind:selectedId={selectedStudentId}
+              bind:selectedId={selectedStudentIds[i]}
             />
           </div>
         </div>
         <Button
           variant="outline"
           class="bg-accent border-0 text-md text-white py-6"
-          on:click={() => selectedStudentId && addStudentToGroup(studentGroup, selectedStudentId)}
+          on:click={() => selectedStudentIds[i] && addStudentToGroup(studentGroup, selectedStudentIds[i])}
           >Schüler hinzufügen</Button
         >
       </div>

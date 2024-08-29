@@ -146,7 +146,7 @@ export type CurriculumRequestDto = {
     lessonsCounts: LessonsCountRequestDto[];
     name: string;
 };
-export type ParsingResponse = {
+export type SuccessResponse = {
     message: string;
     success: boolean;
 };
@@ -300,7 +300,7 @@ export type TimetableMetadata = {
 export type StudentGroupResponseDto = {
     grades: GradeResponseDto[];
     id: string;
-    lessons: Lesson[];
+    lessons: LessonResponseDto;
     name: string;
     students: Student[];
     subjects: Subject[];
@@ -341,7 +341,6 @@ export type PageStudent = {
 };
 export type StudentRequestDto = {
     firstName: string;
-    groupIds: string[];
     lastName: string;
     tagIds: string[];
 };
@@ -522,7 +521,7 @@ export function setUcdlFile(body?: {
 } = {}, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
-        data: ParsingResponse;
+        data: SuccessResponse;
     }>(`/editor${QS.query(QS.explode({
         force
     }))}`, oazapfts.multipart({
@@ -541,10 +540,17 @@ export function validateUcdlFile(body?: {
 }, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
-        data: ParsingResponse;
+        data: SuccessResponse;
     }>("/editor/validate", oazapfts.multipart({
         ...opts,
         method: "PUT",
+        body
+    })));
+}
+export function deleteGrades(body: string[], opts?: Oazapfts.RequestOpts) {
+    return oazapfts.ok(oazapfts.fetchText("/grades", oazapfts.json({
+        ...opts,
+        method: "DELETE",
         body
     })));
 }
@@ -647,6 +653,13 @@ export function updateLesson(id: string, lessonRequestDto: LessonRequestDto, opt
         ...opts,
         method: "PUT",
         body: lessonRequestDto
+    })));
+}
+export function deleteRooms(body: string[], opts?: Oazapfts.RequestOpts) {
+    return oazapfts.ok(oazapfts.fetchText("/rooms", oazapfts.json({
+        ...opts,
+        method: "DELETE",
+        body
     })));
 }
 export function getRooms(pageable: Pageable, { search, capacity, tags }: {
@@ -805,6 +818,13 @@ export function addStudentsToStudentGroup(id: string, body: string[], opts?: Oaz
         body
     })));
 }
+export function deleteStudents(body: string[], opts?: Oazapfts.RequestOpts) {
+    return oazapfts.ok(oazapfts.fetchText("/students", oazapfts.json({
+        ...opts,
+        method: "DELETE",
+        body
+    })));
+}
 export function getStudents(pageable: Pageable, { search, groups, tags }: {
     search?: string;
     groups?: string[];
@@ -856,6 +876,13 @@ export function updateStudent(id: string, studentRequestDto: StudentRequestDto, 
         body: studentRequestDto
     })));
 }
+export function deleteSubjects(body: string[], opts?: Oazapfts.RequestOpts) {
+    return oazapfts.ok(oazapfts.fetchText("/subjects", oazapfts.json({
+        ...opts,
+        method: "DELETE",
+        body
+    })));
+}
 export function getSubjects(sort: Sort, { search }: {
     search?: string;
 } = {}, opts?: Oazapfts.RequestOpts) {
@@ -903,6 +930,13 @@ export function updateSubject(id: string, subjectRequestDto: SubjectRequestDto, 
         body: subjectRequestDto
     })));
 }
+export function deleteTags(body: string[], opts?: Oazapfts.RequestOpts) {
+    return oazapfts.ok(oazapfts.fetchText("/tags", oazapfts.json({
+        ...opts,
+        method: "DELETE",
+        body
+    })));
+}
 export function getTags(sort: Sort, { search }: {
     search?: string;
 } = {}, opts?: Oazapfts.RequestOpts) {
@@ -948,6 +982,13 @@ export function updateTag(id: string, tagRequestDto: TagRequestDto, opts?: Oazap
         ...opts,
         method: "PUT",
         body: tagRequestDto
+    })));
+}
+export function deleteTeachers(body: string[], opts?: Oazapfts.RequestOpts) {
+    return oazapfts.ok(oazapfts.fetchText("/teachers", oazapfts.json({
+        ...opts,
+        method: "DELETE",
+        body
     })));
 }
 export function getTeachers(pageable: Pageable, { search, subjects, tags }: {
@@ -1071,7 +1112,7 @@ export function getTimetables(pageable: Pageable, { name }: {
 export function createTimetable(timetableRequestDto: TimetableRequestDto, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
-        data: Timetable;
+        data: SuccessResponse;
     }>("/timetables", oazapfts.json({
         ...opts,
         method: "POST",

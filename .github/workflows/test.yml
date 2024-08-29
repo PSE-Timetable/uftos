@@ -82,13 +82,15 @@ jobs:
   e2e:
     name: E2E Tests
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./server
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: "./web/.nvmrc"
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -96,8 +98,25 @@ jobs:
           distribution: "temurin"
           java-version: "21"
 
-      - name: Build container
-        run: docker compose build api
+      - name: Docker build
+        run: docker compose -f docker-compose.e2e.yml build
+        if: ${{ !cancelled() }}
+
+      - name: Run npm install
+        working-directory: web
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        working-directory: web
+        run: npx playwright install --with-deps chromium
+        if: ${{ !cancelled() }}
 
       - name: Run Server e2e tests
+        working-directory: server
         run: ./mvnw -Dtest='UftosApplicationTests' test
+        if: ${{ !cancelled() }}
+
+      - name: Run e2e tests (web)
+        working-directory: web
+        run: npx playwright test
+        if: ${{ !cancelled() }}

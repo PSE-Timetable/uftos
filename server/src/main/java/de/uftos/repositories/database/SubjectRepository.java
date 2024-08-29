@@ -13,4 +13,6 @@ public interface SubjectRepository
     extends ListCrudRepository<Subject, String>, JpaSpecificationExecutor<Subject> {
 
   List<Subject> findByTags(Tag tag);
+
+  List<Subject> findAllByTags(List<Tag> tags);
 }

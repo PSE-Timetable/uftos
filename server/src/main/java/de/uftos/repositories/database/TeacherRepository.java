@@ -16,5 +16,7 @@ public interface TeacherRepository extends ListPagingAndSortingRepository<Teache
 
   List<Teacher> findByTags(Tag tag);
 
+  List<Teacher> findAllByTags(List<Tag> tags);
+
   List<Teacher> findBySubjects(Subject subject);
 }
