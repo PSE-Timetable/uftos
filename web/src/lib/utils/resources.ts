@@ -1,11 +1,11 @@
 import {
   deleteConstraintInstance,
-  deleteGrade,
-  deleteRoom,
+  deleteGrades,
+  deleteRooms,
   deleteStudents,
   deleteSubjects,
-  deleteTag,
-  deleteTeacher,
+  deleteTags,
+  deleteTeachers,
   getConstraintInstances,
   getGrades,
   getRooms,
@@ -29,10 +29,6 @@ export type DataItem = {
 
   [key: string]: string | string[] | number;
 };
-
-async function deleteMultiple(ids: string[], deleteEntry: (id: string) => Promise<void>) {
-  return Promise.all(ids.map((id) => deleteEntry(id)));
-}
 
 export const toast = (success: boolean, message: string) =>
   success ? _toast.success(message) : _toast.error(message, { important: true, duration: 4000 });
@@ -91,7 +87,7 @@ export async function loadRoomPage(sortString: string, filter: string, index?: n
 
 export async function deleteRoomEntry(ids: string[]) {
   try {
-    await deleteMultiple(ids, deleteRoom);
+    await deleteRooms(ids);
   } catch {
     toast(false, 'Beim Löschen des Raums ist ein Fehler aufgetreten');
     error(400, { message: `could not delete rooms` });
@@ -144,7 +140,7 @@ export async function loadTags(sortString: string, filter: string) {
 
 export async function deleteTagEntry(ids: string[]) {
   try {
-    await deleteMultiple(ids, deleteTag);
+    await deleteTags(ids);
   } catch {
     toast(false, 'Beim Löschen des Fachs ist ein Fehler aufgetreten');
     error(400, { message: `could not delete tags` });
@@ -176,7 +172,7 @@ export async function loadTeacherPage(sortString: string, filter: string, index?
 
 export async function deleteTeacherEntry(ids: string[]) {
   try {
-    await deleteMultiple(ids, deleteTeacher);
+    await deleteTeachers(ids);
   } catch {
     toast(false, 'Beim Löschen des Lehrers ist ein Fehler aufgetreten');
     error(400, { message: `could not delete teachers` });
@@ -201,7 +197,7 @@ export async function loadGrades(sortString: string, filter: string) {
 
 export async function deleteGradeEntry(ids: string[]) {
   try {
-    await deleteMultiple(ids, deleteGrade);
+    await deleteGrades(ids);
   } catch {
     toast(false, 'Beim Löschen der Stufe ist ein Fehler aufgetreten');
     error(400, { message: `could not delete grades` });

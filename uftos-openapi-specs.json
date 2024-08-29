@@ -496,6 +496,28 @@
       }
     },
     "/grades" : {
+      "delete" : {
+        "operationId" : "deleteGrades",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        },
+        "tags" : [ "grade-controller" ]
+      },
       "get" : {
         "operationId" : "getGrades",
         "parameters" : [ {
@@ -800,6 +822,28 @@
       }
     },
     "/rooms" : {
+      "delete" : {
+        "operationId" : "deleteRooms",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        },
+        "tags" : [ "room-controller" ]
+      },
       "get" : {
         "operationId" : "getRooms",
         "parameters" : [ {
@@ -1615,6 +1659,28 @@
       }
     },
     "/tags" : {
+      "delete" : {
+        "operationId" : "deleteTags",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        },
+        "tags" : [ "tag-controller" ]
+      },
       "get" : {
         "operationId" : "getTags",
         "parameters" : [ {
@@ -1754,6 +1820,28 @@
       }
     },
     "/teachers" : {
+      "delete" : {
+        "operationId" : "deleteTeachers",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        },
+        "tags" : [ "teacher-controller" ]
+      },
       "get" : {
         "operationId" : "getTeachers",
         "parameters" : [ {

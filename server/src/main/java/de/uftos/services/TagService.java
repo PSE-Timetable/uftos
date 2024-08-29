@@ -18,6 +18,7 @@ import de.uftos.repositories.database.TagRepository;
 import de.uftos.repositories.database.TeacherRepository;
 import de.uftos.repositories.database.TimeslotRepository;
 import de.uftos.utils.SpecificationBuilder;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -183,5 +184,64 @@ public class TagService {
     timeslotRepository.saveAll(timeslots);
 
     this.repository.delete(tag.get());
+  }
+
+  /**
+   * Deletes the tags with the given IDs.
+   *
+   * @param ids the IDs of the tags which are to be deleted.
+   * @throws ResponseStatusException is thrown if no tag exists with the given ID.
+   */
+  public void deleteTags(String[] ids) {
+    List<String> tagIds = Arrays.asList(ids);
+    List<Tag> tags = this.repository.findAllById(tagIds);
+    if (tags.size() != tagIds.size()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "Could not find a tag with this id!");
+    }
+
+    List<Student> students = studentRepository.findAllByTags(tags);
+    for (Student student : students) {
+      student.getTags().removeIf(tag1 -> tagIds.contains(tag1.getId()));
+    }
+    studentRepository.saveAll(students);
+
+    List<Teacher> teachers = teacherRepository.findAllByTags(tags);
+    for (Teacher teacher : teachers) {
+      teacher.getTags().removeIf(tag1 -> tagIds.contains(tag1.getId()));
+    }
+    teacherRepository.saveAll(teachers);
+
+    List<StudentGroup> studentGroups = studentGroupRepository.findAllByTags(tags);
+    for (StudentGroup group : studentGroups) {
+      group.getTags().removeIf(tag1 -> tagIds.contains(tag1.getId()));
+    }
+    studentGroupRepository.saveAll(studentGroups);
+
+    List<Room> rooms = roomRepository.findAllByTags(tags);
+    for (Room room : rooms) {
+      room.getTags().removeIf(tag1 -> tagIds.contains(tag1.getId()));
+    }
+    roomRepository.saveAll(rooms);
+
+    List<Subject> subjects = subjectRepository.findAllByTags(tags);
+    for (Subject subject : subjects) {
+      subject.getTags().removeIf(tag1 -> tagIds.contains(tag1.getId()));
+    }
+    subjectRepository.saveAll(subjects);
+
+    List<Grade> grades = gradeRepository.findAllByTags(tags);
+    for (Grade grade : grades) {
+      grade.getTags().removeIf(tag1 -> tagIds.contains(tag1.getId()));
+    }
+    gradeRepository.saveAll(grades);
+
+    List<Timeslot> timeslots = timeslotRepository.findAllByTags(tags);
+    for (Timeslot timeslot : timeslots) {
+      timeslot.getTags().removeIf(tag1 -> tagIds.contains(tag1.getId()));
+    }
+    timeslotRepository.saveAll(timeslots);
+
+    this.repository.deleteAll(tags);
   }
 }

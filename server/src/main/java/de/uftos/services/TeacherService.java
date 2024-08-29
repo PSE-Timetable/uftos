@@ -8,6 +8,7 @@ import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.TeacherRepository;
 import de.uftos.utils.SpecificationBuilder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -125,11 +126,27 @@ public class TeacherService {
    * @throws ResponseStatusException is thrown if no teacher exists with the given ID.
    */
   public void delete(String id) {
-    var teacher = this.repository.findById(id);
+    Optional<Teacher> teacher = this.repository.findById(id);
     if (teacher.isEmpty()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
     }
 
     this.repository.delete(teacher.get());
+  }
+
+  /**
+   * Deletes the teachers with the given IDs.
+   *
+   * @param ids the IDs of the teacher which are to be deleted.
+   * @throws ResponseStatusException is thrown if no teacher exists with the given ID.
+   */
+  public void deleteTeachers(String[] ids) {
+    List<String> teacherIds = Arrays.asList(ids);
+    List<Teacher> teachers = this.repository.findAllById(teacherIds);
+    if (teachers.size() != teacherIds.size()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Could not find a teacher with this id!");
+    }
+
+    this.repository.deleteAll(teachers);
   }
 }

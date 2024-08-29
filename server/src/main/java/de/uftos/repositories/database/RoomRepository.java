@@ -14,4 +14,6 @@ public interface RoomRepository extends ListPagingAndSortingRepository<Room, Str
     ListCrudRepository<Room, String>, JpaSpecificationExecutor<Room> {
 
   List<Room> findByTags(Tag tag);
+
+  List<Room> findAllByTags(List<Tag> tags);
 }

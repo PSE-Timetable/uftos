@@ -110,4 +110,15 @@ public class GradeController {
   public void deleteGrade(@PathVariable String id) {
     this.gradeService.delete(id);
   }
+
+  /**
+   * Maps the HTTP DELETE request to the {@link GradeService#deleteGrades(String[]) delete} function of the
+   * grade service.
+   *
+   * @param ids the IDs of the grades which are to be deleted.
+   */
+  @DeleteMapping()
+  public void deleteGrades(@RequestBody String[] ids) {
+    this.gradeService.deleteGrades(ids);
+  }
 }

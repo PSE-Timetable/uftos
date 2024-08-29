@@ -8,6 +8,7 @@ import de.uftos.repositories.database.RoomRepository;
 import de.uftos.repositories.database.ServerRepository;
 import de.uftos.utils.SpecificationBuilder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,7 +108,8 @@ public class RoomService {
    * @throws ResponseStatusException is thrown if the name, building name are blank or the capacity is 0.
    */
   public Room update(String id, RoomRequestDto roomRequest) {
-    if (roomRequest.name().isBlank() || roomRequest.buildingName().isBlank() || roomRequest.capacity() == 0) {
+    if (roomRequest.name().isBlank() || roomRequest.buildingName().isBlank() ||
+        roomRequest.capacity() == 0) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
           "The name, building name are blank or the capacity is 0.");
     }
@@ -130,5 +132,22 @@ public class RoomService {
     }
 
     this.repository.delete(room.get());
+  }
+
+  /**
+   * Deletes the rooms with the given IDs.
+   *
+   * @param id the IDs of the rooms which are to be deleted.
+   * @throws ResponseStatusException is thrown if no room exists with the given ID.
+   */
+  public void deleteRooms(String[] id) {
+    List<String> roomIds = Arrays.asList(id);
+    List<Room> rooms = this.repository.findAllById(roomIds);
+    if (rooms.isEmpty() || rooms.size() != roomIds.size()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "Could not found a room with this id to be deleted");
+    }
+
+    this.repository.deleteAll(rooms);
   }
 }

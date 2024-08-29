@@ -22,7 +22,12 @@ public interface StudentGroupRepository
 
   List<StudentGroup> findByTags(Tag tag);
 
+  List<StudentGroup> findAllByTags(List<Tag> tags);
+
   List<StudentGroup> findBySubjects(Subject subject);
 
   List<StudentGroup> findByGrades(Grade grade);
+
+  List<StudentGroup> findAllByGrades(List<Grade> grades);
+
 }
