@@ -1,11 +1,16 @@
 package de.uftos.services;
 
 import de.uftos.dto.requestdtos.StudentRequestDto;
+import de.uftos.dto.responsedtos.LessonResponseDto;
+import de.uftos.entities.Lesson;
 import de.uftos.entities.Student;
 import de.uftos.entities.StudentGroup;
+import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.StudentGroupRepository;
 import de.uftos.repositories.database.StudentRepository;
 import de.uftos.utils.SpecificationBuilder;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,18 +28,21 @@ import org.springframework.web.server.ResponseStatusException;
 public class StudentService {
   private final StudentRepository repository;
   private final StudentGroupRepository studentGroupRepository;
+  private final ServerRepository serverRepository;
 
   /**
    * Creates a student service.
    *
-   * @param repository      the repository for accessing the student table.
+   * @param repository             the repository for accessing the student table.
    * @param studentGroupRepository the repository for accessing the student group table.
+   * @param serverRepository       the repository for accessing the server table.
    */
   @Autowired
   public StudentService(StudentRepository repository,
-                        StudentGroupRepository studentGroupRepository) {
+                        StudentGroupRepository studentGroupRepository, ServerRepository serverRepository) {
     this.repository = repository;
     this.studentGroupRepository = studentGroupRepository;
+    this.serverRepository = serverRepository;
   }
 
   /**
@@ -67,6 +75,15 @@ public class StudentService {
     Optional<Student> student = this.repository.findById(id);
 
     return student.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+  }
+
+  public LessonResponseDto getLessonsById(String id) {
+    Student student = getById(id);
+    List<StudentGroup> studentGroups = student.getGroups();
+    List<Lesson> lessons = new ArrayList<>(
+        studentGroups.stream().flatMap(group -> group.getLessons().stream()).toList());
+    lessons.removeIf(lesson -> !lesson.getYear().equals(serverRepository.findAll().getFirst().getCurrentYear()));
+    return LessonResponseDto.createResponseDtoFromLessons(lessons);
   }
 
   /**

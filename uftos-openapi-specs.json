@@ -1431,6 +1431,32 @@
         "tags" : [ "student-controller" ]
       }
     },
+    "/students/{id}/lessons" : {
+      "get" : {
+        "operationId" : "getStudentLessons",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/LessonResponseDto"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "tags" : [ "student-controller" ]
+      }
+    },
     "/subjects" : {
       "get" : {
         "operationId" : "getSubjects",
@@ -3453,7 +3479,7 @@
         "properties" : {
           "day" : {
             "type" : "string",
-            "enum" : [ "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY" ]
+            "enum" : [ "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY" ]
           },
           "id" : {
             "type" : "string"
@@ -3476,7 +3502,7 @@
         "properties" : {
           "day" : {
             "type" : "string",
-            "enum" : [ "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY" ]
+            "enum" : [ "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY" ]
           },
           "slot" : {
             "type" : "integer",

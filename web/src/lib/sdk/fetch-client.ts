@@ -856,6 +856,14 @@ export function updateStudent(id: string, studentRequestDto: StudentRequestDto, 
         body: studentRequestDto
     })));
 }
+export function getStudentLessons(id: string, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.ok(oazapfts.fetchJson<{
+        status: 200;
+        data: LessonResponseDto;
+    }>(`/students/${encodeURIComponent(id)}/lessons`, {
+        ...opts
+    }));
+}
 export function getSubjects(sort: Sort, { search }: {
     search?: string;
 } = {}, opts?: Oazapfts.RequestOpts) {
@@ -1116,7 +1124,5 @@ export enum Day {
     Tuesday = "TUESDAY",
     Wednesday = "WEDNESDAY",
     Thursday = "THURSDAY",
-    Friday = "FRIDAY",
-    Saturday = "SATURDAY",
-    Sunday = "SUNDAY"
+    Friday = "FRIDAY"
 }
