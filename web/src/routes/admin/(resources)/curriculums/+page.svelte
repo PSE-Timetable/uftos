@@ -30,6 +30,7 @@
       try {
         curriculum = await getCurriculum(selectedGrade.curriculumId);
         lessonsCounts = curriculum.lessonsCounts;
+        console.log(lessonsCounts)
       } catch {
         error(400, { message: 'could not get curriculum' });
       }

@@ -25,10 +25,7 @@ export const load = (async ({ params }) => {
       const room = await getRoom(params.id);
       title = `Raum — ${room.name}`;
       formRoom = {
-        id: room.id,
-        name: room.name,
-        buildingName: room.buildingName,
-        capacity: room.capacity,
+        ...room,
         tags: room.tags.map((tag) => tag.id),
       };
     } catch {

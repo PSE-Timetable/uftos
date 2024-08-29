@@ -27,8 +27,7 @@ export const load = (async ({ params }) => {
     try {
       const studentGroup = await getStudentGroup(params.id);
       formGroup = {
-        id: studentGroup.id,
-        name: studentGroup.name,
+        ...studentGroup,
         grades: studentGroup.grades.map((grade) => grade.id),
         students: studentGroup.students.map((student) => student.id),
         tags: studentGroup.tags.map((tag) => tag.id),

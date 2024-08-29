@@ -4,9 +4,9 @@
   import type { Selected } from 'bits-ui';
 
   export let tags: Tag[];
-  let selectedTags: Selected<string>[] = [];
   export let selectedTagIds: string[];
-  selectedTags = tags
+
+  let selectedTags: Selected<string>[] = tags
     .filter((tag) => selectedTagIds.includes(tag.id))
     .map((tag) => ({ label: tag.name, value: tag.id }));
   selectedTagIds = selectedTags.map((tag) => tag.value);

@@ -79,9 +79,9 @@
         <Form.Field {form} name="capacity">
           <Form.Control let:attrs>
             <Input
+              {...attrs}
               type="number"
               min="0"
-              {...attrs}
               bind:value={$formData.capacity}
               background={true}
               class="rounded-none font-normal flex max-w-80"

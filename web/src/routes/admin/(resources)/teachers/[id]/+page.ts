@@ -28,10 +28,7 @@ export const load = (async ({ params }) => {
       title = `Teacher — ${teacher.firstName} ${teacher.lastName} (${teacher.acronym})`;
       teacherSubjects = teacher.subjects.map((subject) => subject.id);
       formTeacher = {
-        id: teacher.id,
-        firstName: teacher.firstName,
-        lastName: teacher.lastName,
-        acronym: teacher.acronym,
+        ...teacher,
         tags: teacher.tags.map((tag) => tag.id),
       };
     } catch {

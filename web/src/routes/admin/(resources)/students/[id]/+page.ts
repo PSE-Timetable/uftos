@@ -23,9 +23,7 @@ export const load = (async ({ params }) => {
     try {
       const student = await getStudent(params.id);
       formStudent = {
-        id: student.id,
-        firstName: student.firstName,
-        lastName: student.lastName,
+        ...student,
         tags: student.tags.map((tag) => tag.id),
       };
       title = `Schüler — ${student.firstName} ${student.lastName}`;

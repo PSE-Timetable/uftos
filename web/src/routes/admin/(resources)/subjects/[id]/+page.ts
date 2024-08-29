@@ -21,7 +21,7 @@ export const load = (async ({ params }) => {
   } else {
     try {
       const subject = await getSubject(params.id);
-      formSubject = { id: subject.id, name: subject.name, tags: subject.tags.map((tag) => tag.id) };
+      formSubject = { ...subject, tags: subject.tags.map((tag) => tag.id) };
       title = `Fach — ${subject.name}`;
     } catch {
       error(404, { message: `Subject with id ${params.id} not found` });
