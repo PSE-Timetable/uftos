@@ -167,7 +167,6 @@ export type Student = {
 export type StudentGroupResponseDto = {
     grades: GradeResponseDto[];
     id: string;
-    lessons: LessonResponseDto;
     name: string;
     students: Student[];
     subjects: Subject[];

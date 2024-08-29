@@ -3426,7 +3426,7 @@
         }
       },
       "StudentGroupResponseDto" : {
-        "required" : [ "grades", "id", "lessons", "name", "students", "subjects", "tags" ],
+        "required" : [ "grades", "id", "name", "students", "subjects", "tags" ],
         "type" : "object",
         "properties" : {
           "grades" : {
@@ -3437,9 +3437,6 @@
           },
           "id" : {
             "type" : "string"
-          },
-          "lessons" : {
-            "$ref" : "#/components/schemas/LessonResponseDto"
           },
           "name" : {
             "type" : "string"

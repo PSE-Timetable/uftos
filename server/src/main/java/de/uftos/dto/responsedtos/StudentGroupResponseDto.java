@@ -25,7 +25,6 @@ public record StudentGroupResponseDto(@NotEmpty String id,
                                       @NotNull List<Student> students,
                                       @NotNull List<GradeResponseDto> grades,
                                       @NotNull List<Tag> tags,
-                                      @NotNull LessonResponseDto lessons,
                                       @NotNull List<Subject> subjects) {
 
   /**
@@ -42,10 +41,6 @@ public record StudentGroupResponseDto(@NotEmpty String id,
             : studentGroup.getGrades().stream().map(GradeResponseDto::createResponseDtoFromGrade)
             .toList(),
         studentGroup.getTags(),
-        LessonResponseDto.createResponseDtoFromLessons(studentGroup.getLessons() == null
-            ? Collections.emptyList()
-            : studentGroup.getLessons()
-        ),
         studentGroup.getSubjects());
   }
 }
