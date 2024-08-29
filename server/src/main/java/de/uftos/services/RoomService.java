@@ -164,19 +164,21 @@ public class RoomService {
   /**
    * Deletes the rooms with the given IDs.
    *
-   * @param id the IDs of the rooms which are to be deleted.
+   * @param ids the IDs of the rooms which are to be deleted.
    * @throws ResponseStatusException is thrown if no room exists with the given ID.
    */
-  public void deleteRooms(String[] id) {
-    List<String> roomIds = Arrays.asList(id);
+  public void deleteRooms(String[] ids) {
+    List<String> roomIds = Arrays.asList(ids);
     List<Room> rooms = this.repository.findAllById(roomIds);
     if (rooms.isEmpty() || rooms.size() != roomIds.size()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "Could not found a room with this id to be deleted");
+          "Could not found a room with this ids to be deleted");
     }
 
     new LessonsDeleter(lessonRepository, timetableRepository).fromRooms(rooms);
 
+    new ConstraintInstanceDeleter(constraintSignatureRepository, constraintInstanceRepository)
+        .removeAllInstancesWithArgumentValue(ids);
 
     this.repository.deleteAll(rooms);
   }

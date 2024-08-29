@@ -180,6 +180,9 @@ public class TeacherService {
 
     new LessonsDeleter(lessonRepository, timetableRepository).fromTeachers(teachers);
 
+    new ConstraintInstanceDeleter(constraintSignatureRepository, constraintInstanceRepository)
+        .removeAllInstancesWithArgumentValue(ids);
+
     this.repository.deleteAll(teachers);
   }
 }

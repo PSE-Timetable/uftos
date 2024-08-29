@@ -4,6 +4,7 @@ import de.uftos.entities.Room;
 import de.uftos.entities.Tag;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.data.repository.ListPagingAndSortingRepository;
 
@@ -15,5 +16,6 @@ public interface RoomRepository extends ListPagingAndSortingRepository<Room, Str
 
   List<Room> findByTags(Tag tag);
 
-  List<Room> findAllByTags(List<Tag> tags);
+  @Query("SELECT r FROM rooms r JOIN r.tags t WHERE t IN :tagIds")
+  List<Room> findAllByTags(List<String> tagIds);
 }

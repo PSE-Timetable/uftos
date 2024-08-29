@@ -189,11 +189,14 @@ public class GradeService {
           "Could not found a grade with this id");
     }
 
-    List<StudentGroup> studentGroups = this.studentGroupRepository.findAllByGrades(grades);
+    List<StudentGroup> studentGroups =
+        this.studentGroupRepository.findAllByGrades(gradesIds);
     if (!studentGroups.isEmpty()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
           "This grade is still associated with a student group.");
     }
+    new ConstraintInstanceDeleter(constraintSignatureRepository, constraintInstanceRepository)
+        .removeAllInstancesWithArgumentValue(ids);
 
     this.repository.deleteAll(grades);
   }

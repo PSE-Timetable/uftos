@@ -226,6 +226,9 @@ public class SubjectService {
 
     new LessonsDeleter(lessonRepository, timetableRepository).fromSubjects(subjects);
 
+    new ConstraintInstanceDeleter(constraintSignatureRepository, constraintInstanceRepository)
+        .removeAllInstancesWithArgumentValue(ids);
+
     this.repository.deleteAll(subjects);
   }
 }
