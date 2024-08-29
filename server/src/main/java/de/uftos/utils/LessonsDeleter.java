@@ -20,10 +20,10 @@ public class LessonsDeleter {
   private final TimetableRepository timetableRepository;
 
   /**
-   * Creates the lesson deleter
+   * Creates the lesson deleter.
    *
-   * @param lessonRepository    the repository for accessing the lesson table
-   * @param timetableRepository the repository for accessing the timetable table
+   * @param lessonRepository    the repository for accessing the lesson table.
+   * @param timetableRepository the repository for accessing the timetable table.
    */
   public LessonsDeleter(LessonRepository lessonRepository,
                         TimetableRepository timetableRepository) {
@@ -88,9 +88,11 @@ public class LessonsDeleter {
   }
 
   private void deleteLessonsAndTimetables(List<Lesson> lessons) {
+    List<Timetable> timetables = this.timetableRepository.findAllByLessons(
+        lessons.stream().map(Lesson::getId).toList()
+    );
     this.lessonRepository.deleteAll(lessons);
 
-    List<Timetable> timetables = this.timetableRepository.findAllByLessons(lessons);
     this.timetableRepository.deleteAll(timetables);
   }
 }

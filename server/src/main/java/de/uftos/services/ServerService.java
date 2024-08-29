@@ -2,10 +2,8 @@ package de.uftos.services;
 
 import de.uftos.dto.Weekday;
 import de.uftos.dto.responsedtos.ServerStatisticsResponseDto;
-import de.uftos.entities.Lesson;
 import de.uftos.entities.Server;
 import de.uftos.entities.Timeslot;
-import de.uftos.entities.Timetable;
 import de.uftos.entities.TimetableMetadata;
 import de.uftos.repositories.database.ConstraintInstanceRepository;
 import de.uftos.repositories.database.ConstraintSignatureRepository;
@@ -146,17 +144,10 @@ public class ServerService {
     new LessonsDeleter(lessonRepository, timetableRepository)
         .fromTimeSlots(deletedSlots);
 
-    List<Lesson> lessons = this.lessonRepository.findAllByTimeslot(deletedSlots);
-    this.lessonRepository.deleteAll(lessons);
-
-    List<Timetable> timetables = this.timetableRepository.findAllByLessons(lessons);
-    this.timetableRepository.deleteAll(timetables);
-
     List<String> timeslotIds = deletedSlots.stream().map(Timeslot::getId).toList();
     new ConstraintInstanceDeleter(constraintSignatureRepository, constraintInstanceRepository)
         .removeAllInstancesWithArgumentValue(timeslotIds.toArray(new String[0]));
 
     this.timeslotRepository.deleteAll(currentSlots);
-    this.timetableRepository.deleteAll(timetables);
   }
 }
