@@ -108,8 +108,7 @@ public class RoomService {
    * @throws ResponseStatusException is thrown if the name, building name are blank or the capacity is 0.
    */
   public Room update(String id, RoomRequestDto roomRequest) {
-    if (roomRequest.name().isBlank() || roomRequest.buildingName().isBlank() ||
-        roomRequest.capacity() == 0) {
+    if (roomRequest.name().isBlank() || roomRequest.buildingName().isBlank()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
           "The name, building name are blank or the capacity is 0.");
     }
