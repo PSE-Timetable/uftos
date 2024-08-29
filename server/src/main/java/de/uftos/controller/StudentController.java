@@ -1,6 +1,7 @@
 package de.uftos.controller;
 
 import de.uftos.dto.requestdtos.StudentRequestDto;
+import de.uftos.dto.responsedtos.LessonResponseDto;
 import de.uftos.entities.Student;
 import de.uftos.services.StudentService;
 import java.util.Optional;
@@ -88,6 +89,19 @@ public class StudentController {
   @PutMapping("/{id}")
   public Student updateStudent(@PathVariable String id, @RequestBody StudentRequestDto student) {
     return this.studentService.update(id, student);
+  }
+
+  /**
+   * Maps the HTTP GET request, to get the lessons that the student atttends to the
+   * {@link StudentService#getLessonsById(String) get LessonsById}
+   * function of the student service.
+   *
+   * @param id the ID of the student.
+   * @return a LessonResponseDto with information about the lessons that the student attends.
+   */
+  @GetMapping("/{id}/lessons")
+  public LessonResponseDto getStudentLessons(@PathVariable String id) {
+    return this.studentService.getLessonsById(id);
   }
 
   /**

@@ -28,9 +28,11 @@ import de.uftos.entities.TimetableMetadata;
 import de.uftos.repositories.database.ConstraintInstanceRepository;
 import de.uftos.repositories.database.ConstraintSignatureRepository;
 import de.uftos.repositories.database.GradeRepository;
+import de.uftos.repositories.database.LessonRepository;
 import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.StudentGroupRepository;
 import de.uftos.repositories.database.StudentRepository;
+import de.uftos.repositories.database.TimetableRepository;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -71,6 +73,12 @@ public class StudentGroupServiceTests {
 
   @Mock
   private ConstraintInstanceRepository instanceRepository;
+
+  @Mock
+  private LessonRepository lessonRepository;
+
+  @Mock
+  private TimetableRepository timetableRepository;
 
   @InjectMocks
   private StudentGroupService studentGroupService;

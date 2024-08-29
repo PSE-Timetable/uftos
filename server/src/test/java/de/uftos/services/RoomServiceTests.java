@@ -25,8 +25,10 @@ import de.uftos.entities.Teacher;
 import de.uftos.entities.TimetableMetadata;
 import de.uftos.repositories.database.ConstraintInstanceRepository;
 import de.uftos.repositories.database.ConstraintSignatureRepository;
+import de.uftos.repositories.database.LessonRepository;
 import de.uftos.repositories.database.RoomRepository;
 import de.uftos.repositories.database.ServerRepository;
+import de.uftos.repositories.database.TimetableRepository;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -56,6 +58,12 @@ public class RoomServiceTests {
 
   @Mock
   private ConstraintInstanceRepository instanceRepository;
+
+  @Mock
+  private LessonRepository lessonRepository;
+
+  @Mock
+  private TimetableRepository timetableRepository;
 
   @InjectMocks
   private RoomService roomService;

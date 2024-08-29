@@ -16,13 +16,13 @@ import de.uftos.entities.Tag;
 import de.uftos.repositories.database.ConstraintInstanceRepository;
 import de.uftos.repositories.database.ConstraintSignatureRepository;
 import de.uftos.repositories.database.CurriculumRepository;
+import de.uftos.repositories.database.LessonRepository;
 import de.uftos.repositories.database.StudentGroupRepository;
 import de.uftos.repositories.database.SubjectRepository;
 import de.uftos.repositories.database.TeacherRepository;
-import de.uftos.repositories.database.TeacherRepository;
+import de.uftos.repositories.database.TimetableRepository;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -63,6 +63,12 @@ public class SubjectServiceTests {
 
   @Mock
   private ConstraintInstanceRepository instanceRepository;
+
+  @Mock
+  private LessonRepository lessonRepository;
+
+  @Mock
+  private TimetableRepository timetableRepository;
 
   @InjectMocks
   private SubjectService subjectService;
