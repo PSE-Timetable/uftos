@@ -158,20 +158,40 @@ export type GradeRequestDto = {
     studentGroupIds: string[];
     tagIds: string[];
 };
+export type Student = {
+    firstName: string;
+    id: string;
+    lastName: string;
+    tags: Tag[];
+};
+export type StudentGroupResponseDto = {
+    grades: GradeResponseDto[];
+    id: string;
+    name: string;
+    students: Student[];
+    subjects: Subject[];
+    tags: Tag[];
+};
 export type Timeslot = {
     day: Day;
     id: string;
     slot: number;
     tags: Tag[];
 };
+export type Timetable = {
+    id: string;
+    name: string;
+};
 export type BulkLesson = {
     gradeIds: string[];
+    groupId: string;
     id: string;
     index?: number;
     roomId: string;
     subjectId: string;
     teacherId: string;
     timeslot: Timeslot;
+    timetable: Timetable;
 };
 export type Room = {
     buildingName: string;
@@ -188,12 +208,9 @@ export type Teacher = {
     subjects: Subject[];
     tags: Tag[];
 };
-export type Timetable = {
-    id: string;
-    name: string;
-};
 export type LessonResponseDto = {
     grades: GradeResponseDto[];
+    groups: StudentGroupResponseDto[];
     lessons: BulkLesson[];
     rooms: Room[];
     subjects: Subject[];
@@ -234,12 +251,6 @@ export type Grade = {
     name?: string;
     studentGroups?: StudentGroup[];
     tags?: Tag[];
-};
-export type Student = {
-    firstName: string;
-    id: string;
-    lastName: string;
-    tags: Tag[];
 };
 export type StudentGroup = {
     grades: Grade[];
@@ -296,15 +307,6 @@ export type TimetableMetadata = {
     startTime: string;
     timeslotLength: number;
     timeslotsAmount: number;
-};
-export type StudentGroupResponseDto = {
-    grades: GradeResponseDto[];
-    id: string;
-    lessons: LessonResponseDto;
-    name: string;
-    students: Student[];
-    subjects: Subject[];
-    tags: Tag[];
 };
 export type PageStudentGroupResponseDto = {
     content?: StudentGroupResponseDto[];
