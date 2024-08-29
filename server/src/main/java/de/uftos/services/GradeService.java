@@ -147,7 +147,7 @@ public class GradeService {
     Optional<Grade> grade = this.repository.findById(id);
     if (grade.isEmpty()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "Could not found a grade with this id");
+          "Could not find a grade with this id!");
     }
     List<StudentGroup> studentGroups = this.studentGroupRepository.findByGrades(grade.get());
     if (!studentGroups.isEmpty()) {
