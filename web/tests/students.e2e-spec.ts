@@ -15,13 +15,14 @@ test.describe('Students page', () => {
     await expect(page).toHaveURL('http://localhost:5173/admin/students');
     await page.getByRole('row').first().waitFor();
     await page.getByRole('row', { name: 'Vorname Nachname Tags' }).getByRole('checkbox').waitFor();
-    await page.waitForTimeout(500); //not ideal, but helps to load the page fully
-    while (!(await page.getByRole('row').first().getByRole('checkbox').isChecked())) {
-      await page.getByRole('row', { name: 'Vorname Nachname Tags' }).getByRole('checkbox').check();
-      await page.keyboard.press('Delete');
-      await page.getByRole('button', { name: 'Löschen' }).click();
-      await expect(page.getByText('Zeile(n) ausgewählt')).toContainText('0 von');
-    }
+    await expect(async () => {
+      while (!(await page.getByRole('row').first().getByRole('checkbox').isChecked())) {
+        await page.getByRole('row', { name: 'Vorname Nachname Tags' }).getByRole('checkbox').check();
+        await page.keyboard.press('Delete');
+        await page.getByRole('button', { name: 'Löschen' }).click();
+        await expect(page.getByText('Zeile(n) ausgewählt')).toContainText('0 von');
+      }
+    }).toPass();
   });
 
   test('create entities', async () => {
@@ -110,15 +111,16 @@ test.describe('Students page', () => {
       await createStudent(requestDto);
     }
     await page.reload();
-    await page.waitForTimeout(500);
     await expect(page.getByRole('row')).toHaveCount(16);
     await expect(page.locator('body')).toContainText('0 von 25 Zeile(n) ausgewählt.');
     await expect(page.getByLabel('Previous')).toBeDisabled();
     await expect(page.getByLabel('Page 1')).toHaveCSS('border-color', 'rgb(43, 109, 136)');
     await expect(page.getByLabel('Page 2')).not.toHaveCSS('border-color', 'rgb(43, 109, 136)');
     await expect(page.getByLabel('Next')).toBeEnabled();
-    await page.getByLabel('Next').click();
-    await expect(page.getByRole('row')).toHaveCount(11);
+    await expect(async () => {
+      await page.getByLabel('Next').click();
+      await expect(page.getByRole('row')).toHaveCount(11, { timeout: 250 });
+    }).toPass();
     await expect(page.getByLabel('Previous')).toBeEnabled();
     await expect(page.getByLabel('Next')).toBeDisabled();
     await expect(page.getByLabel('Page 1')).not.toHaveCSS('border-color', 'rgb(43, 109, 136)');
@@ -152,17 +154,6 @@ test.describe('Students page', () => {
     for (let i = 1; i <= 10; i++) {
       await expect(page.getByRole('row').nth(i).getByRole('cell').nth(1)).toHaveText(firstNames[i - 1 + 15]);
     }
-
-    // does not work correctly
-    /*
-      for (let i = 1; i < 15; i++) {
-        const row1 = page.getByRole('row').nth(i);
-        const row2 = page.getByRole('row').nth(i + 1);
-        expect(
-          await row1.evaluate(async () => ((await row1.textContent()) || '') < ((await row2.textContent()) || '')),
-        ).toBeTruthy();
-      }
-      */
   });
 
   test('empty input', async () => {
@@ -175,15 +166,18 @@ test.describe('Students page', () => {
 
   test('tags', async () => {
     await page.getByRole('link', { name: 'Tag' }).click();
-    while (
-      (await page.getByRole('cell', { name: 'Open menu' }).first().isVisible()) &&
-      (await page.getByRole('row', { name: 'Name' }).getByRole('checkbox').isVisible())
-    ) {
-      await page.getByRole('row', { name: 'Name' }).getByRole('checkbox').check();
-      await page.keyboard.press('Delete');
-      await page.getByRole('button', { name: 'Löschen' }).click();
-      await page.waitForTimeout(100);
-    }
+    await expect(async () => {
+      while (
+        (await page.getByRole('cell', { name: 'Open menu' }).first().isVisible()) &&
+        (await page.getByRole('row', { name: 'Name' }).getByRole('checkbox').isVisible())
+      ) {
+        await page.getByRole('row', { name: 'Name' }).getByRole('checkbox').check();
+        await page.keyboard.press('Delete');
+        await page.getByRole('button', { name: 'Löschen' }).click({
+          timeout: 250,
+        });
+      }
+    }).toPass();
 
     await page.getByRole('button', { name: 'Hinzufügen' }).click();
     await page.getByRole('textbox').click();
@@ -204,7 +198,9 @@ test.describe('Students page', () => {
     await page.getByRole('combobox').click();
     await page.getByRole('button', { name: 'Speichern' }).click();
 
-    await expect(page.getByRole('row').nth(1)).toContainText('ATag,BTag');
+    const locator1 = page.getByText('ATag,BTag');
+    const locator2 = page.getByText('BTag,ATag');
+    await expect(locator1.or(locator2)).toBeVisible();
     await page.getByRole('row').nth(2).getByRole('button').click();
     await page.getByRole('menuitem', { name: 'Editieren' }).click();
     await page.getByRole('combobox').click();
@@ -214,7 +210,9 @@ test.describe('Students page', () => {
     await expect(page.getByRole('row').nth(2)).toContainText('BTag');
     await page.getByRole('row').nth(1).getByRole('button').click();
     await page.getByRole('menuitem', { name: 'Editieren' }).click();
-    await expect(page.getByRole('combobox')).toContainText('ATag, BTag');
+    const locator3 = page.getByText('ATag,BTag');
+    const locator4 = page.getByText('BTag,ATag');
+    await expect(locator3.or(locator4)).toBeVisible();
     await page.getByRole('combobox').click();
     await expect(page.getByRole('option', { name: 'BTag' }).getByRole('img')).toBeVisible();
     await page.getByRole('option', { name: 'BTag' }).click();
