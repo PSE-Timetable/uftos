@@ -114,4 +114,15 @@ public class StudentController {
   public void deleteStudent(@PathVariable String id) {
     this.studentService.delete(id);
   }
+
+  /**
+   * Maps the HTTP DELETE request to the {@link StudentService#delete(String) delete} function of
+   * the student service.
+   *
+   * @param ids the ID of the student which is to be deleted.
+   */
+  @DeleteMapping()
+  public void deleteStudents(@RequestBody String[] ids) {
+    this.studentService.deleteStudents(ids);
+  }
 }

@@ -14,4 +14,6 @@ public interface TimeslotRepository extends ListPagingAndSortingRepository<Times
     ListCrudRepository<Timeslot, String>, JpaSpecificationExecutor<Timeslot> {
 
   List<Timeslot> findByTags(Tag tag);
+
+  List<Timeslot> findAllByTags(List<Tag> tags);
 }

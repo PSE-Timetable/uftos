@@ -15,4 +15,6 @@ public interface StudentRepository
     JpaSpecificationExecutor<Student> {
 
   List<Student> findByTags(Tag tag);
+
+  List<Student> findAllByTags(List<Tag> tags);
 }

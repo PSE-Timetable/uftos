@@ -82,7 +82,7 @@ public class StudentServiceTest {
   @Test
   void createStudent() {
     StudentRequestDto requestDto =
-        new StudentRequestDto("Max", "Mustermann", List.of(), List.of("tagId"));
+        new StudentRequestDto("Max", "Mustermann", List.of("tagId"));
     studentService.create(requestDto);
 
     ArgumentCaptor<Student> studentCap = ArgumentCaptor.forClass(Student.class);
@@ -101,14 +101,14 @@ public class StudentServiceTest {
   @Test
   void createEmptyFirstNameStudent() {
     StudentRequestDto requestDto = new StudentRequestDto("", "Mustermann",
-        List.of(), List.of());
+        List.of());
     assertThrows(ResponseStatusException.class,
         () -> studentService.create(requestDto));
   }
 
   @Test
   void createEmptyLastNameStudent() {
-    StudentRequestDto requestDto = new StudentRequestDto("Max", "", List.of(),
+    StudentRequestDto requestDto = new StudentRequestDto("Max", "",
         List.of());
     assertThrows(ResponseStatusException.class,
         () -> studentService.create(requestDto));
@@ -117,7 +117,7 @@ public class StudentServiceTest {
   @Test
   void updateStudent() {
     StudentRequestDto requestDto =
-        new StudentRequestDto("newFirstName", "newLastName", List.of(),
+        new StudentRequestDto("newFirstName", "newLastName",
             List.of());
     studentService.update("123", requestDto);
 
@@ -136,7 +136,7 @@ public class StudentServiceTest {
   @Test
   void updateEmptyFirstNameStudent() {
     StudentRequestDto requestDto = new StudentRequestDto("", "Mustermann",
-        List.of(), List.of());
+        List.of());
     assertThrows(ResponseStatusException.class,
         () -> studentService.update("123", requestDto));
   }
@@ -144,7 +144,7 @@ public class StudentServiceTest {
   @Test
   void updateEmptyLastNameStudent() {
     StudentRequestDto requestDto = new StudentRequestDto("Max", "",
-        List.of(), List.of());
+        List.of());
     assertThrows(ResponseStatusException.class,
         () -> studentService.update("123", requestDto));
   }
