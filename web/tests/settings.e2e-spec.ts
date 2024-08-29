@@ -28,11 +28,11 @@ test.describe('Settings', () => {
     await page.getByPlaceholder(':45').click();
     await page.getByPlaceholder(':45').fill('08:00');
     await expect(async () => {
-        await expect(page.getByPlaceholder('Länge')).toBeEditable();
-        await page.getByPlaceholder('Länge').click();
-        await page.getByPlaceholder('Länge').fill('45');
-        await expect(page.getByPlaceholder('Länge')).toHaveValue('45');
-      }).toPass();
+      await expect(page.getByPlaceholder('Länge')).toBeEditable();
+      await page.getByPlaceholder('Länge').click();
+      await page.getByPlaceholder('Länge').fill('45');
+      await expect(page.getByPlaceholder('Länge')).toHaveValue('45');
+    }).toPass();
   });
 
   test('create timeslots and breaks', async () => {
