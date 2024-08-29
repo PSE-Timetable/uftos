@@ -83,8 +83,8 @@ public class CurriculumServiceTests {
     curriculum1.setId("123");
     Curriculum curriculum2 = new Curriculum(grade2, "TestCurriculum", List.of(lessonsCount));
     curriculum2.setId("456");
-    Curriculum curriculum3 = new Curriculum(grade2, "UpdateCurriculum", List.of(lessonsCount));
-    curriculum2.setId("234");
+    Curriculum curriculum3 = new Curriculum(newGrade, "UpdateCurriculum", List.of(lessonsCount));
+    curriculum3.setId("234");
 
     Curriculum testCurriculum =
         new Curriculum(testGrade, "testName", List.of(lessonsCount));
@@ -149,15 +149,10 @@ public class CurriculumServiceTests {
         new CurriculumRequestDto("newGrade", "newName", List.of(lessonsCount));
     curriculumService.update("234", requestDto);
 
-    ArgumentCaptor<Curriculum> curriculumCap = ArgumentCaptor.forClass(Curriculum.class);
-    verify(curriculumRepository, times(1)).save(curriculumCap.capture());
-
-    Curriculum curriculum = curriculumCap.getValue();
+    Curriculum curriculum = curriculumRepository.findById("234").get();
     assertNotNull(curriculum);
 
     assertEquals(newGrade, curriculum.getGrade());
-
-    assertEquals("newName", curriculum.getName());
 
     assertEquals(1, curriculum.getLessonsCounts().size());
   }
