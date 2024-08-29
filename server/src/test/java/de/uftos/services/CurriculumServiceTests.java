@@ -75,6 +75,8 @@ public class CurriculumServiceTests {
     Grade grade2 = new Grade("7", List.of("group3", "group4"),
         List.of("T2", "T3"));
 
+    newGrade.setId("newGrade");
+
     LessonsCountRequestDto lessonsCount = new LessonsCountRequestDto("Mathe", 4);
 
     Curriculum curriculum1 = new Curriculum(testGrade, "EmptyCurriculum", List.of());
