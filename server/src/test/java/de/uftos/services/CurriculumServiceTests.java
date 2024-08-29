@@ -144,7 +144,7 @@ public class CurriculumServiceTests {
 
   @Test
   void updateCurriculum() {
-    LessonsCountRequestDto lessonsCount = new LessonsCountRequestDto("Physik", 4);
+    LessonsCountRequestDto lessonsCount = new LessonsCountRequestDto("Mathe", 5);
     CurriculumRequestDto requestDto =
         new CurriculumRequestDto("newGrade", "newName", List.of(lessonsCount));
     curriculumService.update("234", requestDto);
