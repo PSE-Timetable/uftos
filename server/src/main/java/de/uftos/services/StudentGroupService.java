@@ -143,15 +143,23 @@ public class StudentGroupService {
     group.setId(id);
     this.repository.save(group);
 
-    List<Grade> grades =
-        this.gradeRepository.findAllById(groupRequest.gradeIds());
+    List<Grade> oldGrades = this.gradeRepository.findByStudentGroups(group);
+    for (Grade oldGrade : oldGrades) {
+      if (!groupRequest.gradeIds().contains(oldGrade.getId())) {
+        oldGrade.getStudentGroups().remove(group);
+      }
+    }
+    this.gradeRepository.saveAll(oldGrades);
+
+    List<Grade> grades = this.gradeRepository.findAllById(groupRequest.gradeIds());
+
     for (Grade grade : grades) {
       if (grade.getStudentGroups().contains(group)) {
         continue;
       }
       grade.getStudentGroups().add(group);
-      this.gradeRepository.save(grade);
     }
+    this.gradeRepository.saveAll(grades);
 
     //noinspection OptionalGetWithoutIsPresent
     return new StudentGroupResponseDto(this.repository.findById(id).get());
@@ -183,7 +191,7 @@ public class StudentGroupService {
     StudentGroup studentGroup = getStudentGroupById(id);
     List<Student> filteredStudents = studentGroup.getStudents().stream()
         .filter(student -> !studentIds.contains(student.getId())).toList();
-    studentGroup.setStudents(new ArrayList<Student>(filteredStudents)); //make list mutable
+    studentGroup.setStudents(new ArrayList<>(filteredStudents)); //make list mutable
     this.repository.save(studentGroup);
   }
 

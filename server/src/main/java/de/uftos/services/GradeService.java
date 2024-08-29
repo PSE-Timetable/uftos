@@ -9,6 +9,7 @@ import de.uftos.entities.Lesson;
 import de.uftos.entities.StudentGroup;
 import de.uftos.repositories.database.GradeRepository;
 import de.uftos.repositories.database.ServerRepository;
+import de.uftos.repositories.database.StudentGroupRepository;
 import de.uftos.utils.SpecificationBuilder;
 import java.util.Collection;
 import java.util.List;
@@ -30,16 +31,20 @@ import org.springframework.web.server.ResponseStatusException;
 public class GradeService {
   private final GradeRepository repository;
   private final ServerRepository serverRepository;
+  private final StudentGroupRepository studentGroupRepository;
 
   /**
    * Creates a grade service.
    *
-   * @param repository the repository for accessing the grade table.
+   * @param repository             the repository for accessing the grade table.
+   * @param studentGroupRepository the repository for accessing the student group table.
    */
   @Autowired
-  public GradeService(GradeRepository repository, ServerRepository serverRepository) {
+  public GradeService(GradeRepository repository, ServerRepository serverRepository,
+                      StudentGroupRepository studentGroupRepository) {
     this.repository = repository;
     this.serverRepository = serverRepository;
+    this.studentGroupRepository = studentGroupRepository;
   }
 
   /**
@@ -139,9 +144,15 @@ public class GradeService {
    * @throws ResponseStatusException is thrown if no grade exists with the given ID.
    */
   public void delete(String id) {
-    var grade = this.repository.findById(id);
+    Optional<Grade> grade = this.repository.findById(id);
     if (grade.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "Could not found a grade with this id");
+    }
+    List<StudentGroup> studentGroups = this.studentGroupRepository.findByGrades(grade.get());
+    if (!studentGroups.isEmpty()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "This grade is still associated with a student group.");
     }
 
     this.repository.delete(grade.get());

@@ -143,6 +143,4 @@ public class SubjectServiceTests {
   void deleteNonExistentSubject() {
     assertThrows(ResponseStatusException.class, () -> subjectService.delete("nonExistentId"));
   }
-
-
 }
