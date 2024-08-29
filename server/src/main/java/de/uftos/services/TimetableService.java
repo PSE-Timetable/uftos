@@ -162,9 +162,10 @@ public class TimetableService {
    * @throws ResponseStatusException is thrown if the ID doesn't have a corresponding timetable.
    */
   public Timetable getById(String id) {
-    var timetable = this.timetableRepository.findById(id);
+    Optional<Timetable> timetable = this.timetableRepository.findById(id);
 
-    return timetable.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+    return timetable.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+        "Could not find a timetable with this id"));
   }
 
   /**
@@ -530,9 +531,10 @@ public class TimetableService {
    * @throws ResponseStatusException is thrown if no timetable exists with the given ID.
    */
   public void delete(String id) {
-    var timetable = this.timetableRepository.findById(id);
+    Optional<Timetable> timetable = this.timetableRepository.findById(id);
     if (timetable.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "Could not find a timetable with this id");
     }
 
     this.timetableRepository.delete(timetable.get());

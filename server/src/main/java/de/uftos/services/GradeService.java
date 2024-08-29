@@ -70,7 +70,8 @@ public class GradeService {
    */
   public GradeResponseDto getById(String id) {
     Grade grade = this.repository.findById(id)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+            "Could not find a grade with this id"));
 
     return this.mapResponseDto(grade);
   }
@@ -84,7 +85,8 @@ public class GradeService {
    */
   public LessonResponseDto getLessonsById(String id) {
     Grade grade = this.repository.findById(id)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+            "Could not find a grade with this id"));
 
     Stream<StudentGroup> studentGroupStream =
         Stream.of(grade.getStudentGroups()).flatMap(Collection::stream);
@@ -139,9 +141,10 @@ public class GradeService {
    * @throws ResponseStatusException is thrown if no grade exists with the given ID.
    */
   public void delete(String id) {
-    var grade = this.repository.findById(id);
+    Optional<Grade> grade = this.repository.findById(id);
     if (grade.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "Could not find a grade with this id");
     }
 
     this.repository.delete(grade.get());

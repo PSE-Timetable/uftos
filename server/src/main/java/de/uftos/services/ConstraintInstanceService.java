@@ -94,11 +94,13 @@ public class ConstraintInstanceService {
   public ConstraintInstance create(String signatureId, ConstraintInstanceRequestDto request) {
 
     ConstraintSignature signature = this.signatureRepository.findById(signatureId)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+            "Could not find a constraint signature with this id"));
 
 
     if (signature.getParameters().size() != request.arguments().size()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "The arguments size does not match the one required by the constraint signature!");
     }
 
     List<ConstraintArgument> arguments = new ArrayList<>();
@@ -157,7 +159,8 @@ public class ConstraintInstanceService {
     return new ConstraintInstancesResponseDto(
         instances,
         displayNames,
-        signature.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST)),
+        signature.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+            "Could not find a signature with this id")),
         constraintInstances.getTotalElements()
     );
   }
@@ -177,7 +180,8 @@ public class ConstraintInstanceService {
     return new ConstraintInstancesResponseDto(
         List.of(constraintInstance),
         displayNames,
-        signature.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST)),
+        signature.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+            "Could not find a signature with this id")),
         1
     );
   }
@@ -219,9 +223,11 @@ public class ConstraintInstanceService {
 
   private ConstraintInstance getInstanceById(String signatureId, String id) {
     return this.signatureRepository.findById(signatureId)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST)).getInstances()
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+            "Could not find a constraint signature with this id")).getInstances()
         .stream().filter(instance -> instance.getId().equals(id)).findFirst()
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+            "Could not find a constraint instance with this id"));
   }
 
   private List<ConstraintArgumentDisplayName> getDisplayNamesFromInstances(
@@ -248,50 +254,60 @@ public class ConstraintInstanceService {
     return switch (constraintArgument.getConstraintParameter().getParameterType()) {
       case TAG -> new ConstraintArgumentDisplayName(id,
           tagRepository.findById(id)
-              .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST)).getName());
+              .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                  "Could not find this constraint argument from the tag id!")).getName());
       case ROOM -> {
         Room room = roomRepository.findById(id)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                "Could not find this constraint argument from the room id!"));
         yield new ConstraintArgumentDisplayName(id,
             "%s %s".formatted(room.getBuildingName(), room.getName()));
       }
       case GRADE -> new ConstraintArgumentDisplayName(id,
           gradeRepository.findById(id)
-              .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST))
+              .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                  "Could not find this constraint argument from the grade id!"))
               .getName());
       case LESSON -> new ConstraintArgumentDisplayName(id,
           lessonRepository.findById(id)
-              .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST))
+              .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                  "Could not find this constraint argument from the lesson id!"))
               .getYear());
       case STUDENT -> {
         Student student =
             studentRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Could not find this constraint argument from the student id!"));
         yield new ConstraintArgumentDisplayName(id,
             "%s %s".formatted(student.getFirstName(), student.getLastName()));
       }
       case SUBJECT -> new ConstraintArgumentDisplayName(id,
           subjectRepository.findById(id)
-              .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST))
+              .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                  "Could not find this constraint argument from the subject id!"))
               .getName());
       case TEACHER -> {
         Teacher teacher =
             teacherRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Could not find this constraint argument from the teacher id!"));
         yield new ConstraintArgumentDisplayName(id,
             "%s %s".formatted(teacher.getFirstName(), teacher.getLastName()));
       }
       case STUDENT_GROUP -> new ConstraintArgumentDisplayName(id,
           studentGroupRepository.findById(id)
-              .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST))
+              .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                  "Could not find this constraint argument from the student group id!"))
               .getName());
       case TIMESLOT -> {
         Timeslot timeslot = timeslotRepository.findById(id)
-              .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                "Could not find this constraint argument from the timeslot id!"));
         yield new ConstraintArgumentDisplayName(id,
             "%s: %d".formatted(timeslot.getDay().toString(), timeslot.getSlot()));
       }
-      case TIMETABLE, NUMBER -> throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+      case TIMETABLE, NUMBER -> throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "A constraint argument can not be of type timetable or number!");
     };
   }
 
