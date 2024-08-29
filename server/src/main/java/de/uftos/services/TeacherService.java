@@ -94,8 +94,8 @@ public class TeacherService {
    * @throws ResponseStatusException is thrown if the first name, last name or the acronym of the teacher is blank.
    */
   public Teacher create(TeacherRequestDto teacher) {
-    if (teacher.firstName().isBlank() || teacher.lastName().isBlank() ||
-        teacher.acronym().isBlank()) {
+    if (teacher.firstName().isBlank() || teacher.lastName().isBlank() 
+        || teacher.acronym().isBlank()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
           "The first name, last name or the acronym of the teacher is blank.");
     }

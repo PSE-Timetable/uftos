@@ -78,6 +78,13 @@ public class StudentService {
         "Could not find a student with this id"));
   }
 
+  /**
+   * Gets the information about the lessons that the student attends.
+   *
+   * @param id the ID of the student.
+   * @return a LessonResponseDto containing information about the lessons.
+   * @throws ResponseStatusException is thrown if the ID doesn't have a corresponding student.
+   */
   public LessonResponseDto getLessonsById(String id) {
     Student student = getById(id);
     List<StudentGroup> studentGroups = student.getGroups();
