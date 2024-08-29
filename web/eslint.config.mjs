@@ -32,6 +32,7 @@ export default [
       'src/lib/sdk',
       'src/lib/elements/ui',
       'eslint.config.mjs',
+      '**/playwright-report',
     ],
   },
   ...compat.extends(

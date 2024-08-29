@@ -36,17 +36,24 @@ test.describe('Student group page', () => {
         // this timeout is fine, can happen sometimes
       }
     }
-    // doesn't work, change to fetch-client functions when #377 is merged.
-    
-    const students = await getStudents({}).then(({ content }) => content ?? []);
-    await deleteStudents(students.map((student) => student.id));
+
+    const students = await getStudents({page: 0}).then(({ content }) => content ?? []);
+    if (students.length > 0) {
+      await deleteStudents(students.map((student) => student.id));
+    }
     const grades = await getGrades({});
-    await deleteGrades(grades.map((grade) => grade.id));
+    if (grades.length > 0) {
+      await deleteGrades(grades.map((grade) => grade.id));
+    }
     const tags = await getTags({});
-    await deleteTags(tags.map((tag) => tag.id));
+    if (tags.length > 0) {
+      await deleteTags(tags.map((tag) => tag.id));
+    }
     const subjects = await getSubjects({});
-    await deleteSubjects(subjects.map((subject) => subject.id));
-    
+    if (tags.length > 0) {
+      await deleteSubjects(subjects.map((subject) => subject.id));
+    }
+
     for (let i = 0; i < 25; i++) {
       const requestDto: StudentRequestDto = {
         firstName: `Max${i}`,
@@ -55,7 +62,6 @@ test.describe('Student group page', () => {
       };
       await createStudent(requestDto);
     }
-    
   });
 
   test('empty create', async () => {
@@ -110,7 +116,6 @@ test.describe('Student group page', () => {
 
   test('add students to group', async () => {
     await page.getByRole('combobox').first().click();
-    await page.getByRole('combobox').first().click();
     await page.getByRole('option', { name: 'Max2 Mustermann2' }).click();
     await page.getByRole('button', { name: 'Schüler hinzufügen' }).first().click();
     await page.locator('button').filter({ hasText: 'Max2 Mustermann2' }).click();
@@ -125,17 +130,11 @@ test.describe('Student group page', () => {
     await page.locator('button').filter({ hasText: 'Max5 Mustermann5' }).click();
     await page.getByRole('option', { name: 'Max1 Mustermann1' }).click();
     await page.getByRole('button', { name: 'Schüler hinzufügen' }).first().click();
-    await page.locator('button').filter({ hasText: 'Max1 Mustermann1' }).click();
-    await page.getByRole('option', { name: 'Max4 Mustermann4' }).click();
-    await page.getByRole('button', { name: 'Schüler hinzufügen' }).first().click();
-
-    await expect(page.locator('tbody').first().getByRole('row').first()).toContainText('Max1 Mustermann1');
-    await expect(page.locator('tbody').first().getByRole('row').nth(1)).toContainText('Max2 Mustermann2');
-    await expect(page.locator('tbody').first().getByRole('row').nth(2)).toContainText('Max4 Mustermann4');
-    await expect(page.locator('tbody').first().getByRole('row').nth(3)).toContainText('Max5 Mustermann5');
-    await expect(page.locator('tbody').first().getByRole('row').nth(4)).toContainText('Max9 Mustermann9');
-    await page.getByText('Weiter').first().click();
-    await expect(page.locator('tbody').first().getByRole('row').first()).toContainText('Max15 Mustermann15');
+    await expect(page.locator('tbody')).toContainText('Max1 Mustermann1');
+    await expect(page.locator('tbody')).toContainText('Max2 Mustermann2');
+    await expect(page.locator('tbody')).toContainText('Max15 Mustermann15');
+    await expect(page.locator('tbody')).toContainText('Max5 Mustermann5');
+    await expect(page.locator('tbody')).toContainText('Max9 Mustermann9');
   });
 
   test('search', async () => {

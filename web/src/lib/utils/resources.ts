@@ -248,8 +248,11 @@ export async function getStudentsFromGroup(
   if (!additionalId) {
     throw error(400, { message: 'Invalid student group id' });
   }
-  const { students } = await getStudentGroup(additionalId);
-  const dataItems: DataItem[] = students.map(
+  const result = await getStudents(
+    { page: index, size: pageSize, sort: [toSort] },
+    { search: filter, groups: [additionalId] },
+  );
+  const dataItems: DataItem[] = (result.content ?? []).map(
     (student): DataItem => ({
       id: student.id,
       firstName: student.firstName,
@@ -259,7 +262,7 @@ export async function getStudentsFromGroup(
   );
   return {
     data: dataItems,
-    totalElements: Number(students.length),
+    totalElements: Number(result.totalElements),
   };
 }
 
