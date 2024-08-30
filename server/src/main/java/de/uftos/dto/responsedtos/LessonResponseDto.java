@@ -27,6 +27,7 @@ import java.util.Set;
  */
 public record LessonResponseDto(@NotNull List<BulkLesson> lessons,
                                 @NotNull List<Teacher> teachers,
+                                @NotNull List<StudentGroupResponseDto> groups,
                                 @NotNull List<GradeResponseDto> grades, @NotNull List<Room> rooms,
                                 @NotNull List<Subject> subjects, @NotNull Timetable timetable) {
   /**
@@ -43,6 +44,7 @@ public record LessonResponseDto(@NotNull List<BulkLesson> lessons,
     List<GradeResponseDto> gradeResponseDtos = new ArrayList<>();
     Set<Room> rooms = new HashSet<>();
     Set<Subject> subjects = new HashSet<>();
+    Set<StudentGroupResponseDto> groups = new HashSet<>(); 
     Timetable timetable = lessons.isEmpty() ? null : lessons.getFirst().getTimetable();
 
     for (Lesson lesson : lessons) {
@@ -55,23 +57,26 @@ public record LessonResponseDto(@NotNull List<BulkLesson> lessons,
       teachers.add(lesson.getTeacher());
       rooms.add(lesson.getRoom());
       subjects.add(lesson.getSubject());
+      groups.add(new StudentGroupResponseDto(lesson.getStudentGroup()));
     }
 
     grades.stream().map(GradeResponseDto::createResponseDtoFromGrade)
         .forEach(gradeResponseDtos::add);
 
-    return new LessonResponseDto(bulkLessons, teachers.stream().toList(), gradeResponseDtos,
+    return new LessonResponseDto(bulkLessons, teachers.stream().toList(), groups.stream().toList(), gradeResponseDtos,
         rooms.stream().toList(), subjects.stream().toList(), timetable);
   }
 
   private record BulkLesson(@NotEmpty String id, @PositiveOrZero int index,
                             @NotEmpty String teacherId,
                             @NotEmpty String roomId,
+                            @NotEmpty String groupId,
                             @NotNull List<String> gradeIds, @NotNull Timeslot timeslot,
-                            @NotEmpty String subjectId) {
+                            @NotEmpty String subjectId, @NotNull Timetable timetable) {
     private BulkLesson(Lesson lesson, List<String> gradesId) {
       this(lesson.getId(), lesson.getIndex(), lesson.getTeacher().getId(),
-          lesson.getRoom().getId(), gradesId, lesson.getTimeslot(), lesson.getSubject().getId());
+          lesson.getRoom().getId(), lesson.getStudentGroup().getId(), gradesId, lesson.getTimeslot(),
+          lesson.getSubject().getId(), lesson.getTimetable());
     }
   }
 }

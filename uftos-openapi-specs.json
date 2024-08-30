@@ -2205,7 +2205,7 @@
         }
       },
       "BulkLesson" : {
-        "required" : [ "gradeIds", "id", "roomId", "subjectId", "teacherId", "timeslot" ],
+        "required" : [ "gradeIds", "groupId", "id", "roomId", "subjectId", "teacherId", "timeslot", "timetable" ],
         "type" : "object",
         "properties" : {
           "gradeIds" : {
@@ -2213,6 +2213,9 @@
             "items" : {
               "type" : "string"
             }
+          },
+          "groupId" : {
+            "type" : "string"
           },
           "id" : {
             "type" : "string"
@@ -2232,6 +2235,9 @@
           },
           "timeslot" : {
             "$ref" : "#/components/schemas/Timeslot"
+          },
+          "timetable" : {
+            "$ref" : "#/components/schemas/Timetable"
           }
         }
       },
@@ -2575,13 +2581,19 @@
         }
       },
       "LessonResponseDto" : {
-        "required" : [ "grades", "lessons", "rooms", "subjects", "teachers", "timetable" ],
+        "required" : [ "grades", "groups", "lessons", "rooms", "subjects", "teachers", "timetable" ],
         "type" : "object",
         "properties" : {
           "grades" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/GradeResponseDto"
+            }
+          },
+          "groups" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/StudentGroupResponseDto"
             }
           },
           "lessons" : {
@@ -3312,7 +3324,7 @@
         }
       },
       "StudentGroupResponseDto" : {
-        "required" : [ "grades", "id", "lessons", "name", "students", "subjects", "tags" ],
+        "required" : [ "grades", "id", "name", "students", "subjects", "tags" ],
         "type" : "object",
         "properties" : {
           "grades" : {
@@ -3323,9 +3335,6 @@
           },
           "id" : {
             "type" : "string"
-          },
-          "lessons" : {
-            "$ref" : "#/components/schemas/LessonResponseDto"
           },
           "name" : {
             "type" : "string"

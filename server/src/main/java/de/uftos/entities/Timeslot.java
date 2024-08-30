@@ -13,6 +13,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -48,7 +49,8 @@ public class Timeslot {
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(name = "timeslots_tags",
       joinColumns = @JoinColumn(name = "timeslots_id"),
-      inverseJoinColumns = @JoinColumn(name = "tags_id"))
+      inverseJoinColumns = @JoinColumn(name = "tags_id"),
+      uniqueConstraints = @UniqueConstraint(columnNames = {"timeslots_id", "tags_id"}))
   private List<Tag> tags;
 
   @JsonIgnore
@@ -77,7 +79,6 @@ public class Timeslot {
   public Timeslot(String id) {
     this.id = id;
   }
-
 
 
   @Override
