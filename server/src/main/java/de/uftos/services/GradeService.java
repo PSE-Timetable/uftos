@@ -44,7 +44,6 @@ public class GradeService {
    *
    * @param repository                    the repository for accessing the grade table.
    * @param studentGroupRepository        the repository for accessing the student group table.
-   * @param repository                    the repository for accessing the grade table.
    * @param constraintSignatureRepository the repository for accessing the constraint signature table.
    * @param constraintInstanceRepository  the repository for accessing the constraint instance table.
    */
