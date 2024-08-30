@@ -134,7 +134,8 @@ public class JsonGenerator {
    * @return The requested JSON
    * @throws JSONException If something is malformed.
    */
-  public static String generateStudentJson(String firstName, String lastName, List<String> groups, List<String> tags)
+  public static String generateStudentJson(String firstName, String lastName, List<String> groups,
+                                           List<String> tags)
       throws JSONException {
     JSONArray groupArray = new JSONArray();
     groups.forEach(groupArray::put);
@@ -215,6 +216,21 @@ public class JsonGenerator {
     return new JSONObject()
         .put("tagName", name)
         .toString();
+  }
+
+  /**
+   * Generates a JSON with a list of ids.
+   *
+   * @param ids The ids of the entities
+   * @return The requested JSON
+   */
+  public static String generateIdListJson(String... ids) {
+    JSONArray jsonArray = new JSONArray();
+    for (String id : ids) {
+      jsonArray.put(id);
+    }
+
+    return jsonArray.toString();
   }
 
   /**

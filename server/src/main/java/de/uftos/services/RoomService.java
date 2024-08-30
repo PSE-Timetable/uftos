@@ -116,7 +116,7 @@ public class RoomService {
   public Room create(RoomRequestDto room) {
     if (room.name().isBlank() || room.buildingName().isBlank()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "The name, building name are blank or the capacity is 0.");
+          "The name, building name are blank.");
     }
     return this.repository.save(room.map());
   }

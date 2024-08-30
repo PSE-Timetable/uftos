@@ -1,5 +1,6 @@
 package de.uftos.e2e;
 
+import static de.uftos.utils.JsonGenerator.generateIdListJson;
 import static de.uftos.utils.JsonGenerator.generatePageJson;
 import static de.uftos.utils.JsonGenerator.generateRoomJson;
 import static de.uftos.utils.JsonGenerator.generateTagJson;
@@ -79,19 +80,15 @@ class RoomsTest {
   static void deleteCreatedEntities() {
     given().contentType(ContentType.JSON)
         .when()
-        .delete("/rooms/{id}", firstRoomId)
+        .body(generateIdListJson(firstRoomId, secondRoomId))
+        .delete("/rooms")
         .then()
         .statusCode(200);
 
     given().contentType(ContentType.JSON)
         .when()
-        .delete("/rooms/{id}", secondRoomId)
-        .then()
-        .statusCode(200);
-
-    given().contentType(ContentType.JSON)
-        .when()
-        .delete("/tags/{id}", tagId)
+        .body(generateIdListJson(tagId))
+        .delete("/tags")
         .then()
         .statusCode(200);
   }

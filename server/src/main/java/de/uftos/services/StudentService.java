@@ -32,8 +32,8 @@ public class StudentService {
   private final StudentRepository repository;
   private final StudentGroupRepository studentGroupRepository;
   private final ServerRepository serverRepository;
-  private final ConstraintSignatureRepository constraintSignatureRepository;
   private final ConstraintInstanceRepository constraintInstanceRepository;
+  private final ConstraintSignatureRepository constraintSignatureRepository;
 
   /**
    * Creates a student service.
@@ -41,22 +41,20 @@ public class StudentService {
    * @param repository                    the repository for accessing the student table.
    * @param studentGroupRepository        the repository for accessing the student group table.
    * @param serverRepository              the repository for accessing the server table.
-   * @param repository                    the repository for accessing the student table.
-   * @param studentGroupRepository        the repository for accessing the student group table.
-   * @param constraintSignatureRepository the repository for accessing the constraint signature table.
    * @param constraintInstanceRepository  the repository for accessing the constraint instance table.
+   * @param constraintSignatureRepository the repository for accessing the constraint signature table.
    */
   @Autowired
   public StudentService(StudentRepository repository,
                         StudentGroupRepository studentGroupRepository,
                         ServerRepository serverRepository,
-                        ConstraintSignatureRepository constraintSignatureRepository,
-                        ConstraintInstanceRepository constraintInstanceRepository) {
+                        ConstraintInstanceRepository constraintInstanceRepository,
+                        ConstraintSignatureRepository constraintSignatureRepository) {
     this.repository = repository;
     this.studentGroupRepository = studentGroupRepository;
     this.serverRepository = serverRepository;
-    this.constraintSignatureRepository = constraintSignatureRepository;
     this.constraintInstanceRepository = constraintInstanceRepository;
+    this.constraintSignatureRepository = constraintSignatureRepository;
   }
 
   /**
