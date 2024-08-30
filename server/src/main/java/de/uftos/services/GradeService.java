@@ -154,29 +154,6 @@ public class GradeService {
   /**
    * Deletes the grade with the given ID.
    *
-   * @param id the ID of the grade which is to be deleted.
-   * @throws ResponseStatusException is thrown if no grade exists with the given ID.
-   */
-  public void delete(String id) {
-    Optional<Grade> grade = this.repository.findById(id);
-    if (grade.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "Could not find a grade with this id!");
-    }
-    List<StudentGroup> studentGroups = this.studentGroupRepository.findByGrades(grade.get());
-    if (!studentGroups.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "This grade is still associated with a student group.");
-    }
-    new ConstraintInstanceDeleter(constraintSignatureRepository, constraintInstanceRepository)
-        .removeAllInstancesWithArgumentValue(new String[] {id});
-
-    this.repository.delete(grade.get());
-  }
-
-  /**
-   * Deletes the grade with the given ID.
-   *
    * @param ids the IDs of the grades which are to be deleted.
    * @throws ResponseStatusException is thrown if no grade exists with the given ID.
    */

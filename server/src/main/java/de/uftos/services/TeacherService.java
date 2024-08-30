@@ -144,27 +144,6 @@ public class TeacherService {
   }
 
   /**
-   * Deletes the teacher with the given ID.
-   *
-   * @param id the ID of the teacher which is to be deleted.
-   * @throws ResponseStatusException is thrown if no teacher exists with the given ID.
-   */
-  public void delete(String id) {
-    Optional<Teacher> teacher = this.repository.findById(id);
-    if (teacher.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "Could not find a teacher with this id");
-    }
-
-    new ConstraintInstanceDeleter(constraintSignatureRepository, constraintInstanceRepository)
-        .removeAllInstancesWithArgumentValue(new String[] {id});
-
-    new LessonsDeleter(lessonRepository, timetableRepository).fromTeachers(List.of(teacher.get()));
-
-    this.repository.delete(teacher.get());
-  }
-
-  /**
    * Deletes the teachers with the given IDs.
    *
    * @param ids the IDs of the teacher which are to be deleted.

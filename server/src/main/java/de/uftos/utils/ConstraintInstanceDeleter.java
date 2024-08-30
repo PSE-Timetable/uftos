@@ -44,6 +44,10 @@ public class ConstraintInstanceDeleter {
     List<ConstraintSignature> constraintSignatures =
         constraintSignatureRepository.findAll(signatureSpecificationBuilder);
 
+    if (constraintSignatures.isEmpty()) {
+      return;
+    }
+
     List<ConstraintInstance> constraintInstances = new ArrayList<>(constraintSignatures.stream()
         .flatMap(constraintSignature -> constraintSignature.getInstances().stream()).toList());
 

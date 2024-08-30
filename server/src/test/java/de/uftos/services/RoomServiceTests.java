@@ -1,6 +1,7 @@
 package de.uftos.services;
 
 
+import static de.uftos.utils.ClassCaster.getClassType;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -121,6 +122,7 @@ public class RoomServiceTests {
         new Server(new TimetableMetadata(45, 8, "7:45", new Break[] {}), "2024", "test@uftos.de");
     when(serverRepository.findAll()).thenReturn(List.of(server));
     when(roomRepository.findById("123")).thenReturn(Optional.of(room1));
+    when(roomRepository.findAllById(List.of("123"))).thenReturn(List.of(room1));
     when(roomRepository.findById("456")).thenReturn(Optional.of(room2));
   }
 
@@ -173,17 +175,19 @@ public class RoomServiceTests {
 
   @Test
   void deleteExistingRoom() {
-    assertDoesNotThrow(() -> roomService.delete("123"));
-    ArgumentCaptor<Room> roomCap = ArgumentCaptor.forClass(Room.class);
-    verify(roomRepository, times(1)).delete(roomCap.capture());
+    assertDoesNotThrow(() -> roomService.deleteRooms(new String[] {"123"}));
+    ArgumentCaptor<List<Room>> roomCap = ArgumentCaptor.forClass(getClassType());
+    verify(roomRepository, times(1)).deleteAll(roomCap.capture());
 
-    Room room = roomCap.getValue();
-    assertEquals("123", room.getId());
+    List<Room> room = roomCap.getValue();
+    assertEquals(1, room.size());
+    assertEquals("123", room.getFirst().getId());
   }
 
   @Test
   void deleteNonExistingRoom() {
-    assertThrows(ResponseStatusException.class, () -> roomService.delete("nonExistentId"));
+    assertThrows(ResponseStatusException.class,
+        () -> roomService.deleteRooms(new String[] {"nonExistentId"}));
   }
 
   @Test

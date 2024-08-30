@@ -142,67 +142,6 @@ public class TagService {
   }
 
   /**
-   * Deletes the tag with the given ID.
-   *
-   * @param id the ID of the tag which is to be deleted.
-   * @throws ResponseStatusException is thrown if no tag exists with the given ID.
-   */
-  public void delete(String id) {
-    Optional<Tag> tag = this.repository.findById(id);
-    if (tag.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "Could not find a tag with this id");
-    }
-
-    List<Student> students = studentRepository.findByTags(tag.get());
-    for (Student student : students) {
-      student.getTags().removeIf(tag1 -> tag1.getId().equals(id));
-    }
-    studentRepository.saveAll(students);
-
-    List<Teacher> teachers = teacherRepository.findByTags(tag.get());
-    for (Teacher teacher : teachers) {
-      teacher.getTags().removeIf(tag1 -> tag1.getId().equals(id));
-    }
-    teacherRepository.saveAll(teachers);
-
-    List<StudentGroup> studentGroups = studentGroupRepository.findByTags(tag.get());
-    for (StudentGroup group : studentGroups) {
-      group.getTags().removeIf(tag1 -> tag1.getId().equals(id));
-    }
-    studentGroupRepository.saveAll(studentGroups);
-
-    List<Room> rooms = roomRepository.findByTags(tag.get());
-    for (Room room : rooms) {
-      room.getTags().removeIf(tag1 -> tag1.getId().equals(id));
-    }
-    roomRepository.saveAll(rooms);
-
-    List<Subject> subjects = subjectRepository.findByTags(tag.get());
-    for (Subject subject : subjects) {
-      subject.getTags().removeIf(tag1 -> tag1.getId().equals(id));
-    }
-    subjectRepository.saveAll(subjects);
-
-    List<Grade> grades = gradeRepository.findByTags(tag.get());
-    for (Grade grade : grades) {
-      grade.getTags().removeIf(tag1 -> tag1.getId().equals(id));
-    }
-    gradeRepository.saveAll(grades);
-
-    List<Timeslot> timeslots = timeslotRepository.findByTags(tag.get());
-    for (Timeslot timeslot : timeslots) {
-      timeslot.getTags().removeIf(tag1 -> tag1.getId().equals(id));
-    }
-    timeslotRepository.saveAll(timeslots);
-
-    new ConstraintInstanceDeleter(constraintSignatureRepository, constraintInstanceRepository)
-        .removeAllInstancesWithArgumentValue(new String[] {id});
-
-    this.repository.delete(tag.get());
-  }
-
-  /**
    * Deletes the tags with the given IDs.
    *
    * @param ids the IDs of the tags which are to be deleted.
@@ -257,6 +196,9 @@ public class TagService {
       timeslot.getTags().removeIf(tag1 -> tagIds.contains(tag1.getId()));
     }
     timeslotRepository.saveAll(timeslots);
+
+    new ConstraintInstanceDeleter(constraintSignatureRepository, constraintInstanceRepository)
+        .removeAllInstancesWithArgumentValue(ids);
 
     this.repository.deleteAll(tags);
   }

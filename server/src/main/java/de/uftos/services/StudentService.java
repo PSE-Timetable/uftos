@@ -5,9 +5,9 @@ import de.uftos.dto.responsedtos.LessonResponseDto;
 import de.uftos.entities.Lesson;
 import de.uftos.entities.Student;
 import de.uftos.entities.StudentGroup;
-import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.ConstraintInstanceRepository;
 import de.uftos.repositories.database.ConstraintSignatureRepository;
+import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.StudentGroupRepository;
 import de.uftos.repositories.database.StudentRepository;
 import de.uftos.utils.ConstraintInstanceDeleter;
@@ -38,9 +38,9 @@ public class StudentService {
   /**
    * Creates a student service.
    *
-   * @param repository             the repository for accessing the student table.
-   * @param studentGroupRepository the repository for accessing the student group table.
-   * @param serverRepository       the repository for accessing the server table.
+   * @param repository                    the repository for accessing the student table.
+   * @param studentGroupRepository        the repository for accessing the student group table.
+   * @param serverRepository              the repository for accessing the server table.
    * @param repository                    the repository for accessing the student table.
    * @param studentGroupRepository        the repository for accessing the student group table.
    * @param constraintSignatureRepository the repository for accessing the constraint signature table.
@@ -104,7 +104,8 @@ public class StudentService {
     List<StudentGroup> studentGroups = student.getGroups();
     List<Lesson> lessons = new ArrayList<>(
         studentGroups.stream().flatMap(group -> group.getLessons().stream()).toList());
-    lessons.removeIf(lesson -> !lesson.getYear().equals(serverRepository.findAll().getFirst().getCurrentYear()));
+    lessons.removeIf(
+        lesson -> !lesson.getYear().equals(serverRepository.findAll().getFirst().getCurrentYear()));
     return LessonResponseDto.createResponseDtoFromLessons(lessons);
   }
 
@@ -143,37 +144,14 @@ public class StudentService {
   }
 
   /**
-   * Deletes the student with the given ID.
-   *
-   * @param id the ID of the student which is to be deleted.
-   * @throws ResponseStatusException is thrown if no student exists with the given ID.
-   */
-  public void delete(String id) {
-    Optional<Student> student = this.repository.findById(id);
-    if (student.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "Could not find a student with this id");
-    }
-    List<StudentGroup> studentGroups = studentGroupRepository.findByStudents(student.get());
-    for (StudentGroup group : studentGroups) {
-      group.getStudents().removeIf(student1 -> student1.getId().equals(id));
-    }
-    studentGroupRepository.saveAll(studentGroups);
-
-    this.repository.delete(student.get());
-  }
-
-  /**
    * Deletes the students with the given IDs.
    *
    * @param ids the IDs of the students which are to be deleted.
    * @throws ResponseStatusException is thrown if no students exist with the given IDs.
    */
   public void deleteStudents(String[] ids) {
-    Specification<Student> studentSpecification = new SpecificationBuilder<Student>()
-        .andIn(ids, "id")
-        .build();
-    List<Student> students = this.repository.findAll(studentSpecification);
+    List<String> studentIds = Arrays.asList(ids);
+    List<Student> students = this.repository.findAllById(studentIds);
     if (students.isEmpty() || students.size() != ids.length) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
           "There exist no students with the given id(s).");
