@@ -111,6 +111,9 @@ public class TeacherServiceTests {
     when(serverRepository.findAll()).thenReturn(List.of(server));
     when(teacherRepository.findById("123")).thenReturn(Optional.of(teacher1));
     when(teacherRepository.findById("456")).thenReturn(Optional.of(teacher2));
+    when(teacherRepository.findAllById(List.of("123"))).thenReturn(List.of(teacher1));
+    when(teacherRepository.findAllById(List.of("nonExistentId", "123"))).thenReturn(
+        List.of(teacher1));
   }
 
   @Test
@@ -145,6 +148,31 @@ public class TeacherServiceTests {
   }
 
   @Test
+  void createTeacherEmptyFirstName() {
+    TeacherRequestDto requestDto =
+        new TeacherRequestDto("", "lastName", "FL", List.of("subjectId"),
+            List.of("tagId"));
+    assertThrows(ResponseStatusException.class, () -> teacherService.create(requestDto));
+  }
+
+  @Test
+  void createTeacherEmptyLastName() {
+    TeacherRequestDto requestDto =
+        new TeacherRequestDto("firstName", "", "FL", List.of("subjectId"),
+            List.of("tagId"));
+    assertThrows(ResponseStatusException.class, () -> teacherService.create(requestDto));
+  }
+
+  @Test
+  void createTeacherEmptyAcronym() {
+    TeacherRequestDto requestDto =
+        new TeacherRequestDto("firstName", "lastName", "", List.of("subjectId"),
+            List.of("tagId"));
+    assertThrows(ResponseStatusException.class, () -> teacherService.create(requestDto));
+  }
+
+
+  @Test
   void updateTeacher() {
     TeacherRequestDto requestDto =
         new TeacherRequestDto("newFirstName", "newLastName", "NN", List.of(),
@@ -168,6 +196,30 @@ public class TeacherServiceTests {
   }
 
   @Test
+  void updateTeacherEmptyFirstName() {
+    TeacherRequestDto requestDto =
+        new TeacherRequestDto("", "lastName", "FL", List.of("subjectId"),
+            List.of("tagId"));
+    assertThrows(ResponseStatusException.class, () -> teacherService.update("123", requestDto));
+  }
+
+  @Test
+  void updateTeacherEmptyLastName() {
+    TeacherRequestDto requestDto =
+        new TeacherRequestDto("firstName", "", "FL", List.of("subjectId"),
+            List.of("tagId"));
+    assertThrows(ResponseStatusException.class, () -> teacherService.update("123", requestDto));
+  }
+
+  @Test
+  void updateTeacherEmptyAcronym() {
+    TeacherRequestDto requestDto =
+        new TeacherRequestDto("firstName", "lastName", "", List.of("subjectId"),
+            List.of("tagId"));
+    assertThrows(ResponseStatusException.class, () -> teacherService.update("123", requestDto));
+  }
+
+  @Test
   void deleteExistingTeacher() {
     assertDoesNotThrow(() -> teacherService.delete("123"));
     ArgumentCaptor<Teacher> teacherCap = ArgumentCaptor.forClass(Teacher.class);
@@ -180,6 +232,32 @@ public class TeacherServiceTests {
   @Test
   void deleteNonExistingTeacher() {
     assertThrows(ResponseStatusException.class, () -> teacherService.delete("nonExistentId"));
+  }
+
+  @Test
+  void deleteTeachersNonExistent() {
+    assertThrows(ResponseStatusException.class,
+        () -> teacherService.deleteTeachers(new String[] {"nonExistentId"}));
+  }
+
+  @Test
+  void deleteTeachersSomeExistent() {
+    assertThrows(ResponseStatusException.class,
+        () -> teacherService.deleteTeachers(new String[] {"nonExistentId", "123"}));
+  }
+
+  @Test
+  void deleteTeachersAllExistent() {
+    assertDoesNotThrow(() -> teacherService.deleteTeachers(new String[] {"123"}));
+    Class<List<Teacher>> listClass =
+        (Class<List<Teacher>>) (Class) List.class;
+    ArgumentCaptor<List<Teacher>> teacherCap = ArgumentCaptor.forClass(listClass);
+    verify(teacherRepository, times(1)).deleteAll(teacherCap.capture());
+
+    List<Teacher> teacherList = teacherCap.getValue();
+    assertEquals(1, teacherList.size());
+    assertEquals("123", teacherList.getFirst().getId());
+
   }
 
   @Test
@@ -199,8 +277,10 @@ public class TeacherServiceTests {
     );
 
     assertAll("Testing whether all the rooms are there",
-        () -> assertTrue(result.rooms().stream().map(room -> room.getId()).toList().contains(room1.getId())),
-        () -> assertTrue(result.rooms().stream().map(room -> room.getId()).toList().contains(room2.getId()))
+        () -> assertTrue(
+            result.rooms().stream().map(room -> room.getId()).toList().contains(room1.getId())),
+        () -> assertTrue(
+            result.rooms().stream().map(room -> room.getId()).toList().contains(room2.getId()))
     );
 
     assertAll("Testing whether all the student groups are there",

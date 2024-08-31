@@ -46,6 +46,9 @@ public class GradeServiceTests {
   private final GradeRequestDto requestDtoForCreateAndUpdate =
       new GradeRequestDto("testName", List.of(), List.of("tagId"));
 
+  private final GradeRequestDto requestDtoForCreateAndUpdateEmptyName =
+      new GradeRequestDto("", List.of(), List.of("tagId"));
+
   @Mock
   private GradeRepository gradeRepository;
 
@@ -60,6 +63,9 @@ public class GradeServiceTests {
 
   @Mock
   private Grade grade2Mock;
+
+  @Mock
+  private Grade grade3Mock;
 
   @Mock
   private Grade gradeForCreateAndUpdateMock;
@@ -139,6 +145,10 @@ public class GradeServiceTests {
         List.of("T2", "T3"));
     grade2.setId("456");
 
+    Grade grade3 = new Grade("7", List.of(),
+        List.of("T2", "T3"));
+    grade2.setId("567");
+
 
     studentGroup1.setGrades(List.of(grade1Mock));
     studentGroup2.setGrades(List.of(grade1Mock));
@@ -147,14 +157,24 @@ public class GradeServiceTests {
     Server server =
         new Server(new TimetableMetadata(45, 8, "8:00", breaks), "2024", "test@uftos.de");
     when(serverRepository.findAll()).thenReturn(List.of(server));
+    when(studentGroupRepository.findByGrades(grade1Mock)).thenReturn(
+        List.of(studentGroup1, studentGroup2));
+    when(studentGroupRepository.findAllByGrades(List.of(grade1Mock))).thenReturn(
+        List.of(studentGroup1, studentGroup2));
     when(gradeRepository.findById("123")).thenReturn(Optional.of(grade1Mock));
     when(gradeRepository.findById("456")).thenReturn(Optional.of(grade2Mock));
+    when(gradeRepository.findById("567")).thenReturn(Optional.of(grade3Mock));
     when(gradeRepository.save(any(Grade.class))).thenReturn(gradeForCreateAndUpdateMock);
+    when(gradeRepository.findAllById(List.of("123"))).thenReturn(List.of(grade1Mock));
+    when(gradeRepository.findAllById(List.of("567"))).thenReturn(List.of(grade3Mock));
+    when(gradeRepository.findAllById(List.of("nonExistentId", "123"))).thenReturn(
+        List.of(grade1Mock));
     when(grade1Mock.getStudentGroups()).thenReturn(List.of(studentGroup1, studentGroup2));
     when(grade1Mock.getId()).thenReturn(grade1.getId());
     when(grade1Mock.getName()).thenReturn(grade1.getName());
     when(grade1Mock.getTags()).thenReturn(grade1.getTags());
     when(grade2Mock.getStudentGroups()).thenReturn(List.of(studentGroup3, studentGroup4));
+    when(grade3Mock.getId()).thenReturn("567");
 
     Grade gradeForTests = requestDtoForCreateAndUpdate.map();
     when(gradeForCreateAndUpdateMock.getStudentGroups()).thenReturn(
@@ -162,6 +182,7 @@ public class GradeServiceTests {
     when(gradeForCreateAndUpdateMock.getId()).thenReturn(gradeForTests.getId());
     when(gradeForCreateAndUpdateMock.getName()).thenReturn(gradeForTests.getName());
     when(gradeForCreateAndUpdateMock.getTags()).thenReturn(gradeForTests.getTags());
+
   }
 
   @Test
@@ -200,8 +221,20 @@ public class GradeServiceTests {
 
     assertEquals(1, grade.getTags().size());
     assertEquals("tagId", grade.getTags().getFirst().getId());
-
   }
+
+  @Test
+  void createGradeEmptyName() {
+    assertThrows(ResponseStatusException.class,
+        () -> gradeService.create(requestDtoForCreateAndUpdateEmptyName));
+  }
+
+  @Test
+  void updateGradeEmptyName() {
+    assertThrows(ResponseStatusException.class,
+        () -> gradeService.update("123", requestDtoForCreateAndUpdateEmptyName));
+  }
+
 
   @Test
   void lessonsById() {
@@ -232,6 +265,11 @@ public class GradeServiceTests {
   }
 
   @Test
+  void lessonsByNonExistentId() {
+    assertThrows(ResponseStatusException.class, () -> gradeService.getLessonsById("nonExistentId"));
+  }
+
+  @Test
   void updateGrade() {
     gradeService.update("123", requestDtoForCreateAndUpdate);
     ArgumentCaptor<Grade> gradeCap = ArgumentCaptor.forClass(Grade.class);
@@ -248,18 +286,56 @@ public class GradeServiceTests {
   }
 
   @Test
-  void deleteExistentGrade() {
-    assertDoesNotThrow(() -> gradeService.delete("123"));
+  void deleteGradeAssociatedWithGroup() {
+    assertThrows(ResponseStatusException.class, () -> gradeService.delete("123"));
+  }
+
+  @Test
+  void deleteGrade() {
+    assertDoesNotThrow(() -> gradeService.delete("567"));
     ArgumentCaptor<Grade> gradeCap = ArgumentCaptor.forClass(Grade.class);
     verify(gradeRepository, times(1)).delete(gradeCap.capture());
 
     Grade grade = gradeCap.getValue();
-    assertEquals("123", grade.getId());
+    assertEquals("567", grade.getId());
   }
 
   @Test
   void deleteNonExistentGrade() {
     assertThrows(ResponseStatusException.class, () -> gradeService.delete("nonExistentId"));
+  }
+
+  @Test
+  void deleteGradesNonExistent() {
+    assertThrows(ResponseStatusException.class,
+        () -> gradeService.deleteGrades(new String[] {"nonExistentId"}));
+  }
+
+  @Test
+  void deleteGradesSomeExistent() {
+    assertThrows(ResponseStatusException.class,
+        () -> gradeService.deleteGrades(new String[] {"nonExistentId", "123"}));
+  }
+
+  @Test
+  void deleteGradesAllExistentReferencesGroup() {
+    assertThrows(ResponseStatusException.class,
+        () -> gradeService.deleteGrades(new String[] {"123"}));
+
+  }
+
+  @Test
+  void deleteGradesAllExistent() {
+    assertDoesNotThrow(() -> gradeService.deleteGrades(new String[] {"567"}));
+    Class<List<Grade>> listClass =
+        (Class<List<Grade>>) (Class) List.class;
+    ArgumentCaptor<List<Grade>> gradeCap = ArgumentCaptor.forClass(listClass);
+    verify(gradeRepository, times(1)).deleteAll(gradeCap.capture());
+
+    List<Grade> gradeList = gradeCap.getValue();
+    assertEquals(1, gradeList.size());
+    assertEquals("567", gradeList.getFirst().getId());
+
   }
 
 

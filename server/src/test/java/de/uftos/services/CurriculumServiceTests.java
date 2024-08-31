@@ -141,6 +141,22 @@ public class CurriculumServiceTests {
   }
 
   @Test
+  void createEmptyName() {
+    LessonsCountRequestDto lessonsCount = new LessonsCountRequestDto("Englisch", 4);
+    CurriculumRequestDto requestDto =
+        new CurriculumRequestDto("testGrade", "", List.of(lessonsCount));
+    assertThrows(ResponseStatusException.class, () -> curriculumService.create(requestDto));
+  }
+
+  @Test
+  void createNonExistentGrade() {
+    LessonsCountRequestDto lessonsCount = new LessonsCountRequestDto("Englisch", 4);
+    CurriculumRequestDto requestDto =
+        new CurriculumRequestDto("nonExistentGrade", "testName", List.of(lessonsCount));
+    assertThrows(ResponseStatusException.class, () -> curriculumService.create(requestDto));
+  }
+
+  @Test
   void updateCurriculum() {
     LessonsCountRequestDto lessonsCount = new LessonsCountRequestDto("Physik", 4);
     CurriculumRequestDto requestDto =
@@ -158,6 +174,24 @@ public class CurriculumServiceTests {
     assertEquals("newName", curriculum.getName());
 
     assertEquals(1, curriculum.getLessonsCounts().size());
+  }
+
+  @Test
+  void updateCurriculumNonExistent() {
+    LessonsCountRequestDto lessonsCount = new LessonsCountRequestDto("Physik", 4);
+    CurriculumRequestDto requestDto =
+        new CurriculumRequestDto("newGrade", "newName", List.of(lessonsCount));
+    assertThrows(ResponseStatusException.class,
+        () -> curriculumService.update("nonExistentId", requestDto));
+  }
+
+  @Test
+  void updateCurriculumNonExistentGrade() {
+    LessonsCountRequestDto lessonsCount = new LessonsCountRequestDto("Physik", 4);
+    CurriculumRequestDto requestDto =
+        new CurriculumRequestDto("nonExistentGrade", "newName", List.of(lessonsCount));
+    assertThrows(ResponseStatusException.class,
+        () -> curriculumService.update("234", requestDto));
   }
 
   @Test

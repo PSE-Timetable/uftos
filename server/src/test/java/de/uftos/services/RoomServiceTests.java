@@ -106,6 +106,9 @@ public class RoomServiceTests {
     when(serverRepository.findAll()).thenReturn(List.of(server));
     when(roomRepository.findById("123")).thenReturn(Optional.of(room1));
     when(roomRepository.findById("456")).thenReturn(Optional.of(room2));
+    when(roomRepository.findAllById(List.of("123"))).thenReturn(List.of(room1));
+    when(roomRepository.findAllById(List.of("nonExistentId", "123"))).thenReturn(List.of(room1));
+
   }
 
   @Test
@@ -136,6 +139,28 @@ public class RoomServiceTests {
   }
 
   @Test
+  void createRoomEmptyName() {
+    RoomRequestDto requestDto =
+        new RoomRequestDto("", "buildingName", 10, List.of("tagId"));
+    assertThrows(ResponseStatusException.class, () -> roomService.create(requestDto));
+  }
+
+  @Test
+  void createRoomEmptyBuildingName() {
+    RoomRequestDto requestDto =
+        new RoomRequestDto("roomName", "", 10, List.of("tagId"));
+    assertThrows(ResponseStatusException.class, () -> roomService.create(requestDto));
+  }
+
+  @Test
+  void createRoomZeroCapacity() {
+    RoomRequestDto requestDto =
+        new RoomRequestDto("roomName", "buildingName", 0, List.of("tagId"));
+    assertThrows(ResponseStatusException.class, () -> roomService.create(requestDto));
+  }
+
+
+  @Test
   void updateRoom() {
     RoomRequestDto requestDto =
         new RoomRequestDto("newRoomName", "newBuildingName", 11, List.of());
@@ -156,6 +181,20 @@ public class RoomServiceTests {
   }
 
   @Test
+  void updateRoomEmptyName() {
+    RoomRequestDto requestDto =
+        new RoomRequestDto("", "buildingName", 10, List.of("tagId"));
+    assertThrows(ResponseStatusException.class, () -> roomService.update("123", requestDto));
+  }
+
+  @Test
+  void updateRoomEmptyBuildingName() {
+    RoomRequestDto requestDto =
+        new RoomRequestDto("roomName", "", 10, List.of("tagId"));
+    assertThrows(ResponseStatusException.class, () -> roomService.update("123", requestDto));
+  }
+
+  @Test
   void deleteExistingRoom() {
     assertDoesNotThrow(() -> roomService.delete("123"));
     ArgumentCaptor<Room> roomCap = ArgumentCaptor.forClass(Room.class);
@@ -168,6 +207,32 @@ public class RoomServiceTests {
   @Test
   void deleteNonExistingRoom() {
     assertThrows(ResponseStatusException.class, () -> roomService.delete("nonExistentId"));
+  }
+
+  @Test
+  void deleteRoomsNonExistent() {
+    assertThrows(ResponseStatusException.class,
+        () -> roomService.deleteRooms(new String[] {"nonExistentId"}));
+  }
+
+  @Test
+  void deleteRoomsSomeExistent() {
+    assertThrows(ResponseStatusException.class,
+        () -> roomService.deleteRooms(new String[] {"nonExistentId", "123"}));
+  }
+
+  @Test
+  void deleteRoomsAllExistent() {
+    assertDoesNotThrow(() -> roomService.deleteRooms(new String[] {"123"}));
+    Class<List<Room>> listClass =
+        (Class<List<Room>>) (Class) List.class;
+    ArgumentCaptor<List<Room>> roomCap = ArgumentCaptor.forClass(listClass);
+    verify(roomRepository, times(1)).deleteAll(roomCap.capture());
+
+    List<Room> roomList = roomCap.getValue();
+    assertEquals(1, roomList.size());
+    assertEquals("123", roomList.getFirst().getId());
+
   }
 
   @Test
@@ -189,7 +254,8 @@ public class RoomServiceTests {
     );
 
     assertAll("Testing whether all the rooms are there",
-        () -> assertTrue(result.rooms().stream().map(room -> room.getId()).toList().contains(room1.getId()))
+        () -> assertTrue(
+            result.rooms().stream().map(room -> room.getId()).toList().contains(room1.getId()))
     );
 
     assertAll("Testing whether all the student groups are there",
