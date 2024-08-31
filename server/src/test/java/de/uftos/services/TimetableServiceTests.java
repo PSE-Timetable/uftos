@@ -3,19 +3,29 @@ package de.uftos.services;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import de.uftos.dto.ResourceType;
+import de.uftos.dto.Weekday;
 import de.uftos.dto.requestdtos.TimetableRequestDto;
+import de.uftos.dto.solver.RewardPenalize;
 import de.uftos.dto.solver.TimetableProblemDto;
 import de.uftos.dto.solver.TimetableSolutionDto;
+import de.uftos.dto.ucdl.ConstraintDefinitionDto;
+import de.uftos.dto.ucdl.UcdlToken;
+import de.uftos.dto.ucdl.ast.ValueDto;
+import de.uftos.entities.ConstraintArgument;
 import de.uftos.entities.ConstraintInstance;
+import de.uftos.entities.ConstraintParameter;
 import de.uftos.entities.ConstraintSignature;
 import de.uftos.entities.Curriculum;
 import de.uftos.entities.Grade;
 import de.uftos.entities.Lesson;
 import de.uftos.entities.LessonsCount;
 import de.uftos.entities.Room;
+import de.uftos.entities.Server;
 import de.uftos.entities.Student;
 import de.uftos.entities.StudentGroup;
 import de.uftos.entities.Subject;
@@ -29,6 +39,7 @@ import de.uftos.repositories.database.CurriculumRepository;
 import de.uftos.repositories.database.GradeRepository;
 import de.uftos.repositories.database.LessonRepository;
 import de.uftos.repositories.database.RoomRepository;
+import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.StudentGroupRepository;
 import de.uftos.repositories.database.StudentRepository;
 import de.uftos.repositories.database.SubjectRepository;
@@ -42,6 +53,8 @@ import de.uftos.repositories.ucdl.UcdlRepository;
 import de.uftos.repositories.ucdl.parser.javacc.ParseException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -114,6 +127,9 @@ public class TimetableServiceTests {
   @Mock
   private ConstraintInstanceRepository constraintInstanceRepository;
 
+  @Mock
+  private ServerRepository serverRepository;
+
   @InjectMocks
   private TimetableService timetableService;
 
@@ -154,13 +170,17 @@ public class TimetableServiceTests {
 
   @Test
   void createTimetable() {
-    timetableDataSetup();
+    try {
+      timetableDataSetup();
+    } catch (ParseException | IOException e) {
+      fail();
+    }
     TimetableRequestDto timetableRequestDto = new TimetableRequestDto("timetableRequest");
     assertDoesNotThrow(() -> timetableService.create(timetableRequestDto));
 
   }
 
-  private void timetableDataSetup() {
+  private void timetableDataSetup() throws ParseException, IOException {
     ConstraintInstance constraintInstance = new ConstraintInstance();
     ConstraintSignature constraintSignature = new ConstraintSignature();
     Curriculum curriculum = new Curriculum();
@@ -173,47 +193,98 @@ public class TimetableServiceTests {
     Teacher teacher = new Teacher("teacher");
     Timeslot timeslot = new Timeslot("timeslot");
 
-    //TODO: fix null-pointers
-    grade.getStudentGroups().add(studentGroup);
-    studentGroup.getGrades().add(grade);
 
-    grade.getTags().add(tag);
-    tag.getGrades().add(grade);
+    grade.setStudentGroups(List.of(studentGroup));
+    studentGroup.setGrades(List.of(grade));
+
+    grade.setTags(List.of(tag));
+    tag.setGrades(List.of(grade));
 
     grade.setCurriculum(curriculum);
     curriculum.setGrade(grade);
 
-    room.getTags().add(tag);
-    tag.getRooms().add(room);
+    room.setTags(List.of(tag));
+    tag.setRooms(List.of(room));
 
-    student.getGroups().add(studentGroup);
-    studentGroup.getStudents().add(student);
+    room.setLessons(new ArrayList<>());
 
-    student.getTags().add(tag);
-    tag.getStudents().add(student);
+    student.setGroups(List.of(studentGroup));
+    studentGroup.setStudents(List.of(student));
 
-    studentGroup.getSubjects().add(subject);
+    student.setTags(List.of(tag));
+    tag.setStudents(List.of(student));
 
-    studentGroup.getTags().add(tag);
-    tag.getStudentGroups().add(studentGroup);
+    studentGroup.setSubjects(List.of(subject));
 
-    subject.getTeachers().add(teacher);
-    teacher.getSubjects().add(subject);
+    studentGroup.setLessons(new ArrayList<>());
 
-    subject.getTags().add(tag);
-    tag.getSubjects().add(subject);
+    studentGroup.setTags(List.of(tag));
+    tag.setStudentGroups(List.of(studentGroup));
 
-    tag.getTeachers().add(teacher);
-    teacher.getTags().add(tag);
+    subject.setTeachers(List.of(teacher));
+    teacher.setSubjects(List.of(subject));
 
-    tag.getTimeslots().add(timeslot);
-    timeslot.getTags().add(tag);
+    subject.setTags(List.of(tag));
+    tag.setSubjects(List.of(subject));
 
-    curriculum.getLessonsCounts().add(new LessonsCount(subject.getId(), 2));
+    subject.setLessons(new ArrayList<>());
 
-    //TODO: set Values for ConstraintInstance and ConstraintSignature
+    tag.setTeachers(List.of(teacher));
+    teacher.setTags(List.of(tag));
 
-    constraintSignature.getInstances().add(constraintInstance);
+    tag.setTimeslots(List.of(timeslot));
+    timeslot.setTags(List.of(tag));
+
+    teacher.setLessons(new ArrayList<>());
+
+    timeslot.setLessons(new ArrayList<>());
+    timeslot.setDay(Weekday.MONDAY);
+    timeslot.setSlot(0);
+
+    curriculum.setLessonsCounts(List.of(new LessonsCount(subject.getId(), 1)));
+
+    List<ResourceType> parameterTypes =
+        List.of(ResourceType.GRADE, ResourceType.ROOM, ResourceType.STUDENT,
+            ResourceType.STUDENT_GROUP, ResourceType.SUBJECT, ResourceType.TAG,
+            ResourceType.TEACHER, ResourceType.TIMESLOT);
+
+    List<ConstraintParameter> constraintParameters = new ArrayList<>();
+    LinkedHashMap<String, ResourceType> definitionParameters = new LinkedHashMap<>();
+    for (ResourceType resourceType : parameterTypes) {
+      ConstraintParameter constraintParameter = new ConstraintParameter(resourceType.name());
+      constraintParameter.setParameterType(resourceType);
+      definitionParameters.put(resourceType.name(), resourceType);
+    }
+
+    constraintSignature.setInstances(List.of(constraintInstance));
+    constraintSignature.setDescription("");
+    constraintSignature.setDefaultType(RewardPenalize.HARD_PENALIZE);
+    constraintSignature.setName("testConstraint");
+    constraintSignature.setParameters(constraintParameters);
+
+    List<ConstraintArgument> constraintArguments = new ArrayList<>();
+    constraintArguments.add(new ConstraintArgument(ResourceType.GRADE.name(), grade.getId()));
+    constraintArguments.add(new ConstraintArgument(ResourceType.ROOM.name(), room.getId()));
+    constraintArguments.add(new ConstraintArgument(ResourceType.STUDENT.name(), student.getId()));
+    constraintArguments.add(
+        new ConstraintArgument(ResourceType.STUDENT_GROUP.name(), studentGroup.getId()));
+    constraintArguments.add(new ConstraintArgument(ResourceType.SUBJECT.name(), subject.getId()));
+    constraintArguments.add(new ConstraintArgument(ResourceType.TAG.name(), tag.getId()));
+    constraintArguments.add(new ConstraintArgument(ResourceType.TEACHER.name(), teacher.getId()));
+    constraintArguments.add(new ConstraintArgument(ResourceType.TIMESLOT.name(), timeslot.getId()));
+
+    constraintInstance.setType(RewardPenalize.SOFT_REWARD);
+    constraintInstance.setArguments(constraintArguments);
+
+
+    ConstraintDefinitionDto constraintDefinitionDto =
+        new ConstraintDefinitionDto("testConstraint", "",
+            RewardPenalize.HARD_PENALIZE, definitionParameters,
+            new ValueDto<>(UcdlToken.BOOL_VALUE, true));
+
+    HashMap<String, ConstraintDefinitionDto> constraintDefinitions = new HashMap<>();
+    constraintDefinitions.put(constraintDefinitionDto.name(), constraintDefinitionDto);
+
 
     when(constraintInstanceRepository.findAll()).thenReturn(List.of(constraintInstance));
     when(constraintSignatureRepository.findAll()).thenReturn(List.of(constraintSignature));
@@ -226,5 +297,7 @@ public class TimetableServiceTests {
     when(tagRepository.findAll()).thenReturn(List.of(tag));
     when(teacherRepository.findAll()).thenReturn(List.of(teacher));
     when(timeslotRepository.findAll()).thenReturn(List.of(timeslot));
+    when(serverRepository.findAll()).thenReturn(List.of(new Server(null, "2024", "")));
+    when(ucdlRepository.getConstraints()).thenReturn(constraintDefinitions);
   }
 }

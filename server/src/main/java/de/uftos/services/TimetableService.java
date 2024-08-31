@@ -206,7 +206,6 @@ public class TimetableService {
   @SuppressWarnings("checkstyle:VariableDeclarationUsageDistance")
   private TimetableProblemDto getProblemInstance(Timetable timetable) throws BadRequestException {
     List<GradeProblemDto> grades = getGrades();
-
     List<LessonProblemDto> lessons = getLessons(timetable);
     List<RoomProblemDto> rooms = getRooms(timetable);
     List<StudentGroupProblemDto> studentGroups = getStudentGroups(timetable);
