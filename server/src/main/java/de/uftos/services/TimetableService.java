@@ -24,6 +24,7 @@ import de.uftos.entities.Grade;
 import de.uftos.entities.Lesson;
 import de.uftos.entities.LessonsCount;
 import de.uftos.entities.Room;
+import de.uftos.entities.Server;
 import de.uftos.entities.Student;
 import de.uftos.entities.StudentGroup;
 import de.uftos.entities.Subject;
@@ -197,7 +198,8 @@ public class TimetableService {
     try {
       TimetableProblemDto problemInstance = getProblemInstance(timetableEntity);
       solverRepository.solve(problemInstance, solverFinishedEvent).get();
-    } catch (InterruptedException | ExecutionException | BadRequestException e) {
+    } catch (InterruptedException | ExecutionException | BadRequestException
+             | ResponseStatusException e) {
       return new SuccessResponse(false, e.getMessage());
     }
     return new SuccessResponse(true, "Solver erfolgreich gestartet!");
@@ -276,28 +278,74 @@ public class TimetableService {
   private List<LessonProblemDto> getLessons(Timetable timetable) {
     //initializing new Lessons
     List<Curriculum> curriculums = curriculumRepository.findAll();
-    for (StudentGroup studentGroup : studentGroupRepository.findAll()) {
+    if (curriculums.isEmpty()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "There must be at least one curriculum to create a timetable");
+    }
+
+    List<StudentGroup> studentGroups = studentGroupRepository.findAll();
+    if (studentGroups.isEmpty()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "There must be at least one student group to create a timetable");
+    }
+    for (StudentGroup studentGroup : studentGroups) {
       for (Curriculum curriculum : curriculums) {
         if (curriculum.getGrade() != studentGroup.getGrades().getFirst()) {
           continue;
         }
-        for (LessonsCount lessonsCount : curriculum.getLessonsCounts()) {
+
+        List<LessonsCount> lessonsCounts = curriculum.getLessonsCounts();
+        // TODO is this needed?
+        if (lessonsCounts.isEmpty()) {
+          throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+              "There must be at least one lesson set in a curriculum to create a timetable");
+        }
+
+        for (LessonsCount lessonsCount : lessonsCounts) {
           if (!studentGroup.getSubjects().contains(lessonsCount.getSubject())) {
             continue;
           }
           for (int index = 0; index < lessonsCount.getCount(); index++) {
             Lesson lesson = new Lesson();
-            lesson.setYear(serverRepository.findAll().getLast().getCurrentYear());
+
+            List<Server> serverData = serverRepository.findAll();
+            // This shouldn't be possible since it should always contain at least one element,
+            // but you never know...
+            if (serverData.isEmpty()) {
+              throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                  "You must set the server metadata to create a timetable");
+            }
+            lesson.setYear(serverData.getLast().getCurrentYear());
+
             lesson.setIndex(index);
             lesson.setStudentGroup(studentGroup);
             lesson.setSubject(lessonsCount.getSubject());
+
+            List<Teacher> teachers = teacherRepository.findAll();
+            if (teachers.isEmpty()) {
+              throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                  "There must be at least one teacher to create a timetable");
+            }
             lesson.setTeacher(
-                teacherRepository.findAll().get((int) (Math.random() * teacherRepository.count())));
+                teachers.get((int) (Math.random() * teacherRepository.count())));
+
+            List<Room> rooms = roomRepository.findAll();
+            if (rooms.isEmpty()) {
+              throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                  "There must be at least one room to create a timetable");
+            }
             lesson.setRoom(
-                roomRepository.findAll().get((int) (Math.random() * roomRepository.count())));
+                rooms.get((int) (Math.random() * roomRepository.count())));
+
+            List<Timeslot> timeslots = timeslotRepository.findAll();
+            if (timeslots.isEmpty()) {
+              throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                  "There must be at least one timeslot to create a timetable");
+            }
             lesson.setTimeslot(
-                timeslotRepository.findAll()
+                timeslots
                     .get((int) (Math.random() * timeslotRepository.count())));
+
             lesson.setTimetable(timetable);
 
             lessonRepository.save(lesson);
@@ -360,7 +408,12 @@ public class TimetableService {
 
   private List<StudentProblemDto> getStudents() {
     List<StudentProblemDto> students = new ArrayList<>();
-    for (Student student : studentRepository.findAll()) {
+    List<Student> studentList = studentRepository.findAll();
+    if (studentList.isEmpty()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "There must be at least one student to create a timetable");
+    }
+    for (Student student : studentList) {
       List<String> tagIds = new ArrayList<>();
       for (Tag tag : student.getTags()) {
         tagIds.add(tag.getId());
@@ -376,7 +429,12 @@ public class TimetableService {
 
   private List<SubjectProblemDto> getSubjects(Timetable timetable) {
     List<SubjectProblemDto> subjects = new ArrayList<>();
-    for (Subject subject : subjectRepository.findAll()) {
+    List<Subject> subjectList = subjectRepository.findAll();
+    if (subjectList.isEmpty()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "There must be at least one subject to create a timetable");
+    }
+    for (Subject subject : subjectList) {
       List<String> tagIds = new ArrayList<>();
       for (Tag tag : subject.getTags()) {
         tagIds.add(tag.getId());
