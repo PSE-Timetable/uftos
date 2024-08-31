@@ -16,10 +16,10 @@ test.describe('Students page', () => {
     await page.getByRole('row').first().waitFor();
     await page.getByRole('row', { name: 'Vorname Nachname Tags' }).getByRole('checkbox').waitFor();
     await expect(async () => {
-      while (!(await page.getByRole('row').first().getByRole('checkbox').isChecked())) {
+      while (await page.locator('tbody').isVisible()) {
         await page.getByRole('row', { name: 'Vorname Nachname Tags' }).getByRole('checkbox').check();
         await page.keyboard.press('Delete');
-        await page.getByRole('button', { name: 'Löschen' }).click({timeout: 250});
+        await page.getByRole('button', { name: 'Löschen' }).click({ timeout: 250 });
         await expect(page.getByText('Zeile(n) ausgewählt')).toContainText('0 von');
       }
     }).toPass();
@@ -53,12 +53,12 @@ test.describe('Students page', () => {
 
   test('check table', async () => {
     await expect(page.getByRole('row')).toHaveCount(4); // header counts as row
-    await expect(page.locator('tbody')).toContainText('a');
-    await expect(page.locator('tbody')).toContainText('odgsogdpnpowad');
-    await expect(page.locator('tbody')).toContainText('test1');
-    await expect(page.locator('tbody')).toContainText('b');
-    await expect(page.locator('tbody')).toContainText('pdhfgfönwßemü');
-    await expect(page.locator('tbody')).toContainText('test35');
+    await expect(page.getByRole('row').nth(1)).toContainText('a');
+    await expect(page.getByRole('row').nth(1)).toContainText('b');
+    await expect(page.getByRole('row').nth(2)).toContainText('odgsogdpnpowad');
+    await expect(page.getByRole('row').nth(2)).toContainText('pdhfgfönwßemü');
+    await expect(page.getByRole('row').nth(3)).toContainText('test1');
+    await expect(page.getByRole('row').nth(3)).toContainText('test35');
   });
 
   test('search', async () => {
@@ -105,7 +105,6 @@ test.describe('Students page', () => {
       const requestDto: StudentRequestDto = {
         firstName: `Max${i}`,
         lastName: `Mustermann${i}`,
-        groupIds: [],
         tagIds: [],
       };
       await createStudent(requestDto);
