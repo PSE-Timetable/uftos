@@ -11,10 +11,13 @@ import de.uftos.entities.LessonsCount;
 import de.uftos.entities.StudentGroup;
 import de.uftos.entities.Subject;
 import de.uftos.repositories.database.CurriculumRepository;
+import de.uftos.repositories.database.ConstraintInstanceRepository;
+import de.uftos.repositories.database.ConstraintSignatureRepository;
 import de.uftos.repositories.database.GradeRepository;
 import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.StudentGroupRepository;
 import de.uftos.repositories.database.SubjectRepository;
+import de.uftos.utils.ConstraintInstanceDeleter;
 import de.uftos.utils.SpecificationBuilder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,6 +41,8 @@ import org.springframework.web.server.ResponseStatusException;
 public class GradeService {
   private final GradeRepository repository;
   private final ServerRepository serverRepository;
+  private final ConstraintSignatureRepository constraintSignatureRepository;
+  private final ConstraintInstanceRepository constraintInstanceRepository;
   private final StudentGroupRepository studentGroupRepository;
   private final CurriculumRepository curriculumRepository;
   private final SubjectRepository subjectRepository;
@@ -50,14 +55,23 @@ public class GradeService {
    * @param studentGroupRepository the repository for accessing the student group table.
    * @param curriculumRepository   the repository for accessing the curriculum table.
    * @param subjectRepository      the repository for accessing the subject table.
+   * @param repository                    the repository for accessing the grade table.
+   * @param studentGroupRepository        the repository for accessing the student group table.
+   * @param constraintSignatureRepository the repository for accessing the constraint signature table.
+   * @param constraintInstanceRepository  the repository for accessing the constraint instance table.
    */
   @Autowired
   public GradeService(GradeRepository repository, ServerRepository serverRepository,
                       StudentGroupRepository studentGroupRepository,
                       CurriculumRepository curriculumRepository,
                       SubjectRepository subjectRepository) {
+                      ConstraintSignatureRepository constraintSignatureRepository,
+                      ConstraintInstanceRepository constraintInstanceRepository,
+                      StudentGroupRepository studentGroupRepository) {
     this.repository = repository;
     this.serverRepository = serverRepository;
+    this.constraintSignatureRepository = constraintSignatureRepository;
+    this.constraintInstanceRepository = constraintInstanceRepository;
     this.studentGroupRepository = studentGroupRepository;
     this.curriculumRepository = curriculumRepository;
     this.subjectRepository = subjectRepository;
@@ -171,27 +185,6 @@ public class GradeService {
   /**
    * Deletes the grade with the given ID.
    *
-   * @param id the ID of the grade which is to be deleted.
-   * @throws ResponseStatusException is thrown if no grade exists with the given ID.
-   */
-  public void delete(String id) {
-    Optional<Grade> grade = this.repository.findById(id);
-    if (grade.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "Could not find a grade with this id!");
-    }
-    List<StudentGroup> studentGroups = this.studentGroupRepository.findByGrades(grade.get());
-    if (!studentGroups.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "This grade is still associated with a student group.");
-    }
-
-    this.repository.delete(grade.get());
-  }
-
-  /**
-   * Deletes the grade with the given ID.
-   *
    * @param ids the IDs of the grades which are to be deleted.
    * @throws ResponseStatusException is thrown if no grade exists with the given ID.
    */
@@ -203,11 +196,15 @@ public class GradeService {
           "Could not found a grade with this id");
     }
 
-    List<StudentGroup> studentGroups = this.studentGroupRepository.findAllByGrades(grades);
+    List<StudentGroup> studentGroups =
+        this.studentGroupRepository.findAllByGrades(gradesIds);
     if (!studentGroups.isEmpty()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
           "This grade is still associated with a student group.");
     }
+
+    new ConstraintInstanceDeleter(constraintSignatureRepository, constraintInstanceRepository)
+        .removeAllInstancesWithArgumentValue(ids);
 
     this.repository.deleteAll(grades);
   }

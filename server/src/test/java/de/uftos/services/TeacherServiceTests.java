@@ -1,5 +1,6 @@
 package de.uftos.services;
 
+import static de.uftos.utils.ClassCaster.getClassType;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -21,9 +22,14 @@ import de.uftos.entities.Student;
 import de.uftos.entities.StudentGroup;
 import de.uftos.entities.Subject;
 import de.uftos.entities.Teacher;
+import de.uftos.entities.Timetable;
 import de.uftos.entities.TimetableMetadata;
+import de.uftos.repositories.database.ConstraintInstanceRepository;
+import de.uftos.repositories.database.ConstraintSignatureRepository;
+import de.uftos.repositories.database.LessonRepository;
 import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.TeacherRepository;
+import de.uftos.repositories.database.TimetableRepository;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -48,6 +54,18 @@ public class TeacherServiceTests {
 
   @Mock
   private ServerRepository serverRepository;
+
+  @Mock
+  private ConstraintSignatureRepository signatureRepository;
+
+  @Mock
+  private ConstraintInstanceRepository instanceRepository;
+
+  @Mock
+  private LessonRepository lessonRepository;
+
+  @Mock
+  private TimetableRepository timetableRepository;
 
   @InjectMocks
   private TeacherService teacherService;
@@ -99,9 +117,12 @@ public class TeacherServiceTests {
     room1 = new Room("534");
     room2 = new Room("574");
 
-    Lesson lesson1 = createLesson(teacher1, room1, studentGroup1, "2024", subject);
-    Lesson lesson2 = createLesson(teacher1, room1, studentGroup1, "2022", subject);
-    Lesson lesson3 = createLesson(teacher1, room2, studentGroup2, "2024", subject);
+    Timetable timetable = new Timetable("timetable");
+    timetable.setId("timetableId");
+
+    Lesson lesson1 = createLesson(teacher1, room1, studentGroup1, "2024", subject, timetable);
+    Lesson lesson2 = createLesson(teacher1, room1, studentGroup1, "2022", subject, timetable);
+    Lesson lesson3 = createLesson(teacher1, room2, studentGroup2, "2024", subject, timetable);
 
     teacher1.setLessons(List.of(lesson1, lesson2, lesson3));
     teacher1.setSubjects(List.of(subject));
@@ -110,6 +131,7 @@ public class TeacherServiceTests {
         new Server(new TimetableMetadata(45, 8, "7:45", new Break[] {}), "2024", "test@uftos.de");
     when(serverRepository.findAll()).thenReturn(List.of(server));
     when(teacherRepository.findById("123")).thenReturn(Optional.of(teacher1));
+    when(teacherRepository.findAllById(List.of("123"))).thenReturn(List.of(teacher1));
     when(teacherRepository.findById("456")).thenReturn(Optional.of(teacher2));
   }
 
@@ -169,17 +191,19 @@ public class TeacherServiceTests {
 
   @Test
   void deleteExistingTeacher() {
-    assertDoesNotThrow(() -> teacherService.delete("123"));
-    ArgumentCaptor<Teacher> teacherCap = ArgumentCaptor.forClass(Teacher.class);
-    verify(teacherRepository, times(1)).delete(teacherCap.capture());
+    assertDoesNotThrow(() -> teacherService.deleteTeachers(new String[] {"123"}));
+    ArgumentCaptor<List<Teacher>> teacherCap = ArgumentCaptor.forClass(getClassType());
+    verify(teacherRepository, times(1)).deleteAll(teacherCap.capture());
 
-    Teacher teacher = teacherCap.getValue();
-    assertEquals("123", teacher.getId());
+    List<Teacher> teacher = teacherCap.getValue();
+    assertEquals(1, teacher.size());
+    assertEquals("123", teacher.getFirst().getId());
   }
 
   @Test
   void deleteNonExistingTeacher() {
-    assertThrows(ResponseStatusException.class, () -> teacherService.delete("nonExistentId"));
+    assertThrows(ResponseStatusException.class,
+        () -> teacherService.deleteTeachers(new String[] {"nonExistentId"}));
   }
 
   @Test
@@ -199,8 +223,10 @@ public class TeacherServiceTests {
     );
 
     assertAll("Testing whether all the rooms are there",
-        () -> assertTrue(result.rooms().stream().map(room -> room.getId()).toList().contains(room1.getId())),
-        () -> assertTrue(result.rooms().stream().map(room -> room.getId()).toList().contains(room2.getId()))
+        () -> assertTrue(
+            result.rooms().stream().map(Room::getId).toList().contains(room1.getId())),
+        () -> assertTrue(
+            result.rooms().stream().map(Room::getId).toList().contains(room2.getId()))
     );
 
     assertAll("Testing whether all the student groups are there",
@@ -214,15 +240,15 @@ public class TeacherServiceTests {
     );
   }
 
-  private Lesson createLesson(Teacher teacher, Room room, StudentGroup studentGroup,
-                              String number,
-                              Subject subject) {
+  private Lesson createLesson(Teacher teacher, Room room, StudentGroup studentGroup, String number,
+                              Subject subject, Timetable timetable) {
     Lesson lesson = new Lesson();
     lesson.setTeacher(teacher);
     lesson.setRoom(room);
     lesson.setStudentGroup(studentGroup);
     lesson.setYear(number);
     lesson.setSubject(subject);
+    lesson.setTimetable(timetable);
     return lesson;
   }
 }
