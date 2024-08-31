@@ -2,45 +2,26 @@
   import AddResource from '$lib/components/ui/add-resource/add-resource.svelte';
   import { createGrade, updateGrade, type GradeRequestDto } from '$lib/sdk/fetch-client';
   import { error } from '@sveltejs/kit';
+  import { _schema as schema } from './+page';
 
   export let data;
-  let grade = data.grade;
-  let values: string[] = [grade.name];
   let descriptions: string[] = ['Name:'];
 
-  async function create(values: string[], tagIds: string[]) {
+  async function update(formData: Record<string, string | number | string[]>) {
     let gradeRequestDto: GradeRequestDto = {
-      name: values[0],
-      studentGroupIds: [],
-      tagIds,
+      name: String(formData.name),
+      studentGroupIds: formData.studentGroups as string[],
+      tagIds: formData.tags as string[],
     };
     try {
-      await createGrade(gradeRequestDto);
-    } catch {
-      error(400, { message: 'Could not create grade' });
-    }
-  }
-
-  async function update(values: string[], tagIds: string[]) {
-    let gradeRequestDto: GradeRequestDto = {
-      name: values[0],
-      studentGroupIds: [],
-      tagIds,
-    };
-    try {
-      await updateGrade(grade.id, gradeRequestDto);
+      const _ =
+        formData.id === 'new'
+          ? await createGrade(gradeRequestDto)
+          : await updateGrade(String(formData.id), gradeRequestDto);
     } catch {
       error(400, { message: 'Could not update grade' });
     }
   }
 </script>
 
-<AddResource
-  {descriptions}
-  {values}
-  {create}
-  {update}
-  createEntity={data.create}
-  tags={data.tags}
-  entityTags={grade.tags}
-/>
+<AddResource {descriptions} data={data.form} {schema} {update} tags={data.tags} />

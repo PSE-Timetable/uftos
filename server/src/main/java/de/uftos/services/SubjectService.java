@@ -2,6 +2,7 @@ package de.uftos.services;
 
 import de.uftos.dto.requestdtos.SubjectRequestDto;
 import de.uftos.entities.Curriculum;
+import de.uftos.entities.LessonsCount;
 import de.uftos.entities.StudentGroup;
 import de.uftos.entities.Subject;
 import de.uftos.entities.Teacher;
@@ -111,7 +112,17 @@ public class SubjectService {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
           "The name of the subject can not be empty!");
     }
-    return this.repository.save(subject.map());
+
+    Subject subjectEntity = this.repository.save(subject.map());
+
+    List<Curriculum> curricula = curriculumRepository.findAll();
+
+    for (Curriculum curriculum : curricula) {
+      curriculum.getLessonsCounts().add(new LessonsCount(subjectEntity.getId(), 0));
+    }
+    curriculumRepository.saveAll(curricula);
+
+    return subjectEntity;
   }
 
   /**

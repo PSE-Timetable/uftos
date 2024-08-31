@@ -34,9 +34,6 @@ class CurriculumTest {
 
   static String subjectId;
 
-  static String firstCurriculum;
-  static String secondCurriculum;
-
   @BeforeAll
   static void createTestCurricula() throws JSONException {
 
@@ -78,58 +75,17 @@ class CurriculumTest {
         .extract()
         .body().jsonPath().getString("id");
 
-    firstCurriculum = given().contentType(ContentType.JSON)
-        .body(generateCurriculumJson(firstGradeId, FIRST_CURRICULUM_NAME,
-            Collections.emptyList()))
-        .when()
-        .post("/curriculum")
-        .then()
-        .log().ifValidationFails(LogDetail.BODY)
-        .statusCode(200)
-        .body("id", notNullValue())
-        .body("grade.id", equalTo(firstGradeId))
-        .body("name", equalTo(FIRST_CURRICULUM_NAME))
-        .log().ifValidationFails(LogDetail.BODY)
-        .extract()
-        .body().jsonPath().getString("id");
-
-
-    LessonsCountRequestDto lessonsCount = new LessonsCountRequestDto(subjectId, 3);
-
-    secondCurriculum = given().contentType(ContentType.JSON)
-        .body(generateCurriculumJson(secondGradeId, SECOND_CURRICULUM_NAME,
-            List.of(lessonsCount)))
-        .when()
-        .post("/curriculum")
-        .then()
-        .log().ifValidationFails(LogDetail.BODY)
-        .statusCode(200)
-        .body("id", notNullValue())
-        .body("grade.id", equalTo(secondGradeId))
-        .body("name", equalTo(SECOND_CURRICULUM_NAME))
-        .extract()
-        .body().jsonPath().getString("id");
   }
 
   @AfterAll
   static void deleteCreatedEntities() {
-    given().contentType(ContentType.JSON)
-        .when()
-        .delete("/curriculum/{id}", firstCurriculum)
-        .then()
-        .statusCode(200);
-
-    given().contentType(ContentType.JSON)
-        .when()
-        .delete("/curriculum/{id}", secondCurriculum)
-        .then()
-        .statusCode(200);
 
     given().contentType(ContentType.JSON)
         .when()
         .body(generateIdListJson(firstGradeId, secondGradeId))
         .delete("/grades")
         .then()
+        .log().ifValidationFails(LogDetail.BODY)
         .statusCode(200);
 
     given().contentType(ContentType.JSON)
@@ -156,14 +112,12 @@ class CurriculumTest {
   void getCurriculumWithName() throws JSONException {
     given().contentType(ContentType.JSON)
         .body(generatePageJson(0, 10, Collections.emptyList()))
-        .param("name", FIRST_CURRICULUM_NAME)
+        .param("name", FIRST_GRADE_NAME)
         .when()
         .get("/curriculum")
         .then()
         .statusCode(200)
         .body("totalElements", equalTo(1))
-        .body("content[0].id", equalTo(firstCurriculum))
         .log().ifValidationFails();
-
   }
 }

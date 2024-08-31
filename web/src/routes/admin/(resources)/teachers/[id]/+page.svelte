@@ -1,40 +1,27 @@
 <script lang="ts">
   import AddResource from '$lib/components/ui/add-resource/add-resource.svelte';
-  import { createTeacher, updateTeacher, type Teacher, type TeacherRequestDto } from '$lib/sdk/fetch-client.js';
+  import { createTeacher, updateTeacher, type TeacherRequestDto } from '$lib/sdk/fetch-client.js';
   import { error } from '@sveltejs/kit';
+  import { _schema as schema } from './+page';
 
   export let data;
-  let teacher: Teacher = data.teacher;
   let descriptions = ['Vorname:', 'Nachname:', 'Akronym:'];
-  let values: string[] = [teacher.firstName, teacher.lastName, teacher.acronym];
 
-  async function create(values: string[], tagIds: string[], subjectIds?: string[]) {
+  async function update(formData: Record<string, string | number | string[]>, subjectIds?: string[]) {
     let teacherRequestDto: TeacherRequestDto = {
-      firstName: values[0],
-      lastName: values[1],
-      acronym: values[2],
+      firstName: String(formData.firstName),
+      lastName: String(formData.lastName),
+      acronym: String(formData.acronym),
       subjectIds: subjectIds || [],
-      tagIds,
+      tagIds: formData.tags as string[],
     };
     try {
-      await createTeacher(teacherRequestDto);
+      const _ =
+        formData.id === 'new'
+          ? await createTeacher(teacherRequestDto)
+          : await updateTeacher(String(formData.id), teacherRequestDto);
     } catch {
-      error(400, { message: 'Could not create tag' });
-    }
-  }
-
-  async function update(values: string[], tagIds: string[], subjectIds?: string[]) {
-    let teacherRequestDto: TeacherRequestDto = {
-      firstName: values[0],
-      lastName: values[1],
-      acronym: values[2],
-      subjectIds: subjectIds || [],
-      tagIds,
-    };
-    try {
-      await updateTeacher(teacher.id, teacherRequestDto);
-    } catch {
-      error(400, { message: 'Could not update tag' });
+      error(400, { message: 'Could not update teacher' });
     }
   }
 </script>
@@ -42,13 +29,11 @@
 <div class="flex flex-row justify-between">
   <AddResource
     {descriptions}
-    {values}
-    {create}
+    data={data.form}
+    {schema}
     {update}
-    createEntity={data.create}
     tags={data.tags}
-    entityTags={teacher.tags}
     subjects={data.subjects}
-    entitySubjectsIds={new Set(teacher.subjects.map((subject) => subject.id))}
+    entitySubjectsIds={new Set(data.teacherSubjects)}
   />
 </div>
