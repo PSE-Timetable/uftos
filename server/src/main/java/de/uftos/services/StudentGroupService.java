@@ -7,10 +7,16 @@ import de.uftos.entities.Grade;
 import de.uftos.entities.Lesson;
 import de.uftos.entities.Student;
 import de.uftos.entities.StudentGroup;
+import de.uftos.repositories.database.ConstraintInstanceRepository;
+import de.uftos.repositories.database.ConstraintSignatureRepository;
 import de.uftos.repositories.database.GradeRepository;
+import de.uftos.repositories.database.LessonRepository;
 import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.StudentGroupRepository;
 import de.uftos.repositories.database.StudentRepository;
+import de.uftos.repositories.database.TimetableRepository;
+import de.uftos.utils.ConstraintInstanceDeleter;
+import de.uftos.utils.LessonsDeleter;
 import de.uftos.utils.SpecificationBuilder;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -34,22 +40,38 @@ public class StudentGroupService {
   private final ServerRepository serverRepository;
   private final StudentRepository studentRepository;
   private final GradeRepository gradeRepository;
+  private final ConstraintSignatureRepository constraintSignatureRepository;
+  private final ConstraintInstanceRepository constraintInstanceRepository;
+  private final LessonRepository lessonRepository;
+  private final TimetableRepository timetableRepository;
 
   /**
    * Creates a student group service.
    *
-   * @param repository        the repository for accessing the student group table.
-   * @param serverRepository  the repository for accessing the server table.
-   * @param studentRepository the repository for accessing the student table.
-   * @param gradeRepository   the repository for accessing the grade table.
+   * @param repository                    the repository for accessing the student group table.
+   * @param serverRepository              the repository for accessing the server table.
+   * @param studentRepository             the repository for accessing the student table.
+   * @param gradeRepository               the repository for accessing the grade table.
+   * @param constraintSignatureRepository the repository for accessing the constraint signature table.
+   * @param constraintInstanceRepository  the repository for accessing the constraint instance table.
+   * @param lessonRepository              the repository for accessing the lesson table.
+   * @param timetableRepository           the repository for accessing the timetable table.
    */
   @Autowired
   public StudentGroupService(StudentGroupRepository repository, ServerRepository serverRepository,
-                             StudentRepository studentRepository, GradeRepository gradeRepository) {
+                             StudentRepository studentRepository, GradeRepository gradeRepository,
+                             ConstraintSignatureRepository constraintSignatureRepository,
+                             ConstraintInstanceRepository constraintInstanceRepository,
+                             LessonRepository lessonRepository,
+                             TimetableRepository timetableRepository) {
     this.repository = repository;
     this.serverRepository = serverRepository;
     this.studentRepository = studentRepository;
     this.gradeRepository = gradeRepository;
+    this.constraintSignatureRepository = constraintSignatureRepository;
+    this.constraintInstanceRepository = constraintInstanceRepository;
+    this.lessonRepository = lessonRepository;
+    this.timetableRepository = timetableRepository;
   }
 
   /**
@@ -143,16 +165,23 @@ public class StudentGroupService {
     group.setId(id);
     this.repository.save(group);
 
-    List<Grade> grades =
-        this.gradeRepository.findAllById(groupRequest.gradeIds());
-    List<Grade> allGrades = this.gradeRepository.findAll();
-    for (Grade grade : allGrades) {
-      grade.getStudentGroups().remove(group);
+    List<Grade> oldGrades = this.gradeRepository.findByStudentGroups(group);
+    for (Grade oldGrade : oldGrades) {
+      if (!groupRequest.gradeIds().contains(oldGrade.getId())) {
+        oldGrade.getStudentGroups().remove(group);
+      }
     }
+    this.gradeRepository.saveAll(oldGrades);
+
+    List<Grade> grades = this.gradeRepository.findAllById(groupRequest.gradeIds());
+
     for (Grade grade : grades) {
+      if (grade.getStudentGroups().contains(group)) {
+        continue;
+      }
       grade.getStudentGroups().add(group);
-      this.gradeRepository.save(grade);
     }
+    this.gradeRepository.saveAll(grades);
 
     //noinspection OptionalGetWithoutIsPresent
     return new StudentGroupResponseDto(this.repository.findById(id).get());
@@ -169,7 +198,8 @@ public class StudentGroupService {
     Set<Student> studentsInGroup = new HashSet<>(studentGroup.getStudents());
     studentsInGroup.addAll(studentIds.stream()
         .map(studentId -> studentRepository.findById(studentId)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST))).toList());
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                "Could not find a student with this id"))).toList());
     studentGroup.setStudents(new ArrayList<>(studentsInGroup));
     return new StudentGroupResponseDto(this.repository.save(studentGroup));
   }
@@ -184,7 +214,7 @@ public class StudentGroupService {
     StudentGroup studentGroup = getStudentGroupById(id);
     List<Student> filteredStudents = studentGroup.getStudents().stream()
         .filter(student -> !studentIds.contains(student.getId())).toList();
-    studentGroup.setStudents(new ArrayList<Student>(filteredStudents)); //make list mutable
+    studentGroup.setStudents(new ArrayList<>(filteredStudents)); //make list mutable
     this.repository.save(studentGroup);
   }
 
@@ -197,7 +227,8 @@ public class StudentGroupService {
   public void delete(String id) {
     Optional<StudentGroup> group = this.repository.findById(id);
     if (group.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "Could not find a grade with this id");
     }
 
     List<Grade> grades = gradeRepository.findByStudentGroups(group.get());
@@ -206,11 +237,18 @@ public class StudentGroupService {
     }
     gradeRepository.saveAll(grades);
 
+    new ConstraintInstanceDeleter(constraintSignatureRepository, constraintInstanceRepository)
+        .removeAllInstancesWithArgumentValue(new String[] {id});
+
+    new LessonsDeleter(lessonRepository, timetableRepository)
+        .fromStudentGroups(List.of(group.get()));
+
     this.repository.delete(group.get());
   }
 
   private StudentGroup getStudentGroupById(String id) {
     Optional<StudentGroup> studentGroup = this.repository.findById(id);
-    return studentGroup.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+    return studentGroup.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+        "Could not find a student group with this id"));
   }
 }

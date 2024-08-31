@@ -1,20 +1,18 @@
 <script lang="ts">
-  import {
-    type ConstraintSignature,
-    getGrades,
-    getRooms,
-    getStudentGroups,
-    getStudents,
-    getSubjects,
-    getTags,
-    getTeachers,
-    getTimeslots,
-    type Pageable,
-    ParameterType,
-    type Sort,
-  } from '$lib/sdk/fetch-client';
+  import { type ConstraintSignature, type Pageable, ParameterType, type Sort } from '$lib/sdk/fetch-client';
   import { Button } from '$lib/elements/ui/button';
-  import ComboBox, { type ComboBoxItem } from '$lib/elements/ui/combo-box/combo-box.svelte';
+  import ComboBox from '$lib/elements/ui/combo-box/combo-box.svelte';
+  import {
+    getGradesItems,
+    getRoomsItems,
+    getStudentGroupsItems,
+    getStudentsItems,
+    getSubjectsItems,
+    getTagsItems,
+    getTeachersItems,
+    getTimeslotsItems,
+  } from '$lib/utils/combobox-items';
+  import type { ComboBoxItem } from '$lib/elements/ui/combo-box/combo-box';
 
   export let constraintSignature: ConstraintSignature;
   export let addInstance: (
@@ -32,58 +30,35 @@
     try {
       switch (parameterType) {
         case ParameterType.Grade: {
-          const grades = await getGrades(sort, { search: value });
-          data[name] = grades.map((grade) => ({ value: grade.id, label: grade.name }));
+          data[name] = await getGradesItems(sort, { search: value });
           break;
         }
         case ParameterType.Subject: {
-          const subjects = await getSubjects(sort, { search: value });
-          data[name] = subjects.map((subject) => ({ value: subject.id, label: subject.name }));
+          data[name] = await getSubjectsItems(sort, { search: value });
           break;
         }
         case ParameterType.Room: {
-          const { content } = await getRooms(page, { search: value });
-          data[name] =
-            content?.map((room) => ({
-              value: room.id,
-              label: `${room.buildingName}: ${room.name}`,
-            })) || [];
+          data[name] = await getRoomsItems(page, { search: value });
           break;
         }
         case ParameterType.StudentGroup: {
-          const { content } = await getStudentGroups(page, { search: value });
-          data[name] = content?.map((studentGroup) => ({ value: studentGroup.id, label: studentGroup.name })) || [];
+          data[name] = await getStudentGroupsItems(page, { search: value });
           break;
         }
         case ParameterType.Student: {
-          const { content } = await getStudents(page, { search: value });
-          data[name] =
-            content?.map((student) => ({
-              value: student.id,
-              label: `${student.firstName} ${student.lastName}`,
-            })) || [];
+          data[name] = await getStudentsItems(page, { search: value });
           break;
         }
         case ParameterType.Tag: {
-          const tags = await getTags(sort, { search: value });
-          data[name] = tags.map((tag) => ({ value: tag.id, label: tag.name }));
+          data[name] = await getTagsItems(sort, { search: value });
           break;
         }
         case ParameterType.Teacher: {
-          const { content } = await getTeachers(page, { search: value });
-          data[name] =
-            content?.map((teacher) => ({
-              value: teacher.id,
-              label: `${teacher.firstName} ${teacher.lastName}`,
-            })) || [];
+          data[name] = await getTeachersItems(page, { search: value });
           break;
         }
         case ParameterType.Timeslot: {
-          const timeslots = await getTimeslots();
-          data[name] = timeslots.map((timeslot) => ({
-            value: timeslot.id,
-            label: `${timeslot.day}: ${timeslot.slot}`,
-          }));
+          data[name] = await getTimeslotsItems();
           break;
         }
       }

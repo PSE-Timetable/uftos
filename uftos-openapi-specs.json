@@ -432,7 +432,7 @@
             "content" : {
               "*/*" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/ParsingResponse"
+                  "$ref" : "#/components/schemas/SuccessResponse"
                 }
               }
             },
@@ -485,7 +485,7 @@
             "content" : {
               "*/*" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/ParsingResponse"
+                  "$ref" : "#/components/schemas/SuccessResponse"
                 }
               }
             },
@@ -496,6 +496,28 @@
       }
     },
     "/grades" : {
+      "delete" : {
+        "operationId" : "deleteGrades",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        },
+        "tags" : [ "grade-controller" ]
+      },
       "get" : {
         "operationId" : "getGrades",
         "parameters" : [ {
@@ -568,23 +590,6 @@
       }
     },
     "/grades/{id}" : {
-      "delete" : {
-        "operationId" : "deleteGrade",
-        "parameters" : [ {
-          "in" : "path",
-          "name" : "id",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK"
-          }
-        },
-        "tags" : [ "grade-controller" ]
-      },
       "get" : {
         "operationId" : "getGrade",
         "parameters" : [ {
@@ -800,6 +805,28 @@
       }
     },
     "/rooms" : {
+      "delete" : {
+        "operationId" : "deleteRooms",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        },
+        "tags" : [ "room-controller" ]
+      },
       "get" : {
         "operationId" : "getRooms",
         "parameters" : [ {
@@ -877,23 +904,6 @@
       }
     },
     "/rooms/{id}" : {
-      "delete" : {
-        "operationId" : "deleteRoom",
-        "parameters" : [ {
-          "in" : "path",
-          "name" : "id",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK"
-          }
-        },
-        "tags" : [ "room-controller" ]
-      },
       "get" : {
         "operationId" : "getRoom",
         "parameters" : [ {
@@ -1276,6 +1286,28 @@
       }
     },
     "/students" : {
+      "delete" : {
+        "operationId" : "deleteStudents",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        },
+        "tags" : [ "student-controller" ]
+      },
       "get" : {
         "operationId" : "getStudents",
         "parameters" : [ {
@@ -1355,23 +1387,6 @@
       }
     },
     "/students/{id}" : {
-      "delete" : {
-        "operationId" : "deleteStudent",
-        "parameters" : [ {
-          "in" : "path",
-          "name" : "id",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK"
-          }
-        },
-        "tags" : [ "student-controller" ]
-      },
       "get" : {
         "operationId" : "getStudent",
         "parameters" : [ {
@@ -1431,7 +1446,55 @@
         "tags" : [ "student-controller" ]
       }
     },
+    "/students/{id}/lessons" : {
+      "get" : {
+        "operationId" : "getStudentLessons",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/LessonResponseDto"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "tags" : [ "student-controller" ]
+      }
+    },
     "/subjects" : {
+      "delete" : {
+        "operationId" : "deleteSubjects",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        },
+        "tags" : [ "subject-controller" ]
+      },
       "get" : {
         "operationId" : "getSubjects",
         "parameters" : [ {
@@ -1494,23 +1557,6 @@
       }
     },
     "/subjects/{id}" : {
-      "delete" : {
-        "operationId" : "deleteSubject",
-        "parameters" : [ {
-          "in" : "path",
-          "name" : "id",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK"
-          }
-        },
-        "tags" : [ "subject-controller" ]
-      },
       "get" : {
         "operationId" : "getSubject",
         "parameters" : [ {
@@ -1571,6 +1617,28 @@
       }
     },
     "/tags" : {
+      "delete" : {
+        "operationId" : "deleteTags",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        },
+        "tags" : [ "tag-controller" ]
+      },
       "get" : {
         "operationId" : "getTags",
         "parameters" : [ {
@@ -1633,23 +1701,6 @@
       }
     },
     "/tags/{id}" : {
-      "delete" : {
-        "operationId" : "deleteTag",
-        "parameters" : [ {
-          "in" : "path",
-          "name" : "id",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK"
-          }
-        },
-        "tags" : [ "tag-controller" ]
-      },
       "get" : {
         "operationId" : "getTag",
         "parameters" : [ {
@@ -1710,6 +1761,28 @@
       }
     },
     "/teachers" : {
+      "delete" : {
+        "operationId" : "deleteTeachers",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        },
+        "tags" : [ "teacher-controller" ]
+      },
       "get" : {
         "operationId" : "getTeachers",
         "parameters" : [ {
@@ -1789,23 +1862,6 @@
       }
     },
     "/teachers/{id}" : {
-      "delete" : {
-        "operationId" : "deleteTeacher",
-        "parameters" : [ {
-          "in" : "path",
-          "name" : "id",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK"
-          }
-        },
-        "tags" : [ "teacher-controller" ]
-      },
       "get" : {
         "operationId" : "getTeacher",
         "parameters" : [ {
@@ -2075,7 +2131,7 @@
             "content" : {
               "*/*" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/Timetable"
+                  "$ref" : "#/components/schemas/SuccessResponse"
                 }
               }
             },
@@ -2149,7 +2205,7 @@
         }
       },
       "BulkLesson" : {
-        "required" : [ "gradeIds", "id", "roomId", "subjectId", "teacherId", "timeslot" ],
+        "required" : [ "gradeIds", "groupId", "id", "roomId", "subjectId", "teacherId", "timeslot", "timetableId" ],
         "type" : "object",
         "properties" : {
           "gradeIds" : {
@@ -2157,6 +2213,9 @@
             "items" : {
               "type" : "string"
             }
+          },
+          "groupId" : {
+            "type" : "string"
           },
           "id" : {
             "type" : "string"
@@ -2176,6 +2235,9 @@
           },
           "timeslot" : {
             "$ref" : "#/components/schemas/Timeslot"
+          },
+          "timetableId" : {
+            "type" : "string"
           }
         }
       },
@@ -2519,13 +2581,19 @@
         }
       },
       "LessonResponseDto" : {
-        "required" : [ "grades", "lessons", "rooms", "subjects", "teachers", "timetable" ],
+        "required" : [ "grades", "groups", "lessons", "rooms", "subjects", "teachers", "timetables" ],
         "type" : "object",
         "properties" : {
           "grades" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/GradeResponseDto"
+            }
+          },
+          "groups" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/StudentGroupResponseDto"
             }
           },
           "lessons" : {
@@ -2552,8 +2620,11 @@
               "$ref" : "#/components/schemas/Teacher"
             }
           },
-          "timetable" : {
-            "$ref" : "#/components/schemas/Timetable"
+          "timetables" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Timetable"
+            }
           }
         }
       },
@@ -3027,18 +3098,6 @@
           }
         }
       },
-      "ParsingResponse" : {
-        "required" : [ "message", "success" ],
-        "type" : "object",
-        "properties" : {
-          "message" : {
-            "type" : "string"
-          },
-          "success" : {
-            "type" : "boolean"
-          }
-        }
-      },
       "RewardPenalize" : {
         "type" : "string",
         "enum" : [ "SOFT_REWARD", "HARD_REWARD", "SOFT_PENALIZE", "HARD_PENALIZE" ]
@@ -3268,7 +3327,7 @@
         }
       },
       "StudentGroupResponseDto" : {
-        "required" : [ "grades", "id", "lessons", "name", "students", "subjects", "tags" ],
+        "required" : [ "grades", "id", "name", "students", "subjects", "tags" ],
         "type" : "object",
         "properties" : {
           "grades" : {
@@ -3279,12 +3338,6 @@
           },
           "id" : {
             "type" : "string"
-          },
-          "lessons" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/Lesson"
-            }
           },
           "name" : {
             "type" : "string"
@@ -3310,17 +3363,11 @@
         }
       },
       "StudentRequestDto" : {
-        "required" : [ "firstName", "groupIds", "lastName", "tagIds" ],
+        "required" : [ "firstName", "lastName", "tagIds" ],
         "type" : "object",
         "properties" : {
           "firstName" : {
             "type" : "string"
-          },
-          "groupIds" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
           },
           "lastName" : {
             "type" : "string"
@@ -3369,6 +3416,18 @@
             "items" : {
               "type" : "string"
             }
+          }
+        }
+      },
+      "SuccessResponse" : {
+        "required" : [ "message", "success" ],
+        "type" : "object",
+        "properties" : {
+          "message" : {
+            "type" : "string"
+          },
+          "success" : {
+            "type" : "boolean"
           }
         }
       },
@@ -3456,7 +3515,7 @@
         "properties" : {
           "day" : {
             "type" : "string",
-            "enum" : [ "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY" ]
+            "enum" : [ "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY" ]
           },
           "id" : {
             "type" : "string"
@@ -3479,7 +3538,7 @@
         "properties" : {
           "day" : {
             "type" : "string",
-            "enum" : [ "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY" ]
+            "enum" : [ "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY" ]
           },
           "slot" : {
             "type" : "integer",

@@ -9,6 +9,7 @@ import ai.timefold.solver.core.impl.solver.DefaultSolverFactory;
 import de.uftos.dto.solver.ConstraintInstanceDto;
 import de.uftos.dto.solver.GradeProblemDto;
 import de.uftos.dto.solver.LessonProblemDto;
+import de.uftos.dto.solver.RewardPenalize;
 import de.uftos.dto.solver.RoomProblemDto;
 import de.uftos.dto.solver.StudentGroupProblemDto;
 import de.uftos.dto.solver.StudentProblemDto;
@@ -188,6 +189,13 @@ public class SolverRepositoryImpl implements SolverRepository {
       constraintInstances.add(
           ConstraintInstanceFactory.getConstraintInstance(instance, definitions, resources));
     }
+    if (constraintInstances.isEmpty()) {
+      //solver won't work without constraint instances
+      ConstraintInstanceTimefoldInstance trivialInstance =
+          new ConstraintInstanceTimefoldInstance(new ArrayList<>(), (list) -> false,
+              RewardPenalize.SOFT_PENALIZE);
+      constraintInstances.add(trivialInstance);
+    }
     solution.getConstraintInstances().addAll(constraintInstances);
 
     return solution;
@@ -363,7 +371,7 @@ public class SolverRepositoryImpl implements SolverRepository {
       }
       for (String lessonId : subject.lessonIds()) {
         LessonTimefoldInstance lesson = lessons.get(lessonId);
-        if (lesson == null || lesson.getStudentGroup() != null) {
+        if (lesson == null || lesson.getSubject() != null) {
           throw new IllegalArgumentException();
         }
 
@@ -396,7 +404,7 @@ public class SolverRepositoryImpl implements SolverRepository {
       }
       for (String lessonId : timeslot.lessonIds()) {
         LessonTimefoldInstance lesson = lessons.get(lessonId);
-        if (lesson == null || lesson.getStudentGroup() != null) {
+        if (lesson == null || lesson.getTimeslot() != null) {
           throw new IllegalArgumentException();
         }
 
@@ -438,7 +446,7 @@ public class SolverRepositoryImpl implements SolverRepository {
       }
       for (String lessonId : teacher.lessonIds()) {
         LessonTimefoldInstance lesson = lessons.get(lessonId);
-        if (lesson == null || lesson.getStudentGroup() != null) {
+        if (lesson == null || lesson.getTeacher() != null) {
           throw new IllegalArgumentException();
         }
 
@@ -480,7 +488,7 @@ public class SolverRepositoryImpl implements SolverRepository {
       }
       for (String lessonId : room.lessonIds()) {
         LessonTimefoldInstance lesson = lessons.get(lessonId);
-        if (lesson == null || lesson.getStudentGroup() != null) {
+        if (lesson == null || lesson.getRoom() != null) {
           throw new IllegalArgumentException();
         }
 

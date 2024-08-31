@@ -1,5 +1,6 @@
 package de.uftos.e2e;
 
+import static de.uftos.utils.JsonGenerator.generateIdListJson;
 import static de.uftos.utils.JsonGenerator.generateTagJson;
 import static de.uftos.utils.JsonGenerator.generateTimeslotJson;
 import static io.restassured.RestAssured.given;
@@ -54,7 +55,7 @@ class TimeslotTest {
         .log().ifValidationFails()
         .extract()
         .body().jsonPath().getString("id");
-    
+
 
     secondTimeslot = given().contentType(ContentType.JSON)
         .body(
@@ -72,7 +73,7 @@ class TimeslotTest {
   }
 
   @AfterAll
-  static void deleteCreatedEntities() {
+  static void deleteCreatedEntities() throws JSONException {
     given().contentType(ContentType.JSON)
         .when()
         .delete("/timeslots/{id}", firstTimeslot)
@@ -87,7 +88,8 @@ class TimeslotTest {
 
     given().contentType(ContentType.JSON)
         .when()
-        .delete("/tags/{id}", tagId)
+        .body(generateIdListJson(tagId))
+        .delete("/tags")
         .then()
         .statusCode(200);
   }
