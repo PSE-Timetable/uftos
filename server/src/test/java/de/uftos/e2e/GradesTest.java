@@ -70,51 +70,10 @@ class GradesTest {
         .log().ifValidationFails(LogDetail.BODY)
         .extract()
         .body().jsonPath().getString("id");
-
-    firstCurriculum = given().contentType(ContentType.JSON)
-        .body(generateCurriculumJson(firstGrade, FIRST_CURRICULUM_NAME,
-            Collections.emptyList()))
-        .when()
-        .post("/curriculum")
-        .then()
-        .log().ifValidationFails(LogDetail.BODY)
-        .statusCode(200)
-        .body("id", notNullValue())
-        .body("grade.id", equalTo(firstGrade))
-        .body("name", equalTo(FIRST_CURRICULUM_NAME))
-        .log().ifValidationFails(LogDetail.BODY)
-        .extract()
-        .body().jsonPath().getString("id");
-
-    secondCurriculum = given().contentType(ContentType.JSON)
-        .body(generateCurriculumJson(secondGrade, SECOND_CURRICULUM_NAME,
-            Collections.emptyList()))
-        .when()
-        .post("/curriculum")
-        .then()
-        .log().ifValidationFails(LogDetail.BODY)
-        .statusCode(200)
-        .body("id", notNullValue())
-        .body("grade.id", equalTo(secondGrade))
-        .body("name", equalTo(SECOND_CURRICULUM_NAME))
-        .log().ifValidationFails(LogDetail.BODY)
-        .extract()
-        .body().jsonPath().getString("id");
   }
 
   @AfterAll
   static void deleteCreatedEntities() {
-    given().contentType(ContentType.JSON)
-        .when()
-        .delete("/curriculum/{id}", firstCurriculum)
-        .then()
-        .statusCode(200);
-
-    given().contentType(ContentType.JSON)
-        .when()
-        .delete("/curriculum/{id}", secondCurriculum)
-        .then()
-        .statusCode(200);
 
     given().contentType(ContentType.JSON)
         .when()
