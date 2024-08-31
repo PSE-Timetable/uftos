@@ -9,15 +9,11 @@
   let selectedTags: Selected<string>[] = tags
     .filter((tag) => selectedTagIds.includes(tag.id))
     .map((tag) => ({ label: tag.name, value: tag.id }));
-  selectedTagIds = selectedTags.map((tag) => tag.value);
+  $: selectedTagIds = selectedTags.map((tag) => tag.value);
 </script>
 
 {#if tags.length > 0}
-  <Select.Root
-    multiple
-    selected={selectedTags}
-    onSelectedChange={(s) => (selectedTagIds = s?.map((tag) => tag.value) || [])}
-  >
+  <Select.Root multiple bind:selected={selectedTags}>
     {#each selectedTags as tag}
       <input name={tag.label} hidden value={tag} />
     {/each}

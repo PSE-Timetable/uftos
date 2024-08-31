@@ -15,7 +15,7 @@ export const _schema = z.object({
 export const load = (async ({ params }) => {
   const sort: Sort = { sort: ['name,asc'] };
   const tags = await getTags(sort);
-  let formStudent, title;
+  let formStudent: { id: string; firstName: string; lastName: string; tags: string[] }, title: string;
   if (params.id === 'new') {
     formStudent = { id: 'new', firstName: '', lastName: '', tags: [] };
     title = 'Schüler — Hinzufügen';

@@ -16,7 +16,7 @@ export const _schema = z.object({
 export const load = (async ({ params }) => {
   const sort: Sort = { sort: ['name,asc'] };
   const tags = await getTags(sort);
-  let formRoom, title;
+  let formRoom: { id: string; name: string; buildingName: string; capacity: number; tags: string[] }, title: string;
   if (params.id === 'new') {
     formRoom = { id: 'new', name: '', buildingName: '', capacity: 0, tags: [] };
     title = 'Raum — Hinzufügen';

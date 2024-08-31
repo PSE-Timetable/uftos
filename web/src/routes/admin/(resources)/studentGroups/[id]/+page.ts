@@ -18,7 +18,9 @@ export const load = (async ({ params }) => {
   const tags = await getTags(sort);
   const subjects = await getSubjects(sort);
   const grades = await getGrades(sort);
-  let formGroup, title, groupSubjects: string[];
+  let formGroup: { id: string; name: string; grades: string[]; students: string[]; tags: string[] },
+    title: string,
+    groupSubjects: string[];
   if (params.id === 'new') {
     formGroup = { id: 'new', name: '', grades: [], students: [], tags: [] };
     title = 'Schülergruppe — Hinzufügen';

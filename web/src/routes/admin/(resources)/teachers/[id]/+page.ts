@@ -17,7 +17,9 @@ export const load = (async ({ params }) => {
   const sort: Sort = { sort: ['name,asc'] };
   const tags = await getTags(sort);
   const subjects = await getSubjects(sort);
-  let formTeacher, title, teacherSubjects: string[];
+  let formTeacher: { id: string; firstName: string; lastName: string; acronym: string; tags: string[] },
+    title: string,
+    teacherSubjects: string[];
   if (params.id === 'new') {
     formTeacher = { id: 'new', firstName: '', lastName: '', acronym: '', tags: [] };
     title = 'Lehrer — Hinzufügen';
