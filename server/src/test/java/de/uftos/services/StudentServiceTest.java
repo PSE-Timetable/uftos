@@ -1,18 +1,25 @@
 package de.uftos.services;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import de.uftos.dto.requestdtos.StudentRequestDto;
+import de.uftos.dto.responsedtos.LessonResponseDto;
+import de.uftos.entities.Lesson;
+import de.uftos.entities.Room;
+import de.uftos.entities.Server;
 import de.uftos.entities.Student;
 import de.uftos.entities.StudentGroup;
 import de.uftos.entities.Tag;
+import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.StudentGroupRepository;
 import de.uftos.repositories.database.StudentRepository;
 import java.util.Collections;
@@ -34,7 +41,13 @@ import org.springframework.web.server.ResponseStatusException;
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class StudentServiceTest {
   @Mock
+  private StudentGroup groupMock;
+
+  @Mock
   StudentGroupRepository studentGroupRepository;
+
+  @Mock
+  private ServerRepository serverRepository;
 
   @Mock
   private StudentRepository studentRepository;
@@ -50,8 +63,20 @@ public class StudentServiceTest {
     StudentGroup group = new StudentGroup("group", List.of("123"), List.of(), List.of());
     group.setId("groupId");
 
-    Student student = new Student("123", "Max", "Mustermann", List.of(group), List.of(tag));
+    Lesson lesson =
+        new Lesson(0, "teacherId", "groupId", "roomId", "timeslotId", "subjectId", "timetableId",
+            "2024");
+    lesson.setStudentGroup(groupMock);
+    group.setLessons(List.of(lesson));
 
+    Student student = new Student("123", "Max", "Mustermann", List.of(groupMock), List.of(tag));
+
+    when(groupMock.getGrades()).thenReturn(List.of());
+    when(groupMock.getLessons()).thenReturn(List.of(lesson));
+    when(groupMock.getStudents()).thenReturn(List.of(student));
+    when(groupMock.getId()).thenReturn("groupId");
+    Server server = new Server(null, "2024", "email");
+    when(serverRepository.findAll()).thenReturn(List.of(server));
     when(studentRepository.findAll()).thenReturn(List.of(student));
     when(studentRepository.findById("123")).thenReturn(Optional.of(student));
     when(studentGroupRepository.findByStudents(any(Student.class))).thenReturn(
@@ -162,6 +187,33 @@ public class StudentServiceTest {
   @Test
   void deleteNonExistentStudent() {
     assertThrows(ResponseStatusException.class, () -> studentService.delete("nonExistentId"));
+  }
+
+  @Test
+  void lessonsById() {
+    LessonResponseDto result = studentService.getLessonsById("123");
+    assertResultArraySizes(result, 1, 1, 1, 0);
+    assertAll("Testing whether the sizes of the arrays are correct",
+        () -> assertEquals(1, result.groups().size()),
+        () -> assertEquals(1, result.groups().getFirst().students().size()),
+        () -> assertEquals("groupId", result.groups().getFirst().id())
+    );
+
+    List<String> roomIds = result.rooms().stream().map(Room::getId).toList();
+    assertAll("Testing whether all the rooms are there",
+        () -> assertEquals(1, roomIds.size()),
+        () -> assertTrue(roomIds.contains("roomId"))
+    );
+  }
+
+  private void assertResultArraySizes(LessonResponseDto result, int teachers, int lessons,
+                                      int rooms, int grades) {
+    assertAll("Testing whether the sizes of the arrays are correct",
+        () -> assertEquals(teachers, result.teachers().size()),
+        () -> assertEquals(lessons, result.lessons().size()),
+        () -> assertEquals(rooms, result.rooms().size()),
+        () -> assertEquals(grades, result.grades().size())
+    );
   }
 
 }

@@ -39,7 +39,8 @@ public class StudentService {
    */
   @Autowired
   public StudentService(StudentRepository repository,
-                        StudentGroupRepository studentGroupRepository, ServerRepository serverRepository) {
+                        StudentGroupRepository studentGroupRepository,
+                        ServerRepository serverRepository) {
     this.repository = repository;
     this.studentGroupRepository = studentGroupRepository;
     this.serverRepository = serverRepository;
@@ -90,7 +91,9 @@ public class StudentService {
     List<StudentGroup> studentGroups = student.getGroups();
     List<Lesson> lessons = new ArrayList<>(
         studentGroups.stream().flatMap(group -> group.getLessons().stream()).toList());
-    lessons.removeIf(lesson -> !lesson.getYear().equals(serverRepository.findAll().getFirst().getCurrentYear()));
+
+    lessons.removeIf(
+        lesson -> !lesson.getYear().equals(serverRepository.findAll().getFirst().getCurrentYear()));
     return LessonResponseDto.createResponseDtoFromLessons(lessons);
   }
 

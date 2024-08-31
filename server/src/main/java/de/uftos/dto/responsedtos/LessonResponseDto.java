@@ -44,7 +44,7 @@ public record LessonResponseDto(@NotNull List<BulkLesson> lessons,
     List<GradeResponseDto> gradeResponseDtos = new ArrayList<>();
     Set<Room> rooms = new HashSet<>();
     Set<Subject> subjects = new HashSet<>();
-    Set<StudentGroupResponseDto> groups = new HashSet<>(); 
+    Set<StudentGroupResponseDto> groups = new HashSet<>();
     Timetable timetable = lessons.isEmpty() ? null : lessons.getFirst().getTimetable();
 
     for (Lesson lesson : lessons) {
@@ -63,7 +63,8 @@ public record LessonResponseDto(@NotNull List<BulkLesson> lessons,
     grades.stream().map(GradeResponseDto::createResponseDtoFromGrade)
         .forEach(gradeResponseDtos::add);
 
-    return new LessonResponseDto(bulkLessons, teachers.stream().toList(), groups.stream().toList(), gradeResponseDtos,
+    return new LessonResponseDto(bulkLessons, teachers.stream().toList(), groups.stream().toList(),
+        gradeResponseDtos,
         rooms.stream().toList(), subjects.stream().toList(), timetable);
   }
 
@@ -75,7 +76,8 @@ public record LessonResponseDto(@NotNull List<BulkLesson> lessons,
                             @NotEmpty String subjectId, @NotNull Timetable timetable) {
     private BulkLesson(Lesson lesson, List<String> gradesId) {
       this(lesson.getId(), lesson.getIndex(), lesson.getTeacher().getId(),
-          lesson.getRoom().getId(), lesson.getStudentGroup().getId(), gradesId, lesson.getTimeslot(),
+          lesson.getRoom().getId(), lesson.getStudentGroup().getId(), gradesId,
+          lesson.getTimeslot(),
           lesson.getSubject().getId(), lesson.getTimetable());
     }
   }

@@ -146,7 +146,9 @@ public class StudentGroupService {
     List<Grade> oldGrades = this.gradeRepository.findByStudentGroups(group);
     for (Grade oldGrade : oldGrades) {
       if (!groupRequest.gradeIds().contains(oldGrade.getId())) {
-        oldGrade.getStudentGroups().remove(group);
+        List<StudentGroup> oldGradeGroups = new ArrayList<>(oldGrade.getStudentGroups());
+        oldGradeGroups.remove(group);
+        oldGrade.setStudentGroups(oldGradeGroups);
       }
     }
     this.gradeRepository.saveAll(oldGrades);
@@ -157,7 +159,9 @@ public class StudentGroupService {
       if (grade.getStudentGroups().contains(group)) {
         continue;
       }
-      grade.getStudentGroups().add(group);
+      List<StudentGroup> groups = new ArrayList<>(grade.getStudentGroups());
+      groups.add(group);
+      grade.setStudentGroups(groups);
     }
     this.gradeRepository.saveAll(grades);
 
