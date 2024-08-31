@@ -6,6 +6,7 @@ import de.uftos.repositories.database.ServerRepository;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.servers.Server;
+import java.util.Date;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
@@ -41,7 +42,7 @@ public class UftosApplication {
                   0,
                   "07:45",
                   new Break[] {}),
-              "2024", "test@uftos.de"));
+              Integer.toString(new Date().getYear() + 1900), "test@uftos.de"));
     };
   }
 }
