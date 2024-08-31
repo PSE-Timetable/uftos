@@ -9,7 +9,19 @@ import static org.mockito.Mockito.when;
 import de.uftos.dto.requestdtos.TimetableRequestDto;
 import de.uftos.dto.solver.TimetableProblemDto;
 import de.uftos.dto.solver.TimetableSolutionDto;
+import de.uftos.entities.ConstraintInstance;
+import de.uftos.entities.ConstraintSignature;
+import de.uftos.entities.Curriculum;
+import de.uftos.entities.Grade;
 import de.uftos.entities.Lesson;
+import de.uftos.entities.LessonsCount;
+import de.uftos.entities.Room;
+import de.uftos.entities.Student;
+import de.uftos.entities.StudentGroup;
+import de.uftos.entities.Subject;
+import de.uftos.entities.Tag;
+import de.uftos.entities.Teacher;
+import de.uftos.entities.Timeslot;
 import de.uftos.entities.Timetable;
 import de.uftos.repositories.database.ConstraintInstanceRepository;
 import de.uftos.repositories.database.ConstraintSignatureRepository;
@@ -142,7 +154,77 @@ public class TimetableServiceTests {
 
   @Test
   void createTimetable() {
+    timetableDataSetup();
     TimetableRequestDto timetableRequestDto = new TimetableRequestDto("timetableRequest");
     assertDoesNotThrow(() -> timetableService.create(timetableRequestDto));
+
+  }
+
+  private void timetableDataSetup() {
+    ConstraintInstance constraintInstance = new ConstraintInstance();
+    ConstraintSignature constraintSignature = new ConstraintSignature();
+    Curriculum curriculum = new Curriculum();
+    Grade grade = new Grade("grade");
+    Room room = new Room("room");
+    Student student = new Student("student");
+    StudentGroup studentGroup = new StudentGroup("studentGroup");
+    Subject subject = new Subject("subject");
+    Tag tag = new Tag("tag");
+    Teacher teacher = new Teacher("teacher");
+    Timeslot timeslot = new Timeslot("timeslot");
+
+    //TODO: fix null-pointers
+    grade.getStudentGroups().add(studentGroup);
+    studentGroup.getGrades().add(grade);
+
+    grade.getTags().add(tag);
+    tag.getGrades().add(grade);
+
+    grade.setCurriculum(curriculum);
+    curriculum.setGrade(grade);
+
+    room.getTags().add(tag);
+    tag.getRooms().add(room);
+
+    student.getGroups().add(studentGroup);
+    studentGroup.getStudents().add(student);
+
+    student.getTags().add(tag);
+    tag.getStudents().add(student);
+
+    studentGroup.getSubjects().add(subject);
+
+    studentGroup.getTags().add(tag);
+    tag.getStudentGroups().add(studentGroup);
+
+    subject.getTeachers().add(teacher);
+    teacher.getSubjects().add(subject);
+
+    subject.getTags().add(tag);
+    tag.getSubjects().add(subject);
+
+    tag.getTeachers().add(teacher);
+    teacher.getTags().add(tag);
+
+    tag.getTimeslots().add(timeslot);
+    timeslot.getTags().add(tag);
+
+    curriculum.getLessonsCounts().add(new LessonsCount(subject.getId(), 2));
+
+    //TODO: set Values for ConstraintInstance and ConstraintSignature
+
+    constraintSignature.getInstances().add(constraintInstance);
+
+    when(constraintInstanceRepository.findAll()).thenReturn(List.of(constraintInstance));
+    when(constraintSignatureRepository.findAll()).thenReturn(List.of(constraintSignature));
+    when(curriculumRepository.findAll()).thenReturn(List.of(curriculum));
+    when(gradeRepository.findAll()).thenReturn(List.of(grade));
+    when(roomRepository.findAll()).thenReturn(List.of(room));
+    when(studentRepository.findAll()).thenReturn(List.of(student));
+    when(studentGroupRepository.findAll()).thenReturn(List.of(studentGroup));
+    when(subjectRepository.findAll()).thenReturn(List.of(subject));
+    when(tagRepository.findAll()).thenReturn(List.of(tag));
+    when(teacherRepository.findAll()).thenReturn(List.of(teacher));
+    when(timeslotRepository.findAll()).thenReturn(List.of(timeslot));
   }
 }
