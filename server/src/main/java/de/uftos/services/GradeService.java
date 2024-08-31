@@ -4,13 +4,19 @@ package de.uftos.services;
 import de.uftos.dto.requestdtos.GradeRequestDto;
 import de.uftos.dto.responsedtos.GradeResponseDto;
 import de.uftos.dto.responsedtos.LessonResponseDto;
+import de.uftos.entities.Curriculum;
 import de.uftos.entities.Grade;
 import de.uftos.entities.Lesson;
+import de.uftos.entities.LessonsCount;
 import de.uftos.entities.StudentGroup;
+import de.uftos.entities.Subject;
+import de.uftos.repositories.database.CurriculumRepository;
 import de.uftos.repositories.database.GradeRepository;
 import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.StudentGroupRepository;
+import de.uftos.repositories.database.SubjectRepository;
 import de.uftos.utils.SpecificationBuilder;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -33,19 +39,28 @@ public class GradeService {
   private final GradeRepository repository;
   private final ServerRepository serverRepository;
   private final StudentGroupRepository studentGroupRepository;
+  private final CurriculumRepository curriculumRepository;
+  private final SubjectRepository subjectRepository;
 
   /**
    * Creates a grade service.
    *
    * @param repository             the repository for accessing the grade table.
+   * @param serverRepository       the repository for accessing the server table.
    * @param studentGroupRepository the repository for accessing the student group table.
+   * @param curriculumRepository   the repository for accessing the curriculum table.
+   * @param subjectRepository      the repository for accessing the subject table.
    */
   @Autowired
   public GradeService(GradeRepository repository, ServerRepository serverRepository,
-                      StudentGroupRepository studentGroupRepository) {
+                      StudentGroupRepository studentGroupRepository,
+                      CurriculumRepository curriculumRepository,
+                      SubjectRepository subjectRepository) {
     this.repository = repository;
     this.serverRepository = serverRepository;
     this.studentGroupRepository = studentGroupRepository;
+    this.curriculumRepository = curriculumRepository;
+    this.subjectRepository = subjectRepository;
   }
 
   /**
@@ -119,7 +134,20 @@ public class GradeService {
     if (grade.name().isBlank()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The name of the grade is blank.");
     }
-    return this.mapResponseDto(this.repository.save(grade.map()));
+    Grade gradeEntity = this.repository.save(grade.map());
+    List<Subject> subjects = subjectRepository.findAll();
+    List<LessonsCount> lessonsCounts = new ArrayList<>();
+    for (Subject subject : subjects) {
+      lessonsCounts.add(new LessonsCount(subject.getId(), 0));
+    }
+
+    Curriculum curriculum = new Curriculum();
+    curriculum.setGrade(gradeEntity);
+    curriculum.setName(gradeEntity.getName());
+    curriculum.setLessonsCounts(lessonsCounts);
+    curriculumRepository.save(curriculum);
+
+    return this.mapResponseDto(gradeEntity);
   }
 
   /**
