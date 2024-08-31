@@ -67,7 +67,7 @@ jobs:
           java-version: "21"
 
       - name: Run checkstyle
-        uses: dbelyaev/action-checkstyle@v1.15.0
+        uses: dbelyaev/action-checkstyle@v1.16.0
         with:
           github_token: ${{ secrets.github_token }}
           reporter: github-check
