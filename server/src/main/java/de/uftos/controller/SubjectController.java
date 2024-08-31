@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -83,5 +84,16 @@ public class SubjectController {
   @PutMapping("/{id}")
   public Subject updateSubject(@PathVariable String id, @RequestBody SubjectRequestDto subject) {
     return this.subjectService.update(id, subject);
+  }
+
+  /**
+   * Maps the HTTP DELETE request to the {@link SubjectService#delete(String) delete} function
+   * of the subject service.
+   *
+   * @param ids the ID sof the subject which are to be deleted.
+   */
+  @DeleteMapping()
+  public void deleteSubjects(@RequestBody String[] ids) {
+    this.subjectService.deleteSubjects(ids);
   }
 }
