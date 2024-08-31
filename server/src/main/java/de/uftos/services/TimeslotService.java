@@ -2,7 +2,10 @@ package de.uftos.services;
 
 import de.uftos.dto.requestdtos.TimeslotRequestDto;
 import de.uftos.entities.Timeslot;
+import de.uftos.repositories.database.ConstraintInstanceRepository;
+import de.uftos.repositories.database.ConstraintSignatureRepository;
 import de.uftos.repositories.database.TimeslotRepository;
+import de.uftos.utils.ConstraintInstanceDeleter;
 import de.uftos.utils.SpecificationBuilder;
 import java.util.List;
 import java.util.Optional;
@@ -18,15 +21,23 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class TimeslotService {
   private final TimeslotRepository repository;
+  private final ConstraintSignatureRepository constraintSignatureRepository;
+  private final ConstraintInstanceRepository constraintInstanceRepository;
 
   /**
    * Creates a timeslot service.
    *
-   * @param repository the repository for accessing the timeslot table.
+   * @param repository                    the repository for accessing the timeslot table.
+   * @param constraintSignatureRepository the repository for accessing the constraint signature table.
+   * @param constraintInstanceRepository  the repository for accessing the constraint instance table.
    */
   @Autowired
-  public TimeslotService(TimeslotRepository repository) {
+  public TimeslotService(TimeslotRepository repository,
+                         ConstraintSignatureRepository constraintSignatureRepository,
+                         ConstraintInstanceRepository constraintInstanceRepository) {
     this.repository = repository;
+    this.constraintSignatureRepository = constraintSignatureRepository;
+    this.constraintInstanceRepository = constraintInstanceRepository;
   }
 
   /**
@@ -95,6 +106,9 @@ public class TimeslotService {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
           "Could not find a timeslot with this id");
     }
+
+    new ConstraintInstanceDeleter(constraintSignatureRepository, constraintInstanceRepository)
+        .removeAllInstancesWithArgumentValue(new String[] {id});
 
     this.repository.delete(timeslot.get());
   }

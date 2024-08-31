@@ -104,17 +104,6 @@ public class TeacherController {
   }
 
   /**
-   * Maps the HTTP DELETE request to the {@link TeacherService#delete(String) delete} function of
-   * the teacher service.
-   *
-   * @param id the ID of the teacher which is to be deleted.
-   */
-  @DeleteMapping("/{id}")
-  public void deleteTeacher(@PathVariable String id) {
-    this.teacherService.delete(id);
-  }
-
-  /**
    * Maps the HTTP DELETE request to the {@link TeacherService#deleteTeachers(String[]) delete} function of
    * the teacher service.
    *

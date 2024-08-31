@@ -1,5 +1,6 @@
 package de.uftos.services;
 
+import static de.uftos.utils.ClassCaster.getClassType;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -14,6 +15,8 @@ import de.uftos.entities.Break;
 import de.uftos.entities.Server;
 import de.uftos.entities.Tag;
 import de.uftos.entities.TimetableMetadata;
+import de.uftos.repositories.database.ConstraintInstanceRepository;
+import de.uftos.repositories.database.ConstraintSignatureRepository;
 import de.uftos.repositories.database.GradeRepository;
 import de.uftos.repositories.database.RoomRepository;
 import de.uftos.repositories.database.ServerRepository;
@@ -68,6 +71,12 @@ public class TagServiceTests {
   @Mock
   private TimeslotRepository timeslotRepository;
 
+  @Mock
+  private ConstraintSignatureRepository signatureRepository;
+
+  @Mock
+  private ConstraintInstanceRepository instanceRepository;
+
   @InjectMocks
   private TagService tagService;
 
@@ -80,6 +89,7 @@ public class TagServiceTests {
         new Server(new TimetableMetadata(45, 8, "7:45", new Break[] {}), "2024", "test@uftos.de");
     when(serverRepository.findAll()).thenReturn(List.of(server));
     when(tagRepository.findById("123")).thenReturn(Optional.of(tag));
+    when(tagRepository.findAllById(List.of("123"))).thenReturn(List.of(tag));
     when(teacherRepository.findByTags(any(Tag.class))).thenReturn(Collections.emptyList());
     when(studentGroupRepository.findByTags(any(Tag.class))).thenReturn(Collections.emptyList());
     when(studentRepository.findByTags(any(Tag.class))).thenReturn(Collections.emptyList());
@@ -134,17 +144,19 @@ public class TagServiceTests {
 
   @Test
   void deleteExistentTag() {
-    assertDoesNotThrow(() -> tagService.delete("123"));
-    ArgumentCaptor<Tag> tagCap = ArgumentCaptor.forClass(Tag.class);
-    verify(tagRepository, times(1)).delete(tagCap.capture());
+    assertDoesNotThrow(() -> tagService.deleteTags(new String[] {"123"}));
+    ArgumentCaptor<List<Tag>> tagCap = ArgumentCaptor.forClass(getClassType());
+    verify(tagRepository, times(1)).deleteAll(tagCap.capture());
 
-    Tag tag = tagCap.getValue();
-    assertEquals("123", tag.getId());
+    List<Tag> tag = tagCap.getValue();
+    assertEquals(1, tag.size());
+    assertEquals("123", tag.getFirst().getId());
   }
 
   @Test
   void deleteNonExistentTag() {
-    assertThrows(ResponseStatusException.class, () -> tagService.delete("nonExistentId"));
+    assertThrows(ResponseStatusException.class,
+        () -> tagService.deleteTags(new String[] {"nonExistentId"}));
   }
 
 }

@@ -4,6 +4,7 @@ import de.uftos.entities.Tag;
 import de.uftos.entities.Timeslot;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.data.repository.ListPagingAndSortingRepository;
 
@@ -15,5 +16,6 @@ public interface TimeslotRepository extends ListPagingAndSortingRepository<Times
 
   List<Timeslot> findByTags(Tag tag);
 
-  List<Timeslot> findAllByTags(List<Tag> tags);
+  @Query("SELECT ti FROM timeslots ti JOIN ti.tags t WHERE t IN :tagIds")
+  List<Timeslot> findAllByTags(List<String> tagIds);
 }

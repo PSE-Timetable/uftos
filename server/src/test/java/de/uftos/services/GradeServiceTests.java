@@ -1,5 +1,6 @@
 package de.uftos.services;
 
+import static de.uftos.utils.ClassCaster.getClassType;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,6 +25,8 @@ import de.uftos.entities.Subject;
 import de.uftos.entities.Teacher;
 import de.uftos.entities.Timetable;
 import de.uftos.entities.TimetableMetadata;
+import de.uftos.repositories.database.ConstraintInstanceRepository;
+import de.uftos.repositories.database.ConstraintSignatureRepository;
 import de.uftos.repositories.database.GradeRepository;
 import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.StudentGroupRepository;
@@ -55,6 +58,12 @@ public class GradeServiceTests {
 
   @Mock
   private StudentGroupRepository studentGroupRepository;
+
+  @Mock
+  private ConstraintSignatureRepository signatureRepository;
+
+  @Mock
+  private ConstraintInstanceRepository instanceRepository;
 
   @Mock
   private Grade grade1Mock;
@@ -152,6 +161,7 @@ public class GradeServiceTests {
         new Server(new TimetableMetadata(45, 8, "8:00", breaks), "2024", "test@uftos.de");
     when(serverRepository.findAll()).thenReturn(List.of(server));
     when(gradeRepository.findById("123")).thenReturn(Optional.of(grade1Mock));
+    when(gradeRepository.findAllById(List.of("123"))).thenReturn(List.of(grade1Mock));
     when(gradeRepository.findById("456")).thenReturn(Optional.of(grade2Mock));
     when(gradeRepository.save(any(Grade.class))).thenReturn(gradeForCreateAndUpdateMock);
     when(grade1Mock.getStudentGroups()).thenReturn(List.of(studentGroup1, studentGroup2));
@@ -253,17 +263,19 @@ public class GradeServiceTests {
 
   @Test
   void deleteExistentGrade() {
-    assertDoesNotThrow(() -> gradeService.delete("123"));
-    ArgumentCaptor<Grade> gradeCap = ArgumentCaptor.forClass(Grade.class);
-    verify(gradeRepository, times(1)).delete(gradeCap.capture());
+    assertDoesNotThrow(() -> gradeService.deleteGrades(new String[] {"123"}));
+    ArgumentCaptor<List<Grade>> gradeCap = ArgumentCaptor.forClass(getClassType());
+    verify(gradeRepository, times(1)).deleteAll(gradeCap.capture());
 
-    Grade grade = gradeCap.getValue();
-    assertEquals("123", grade.getId());
+    List<Grade> grade = gradeCap.getValue();
+    assertEquals(1, grade.size());
+    assertEquals("123", grade.getFirst().getId());
   }
 
   @Test
   void deleteNonExistentGrade() {
-    assertThrows(ResponseStatusException.class, () -> gradeService.delete("nonExistentId"));
+    assertThrows(ResponseStatusException.class,
+        () -> gradeService.deleteGrades(new String[] {"nonExistentId"}));
   }
 
 
