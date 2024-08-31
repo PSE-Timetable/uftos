@@ -5,7 +5,9 @@ import de.uftos.dto.responsedtos.ServerEmailResponseDto;
 import de.uftos.dto.responsedtos.ServerStatisticsResponseDto;
 import de.uftos.entities.TimetableMetadata;
 import de.uftos.services.ServerService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
  * The REST controller for everything server.
  * This controller handles /server HTTP requests.
  */
+@Validated
 @RestController
 @RequestMapping("/server")
 public class ServerController {
@@ -82,7 +85,7 @@ public class ServerController {
    * @param email the new well-formed email address.
    */
   @PutMapping("/email")
-  public void setNotificationEmail(@RequestBody ServerEmailRequestDto email) {
+  public void setNotificationEmail(@Valid @RequestBody ServerEmailRequestDto email) {
     this.serverService.setEmail(email);
   }
 

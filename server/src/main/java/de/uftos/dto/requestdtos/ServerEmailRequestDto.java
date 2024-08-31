@@ -7,5 +7,6 @@ import jakarta.validation.constraints.Email;
  *
  * @param email the email address for notifications.
  */
-public record ServerEmailRequestDto(@Email String email) {
+public record ServerEmailRequestDto(
+    @Email(regexp = ".+@.+\\..+", message = "Email must be well-formed.") String email) {
 }
