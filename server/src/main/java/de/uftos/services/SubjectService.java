@@ -134,67 +134,20 @@ public class SubjectService {
   }
 
   /**
-   * Deletes the subject with the given ID.
-   *
-   * @param id the ID of the subject which is to be deleted.
-   * @throws ResponseStatusException is thrown if no subjects exist with the given IDs.
-   */
-  public void delete(String id) {
-    Optional<Subject> subjectOptional = this.repository.findById(id);
-    if (subjectOptional.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "The name of the subject is blank.");
-    }
-
-    Subject subject = subjectOptional.get();
-
-    List<Curriculum> curriculums = curriculumRepository.findAll();
-
-    for (Curriculum curriculum : curriculums) {
-      curriculum.getLessonsCounts()
-          .removeIf((lessonsCount) -> lessonsCount.getSubject().equals(subject));
-    }
-
-    List<Teacher> teachers = teacherRepository.findBySubjects(subject);
-    for (Teacher teacher : teachers) {
-      teacher.getSubjects().removeIf(subject1 -> subject1.getId().equals(id));
-    }
-    teacherRepository.saveAll(teachers);
-
-    List<StudentGroup> studentGroups = studentGroupRepository.findBySubjects(subject);
-    for (StudentGroup studentGroup : studentGroups) {
-      studentGroup.getSubjects().removeIf(subject1 -> subject1.getId().equals(id));
-    }
-
-    studentGroupRepository.saveAll(studentGroups);
-    curriculumRepository.saveAll(curriculums);
-
-    new ConstraintInstanceDeleter(constraintSignatureRepository, constraintInstanceRepository)
-        .removeAllInstancesWithArgumentValue(new String[] {id});
-
-    new LessonsDeleter(lessonRepository, timetableRepository).fromSubjects(List.of(subject));
-
-    this.repository.delete(subject);
-  }
-
-  /**
    * Deletes the subjects with the given IDs.
    *
    * @param ids the IDs of the subjects which are to be deleted.
    * @throws ResponseStatusException is thrown if no subject exists with the given ID.
    */
   public void deleteSubjects(String[] ids) {
-    Specification<Subject> subjectSpecification = new SpecificationBuilder<Subject>()
-        .andIn(ids, "id")
-        .build();
-    List<Subject> subjects = this.repository.findAll(subjectSpecification);
+    List<String> subjectIds = Arrays.stream(ids).toList();
+    List<Subject> subjects = this.repository.findAllById(subjectIds);
 
     if (subjects.isEmpty() || subjects.size() != ids.length) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
           "There exist no subjects with the given id(s).");
     }
 
-    List<String> subjectIds = Arrays.stream(ids).toList();
 
     Specification<Curriculum> curriculumSpecification = new SpecificationBuilder<Curriculum>()
         .andDoubleJoinIn(ids, "lessonsCounts", "subject", "id")

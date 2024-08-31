@@ -1,5 +1,6 @@
 package de.uftos.services;
 
+import static de.uftos.utils.ClassCaster.getClassType;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -86,6 +87,7 @@ public class SubjectServiceTests {
 
     when(subjectRepository.findAll()).thenReturn(List.of(subject));
     when(subjectRepository.findById(SUBJECT_ID)).thenReturn(Optional.of(subject));
+    when(subjectRepository.findAllById(List.of(SUBJECT_ID))).thenReturn(List.of(subject));
     when(curriculumRepository.findAll()).thenReturn(new ArrayList<>());
     when(teacherRepository.findBySubjects(any(Subject.class))).thenReturn(Collections.emptyList());
     when(studentGroupRepository.findBySubjects(any(Subject.class))).thenReturn(
@@ -147,16 +149,18 @@ public class SubjectServiceTests {
 
   @Test
   void deleteExistentSubject() {
-    assertDoesNotThrow(() -> subjectService.delete(SUBJECT_ID));
-    ArgumentCaptor<Subject> subjectCap = ArgumentCaptor.forClass(Subject.class);
-    verify(subjectRepository, times(1)).delete(subjectCap.capture());
+    assertDoesNotThrow(() -> subjectService.deleteSubjects(new String[] {SUBJECT_ID}));
+    ArgumentCaptor<List<Subject>> subjectCap = ArgumentCaptor.forClass(getClassType());
+    verify(subjectRepository, times(1)).deleteAll(subjectCap.capture());
 
-    Subject subject = subjectCap.getValue();
-    assertEquals(SUBJECT_ID, subject.getId());
+    List<Subject> subject = subjectCap.getValue();
+    assertEquals(1, subject.size());
+    assertEquals(SUBJECT_ID, subject.getFirst().getId());
   }
 
   @Test
   void deleteNonExistentSubject() {
-    assertThrows(ResponseStatusException.class, () -> subjectService.delete("nonExistentId"));
+    assertThrows(ResponseStatusException.class,
+        () -> subjectService.deleteSubjects(new String[] {"nonExistentId"}));
   }
 }
