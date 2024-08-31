@@ -103,7 +103,7 @@
       />
       <Tabs.Content value="class">
         {#if data.type === 'class' && id}
-          {#key id}
+          {#key [id, selectedId]}
             <Timetable
               getLessons={async () => {
                 const response = await getStudentGroupLessons(id);
@@ -116,7 +116,7 @@
       </Tabs.Content>
       <Tabs.Content value="teacher">
         {#if data.type === 'teacher' && id}
-          {#key id}
+          {#key [id, selectedId]}
             <Timetable
               getLessons={async () => {
                 const response = await getTeacherLessons(id);
@@ -129,7 +129,7 @@
       </Tabs.Content>
       <Tabs.Content value="room">
         {#if data.type === 'room' && id}
-          {#key id}
+          {#key [id, selectedId]}
             <Timetable
               getLessons={async () => {
                 const response = await getRoomLessons(id);
@@ -142,7 +142,7 @@
       </Tabs.Content>
       <Tabs.Content value="student">
         {#if data.type === 'student' && id}
-          {#key id}
+          {#key [id, selectedId]}
             <Timetable
               getLessons={async () => {
                 const response = await getStudentLessons(id);
