@@ -295,7 +295,6 @@ public class TimetableService {
         }
 
         List<LessonsCount> lessonsCounts = curriculum.getLessonsCounts();
-        // TODO is this needed?
         if (lessonsCounts.isEmpty()) {
           throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
               "There must be at least one lesson set in a curriculum to create a timetable");
