@@ -11,7 +11,6 @@
     let studentRequestDto: StudentRequestDto = {
       firstName: String(formData.firstName),
       lastName: String(formData.lastName),
-      groupIds: [], // need to be removed after merge of #377
       tagIds: formData.tags as string[],
     };
     try {
