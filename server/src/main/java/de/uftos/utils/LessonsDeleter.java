@@ -88,8 +88,20 @@ public class LessonsDeleter {
   }
 
   private void deleteLessonsAndTimetables(List<Lesson> lessons) {
+    if (lessons.isEmpty()) {
+      return;
+    }
     List<Timetable> timetables = this.timetableRepository.findAllByLessons(
         lessons.stream().map(Lesson::getId).toList()
+    );
+
+    // Adding all lessons from the timetables to be deleted
+    lessons.addAll(
+        timetables
+            .stream()
+            .map(Timetable::getLessons)
+            .flatMap(List::stream)
+            .toList()
     );
     this.lessonRepository.deleteAll(lessons);
 
