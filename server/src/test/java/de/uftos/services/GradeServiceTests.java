@@ -27,9 +27,11 @@ import de.uftos.entities.Timetable;
 import de.uftos.entities.TimetableMetadata;
 import de.uftos.repositories.database.ConstraintInstanceRepository;
 import de.uftos.repositories.database.ConstraintSignatureRepository;
+import de.uftos.repositories.database.CurriculumRepository;
 import de.uftos.repositories.database.GradeRepository;
 import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.StudentGroupRepository;
+import de.uftos.repositories.database.SubjectRepository;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -64,6 +66,12 @@ public class GradeServiceTests {
 
   @Mock
   private ConstraintInstanceRepository instanceRepository;
+
+  @Mock
+  private SubjectRepository subjectRepository;
+
+  @Mock
+  private CurriculumRepository curriculumRepository;
 
   @Mock
   private Grade grade1Mock;
