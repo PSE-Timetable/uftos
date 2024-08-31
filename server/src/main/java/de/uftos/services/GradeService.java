@@ -10,9 +10,9 @@ import de.uftos.entities.Lesson;
 import de.uftos.entities.LessonsCount;
 import de.uftos.entities.StudentGroup;
 import de.uftos.entities.Subject;
-import de.uftos.repositories.database.CurriculumRepository;
 import de.uftos.repositories.database.ConstraintInstanceRepository;
 import de.uftos.repositories.database.ConstraintSignatureRepository;
+import de.uftos.repositories.database.CurriculumRepository;
 import de.uftos.repositories.database.GradeRepository;
 import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.StudentGroupRepository;
@@ -50,13 +50,11 @@ public class GradeService {
   /**
    * Creates a grade service.
    *
-   * @param repository             the repository for accessing the grade table.
-   * @param serverRepository       the repository for accessing the server table.
-   * @param studentGroupRepository the repository for accessing the student group table.
-   * @param curriculumRepository   the repository for accessing the curriculum table.
-   * @param subjectRepository      the repository for accessing the subject table.
    * @param repository                    the repository for accessing the grade table.
+   * @param serverRepository              the repository for accessing the server table.
    * @param studentGroupRepository        the repository for accessing the student group table.
+   * @param curriculumRepository          the repository for accessing the curriculum table.
+   * @param subjectRepository             the repository for accessing the subject table.
    * @param constraintSignatureRepository the repository for accessing the constraint signature table.
    * @param constraintInstanceRepository  the repository for accessing the constraint instance table.
    */
@@ -64,10 +62,9 @@ public class GradeService {
   public GradeService(GradeRepository repository, ServerRepository serverRepository,
                       StudentGroupRepository studentGroupRepository,
                       CurriculumRepository curriculumRepository,
-                      SubjectRepository subjectRepository) {
+                      SubjectRepository subjectRepository,
                       ConstraintSignatureRepository constraintSignatureRepository,
-                      ConstraintInstanceRepository constraintInstanceRepository,
-                      StudentGroupRepository studentGroupRepository) {
+                      ConstraintInstanceRepository constraintInstanceRepository) {
     this.repository = repository;
     this.serverRepository = serverRepository;
     this.constraintSignatureRepository = constraintSignatureRepository;
