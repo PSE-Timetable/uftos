@@ -9,7 +9,6 @@ import {
   getConstraintInstances,
   getGrades,
   getRooms,
-  getStudentGroup,
   getStudents,
   getSubjects,
   getTags,
