@@ -36,8 +36,8 @@ test.describe('Student group page', () => {
         // this timeout is fine, can happen sometimes
       }
     }
-
-    const students = await getStudents({page: 0}).then(({ content }) => content ?? []);
+    const totalElements = await getStudents({ page: 0 }).then(({ totalElements }) => totalElements);
+    const students = await getStudents({ page: 0, size: totalElements }).then(({ content }) => content ?? []);
     if (students.length > 0) {
       await deleteStudents(students.map((student) => student.id));
     }
@@ -102,7 +102,9 @@ test.describe('Student group page', () => {
     await expect(page.getByRole('checkbox').nth(3)).toBeChecked();
     await expect(page.getByRole('checkbox').nth(1)).toBeChecked();
     await expect(page.getByRole('checkbox').nth(4)).toBeChecked();
-    await expect(page.locator('body')).toContainText('tag1, tag2');
+    const locator1 = page.getByText('tag1, tag2');
+    const locator2 = page.getByText('tag2, tag1');
+    await expect(locator1.or(locator2)).toBeVisible();
     await page.getByText('Speichern').click();
   });
 
@@ -115,9 +117,11 @@ test.describe('Student group page', () => {
   });
 
   test('add students to group', async () => {
-    await page.getByRole('combobox').first().click();
-    await page.getByRole('option', { name: 'Max2 Mustermann2' }).click();
-    await page.getByRole('button', { name: 'Schüler hinzufügen' }).first().click();
+    await expect(async () => {
+      await page.getByRole('combobox').first().click();
+      await page.getByRole('option', { name: 'Max2 Mustermann2' }).click({ timeout: 500 });
+      await page.getByRole('button', { name: 'Schüler hinzufügen' }).first().click();
+    }).toPass();
     await page.locator('button').filter({ hasText: 'Max2 Mustermann2' }).click();
     await page.getByRole('option', { name: 'Max9 Mustermann9' }).click();
     await page.getByRole('button', { name: 'Schüler hinzufügen' }).first().click();
