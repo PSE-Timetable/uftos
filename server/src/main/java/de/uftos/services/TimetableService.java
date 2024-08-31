@@ -280,13 +280,13 @@ public class TimetableService {
     List<Curriculum> curriculums = curriculumRepository.findAll();
     if (curriculums.isEmpty()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "There must be at least one curriculum to create a timetable");
+          "Es muss mindestens ein Curriculum vorhanden sein, um einen Stundenplan zu erstellen");
     }
 
     List<StudentGroup> studentGroups = studentGroupRepository.findAll();
     if (studentGroups.isEmpty()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "There must be at least one student group to create a timetable");
+          "Es muss mindestens eine Schülergruppe vorhanden sein, um einen Stundenplan zu erstellen");
     }
     for (StudentGroup studentGroup : studentGroups) {
       for (Curriculum curriculum : curriculums) {
@@ -295,10 +295,9 @@ public class TimetableService {
         }
 
         List<LessonsCount> lessonsCounts = curriculum.getLessonsCounts();
-        // TODO is this needed?
         if (lessonsCounts.isEmpty()) {
           throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-              "There must be at least one lesson set in a curriculum to create a timetable");
+              "Es muss mindestens ein Fach vorhanden sein, um einen Stundenplan zu erstellen");
         }
 
         for (LessonsCount lessonsCount : lessonsCounts) {
@@ -313,7 +312,7 @@ public class TimetableService {
             // but you never know...
             if (serverData.isEmpty()) {
               throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                  "You must set the server metadata to create a timetable");
+                  "Man muss die Server-Metadaten einstellen, um einen Stundenplan zu erstellen");
             }
             lesson.setYear(serverData.getLast().getCurrentYear());
 
@@ -324,7 +323,7 @@ public class TimetableService {
             List<Teacher> teachers = teacherRepository.findAll();
             if (teachers.isEmpty()) {
               throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                  "There must be at least one teacher to create a timetable");
+                  "Es muss mindestens ein Lehrer vorhanden sein, um einen Stundenplan zu erstellen");
             }
             lesson.setTeacher(
                 teachers.get((int) (Math.random() * teacherRepository.count())));
@@ -332,7 +331,7 @@ public class TimetableService {
             List<Room> rooms = roomRepository.findAll();
             if (rooms.isEmpty()) {
               throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                  "There must be at least one room to create a timetable");
+                  "Es muss mindestens ein Raum vorhanden sein, um einen Stundenplan zu erstellen");
             }
             lesson.setRoom(
                 rooms.get((int) (Math.random() * roomRepository.count())));
@@ -340,7 +339,7 @@ public class TimetableService {
             List<Timeslot> timeslots = timeslotRepository.findAll();
             if (timeslots.isEmpty()) {
               throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                  "There must be at least one timeslot to create a timetable");
+                  "Es muss mindestens ein Timeslot vorhanden sein, um einen Fahrplan zu erstellen");
             }
             lesson.setTimeslot(
                 timeslots
