@@ -146,7 +146,7 @@ export type CurriculumRequestDto = {
     lessonsCounts: LessonsCountRequestDto[];
     name: string;
 };
-export type ParsingResponse = {
+export type SuccessResponse = {
     message: string;
     success: boolean;
 };
@@ -158,6 +158,20 @@ export type GradeRequestDto = {
     studentGroupIds: string[];
     tagIds: string[];
 };
+export type Student = {
+    firstName: string;
+    id: string;
+    lastName: string;
+    tags: Tag[];
+};
+export type StudentGroupResponseDto = {
+    grades: GradeResponseDto[];
+    id: string;
+    name: string;
+    students: Student[];
+    subjects: Subject[];
+    tags: Tag[];
+};
 export type Timeslot = {
     day: Day;
     id: string;
@@ -166,12 +180,14 @@ export type Timeslot = {
 };
 export type BulkLesson = {
     gradeIds: string[];
+    groupId: string;
     id: string;
     index?: number;
     roomId: string;
     subjectId: string;
     teacherId: string;
     timeslot: Timeslot;
+    timetableId: string;
 };
 export type Room = {
     buildingName: string;
@@ -194,11 +210,12 @@ export type Timetable = {
 };
 export type LessonResponseDto = {
     grades: GradeResponseDto[];
+    groups: StudentGroupResponseDto[];
     lessons: BulkLesson[];
     rooms: Room[];
     subjects: Subject[];
     teachers: Teacher[];
-    timetable: Timetable;
+    timetables: Timetable[];
 };
 export type PageLessonResponseDto = {
     content?: LessonResponseDto[];
@@ -234,12 +251,6 @@ export type Grade = {
     name?: string;
     studentGroups?: StudentGroup[];
     tags?: Tag[];
-};
-export type Student = {
-    firstName: string;
-    id: string;
-    lastName: string;
-    tags: Tag[];
 };
 export type StudentGroup = {
     grades: Grade[];
@@ -297,15 +308,6 @@ export type TimetableMetadata = {
     timeslotLength: number;
     timeslotsAmount: number;
 };
-export type StudentGroupResponseDto = {
-    grades: GradeResponseDto[];
-    id: string;
-    lessons: Lesson[];
-    name: string;
-    students: Student[];
-    subjects: Subject[];
-    tags: Tag[];
-};
 export type PageStudentGroupResponseDto = {
     content?: StudentGroupResponseDto[];
     empty?: boolean;
@@ -341,7 +343,6 @@ export type PageStudent = {
 };
 export type StudentRequestDto = {
     firstName: string;
-    groupIds: string[];
     lastName: string;
     tagIds: string[];
 };
@@ -522,7 +523,7 @@ export function setUcdlFile(body?: {
 } = {}, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
-        data: ParsingResponse;
+        data: SuccessResponse;
     }>(`/editor${QS.query(QS.explode({
         force
     }))}`, oazapfts.multipart({
@@ -541,10 +542,17 @@ export function validateUcdlFile(body?: {
 }, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
-        data: ParsingResponse;
+        data: SuccessResponse;
     }>("/editor/validate", oazapfts.multipart({
         ...opts,
         method: "PUT",
+        body
+    })));
+}
+export function deleteGrades(body: string[], opts?: Oazapfts.RequestOpts) {
+    return oazapfts.ok(oazapfts.fetchText("/grades", oazapfts.json({
+        ...opts,
+        method: "DELETE",
         body
     })));
 }
@@ -572,12 +580,6 @@ export function createGrade(gradeRequestDto: GradeRequestDto, opts?: Oazapfts.Re
         method: "POST",
         body: gradeRequestDto
     })));
-}
-export function deleteGrade(id: string, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.ok(oazapfts.fetchText(`/grades/${encodeURIComponent(id)}`, {
-        ...opts,
-        method: "DELETE"
-    }));
 }
 export function getGrade(id: string, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
@@ -649,6 +651,13 @@ export function updateLesson(id: string, lessonRequestDto: LessonRequestDto, opt
         body: lessonRequestDto
     })));
 }
+export function deleteRooms(body: string[], opts?: Oazapfts.RequestOpts) {
+    return oazapfts.ok(oazapfts.fetchText("/rooms", oazapfts.json({
+        ...opts,
+        method: "DELETE",
+        body
+    })));
+}
 export function getRooms(pageable: Pageable, { search, capacity, tags }: {
     search?: string;
     capacity?: number;
@@ -675,12 +684,6 @@ export function createRoom(roomRequestDto: RoomRequestDto, opts?: Oazapfts.Reque
         method: "POST",
         body: roomRequestDto
     })));
-}
-export function deleteRoom(id: string, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.ok(oazapfts.fetchText(`/rooms/${encodeURIComponent(id)}`, {
-        ...opts,
-        method: "DELETE"
-    }));
 }
 export function getRoom(id: string, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
@@ -805,6 +808,13 @@ export function addStudentsToStudentGroup(id: string, body: string[], opts?: Oaz
         body
     })));
 }
+export function deleteStudents(body: string[], opts?: Oazapfts.RequestOpts) {
+    return oazapfts.ok(oazapfts.fetchText("/students", oazapfts.json({
+        ...opts,
+        method: "DELETE",
+        body
+    })));
+}
 export function getStudents(pageable: Pageable, { search, groups, tags }: {
     search?: string;
     groups?: string[];
@@ -832,12 +842,6 @@ export function createStudent(studentRequestDto: StudentRequestDto, opts?: Oazap
         body: studentRequestDto
     })));
 }
-export function deleteStudent(id: string, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.ok(oazapfts.fetchText(`/students/${encodeURIComponent(id)}`, {
-        ...opts,
-        method: "DELETE"
-    }));
-}
 export function getStudent(id: string, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
@@ -854,6 +858,21 @@ export function updateStudent(id: string, studentRequestDto: StudentRequestDto, 
         ...opts,
         method: "PUT",
         body: studentRequestDto
+    })));
+}
+export function getStudentLessons(id: string, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.ok(oazapfts.fetchJson<{
+        status: 200;
+        data: LessonResponseDto;
+    }>(`/students/${encodeURIComponent(id)}/lessons`, {
+        ...opts
+    }));
+}
+export function deleteSubjects(body: string[], opts?: Oazapfts.RequestOpts) {
+    return oazapfts.ok(oazapfts.fetchText("/subjects", oazapfts.json({
+        ...opts,
+        method: "DELETE",
+        body
     })));
 }
 export function getSubjects(sort: Sort, { search }: {
@@ -879,12 +898,6 @@ export function createSubject(subjectRequestDto: SubjectRequestDto, opts?: Oazap
         body: subjectRequestDto
     })));
 }
-export function deleteSubject(id: string, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.ok(oazapfts.fetchText(`/subjects/${encodeURIComponent(id)}`, {
-        ...opts,
-        method: "DELETE"
-    }));
-}
 export function getSubject(id: string, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
@@ -901,6 +914,13 @@ export function updateSubject(id: string, subjectRequestDto: SubjectRequestDto, 
         ...opts,
         method: "PUT",
         body: subjectRequestDto
+    })));
+}
+export function deleteTags(body: string[], opts?: Oazapfts.RequestOpts) {
+    return oazapfts.ok(oazapfts.fetchText("/tags", oazapfts.json({
+        ...opts,
+        method: "DELETE",
+        body
     })));
 }
 export function getTags(sort: Sort, { search }: {
@@ -926,12 +946,6 @@ export function createTag(tagRequestDto: TagRequestDto, opts?: Oazapfts.RequestO
         body: tagRequestDto
     })));
 }
-export function deleteTag(id: string, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.ok(oazapfts.fetchText(`/tags/${encodeURIComponent(id)}`, {
-        ...opts,
-        method: "DELETE"
-    }));
-}
 export function getTag(id: string, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
@@ -948,6 +962,13 @@ export function updateTag(id: string, tagRequestDto: TagRequestDto, opts?: Oazap
         ...opts,
         method: "PUT",
         body: tagRequestDto
+    })));
+}
+export function deleteTeachers(body: string[], opts?: Oazapfts.RequestOpts) {
+    return oazapfts.ok(oazapfts.fetchText("/teachers", oazapfts.json({
+        ...opts,
+        method: "DELETE",
+        body
     })));
 }
 export function getTeachers(pageable: Pageable, { search, subjects, tags }: {
@@ -976,12 +997,6 @@ export function createTeacher(teacherRequestDto: TeacherRequestDto, opts?: Oazap
         method: "POST",
         body: teacherRequestDto
     })));
-}
-export function deleteTeacher(id: string, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.ok(oazapfts.fetchText(`/teachers/${encodeURIComponent(id)}`, {
-        ...opts,
-        method: "DELETE"
-    }));
 }
 export function getTeacher(id: string, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
@@ -1071,7 +1086,7 @@ export function getTimetables(pageable: Pageable, { name }: {
 export function createTimetable(timetableRequestDto: TimetableRequestDto, opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
         status: 200;
-        data: Timetable;
+        data: SuccessResponse;
     }>("/timetables", oazapfts.json({
         ...opts,
         method: "POST",
@@ -1116,7 +1131,5 @@ export enum Day {
     Tuesday = "TUESDAY",
     Wednesday = "WEDNESDAY",
     Thursday = "THURSDAY",
-    Friday = "FRIDAY",
-    Saturday = "SATURDAY",
-    Sunday = "SUNDAY"
+    Friday = "FRIDAY"
 }

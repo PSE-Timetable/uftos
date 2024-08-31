@@ -1,5 +1,6 @@
 package de.uftos.e2e;
 
+import static de.uftos.utils.JsonGenerator.generateIdListJson;
 import static de.uftos.utils.JsonGenerator.generatePageJson;
 import static de.uftos.utils.JsonGenerator.generateTagJson;
 import static io.restassured.RestAssured.given;
@@ -52,13 +53,8 @@ class TagsTest {
   static void deleteCreatedTags() {
     given().contentType(ContentType.JSON)
         .when()
-        .delete("/tags/{id}", tagId1)
-        .then()
-        .statusCode(200);
-
-    given().contentType(ContentType.JSON)
-        .when()
-        .delete("/tags/{id}", tagId2)
+        .body(generateIdListJson(tagId1, tagId2))
+        .delete("/tags")
         .then()
         .statusCode(200);
   }

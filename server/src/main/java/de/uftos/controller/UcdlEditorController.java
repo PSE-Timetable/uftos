@@ -1,6 +1,6 @@
 package de.uftos.controller;
 
-import de.uftos.dto.ucdl.ParsingResponse;
+import de.uftos.dto.SuccessResponse;
 import de.uftos.services.UcdlEditorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -39,7 +39,7 @@ public class UcdlEditorController {
    * @return a response whether the file could be parsed successfully or not.
    */
   @PutMapping(value = "/validate", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public ParsingResponse validateUcdlFile(@RequestParam(value = "file") MultipartFile file) {
+  public SuccessResponse validateUcdlFile(@RequestParam(value = "file") MultipartFile file) {
     return this.editorService.validate(file);
   }
 
@@ -52,7 +52,7 @@ public class UcdlEditorController {
    * @return a response whether the file could be parsed and saved successfully or not.
    */
   @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public ParsingResponse setUcdlFile(@RequestParam(value = "file") MultipartFile file,
+  public SuccessResponse setUcdlFile(@RequestParam(value = "file") MultipartFile file,
                                      @RequestParam(value = "force", required = false, defaultValue = "false")
                                      boolean force) {
     return this.editorService.setUcdl(file, force);

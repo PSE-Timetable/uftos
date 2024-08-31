@@ -2,6 +2,7 @@ package de.uftos.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.hypersistence.utils.hibernate.type.search.PostgreSQLTSVectorType;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -12,6 +13,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
@@ -48,7 +50,8 @@ public class Subject {
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(name = "subjects_tags",
       joinColumns = @JoinColumn(name = "subjects_id"),
-      inverseJoinColumns = @JoinColumn(name = "tags_id"))
+      inverseJoinColumns = @JoinColumn(name = "tags_id"),
+      uniqueConstraints = @UniqueConstraint(columnNames = {"subjects_id", "tags_id"}))
   private List<Tag> tags;
 
   @JsonIgnore
@@ -56,7 +59,7 @@ public class Subject {
   private List<Lesson> lessons;
 
   @JsonIgnore
-  @OneToMany(mappedBy = "subject")
+  @OneToMany(mappedBy = "subject", cascade = CascadeType.REMOVE)
   private List<LessonsCount> lessonsCounts;
 
   @JsonIgnore

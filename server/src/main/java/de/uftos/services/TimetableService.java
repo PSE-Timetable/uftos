@@ -1,5 +1,6 @@
 package de.uftos.services;
 
+import de.uftos.dto.SuccessResponse;
 import de.uftos.dto.requestdtos.TimetableRequestDto;
 import de.uftos.dto.solver.ConstraintInstanceDto;
 import de.uftos.dto.solver.GradeProblemDto;
@@ -161,9 +162,10 @@ public class TimetableService {
    * @throws ResponseStatusException is thrown if the ID doesn't have a corresponding timetable.
    */
   public Timetable getById(String id) {
-    var timetable = this.timetableRepository.findById(id);
+    Optional<Timetable> timetable = this.timetableRepository.findById(id);
 
-    return timetable.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+    return timetable.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+        "Could not find a timetable with this id"));
   }
 
   /**
@@ -173,12 +175,12 @@ public class TimetableService {
    * @return the created timetable which includes the ID that was assigned.
    * @throws ResponseStatusException is thrown if the name of the timetable is blank.
    */
-  public Timetable create(TimetableRequestDto timetable) throws ResponseStatusException {
+  public SuccessResponse create(TimetableRequestDto timetable) throws ResponseStatusException {
     if (timetable.name().isBlank()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "The name of the timetable is blank.");
+      return new SuccessResponse(false, "The name of the timetable is blank.");
     }
     Consumer<TimetableSolutionDto> solverFinishedEvent = (solution) -> {
+      saveSolution(solution);
       if (solution.hardScore() < 0) {
         this.notificationRepository.notify(NotificationType.EMAIL,
             "Stundenplan konnte nicht erstellt werden",
@@ -186,7 +188,6 @@ public class TimetableService {
                 -solution.hardScore(), -solution.softScore()));
         return;
       }
-      saveSolution(solution);
       this.notificationRepository.notify(NotificationType.EMAIL, "Studenplan ist fertig!",
           "Der Stundenplan wurde erfolgreich berechnet, wobei "
               + "%d Soft Constraint(s) nicht erfüllt wurden.".formatted(-solution.softScore()));
@@ -197,9 +198,9 @@ public class TimetableService {
       TimetableProblemDto problemInstance = getProblemInstance(timetableEntity);
       solverRepository.solve(problemInstance, solverFinishedEvent).get();
     } catch (InterruptedException | ExecutionException | BadRequestException e) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+      return new SuccessResponse(false, e.getMessage());
     }
-    return timetable.map(); //todo: change signature of method as this is a useless return value
+    return new SuccessResponse(true, "Solver erfolgreich gestartet!");
   }
 
   @SuppressWarnings("checkstyle:VariableDeclarationUsageDistance")
@@ -290,9 +291,13 @@ public class TimetableService {
             lesson.setIndex(index);
             lesson.setStudentGroup(studentGroup);
             lesson.setSubject(lessonsCount.getSubject());
-            lesson.setTeacher(teacherRepository.findAll().getFirst());
-            lesson.setRoom(roomRepository.findAll().getFirst());
-            lesson.setTimeslot(timeslotRepository.findAll().getFirst());
+            lesson.setTeacher(
+                teacherRepository.findAll().get((int) (Math.random() * teacherRepository.count())));
+            lesson.setRoom(
+                roomRepository.findAll().get((int) (Math.random() * roomRepository.count())));
+            lesson.setTimeslot(
+                timeslotRepository.findAll()
+                    .get((int) (Math.random() * timeslotRepository.count())));
             lesson.setTimetable(timetable);
 
             lessonRepository.save(lesson);
@@ -487,11 +492,6 @@ public class TimetableService {
   }
 
   private void saveSolution(TimetableSolutionDto solution) {
-    if (solution.hardScore() < 0) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          (-solution.hardScore()) + " hard constraints could not be satisfied");
-    }
-
     HashMap<String, LessonProblemDto> lessons = new HashMap<>();
 
     for (LessonProblemDto lesson : solution.lessons()) {
@@ -518,9 +518,8 @@ public class TimetableService {
       lessonEntity.setRoom(room.get());
       lessonEntity.setTeacher(teacher.get());
       lessonEntity.setTimeslot(timeslot.get());
-
-      lessonRepository.save(lessonEntity);
     }
+    lessonRepository.saveAll(lessonEntities);
   }
 
   /**
@@ -530,9 +529,10 @@ public class TimetableService {
    * @throws ResponseStatusException is thrown if no timetable exists with the given ID.
    */
   public void delete(String id) {
-    var timetable = this.timetableRepository.findById(id);
+    Optional<Timetable> timetable = this.timetableRepository.findById(id);
     if (timetable.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "Could not find a timetable with this id");
     }
 
     this.timetableRepository.delete(timetable.get());

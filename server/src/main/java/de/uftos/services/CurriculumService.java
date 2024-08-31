@@ -65,7 +65,8 @@ public class CurriculumService {
    */
   public CurriculumResponseDto getById(String id) {
     Curriculum curriculum = this.repository.findById(id)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+            "Could not find a curriculum with this id"));
     return new CurriculumResponseDto(curriculum);
   }
 
@@ -78,10 +79,12 @@ public class CurriculumService {
    */
   public CurriculumResponseDto create(CurriculumRequestDto curriculum) {
     if (curriculum.name().isBlank()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The name of the curriculum is blank.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "The name of the curriculum is blank.");
     }
     Grade grade = gradeRepository.findById(curriculum.gradeId())
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+            "Could not find a grade with this id"));
     return this.mapResponseDto(this.repository.save(curriculum.map(grade)));
   }
 
@@ -100,9 +103,12 @@ public class CurriculumService {
    */
   public CurriculumResponseDto update(String id, CurriculumRequestDto curriculumRequest) {
     Grade grade = gradeRepository.findById(curriculumRequest.gradeId())
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+            "Could not find a grade with this id"));
     Curriculum curriculum = curriculumRequest.map(grade);
-    curriculum.setId(id);
+    this.repository.delete(this.repository.findById(id)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+            "Could not find a curriculum with this id")));
     return new CurriculumResponseDto(this.repository.save(curriculum));
   }
 
@@ -113,9 +119,10 @@ public class CurriculumService {
    * @throws ResponseStatusException is thrown if no curriculum exists with the given ID.
    */
   public void delete(String id) {
-    var curriculum = this.repository.findById(id);
+    Optional<Curriculum> curriculum = this.repository.findById(id);
     if (curriculum.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "Could not find a curriculum with this id");
     }
 
     this.repository.delete(curriculum.get());

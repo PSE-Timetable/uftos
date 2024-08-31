@@ -1,11 +1,19 @@
 package de.uftos.services;
 
 import de.uftos.dto.requestdtos.StudentRequestDto;
+import de.uftos.dto.responsedtos.LessonResponseDto;
+import de.uftos.entities.Lesson;
 import de.uftos.entities.Student;
 import de.uftos.entities.StudentGroup;
+import de.uftos.repositories.database.ConstraintInstanceRepository;
+import de.uftos.repositories.database.ConstraintSignatureRepository;
+import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.StudentGroupRepository;
 import de.uftos.repositories.database.StudentRepository;
+import de.uftos.utils.ConstraintInstanceDeleter;
 import de.uftos.utils.SpecificationBuilder;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,18 +31,30 @@ import org.springframework.web.server.ResponseStatusException;
 public class StudentService {
   private final StudentRepository repository;
   private final StudentGroupRepository studentGroupRepository;
+  private final ServerRepository serverRepository;
+  private final ConstraintInstanceRepository constraintInstanceRepository;
+  private final ConstraintSignatureRepository constraintSignatureRepository;
 
   /**
    * Creates a student service.
    *
-   * @param repository      the repository for accessing the student table.
-   * @param studentGroupRepository the repository for accessing the student group table.
+   * @param repository                    the repository for accessing the student table.
+   * @param studentGroupRepository        the repository for accessing the student group table.
+   * @param serverRepository              the repository for accessing the server table.
+   * @param constraintInstanceRepository  the repository for accessing the constraint instance table.
+   * @param constraintSignatureRepository the repository for accessing the constraint signature table.
    */
   @Autowired
   public StudentService(StudentRepository repository,
-                        StudentGroupRepository studentGroupRepository) {
+                        StudentGroupRepository studentGroupRepository,
+                        ServerRepository serverRepository,
+                        ConstraintInstanceRepository constraintInstanceRepository,
+                        ConstraintSignatureRepository constraintSignatureRepository) {
     this.repository = repository;
     this.studentGroupRepository = studentGroupRepository;
+    this.serverRepository = serverRepository;
+    this.constraintInstanceRepository = constraintInstanceRepository;
+    this.constraintSignatureRepository = constraintSignatureRepository;
   }
 
   /**
@@ -66,7 +86,25 @@ public class StudentService {
   public Student getById(String id) {
     Optional<Student> student = this.repository.findById(id);
 
-    return student.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+    return student.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+        "Could not find a student with this id"));
+  }
+
+  /**
+   * Gets the information about the lessons that the student attends.
+   *
+   * @param id the ID of the student.
+   * @return a LessonResponseDto containing information about the lessons.
+   * @throws ResponseStatusException is thrown if the ID doesn't have a corresponding student.
+   */
+  public LessonResponseDto getLessonsById(String id) {
+    Student student = getById(id);
+    List<StudentGroup> studentGroups = student.getGroups();
+    List<Lesson> lessons = new ArrayList<>(
+        studentGroups.stream().flatMap(group -> group.getLessons().stream()).toList());
+    lessons.removeIf(
+        lesson -> !lesson.getYear().equals(serverRepository.findAll().getFirst().getCurrentYear()));
+    return LessonResponseDto.createResponseDtoFromLessons(lessons);
   }
 
   /**
@@ -82,21 +120,7 @@ public class StudentService {
           "The first or last name of the student is blank.");
     }
     Student student = rawStudent.map();
-    String studentId = this.repository.save(student).getId();
-
-    List<StudentGroup> studentGroups =
-        this.studentGroupRepository.findAllById(rawStudent.groupIds());
-    if (studentGroups.size() != rawStudent.groupIds().size()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "Could not find all student groups by id");
-    }
-    for (StudentGroup group : studentGroups) {
-      group.getStudents().add(student);
-      this.studentGroupRepository.save(group);
-    }
-
-    //noinspection OptionalGetWithoutIsPresent
-    return this.repository.findById(studentId).get();
+    return this.repository.save(student);
   }
 
   /**
@@ -114,36 +138,36 @@ public class StudentService {
     }
     Student student = studentRequest.map();
     student.setId(id);
-    this.repository.save(student);
-
-    List<StudentGroup> studentGroups =
-        this.studentGroupRepository.findAllById(studentRequest.groupIds());
-    for (StudentGroup group : studentGroups) {
-      group.getStudents().add(student);
-      this.studentGroupRepository.save(group);
-    }
-
-    //noinspection OptionalGetWithoutIsPresent
-    return this.repository.findById(id).get();
+    return this.repository.save(student);
   }
 
   /**
-   * Deletes the student with the given ID.
+   * Deletes the students with the given IDs.
    *
-   * @param id the ID of the student which is to be deleted.
-   * @throws ResponseStatusException is thrown if no student exists with the given ID.
+   * @param ids the IDs of the students which are to be deleted.
+   * @throws ResponseStatusException is thrown if no students exist with the given IDs.
    */
-  public void delete(String id) {
-    Optional<Student> student = this.repository.findById(id);
-    if (student.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+  public void deleteStudents(String[] ids) {
+    List<String> studentIds = Arrays.asList(ids);
+    List<Student> students = this.repository.findAllById(studentIds);
+    if (students.isEmpty() || students.size() != ids.length) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "There exist no students with the given id(s).");
     }
-    List<StudentGroup> studentGroups = studentGroupRepository.findByStudents(student.get());
+    Specification<StudentGroup> groupSpecification = new SpecificationBuilder<StudentGroup>()
+        .optionalAndJoinIn(Optional.of(ids), "students", "id")
+        .build();
+
+    List<StudentGroup> studentGroups = this.studentGroupRepository.findAll(groupSpecification);
     for (StudentGroup group : studentGroups) {
-      group.getStudents().removeIf(student1 -> student1.getId().equals(id));
+      group.getStudents().removeIf(students::contains);
     }
+
     studentGroupRepository.saveAll(studentGroups);
 
-    this.repository.delete(student.get());
+    new ConstraintInstanceDeleter(constraintSignatureRepository, constraintInstanceRepository)
+        .removeAllInstancesWithArgumentValue(ids);
+
+    this.repository.deleteAllById(Arrays.stream(ids).toList());
   }
 }

@@ -1,5 +1,6 @@
 package de.uftos.services;
 
+import static de.uftos.utils.ClassCaster.getClassType;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -13,8 +14,7 @@ import de.uftos.dto.requestdtos.StudentRequestDto;
 import de.uftos.entities.Student;
 import de.uftos.entities.StudentGroup;
 import de.uftos.entities.Tag;
-import de.uftos.repositories.database.StudentGroupRepository;
-import de.uftos.repositories.database.ServerRepository;
+import de.uftos.repositories.database.ConstraintSignatureRepository;
 import de.uftos.repositories.database.StudentGroupRepository;
 import de.uftos.repositories.database.StudentRepository;
 import java.util.Collections;
@@ -29,6 +29,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.web.server.ResponseStatusException;
 
 @SuppressWarnings("checkstyle:MissingJavadocType")
@@ -40,6 +41,9 @@ public class StudentServiceTest {
 
   @Mock
   private StudentRepository studentRepository;
+
+  @Mock
+  private ConstraintSignatureRepository constraintSignatureRepository;
 
   @InjectMocks
   private StudentService studentService;
@@ -56,10 +60,13 @@ public class StudentServiceTest {
 
     when(studentRepository.findAll()).thenReturn(List.of(student));
     when(studentRepository.findById("123")).thenReturn(Optional.of(student));
-    when(studentGroupRepository.findByStudents(any(Student.class))).thenReturn(Collections.emptyList());
+    when(studentRepository.findAllById(List.of("123"))).thenReturn(List.of(student));
+    when(constraintSignatureRepository.findAll(any(Specification.class))).thenReturn(
+        Collections.emptyList());
+    when(studentGroupRepository.findByStudents(any(Student.class))).thenReturn(
+        Collections.emptyList());
     when(studentRepository.save(any(Student.class))).thenReturn(student);
   }
-
 
   @Test
   void getByNonExistentId() {
@@ -83,7 +90,7 @@ public class StudentServiceTest {
   @Test
   void createStudent() {
     StudentRequestDto requestDto =
-        new StudentRequestDto("Max", "Mustermann", List.of(), List.of("tagId"));
+        new StudentRequestDto("Max", "Mustermann", List.of("tagId"));
     studentService.create(requestDto);
 
     ArgumentCaptor<Student> studentCap = ArgumentCaptor.forClass(Student.class);
@@ -102,14 +109,14 @@ public class StudentServiceTest {
   @Test
   void createEmptyFirstNameStudent() {
     StudentRequestDto requestDto = new StudentRequestDto("", "Mustermann",
-        List.of(), List.of());
+        List.of());
     assertThrows(ResponseStatusException.class,
         () -> studentService.create(requestDto));
   }
 
   @Test
   void createEmptyLastNameStudent() {
-    StudentRequestDto requestDto = new StudentRequestDto("Max", "", List.of(),
+    StudentRequestDto requestDto = new StudentRequestDto("Max", "",
         List.of());
     assertThrows(ResponseStatusException.class,
         () -> studentService.create(requestDto));
@@ -118,7 +125,7 @@ public class StudentServiceTest {
   @Test
   void updateStudent() {
     StudentRequestDto requestDto =
-        new StudentRequestDto("newFirstName", "newLastName", List.of(),
+        new StudentRequestDto("newFirstName", "newLastName",
             List.of());
     studentService.update("123", requestDto);
 
@@ -137,7 +144,7 @@ public class StudentServiceTest {
   @Test
   void updateEmptyFirstNameStudent() {
     StudentRequestDto requestDto = new StudentRequestDto("", "Mustermann",
-        List.of(), List.of());
+        List.of());
     assertThrows(ResponseStatusException.class,
         () -> studentService.update("123", requestDto));
   }
@@ -145,24 +152,26 @@ public class StudentServiceTest {
   @Test
   void updateEmptyLastNameStudent() {
     StudentRequestDto requestDto = new StudentRequestDto("Max", "",
-        List.of(), List.of());
+        List.of());
     assertThrows(ResponseStatusException.class,
         () -> studentService.update("123", requestDto));
   }
 
   @Test
   void deleteExistentStudent() {
-    assertDoesNotThrow(() -> studentService.delete("123"));
-    ArgumentCaptor<Student> studentCap = ArgumentCaptor.forClass(Student.class);
-    verify(studentRepository, times(1)).delete(studentCap.capture());
+    assertDoesNotThrow(() -> studentService.deleteStudents(new String[] {"123"}));
+    ArgumentCaptor<List<String>> studentCap = ArgumentCaptor.forClass(getClassType());
+    verify(studentRepository, times(1)).deleteAllById(studentCap.capture());
 
-    Student student = studentCap.getValue();
-    assertEquals("123", student.getId());
+    List<String> student = studentCap.getValue();
+
+    assertEquals(1, student.size());
+    assertEquals("123", student.getFirst());
   }
 
   @Test
   void deleteNonExistentStudent() {
-    assertThrows(ResponseStatusException.class, () -> studentService.delete("nonExistentId"));
+    assertThrows(ResponseStatusException.class,
+        () -> studentService.deleteStudents(new String[] {"nonExistentId"}));
   }
-
 }

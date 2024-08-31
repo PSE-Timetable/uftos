@@ -16,10 +16,7 @@
       <p class="text-xl font-bold">Adminseite</p>
     </div>
     <div class="flex flex-col gap-2 items-center">
-      <a
-        href="/timetable/teacher"
-        class="flex justify-center items-center bg-white p-4 w-full rounded-lg hover:bg-accent"
-      >
+      <a href="/timetable" class="flex justify-center items-center bg-white p-4 w-full rounded-lg hover:bg-accent">
         <Calendar class="w-[10vw] h-[10vw] stroke-primary hover:stroke-white" />
       </a>
       <p class="text-xl font-bold">Stundenplanseite</p>

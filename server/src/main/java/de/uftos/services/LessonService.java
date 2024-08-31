@@ -4,6 +4,7 @@ import de.uftos.dto.requestdtos.LessonRequestDto;
 import de.uftos.dto.responsedtos.LessonResponseDto;
 import de.uftos.entities.Lesson;
 import de.uftos.repositories.database.LessonRepository;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -47,9 +48,10 @@ public class LessonService {
    * @throws ResponseStatusException is thrown if the ID doesn't have a corresponding lesson.
    */
   public Lesson getById(String id) {
-    var lesson = this.repository.findById(id);
+    Optional<Lesson> lesson = this.repository.findById(id);
 
-    return lesson.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+    return lesson.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+        "Could not find a lesson with this id!"));
   }
 
   /**
@@ -62,8 +64,10 @@ public class LessonService {
    */
   public Lesson create(LessonRequestDto lessonRequestDto) {
     Lesson lesson = lessonRequestDto.map();
+    // TODO why is this here? This doesn't make any sense
     if (this.repository.findById(lesson.getId()).isPresent()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "There already exists a lesson with this id!");
     }
 
     return this.repository.save(lesson);
@@ -90,9 +94,10 @@ public class LessonService {
    * @throws ResponseStatusException is thrown if no lesson exists with the given ID.
    */
   public void delete(String id) {
-    var lesson = this.repository.findById(id);
+    Optional<Lesson> lesson = this.repository.findById(id);
     if (lesson.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "Could not find a lesson with this id!");
     }
 
     this.repository.delete(lesson.get());

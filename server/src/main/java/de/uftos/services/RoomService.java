@@ -4,10 +4,17 @@ import de.uftos.dto.requestdtos.RoomRequestDto;
 import de.uftos.dto.responsedtos.LessonResponseDto;
 import de.uftos.entities.Lesson;
 import de.uftos.entities.Room;
+import de.uftos.repositories.database.ConstraintInstanceRepository;
+import de.uftos.repositories.database.ConstraintSignatureRepository;
+import de.uftos.repositories.database.LessonRepository;
 import de.uftos.repositories.database.RoomRepository;
 import de.uftos.repositories.database.ServerRepository;
+import de.uftos.repositories.database.TimetableRepository;
+import de.uftos.utils.ConstraintInstanceDeleter;
+import de.uftos.utils.LessonsDeleter;
 import de.uftos.utils.SpecificationBuilder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,16 +32,31 @@ import org.springframework.web.server.ResponseStatusException;
 public class RoomService {
   private final RoomRepository repository;
   private final ServerRepository serverRepository;
+  private final ConstraintSignatureRepository constraintSignatureRepository;
+  private final ConstraintInstanceRepository constraintInstanceRepository;
+  private final LessonRepository lessonRepository;
+  private final TimetableRepository timetableRepository;
 
   /**
    * Creates a lesson service.
    *
-   * @param repository the repository for accessing the lesson table.
+   * @param repository                    the repository for accessing the lesson table.
+   * @param constraintSignatureRepository the repository for accessing the constraint signature table.
+   * @param constraintInstanceRepository  the repository for accessing the constraint instance table.
+   * @param lessonRepository              the repository for accessing the lesson table.
+   * @param timetableRepository           the repository for accessing the timetable table.
    */
   @Autowired
-  public RoomService(RoomRepository repository, ServerRepository serverRepository) {
+  public RoomService(RoomRepository repository, ServerRepository serverRepository,
+                     ConstraintSignatureRepository constraintSignatureRepository,
+                     ConstraintInstanceRepository constraintInstanceRepository,
+                     LessonRepository lessonRepository, TimetableRepository timetableRepository) {
     this.repository = repository;
     this.serverRepository = serverRepository;
+    this.constraintSignatureRepository = constraintSignatureRepository;
+    this.constraintInstanceRepository = constraintInstanceRepository;
+    this.lessonRepository = lessonRepository;
+    this.timetableRepository = timetableRepository;
   }
 
   /**
@@ -65,7 +87,8 @@ public class RoomService {
   public Room getById(String id) {
     Optional<Room> room = this.repository.findById(id);
 
-    return room.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+    return room.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+        "Could not find a room with this id"));
   }
 
   /**
@@ -91,9 +114,9 @@ public class RoomService {
    * @throws ResponseStatusException is thrown if the name, building name are blank or the capacity is 0.
    */
   public Room create(RoomRequestDto room) {
-    if (room.name().isBlank() || room.buildingName().isBlank() || room.capacity() == 0) {
+    if (room.name().isBlank() || room.buildingName().isBlank()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "The name, building name are blank or the capacity is 0.");
+          "The name, building name are blank.");
     }
     return this.repository.save(room.map());
   }
@@ -107,7 +130,7 @@ public class RoomService {
    * @throws ResponseStatusException is thrown if the name, building name are blank or the capacity is 0.
    */
   public Room update(String id, RoomRequestDto roomRequest) {
-    if (roomRequest.name().isBlank() || roomRequest.buildingName().isBlank() || roomRequest.capacity() == 0) {
+    if (roomRequest.name().isBlank() || roomRequest.buildingName().isBlank()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
           "The name, building name are blank or the capacity is 0.");
     }
@@ -118,17 +141,24 @@ public class RoomService {
   }
 
   /**
-   * Deletes the room with the given ID.
+   * Deletes the rooms with the given IDs.
    *
-   * @param id the ID of the room which is to be deleted.
+   * @param ids the IDs of the rooms which are to be deleted.
    * @throws ResponseStatusException is thrown if no room exists with the given ID.
    */
-  public void delete(String id) {
-    var room = this.repository.findById(id);
-    if (room.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+  public void deleteRooms(String[] ids) {
+    List<String> roomIds = Arrays.asList(ids);
+    List<Room> rooms = this.repository.findAllById(roomIds);
+    if (rooms.isEmpty() || rooms.size() != roomIds.size()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "Could not found a room with this ids to be deleted");
     }
 
-    this.repository.delete(room.get());
+    new LessonsDeleter(lessonRepository, timetableRepository).fromRooms(rooms);
+
+    new ConstraintInstanceDeleter(constraintSignatureRepository, constraintInstanceRepository)
+        .removeAllInstancesWithArgumentValue(ids);
+
+    this.repository.deleteAll(rooms);
   }
 }
