@@ -590,23 +590,6 @@
       }
     },
     "/grades/{id}" : {
-      "delete" : {
-        "operationId" : "deleteGrade",
-        "parameters" : [ {
-          "in" : "path",
-          "name" : "id",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK"
-          }
-        },
-        "tags" : [ "grade-controller" ]
-      },
       "get" : {
         "operationId" : "getGrade",
         "parameters" : [ {
@@ -921,23 +904,6 @@
       }
     },
     "/rooms/{id}" : {
-      "delete" : {
-        "operationId" : "deleteRoom",
-        "parameters" : [ {
-          "in" : "path",
-          "name" : "id",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK"
-          }
-        },
-        "tags" : [ "room-controller" ]
-      },
       "get" : {
         "operationId" : "getRoom",
         "parameters" : [ {
@@ -1421,23 +1387,6 @@
       }
     },
     "/students/{id}" : {
-      "delete" : {
-        "operationId" : "deleteStudent",
-        "parameters" : [ {
-          "in" : "path",
-          "name" : "id",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK"
-          }
-        },
-        "tags" : [ "student-controller" ]
-      },
       "get" : {
         "operationId" : "getStudent",
         "parameters" : [ {
@@ -1608,23 +1557,6 @@
       }
     },
     "/subjects/{id}" : {
-      "delete" : {
-        "operationId" : "deleteSubject",
-        "parameters" : [ {
-          "in" : "path",
-          "name" : "id",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK"
-          }
-        },
-        "tags" : [ "subject-controller" ]
-      },
       "get" : {
         "operationId" : "getSubject",
         "parameters" : [ {
@@ -1769,23 +1701,6 @@
       }
     },
     "/tags/{id}" : {
-      "delete" : {
-        "operationId" : "deleteTag",
-        "parameters" : [ {
-          "in" : "path",
-          "name" : "id",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK"
-          }
-        },
-        "tags" : [ "tag-controller" ]
-      },
       "get" : {
         "operationId" : "getTag",
         "parameters" : [ {
@@ -1947,23 +1862,6 @@
       }
     },
     "/teachers/{id}" : {
-      "delete" : {
-        "operationId" : "deleteTeacher",
-        "parameters" : [ {
-          "in" : "path",
-          "name" : "id",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK"
-          }
-        },
-        "tags" : [ "teacher-controller" ]
-      },
       "get" : {
         "operationId" : "getTeacher",
         "parameters" : [ {
@@ -2307,7 +2205,7 @@
         }
       },
       "BulkLesson" : {
-        "required" : [ "gradeIds", "groupId", "id", "roomId", "subjectId", "teacherId", "timeslot", "timetable" ],
+        "required" : [ "gradeIds", "groupId", "id", "roomId", "subjectId", "teacherId", "timeslot", "timetableId" ],
         "type" : "object",
         "properties" : {
           "gradeIds" : {
@@ -2338,8 +2236,8 @@
           "timeslot" : {
             "$ref" : "#/components/schemas/Timeslot"
           },
-          "timetable" : {
-            "$ref" : "#/components/schemas/Timetable"
+          "timetableId" : {
+            "type" : "string"
           }
         }
       },
@@ -2683,7 +2581,7 @@
         }
       },
       "LessonResponseDto" : {
-        "required" : [ "grades", "groups", "lessons", "rooms", "subjects", "teachers", "timetable" ],
+        "required" : [ "grades", "groups", "lessons", "rooms", "subjects", "teachers", "timetables" ],
         "type" : "object",
         "properties" : {
           "grades" : {
@@ -2722,8 +2620,11 @@
               "$ref" : "#/components/schemas/Teacher"
             }
           },
-          "timetable" : {
-            "$ref" : "#/components/schemas/Timetable"
+          "timetables" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Timetable"
+            }
           }
         }
       },

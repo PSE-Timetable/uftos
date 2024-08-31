@@ -24,7 +24,15 @@
     const lastLine = text.split('\n').length;
 
     ucdlEditor.executeEdits(null, [
-      { text, range: { startColumn: 1, endColumn: 1, startLineNumber: 1, endLineNumber: lastLine } },
+      {
+        text,
+        range: {
+          startColumn: 1,
+          endColumn: 1,
+          startLineNumber: 1,
+          endLineNumber: Math.max(lastLine, ucdlEditor.getModel()?.getLineCount() || 0),
+        },
+      },
     ]);
     ucdlEditor.pushUndoStop();
   };

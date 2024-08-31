@@ -1,5 +1,6 @@
 package de.uftos.e2e;
 
+import static de.uftos.utils.JsonGenerator.generateIdListJson;
 import static de.uftos.utils.JsonGenerator.generatePageJson;
 import static de.uftos.utils.JsonGenerator.generateSubjectJson;
 import static de.uftos.utils.JsonGenerator.generateTagJson;
@@ -94,25 +95,22 @@ class TeachersTest {
   static void deleteCreatedEntities() {
     given().contentType(ContentType.JSON)
         .when()
-        .delete("/teachers/{id}", firstTeacher)
+        .body(generateIdListJson(firstTeacher, secondTeacher))
+        .delete("/teachers")
         .then()
         .statusCode(200);
 
     given().contentType(ContentType.JSON)
         .when()
-        .delete("/teachers/{id}", secondTeacher)
+        .body(generateIdListJson(subjectId))
+        .delete("/subjects")
         .then()
         .statusCode(200);
 
     given().contentType(ContentType.JSON)
         .when()
-        .delete("/subjects/{id}", subjectId)
-        .then()
-        .statusCode(200);
-
-    given().contentType(ContentType.JSON)
-        .when()
-        .delete("/tags/{id}", tagId)
+        .body(generateIdListJson(tagId))
+        .delete("/tags")
         .then()
         .statusCode(200);
   }

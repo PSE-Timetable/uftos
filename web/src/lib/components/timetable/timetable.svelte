@@ -5,6 +5,7 @@
   import { getTimetableMetadata, type TimetableMetadata } from '$lib/sdk/fetch-client';
   import { onMount } from 'svelte';
   import type { LessonItem, TimetableItems } from './timetable';
+  import { WeekDay } from '$lib/utils';
 
   type TimetableElement = {
     hasLongBreak: boolean;
@@ -14,8 +15,9 @@
     end: string;
   };
 
-  export let items: TimetableItems;
+  export let getLessons: () => Promise<TimetableItems>;
 
+  let items: TimetableItems;
   let index = 1;
   let timetableMetadata: TimetableMetadata;
   let currentTime: DateTime;
@@ -23,15 +25,8 @@
   let timetableElements: TimetableElement[] = [];
 
   onMount(async () => {
-    timetableMetadata = {
-      ...(await getTimetableMetadata()),
-      breaks: [
-        { afterSlot: 1, length: 5, long: false },
-        { afterSlot: 2, length: 15, long: true },
-        { afterSlot: 3, length: 5, long: false },
-        { afterSlot: 4, length: 15, long: true },
-      ],
-    };
+    items = await getLessons();
+    timetableMetadata = await getTimetableMetadata();
     currentTime = DateTime.fromFormat(timetableMetadata.startTime, 'H:mm');
     timetableElements = items.map((element) => {
       const begin = currentTime.toFormat('H:mm');
@@ -50,24 +45,31 @@
   });
 </script>
 
-<div class="inline-grid grid-flow-row gap-2 grid-cols-[max-content,repeat(5,1fr)] bg-white p-4 rounded-2xl w-full">
-  {#each timetableElements as row}
-    <Timeslot index={row.index} begin={row.begin} end={row.end} />
-    {#each row.lessons as lesson}
-      {#if lesson === null}
-        <div />
-      {:else}
-        <Lesson
-          color={lesson.color || 'orange'}
-          leftCorner={lesson.bottomLeft}
-          length={lesson.length}
-          rightCorner={lesson.bottomRight}
-          title={lesson.title}
-        />
+<div class="inline-grid grid-flow-row gap-2 grid-cols-[max-content,repeat(5,1fr)] bg-white rounded-2xl w-full p-4 mt-2">
+  {#if timetableElements.length === 0}
+    <div class="justify-self-center col-span-full">Keine Timeslots vorhanden!</div>
+  {:else}
+    {#each Object.values(WeekDay) as day, index}
+      <div class="flex w-full justify-center col-start-{index + 2}">{day}</div>
+    {/each}
+    {#each timetableElements as row}
+      <Timeslot index={row.index} begin={row.begin} end={row.end} />
+      {#each row.lessons as lesson}
+        {#if lesson === null}
+          <div />
+        {:else}
+          <Lesson
+            color={lesson.color || 'orange'}
+            leftCorner={lesson.bottomLeft}
+            length={lesson.length}
+            rightCorner={lesson.bottomRight}
+            title={lesson.title}
+          />
+        {/if}
+      {/each}
+      {#if row.hasLongBreak}
+        <div class="col-span-full" />
       {/if}
     {/each}
-    {#if row.hasLongBreak}
-      <div class="col-span-full" />
-    {/if}
-  {/each}
+  {/if}
 </div>

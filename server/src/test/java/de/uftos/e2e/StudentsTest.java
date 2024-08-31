@@ -1,5 +1,6 @@
 package de.uftos.e2e;
 
+import static de.uftos.utils.JsonGenerator.generateIdListJson;
 import static de.uftos.utils.JsonGenerator.generatePageJson;
 import static de.uftos.utils.JsonGenerator.generateStudentGroupJson;
 import static de.uftos.utils.JsonGenerator.generateStudentJson;
@@ -98,19 +99,15 @@ class StudentsTest {
 
     given().contentType(ContentType.JSON)
         .when()
-        .delete("/students/{id}", firstStudent)
+        .body(generateIdListJson(firstStudent, secondStudent))
+        .delete("/students")
         .then()
         .statusCode(200);
 
     given().contentType(ContentType.JSON)
         .when()
-        .delete("/students/{id}", secondStudent)
-        .then()
-        .statusCode(200);
-
-    given().contentType(ContentType.JSON)
-        .when()
-        .delete("/tags/{id}", tagId)
+        .body(generateIdListJson(tagId))
+        .delete("/tags")
         .then()
         .statusCode(200);
   }

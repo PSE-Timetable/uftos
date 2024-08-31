@@ -5,10 +5,16 @@ import de.uftos.entities.Curriculum;
 import de.uftos.entities.StudentGroup;
 import de.uftos.entities.Subject;
 import de.uftos.entities.Teacher;
+import de.uftos.repositories.database.ConstraintInstanceRepository;
+import de.uftos.repositories.database.ConstraintSignatureRepository;
 import de.uftos.repositories.database.CurriculumRepository;
+import de.uftos.repositories.database.LessonRepository;
 import de.uftos.repositories.database.StudentGroupRepository;
 import de.uftos.repositories.database.SubjectRepository;
 import de.uftos.repositories.database.TeacherRepository;
+import de.uftos.repositories.database.TimetableRepository;
+import de.uftos.utils.ConstraintInstanceDeleter;
+import de.uftos.utils.LessonsDeleter;
 import de.uftos.utils.SpecificationBuilder;
 import java.util.Arrays;
 import java.util.List;
@@ -29,23 +35,39 @@ public class SubjectService {
   private final CurriculumRepository curriculumRepository;
   private final TeacherRepository teacherRepository;
   private final StudentGroupRepository studentGroupRepository;
+  private final ConstraintSignatureRepository constraintSignatureRepository;
+  private final ConstraintInstanceRepository constraintInstanceRepository;
+  private final LessonRepository lessonRepository;
+  private final TimetableRepository timetableRepository;
 
   /**
    * Creates a subject service.
    *
-   * @param repository             The repository for accessing the subject table.
-   * @param curriculumRepository   The repository for accessing the curriculum table.
-   * @param teacherRepository      The repository for accessing the teacher table.
-   * @param studentGroupRepository The repository for accessing the student group table.
+   * @param repository                    The repository for accessing the subject table.
+   * @param curriculumRepository          The repository for accessing the curriculum table.
+   * @param teacherRepository             The repository for accessing the teacher table.
+   * @param studentGroupRepository        The repository for accessing the student group table.
+   * @param constraintSignatureRepository the repository for accessing the constraint signature table.
+   * @param constraintInstanceRepository  the repository for accessing the constraint instance table.
+   * @param lessonRepository              the repository for accessing the lesson table.
+   * @param timetableRepository           the repository for accessing the timetable table.
    */
   @Autowired
   public SubjectService(SubjectRepository repository, CurriculumRepository curriculumRepository,
                         TeacherRepository teacherRepository,
-                        StudentGroupRepository studentGroupRepository) {
+                        StudentGroupRepository studentGroupRepository,
+                        ConstraintSignatureRepository constraintSignatureRepository,
+                        ConstraintInstanceRepository constraintInstanceRepository,
+                        LessonRepository lessonRepository,
+                        TimetableRepository timetableRepository) {
     this.repository = repository;
     this.curriculumRepository = curriculumRepository;
     this.teacherRepository = teacherRepository;
     this.studentGroupRepository = studentGroupRepository;
+    this.constraintSignatureRepository = constraintSignatureRepository;
+    this.constraintInstanceRepository = constraintInstanceRepository;
+    this.lessonRepository = lessonRepository;
+    this.timetableRepository = timetableRepository;
   }
 
   /**
@@ -112,62 +134,20 @@ public class SubjectService {
   }
 
   /**
-   * Deletes the subject with the given ID.
-   *
-   * @param id the ID of the subject which is to be deleted.
-   * @throws ResponseStatusException is thrown if no subjects exist with the given IDs.
-   */
-  public void delete(String id) {
-    Optional<Subject> subjectOptional = this.repository.findById(id);
-    if (subjectOptional.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "The name of the subject is blank.");
-    }
-
-    Subject subject = subjectOptional.get();
-
-    List<Curriculum> curriculums = curriculumRepository.findAll();
-
-    for (Curriculum curriculum : curriculums) {
-      curriculum.getLessonsCounts()
-          .removeIf((lessonsCount) -> lessonsCount.getSubject().equals(subject));
-    }
-
-    List<Teacher> teachers = teacherRepository.findBySubjects(subject);
-    for (Teacher teacher : teachers) {
-      teacher.getSubjects().removeIf(subject1 -> subject1.getId().equals(id));
-    }
-    teacherRepository.saveAll(teachers);
-
-    List<StudentGroup> studentGroups = studentGroupRepository.findBySubjects(subject);
-    for (StudentGroup studentGroup : studentGroups) {
-      studentGroup.getSubjects().removeIf(subject1 -> subject1.getId().equals(id));
-    }
-
-    studentGroupRepository.saveAll(studentGroups);
-    curriculumRepository.saveAll(curriculums);
-
-    this.repository.delete(subject);
-  }
-
-  /**
    * Deletes the subjects with the given IDs.
    *
    * @param ids the IDs of the subjects which are to be deleted.
    * @throws ResponseStatusException is thrown if no subject exists with the given ID.
    */
   public void deleteSubjects(String[] ids) {
-    Specification<Subject> subjectSpecification = new SpecificationBuilder<Subject>()
-        .andIn(ids, "id")
-        .build();
-    List<Subject> subjects = this.repository.findAll(subjectSpecification);
+    List<String> subjectIds = Arrays.stream(ids).toList();
+    List<Subject> subjects = this.repository.findAllById(subjectIds);
 
     if (subjects.isEmpty() || subjects.size() != ids.length) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
           "There exist no subjects with the given id(s).");
     }
 
-    List<String> subjectIds = Arrays.stream(ids).toList();
 
     Specification<Curriculum> curriculumSpecification = new SpecificationBuilder<Curriculum>()
         .andDoubleJoinIn(ids, "lessonsCounts", "subject", "id")
@@ -196,6 +176,11 @@ public class SubjectService {
       studentGroup.getSubjects().removeIf(subject1 -> subjectIds.contains(subject1.getId()));
     }
     studentGroupRepository.saveAll(studentGroups);
+
+    new LessonsDeleter(lessonRepository, timetableRepository).fromSubjects(subjects);
+
+    new ConstraintInstanceDeleter(constraintSignatureRepository, constraintInstanceRepository)
+        .removeAllInstancesWithArgumentValue(ids);
 
     this.repository.deleteAll(subjects);
   }

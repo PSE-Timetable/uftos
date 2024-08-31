@@ -90,17 +90,6 @@ public class SubjectController {
    * Maps the HTTP DELETE request to the {@link SubjectService#delete(String) delete} function
    * of the subject service.
    *
-   * @param id the ID of the subject which is to be deleted.
-   */
-  @DeleteMapping("/{id}")
-  public void deleteSubject(@PathVariable String id) {
-    this.subjectService.delete(id);
-  }
-
-  /**
-   * Maps the HTTP DELETE request to the {@link SubjectService#delete(String) delete} function
-   * of the subject service.
-   *
    * @param ids the ID sof the subject which are to be deleted.
    */
   @DeleteMapping()
