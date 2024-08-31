@@ -2,6 +2,8 @@ package de.uftos.utils;
 
 import de.uftos.dto.Weekday;
 import de.uftos.dto.requestdtos.LessonsCountRequestDto;
+import de.uftos.entities.Break;
+import de.uftos.entities.TimetableMetadata;
 import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -90,7 +92,7 @@ public class JsonGenerator {
   }
 
   /**
-   * Generates the grade JSON.
+   * Generates the lessonCount JSON.
    *
    * @param dto The lesson count DTO that should be transformed to a JSON
    * @return The requested JSON
@@ -101,6 +103,47 @@ public class JsonGenerator {
     return new JSONObject()
         .put("subjectId", dto.subjectId())
         .put("count", dto.count());
+  }
+
+  /**
+   * Generates the grade JSON.
+   *
+   * @param timeslotLength The length of timeslots
+   * @param timeslotAmount The number of timeslots per day
+   * @param startTime      The start time of a school day
+   * @param breaks         The breaks between the timeslots
+   * @return The requested JSON
+   * @throws JSONException If something is malformed.
+   */
+  public static String generateTimetableMetadataJson(int timeslotLength, int timeslotAmount,
+                                                     String startTime, List<Break> breaks)
+      throws JSONException {
+    JSONArray breakArray = new JSONArray();
+    for (Break b : breaks) {
+      JSONObject breakJson = generateBreakJson(b);
+      breakArray.put(breakJson);
+    }
+
+    return new JSONObject()
+        .put("timeslotLength", timeslotLength)
+        .put("timeslotsAmount", timeslotAmount)
+        .put("startTime", startTime)
+        .put("breaks", breakArray)
+        .toString();
+  }
+
+  /**
+   * Generates the break JSON.
+   *
+   * @param b The break that should be transformed to a JSON
+   * @return The requested JSON
+   * @throws JSONException If something is malformed.
+   */
+  private static JSONObject generateBreakJson(Break b) throws JSONException {
+    return new JSONObject()
+        .put("afterSlot", b.getAfterSlot())
+        .put("length", b.getLength())
+        .put("long", b.isLong());
   }
 
   /**
