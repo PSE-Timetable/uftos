@@ -1,7 +1,3 @@
-<script lang="ts" context="module">
-  export type ComboBoxItem = { value: string; label: string };
-</script>
-
 <script lang="ts">
   import Check from 'lucide-svelte/icons/check';
   import ChevronsUpDown from 'lucide-svelte/icons/chevrons-up-down';
@@ -10,16 +6,19 @@
   import * as Popover from '$lib/elements/ui/popover/index.js';
   import { Button } from '$lib/elements/ui/button/index.js';
   import { cn } from '$lib/utils.js';
+  import type { ComboBoxItem } from './combo-box';
 
   export let data: ComboBoxItem[] = [];
   export let selectedId: string;
   export let shadow: boolean = false;
+  export let placeholder: string = 'Ressource auswählen';
+  export let searchPlaceholder: string = 'Suche Ressource';
+  export let notFoundPlaceholder: string = 'Keine Ressource gefunden';
 
   let open: boolean = false;
   let searchedValue: string;
-  let selectedValue = data.find((f) => f.value === selectedId)?.label ?? 'Ressource auswählen';
+  let selectedValue = data.find((f) => f.value === selectedId)?.label ?? placeholder;
   let lastSearchedValued: string;
-
 
   export let onSearch: (value: string) => void;
   export let onSelectChange: (value: string, label: string) => void = () => {};
@@ -35,7 +34,7 @@
 
   const handleSelect = async (value: string, ids: { content: string; trigger: string }) => {
     let selected = data.find((f) => f.value === value);
-    selectedValue = selected?.label ?? 'Ressource auswählen';
+    selectedValue = selected?.label ?? placeholder;
     selectedId = selected?.value ?? '';
     onSelectChange(selectedId, selectedValue);
     await closeAndFocusTrigger(ids.trigger);
@@ -56,7 +55,9 @@
     <Button
       aria-expanded={open}
       builders={[builder]}
-      class="w-[200px] justify-between bg-white text-primary hover:bg-accent hover:text-white {shadow ? 'shadow-custom' : ''}"
+      class="w-[200px] justify-between bg-white text-primary hover:bg-accent hover:text-white {shadow
+        ? 'shadow-custom'
+        : ''}"
       role="combobox"
     >
       <p class="truncate">{selectedValue}</p>
@@ -65,8 +66,8 @@
   </Popover.Trigger>
   <Popover.Content class="overflow-x-auto w-[200px] p-0">
     <Command.Root shouldFilter={false}>
-      <Command.Input bind:value={searchedValue} placeholder="Suche Ressource" />
-      <Command.Empty>Keine Ressource gefunden</Command.Empty>
+      <Command.Input bind:value={searchedValue} placeholder={searchPlaceholder} />
+      <Command.Empty>{notFoundPlaceholder}</Command.Empty>
       {#each data as resource (resource.value)}
         <Command.Item value={resource.value} onSelect={(value) => handleSelect(value, ids)}>
           <Check class={cn('mr-2 h-4 w-4', selectedId !== resource.value && 'text-transparent')} />
