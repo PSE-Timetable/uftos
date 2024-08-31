@@ -550,7 +550,10 @@ export function validateUcdlFile(body?: {
     })));
 }
 export function deleteGrades(body: string[], opts?: Oazapfts.RequestOpts) {
-    return oazapfts.ok(oazapfts.fetchText("/grades", oazapfts.json({
+    return oazapfts.ok(oazapfts.fetchJson<{
+        status: 200;
+        data: SuccessResponse;
+    }>("/grades", oazapfts.json({
         ...opts,
         method: "DELETE",
         body
