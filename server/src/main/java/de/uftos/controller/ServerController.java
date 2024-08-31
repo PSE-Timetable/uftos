@@ -1,5 +1,7 @@
 package de.uftos.controller;
 
+import de.uftos.dto.requestdtos.ServerEmailRequestDto;
+import de.uftos.dto.responsedtos.ServerEmailResponseDto;
 import de.uftos.dto.responsedtos.ServerStatisticsResponseDto;
 import de.uftos.entities.TimetableMetadata;
 import de.uftos.services.ServerService;
@@ -30,7 +32,7 @@ public class ServerController {
   }
 
   /**
-   * Returns the currently set timeslot length by GET-ting /timeslot-length, using the
+   * Returns the currently set timeslot metadata by GET-ting /timeslot-metadata, using the
    * {@link ServerService#getTimetableMetadata()} function of the server service.
    *
    * @return the timeslot length
@@ -41,7 +43,7 @@ public class ServerController {
   }
 
   /**
-   * Sets the timeslot length by PUT-ting /timeslot-length, using the
+   * Sets the timeslot metadata by PUT-ting /timeslot-metadata, using the
    * {@link ServerService#setTimetableMetadata(TimetableMetadata)} function of the server service.
    *
    * @param timetableMetadata the new timetable metadata
@@ -61,4 +63,27 @@ public class ServerController {
   public ServerStatisticsResponseDto getServerStats() {
     return this.serverService.getStats();
   }
+
+  /**
+   * Returns server notification email address by GET-ting /email, using the
+   * {@link ServerService#getEmail()} function of the server service.
+   *
+   * @return the email address notification mails should be sent to
+   */
+  @GetMapping("/email")
+  public ServerEmailResponseDto getNotificationEmail() {
+    return this.serverService.getEmail();
+  }
+
+  /**
+   * Updates server notification email address by PUT-ting /email, using the
+   * {@link ServerService#setEmail(ServerEmailRequestDto)} function of the server service.
+   *
+   * @param email the new well-formed email address.
+   */
+  @PutMapping("/email")
+  public void setNotificationEmail(@RequestBody ServerEmailRequestDto email) {
+    this.serverService.setEmail(email);
+  }
+
 }
