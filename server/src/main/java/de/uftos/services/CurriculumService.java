@@ -6,9 +6,11 @@ import de.uftos.dto.responsedtos.CurriculumResponseDto;
 import de.uftos.dto.responsedtos.GradeResponseDto;
 import de.uftos.entities.Curriculum;
 import de.uftos.entities.Grade;
+import de.uftos.entities.LessonsCount;
 import de.uftos.repositories.database.CurriculumRepository;
 import de.uftos.repositories.database.GradeRepository;
 import de.uftos.utils.SpecificationBuilder;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +67,8 @@ public class CurriculumService {
    */
   public CurriculumResponseDto getById(String id) {
     Curriculum curriculum = this.repository.findById(id)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+            "Could not find a curriculum with this id"));
     return new CurriculumResponseDto(curriculum);
   }
 
@@ -82,7 +85,8 @@ public class CurriculumService {
           "The name of the curriculum is blank.");
     }
     Grade grade = gradeRepository.findById(curriculum.gradeId())
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+            "Could not find a grade with this id"));
     return this.mapResponseDto(this.repository.save(curriculum.map(grade)));
   }
 
@@ -101,11 +105,33 @@ public class CurriculumService {
    */
   public CurriculumResponseDto update(String id, CurriculumRequestDto curriculumRequest) {
     Grade grade = gradeRepository.findById(curriculumRequest.gradeId())
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
-    Curriculum curriculum = curriculumRequest.map(grade);
-    this.repository.delete(this.repository.findById(id)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST)));
-    return new CurriculumResponseDto(this.repository.save(curriculum));
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+            "Could not find a grade with this id"));
+    Curriculum newCurriculum = curriculumRequest.map(grade);
+    Curriculum oldCurriculum = this.repository.findById(id)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+            "Could not find a curriculum with this id"));
+
+    List<LessonsCount> newLessonsCounts = newCurriculum.getLessonsCounts().stream().sorted(
+        Comparator.comparing(l -> l.getSubject().getId())).toList();
+
+    List<LessonsCount> oldLessonsCounts = oldCurriculum.getLessonsCounts().stream().sorted(
+        Comparator.comparing(l -> l.getSubject().getId())).toList();
+
+    if (newLessonsCounts.size() != oldLessonsCounts.size()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Lessons counts don't match!");
+    }
+
+    for (int i = 0; i < newLessonsCounts.size(); i++) {
+      LessonsCount newCount = newLessonsCounts.get(i);
+      LessonsCount oldCount = oldLessonsCounts.get(i);
+      if (!newCount.getSubject().getId().equals(oldCount.getSubject().getId())) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Lessons counts don't match!");
+      }
+      oldCount.setCount(newCount.getCount());
+    }
+
+    return new CurriculumResponseDto(this.repository.save(oldCurriculum));
   }
 
   /**
@@ -115,9 +141,10 @@ public class CurriculumService {
    * @throws ResponseStatusException is thrown if no curriculum exists with the given ID.
    */
   public void delete(String id) {
-    var curriculum = this.repository.findById(id);
+    Optional<Curriculum> curriculum = this.repository.findById(id);
     if (curriculum.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "Could not find a curriculum with this id");
     }
 
     this.repository.delete(curriculum.get());

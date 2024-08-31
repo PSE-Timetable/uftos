@@ -24,11 +24,16 @@ import de.uftos.entities.Student;
 import de.uftos.entities.StudentGroup;
 import de.uftos.entities.Subject;
 import de.uftos.entities.Teacher;
+import de.uftos.entities.Timetable;
 import de.uftos.entities.TimetableMetadata;
+import de.uftos.repositories.database.ConstraintInstanceRepository;
+import de.uftos.repositories.database.ConstraintSignatureRepository;
 import de.uftos.repositories.database.GradeRepository;
+import de.uftos.repositories.database.LessonRepository;
 import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.StudentGroupRepository;
 import de.uftos.repositories.database.StudentRepository;
+import de.uftos.repositories.database.TimetableRepository;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -51,14 +56,31 @@ public class StudentGroupServiceTests {
   private final StudentGroupRequestDto requestDto =
       new StudentGroupRequestDto("testName", List.of("studentId1"), List.of("gradeId1"),
           List.of("tagId1"), List.of("subjectId1"));
+
   @Mock
   private StudentGroupRepository studentGroupRepository;
+
   @Mock
   private StudentRepository studentRepository;
+
   @Mock
   private GradeRepository gradeRepository;
+
   @Mock
   private ServerRepository serverRepository;
+
+  @Mock
+  private ConstraintSignatureRepository signatureRepository;
+
+  @Mock
+  private ConstraintInstanceRepository instanceRepository;
+
+  @Mock
+  private LessonRepository lessonRepository;
+
+  @Mock
+  private TimetableRepository timetableRepository;
+
   @InjectMocks
   private StudentGroupService studentGroupService;
 
@@ -197,7 +219,8 @@ public class StudentGroupServiceTests {
     studentGroup2.setLessons(Collections.emptyList());
 
     StudentGroup studentGroup3 =
-        new StudentGroup("testName", List.of("studentId1"), List.of("tagId1"), List.of("subjectId1"));
+        new StudentGroup("testName", List.of("studentId1"), List.of("tagId1"),
+            List.of("subjectId1"));
 
     Grade grade1 = new Grade("gradeId1");
     grade1.setStudentGroups(new ArrayList<>(List.of(studentGroup1, studentGroup2, studentGroup3)));
@@ -216,9 +239,12 @@ public class StudentGroupServiceTests {
     Teacher teacher1 = new Teacher("T1");
     Teacher teacher2 = new Teacher("T2");
 
-    Lesson lesson1 = createLesson(teacher1, room1, studentGroup1, "2024", subject);
-    Lesson lesson2 = createLesson(teacher2, room1, studentGroup1, "2022", subject);
-    Lesson lesson3 = createLesson(teacher1, room2, studentGroup2, "2024", subject);
+    Timetable timetable = new Timetable("timetable");
+    timetable.setId("timetableId");
+
+    Lesson lesson1 = createLesson(teacher1, room1, studentGroup1, "2024", subject, timetable);
+    Lesson lesson2 = createLesson(teacher2, room1, studentGroup1, "2022", subject, timetable);
+    Lesson lesson3 = createLesson(teacher1, room2, studentGroup2, "2024", subject, timetable);
 
     studentGroup1.setLessons(List.of(lesson1, lesson2, lesson3));
 
@@ -243,15 +269,15 @@ public class StudentGroupServiceTests {
     when(studentGroupRepository.findById("789")).thenReturn(Optional.of(studentGroup3));
   }
 
-  private Lesson createLesson(Teacher teacher, Room room, StudentGroup studentGroup,
-                              String number,
-                              Subject subject) {
+  private Lesson createLesson(Teacher teacher, Room room, StudentGroup studentGroup, String number,
+                              Subject subject, Timetable timetable) {
     Lesson lesson = new Lesson();
     lesson.setTeacher(teacher);
     lesson.setRoom(room);
     lesson.setStudentGroup(studentGroup);
     lesson.setYear(number);
     lesson.setSubject(subject);
+    lesson.setTimetable(timetable);
     return lesson;
   }
 

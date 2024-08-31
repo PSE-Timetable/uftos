@@ -86,13 +86,13 @@ public class TagController {
   }
 
   /**
-   * Maps the HTTP DELETE request to the {@link TagService#delete(String) delete} function of the
+   * Maps the HTTP DELETE request to the {@link TagService#deleteTags(String[]) delete} function of the
    * tag service.
    *
-   * @param id the ID of the tag which is to be deleted.
+   * @param ids the IDs of the tag which is to be deleted.
    */
-  @DeleteMapping("/{id}")
-  public void deleteTag(@PathVariable String id) {
-    this.tagsService.delete(id);
+  @DeleteMapping()
+  public void deleteTags(@RequestBody String[] ids) {
+    this.tagsService.deleteTags(ids);
   }
 }

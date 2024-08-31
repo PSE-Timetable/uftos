@@ -52,6 +52,7 @@ public class ConstraintSignatureService {
    */
   public ConstraintSignature getById(String id) {
     return this.repository.findById(id)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+            "Could not find a constraint signature with this id"));
   }
 }

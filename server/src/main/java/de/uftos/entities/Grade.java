@@ -13,6 +13,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.UniqueConstraint;
 import java.util.List;
 import java.util.Objects;
 import lombok.Data;
@@ -41,13 +42,15 @@ public class Grade {
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(name = "grades_student_groups",
       joinColumns = @JoinColumn(name = "grades_id"),
-      inverseJoinColumns = @JoinColumn(name = "student_groups_id"))
+      inverseJoinColumns = @JoinColumn(name = "student_groups_id"),
+      uniqueConstraints = @UniqueConstraint(columnNames = {"grades_id", "student_groups_id"}))
   private List<StudentGroup> studentGroups;
 
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(name = "grades_tags",
       joinColumns = @JoinColumn(name = "grades_id"),
-      inverseJoinColumns = @JoinColumn(name = "tags_id"))
+      inverseJoinColumns = @JoinColumn(name = "tags_id"),
+      uniqueConstraints = @UniqueConstraint(columnNames = {"grades_id", "tags_id"}))
   private List<Tag> tags;
 
   @JsonIgnore
