@@ -1,6 +1,7 @@
 package de.uftos.controller;
 
 import de.uftos.dto.requestdtos.StudentRequestDto;
+import de.uftos.dto.responsedtos.LessonResponseDto;
 import de.uftos.entities.Student;
 import de.uftos.services.StudentService;
 import java.util.Optional;
@@ -91,18 +92,20 @@ public class StudentController {
   }
 
   /**
-   * Maps the HTTP DELETE request to the {@link StudentService#delete(String) delete} function of
-   * the student service.
+   * Maps the HTTP GET request, to get the lessons that the student atttends to the
+   * {@link StudentService#getLessonsById(String) get LessonsById}
+   * function of the student service.
    *
-   * @param id the ID of the student which is to be deleted.
+   * @param id the ID of the student.
+   * @return a LessonResponseDto with information about the lessons that the student attends.
    */
-  @DeleteMapping("/{id}")
-  public void deleteStudent(@PathVariable String id) {
-    this.studentService.delete(id);
+  @GetMapping("/{id}/lessons")
+  public LessonResponseDto getStudentLessons(@PathVariable String id) {
+    return this.studentService.getLessonsById(id);
   }
 
   /**
-   * Maps the HTTP DELETE request to the {@link StudentService#delete(String) delete} function of
+   * Maps the HTTP DELETE request to the {@link StudentService#deleteStudents(String[]) delete} function of
    * the student service.
    *
    * @param ids the ID of the student which is to be deleted.

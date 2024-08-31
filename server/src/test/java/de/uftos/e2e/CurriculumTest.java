@@ -2,6 +2,7 @@ package de.uftos.e2e;
 
 import static de.uftos.utils.JsonGenerator.generateCurriculumJson;
 import static de.uftos.utils.JsonGenerator.generateGradeJson;
+import static de.uftos.utils.JsonGenerator.generateIdListJson;
 import static de.uftos.utils.JsonGenerator.generatePageJson;
 import static de.uftos.utils.JsonGenerator.generateSubjectJson;
 import static io.restassured.RestAssured.given;
@@ -126,19 +127,15 @@ class CurriculumTest {
 
     given().contentType(ContentType.JSON)
         .when()
-        .delete("/grades/{id}", firstGradeId)
+        .body(generateIdListJson(firstGradeId, secondGradeId))
+        .delete("/grades")
         .then()
         .statusCode(200);
 
     given().contentType(ContentType.JSON)
         .when()
-        .delete("/grades/{id}", secondGradeId)
-        .then()
-        .statusCode(200);
-
-    given().contentType(ContentType.JSON)
-        .when()
-        .delete("/subjects/{id}", subjectId)
+        .body(generateIdListJson(subjectId))
+        .delete("/subjects")
         .then()
         .statusCode(200);
   }
