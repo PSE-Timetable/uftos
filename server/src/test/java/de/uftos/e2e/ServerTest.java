@@ -1,10 +1,9 @@
 package de.uftos.e2e;
 
 import static de.uftos.utils.JsonGenerator.generateGradeJson;
-import static de.uftos.utils.JsonGenerator.generatePageJson;
+import static de.uftos.utils.JsonGenerator.generateIdListJson;
 import static de.uftos.utils.JsonGenerator.generateRoomJson;
 import static de.uftos.utils.JsonGenerator.generateStudentJson;
-import static de.uftos.utils.JsonGenerator.generateTagJson;
 import static de.uftos.utils.JsonGenerator.generateTeacherJson;
 import static de.uftos.utils.JsonGenerator.generateTimetableMetadataJson;
 import static io.restassured.RestAssured.given;
@@ -25,22 +24,19 @@ import org.junit.jupiter.api.Test;
 class ServerTest {
 
 
-  static String studentId;
   private static final String FIRST_STUDENT_FIRST_NAME = "Karen";
   private static final String FIRST_STUDENT_LAST_NAME = "Mustermann";
-
-  static String teacherId;
   private static final String FIRST_TEACHER_FIRST_NAME = "Karen";
   private static final String FIRST_TEACHER_LAST_NAME = "Mustermann";
   private static final String FIRST_TEACHER_ACRONYM = "KM";
-
-  static String gradeId;
   private static final String FIRST_GRADE_NAME = "5";
-
-  static String roomId;
   private static final String FIRST_ROOM_NAME = "100";
   private static final String FIRST_ROOM_BUILDING = "10.10";
   private static final int FIRST_ROOM_CAPACITY = 30;
+  static String studentId;
+  static String teacherId;
+  static String gradeId;
+  static String roomId;
 
   @BeforeAll
   static void createTestEntities() throws JSONException {
@@ -109,25 +105,29 @@ class ServerTest {
   static void deleteCreatedEntities() {
     given().contentType(ContentType.JSON)
         .when()
-        .delete("/students/{id}", studentId)
+        .body(generateIdListJson(studentId))
+        .delete("/students")
         .then()
         .statusCode(200);
 
     given().contentType(ContentType.JSON)
         .when()
-        .delete("/teachers/{id}", teacherId)
+        .body(generateIdListJson(teacherId))
+        .delete("/teachers")
         .then()
         .statusCode(200);
 
     given().contentType(ContentType.JSON)
         .when()
-        .delete("/grades/{id}", gradeId)
+        .body(generateIdListJson(gradeId))
+        .delete("/grades")
         .then()
         .statusCode(200);
 
     given().contentType(ContentType.JSON)
         .when()
-        .delete("/rooms/{id}", roomId)
+        .body(generateIdListJson(roomId))
+        .delete("/rooms")
         .then()
         .statusCode(200);
   }

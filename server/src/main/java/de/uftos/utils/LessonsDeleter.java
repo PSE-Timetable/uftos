@@ -9,7 +9,9 @@ import de.uftos.entities.Timeslot;
 import de.uftos.entities.Timetable;
 import de.uftos.repositories.database.LessonRepository;
 import de.uftos.repositories.database.TimetableRepository;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Delete all lessons that contain all given entities.
@@ -94,16 +96,11 @@ public class LessonsDeleter {
     List<Timetable> timetables = this.timetableRepository.findAllByLessons(
         lessons.stream().map(Lesson::getId).toList()
     );
+    Set<Lesson> lessonsToDelete = new HashSet<>(lessons);
 
     // Adding all lessons from the timetables to be deleted
-    lessons.addAll(
-        timetables
-            .stream()
-            .map(Timetable::getLessons)
-            .flatMap(List::stream)
-            .toList()
-    );
-    this.lessonRepository.deleteAll(lessons);
+    timetables.forEach(timetable -> lessonsToDelete.addAll(timetable.getLessons()));
+    this.lessonRepository.deleteAll(lessonsToDelete);
 
     this.timetableRepository.deleteAll(timetables);
   }
