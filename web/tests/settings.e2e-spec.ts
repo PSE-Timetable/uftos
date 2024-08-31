@@ -11,9 +11,9 @@ test.describe('Settings', () => {
     await page.getByRole('link').first().click();
     await page.waitForURL('http://localhost:5173/admin');
     await expect(async () => {
-      await page.getByRole('button', { name: 'Einstellungen' }).click();
+      await page.getByRole('button', { name: 'Einstellungen' }).click({ timeout: 500 });
       await page.getByRole('menuitem', { name: 'Allgemeine Einstell.' }).click({
-        timeout: 1000,
+        timeout: 1250,
       });
       await page.waitForURL('http://localhost:5173/admin/settings');
     }).toPass();
