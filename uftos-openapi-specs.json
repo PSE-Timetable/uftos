@@ -2205,7 +2205,7 @@
         }
       },
       "BulkLesson" : {
-        "required" : [ "gradeIds", "groupId", "id", "roomId", "subjectId", "teacherId", "timeslot", "timetable" ],
+        "required" : [ "gradeIds", "groupId", "id", "roomId", "subjectId", "teacherId", "timeslot", "timetableId" ],
         "type" : "object",
         "properties" : {
           "gradeIds" : {
@@ -2236,8 +2236,8 @@
           "timeslot" : {
             "$ref" : "#/components/schemas/Timeslot"
           },
-          "timetable" : {
-            "$ref" : "#/components/schemas/Timetable"
+          "timetableId" : {
+            "type" : "string"
           }
         }
       },
@@ -2581,7 +2581,7 @@
         }
       },
       "LessonResponseDto" : {
-        "required" : [ "grades", "groups", "lessons", "rooms", "subjects", "teachers", "timetable" ],
+        "required" : [ "grades", "groups", "lessons", "rooms", "subjects", "teachers", "timetables" ],
         "type" : "object",
         "properties" : {
           "grades" : {
@@ -2620,8 +2620,11 @@
               "$ref" : "#/components/schemas/Teacher"
             }
           },
-          "timetable" : {
-            "$ref" : "#/components/schemas/Timetable"
+          "timetables" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Timetable"
+            }
           }
         }
       },

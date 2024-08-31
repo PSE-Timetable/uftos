@@ -178,10 +178,6 @@ export type Timeslot = {
     slot: number;
     tags: Tag[];
 };
-export type Timetable = {
-    id: string;
-    name: string;
-};
 export type BulkLesson = {
     gradeIds: string[];
     groupId: string;
@@ -191,7 +187,7 @@ export type BulkLesson = {
     subjectId: string;
     teacherId: string;
     timeslot: Timeslot;
-    timetable: Timetable;
+    timetableId: string;
 };
 export type Room = {
     buildingName: string;
@@ -208,6 +204,10 @@ export type Teacher = {
     subjects: Subject[];
     tags: Tag[];
 };
+export type Timetable = {
+    id: string;
+    name: string;
+};
 export type LessonResponseDto = {
     grades: GradeResponseDto[];
     groups: StudentGroupResponseDto[];
@@ -215,7 +215,7 @@ export type LessonResponseDto = {
     rooms: Room[];
     subjects: Subject[];
     teachers: Teacher[];
-    timetable: Timetable;
+    timetables: Timetable[];
 };
 export type PageLessonResponseDto = {
     content?: LessonResponseDto[];

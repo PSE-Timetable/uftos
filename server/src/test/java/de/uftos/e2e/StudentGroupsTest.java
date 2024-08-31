@@ -101,7 +101,7 @@ public class StudentGroupsTest {
         .statusCode(200)
         .body("id", notNullValue())
         .body("name", equalTo(FIRST_STUDENT_GROUP_NAME))
-        .log().all()
+        .log().ifValidationFails()
         .extract()
         .body().jsonPath().getString("id");
 
@@ -172,7 +172,6 @@ public class StudentGroupsTest {
         .get("/student-groups")
         .then()
         .statusCode(200)
-        //.body("size()", equalTo(2))
         .log().ifValidationFails();
   }
 

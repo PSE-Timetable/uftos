@@ -23,6 +23,7 @@ import de.uftos.entities.Server;
 import de.uftos.entities.StudentGroup;
 import de.uftos.entities.Subject;
 import de.uftos.entities.Teacher;
+import de.uftos.entities.Timetable;
 import de.uftos.entities.TimetableMetadata;
 import de.uftos.repositories.database.ConstraintInstanceRepository;
 import de.uftos.repositories.database.ConstraintSignatureRepository;
@@ -123,15 +124,18 @@ public class GradeServiceTests {
     Teacher teacher1 = new Teacher("Te1");
     Teacher teacher2 = new Teacher("Te2");
 
-    Lesson lesson1 = createLesson(teacher1, room1, studentGroup1, "2024", subject);
+    Timetable timetable = new Timetable("timetable");
+    timetable.setId("timetableId");
+
+    Lesson lesson1 = createLesson(teacher1, room1, studentGroup1, "2024", subject, timetable);
     lesson1.setId("l1");
-    Lesson lesson2 = createLesson(teacher2, room1, studentGroup1, "2022", subject);
+    Lesson lesson2 = createLesson(teacher2, room1, studentGroup1, "2022", subject, timetable);
     lesson2.setId("l2");
-    Lesson lesson3 = createLesson(teacher1, room2, studentGroup1, "2024", subject);
+    Lesson lesson3 = createLesson(teacher1, room2, studentGroup1, "2024", subject, timetable);
     lesson3.setId("l3");
-    Lesson lesson4 = createLesson(teacher1, room2, studentGroup2, "2022", subject);
+    Lesson lesson4 = createLesson(teacher1, room2, studentGroup2, "2022", subject, timetable);
     lesson4.setId("l4");
-    Lesson lesson5 = createLesson(teacher2, room2, studentGroup2, "2024", subject);
+    Lesson lesson5 = createLesson(teacher2, room2, studentGroup2, "2024", subject, timetable);
     lesson5.setId("l5");
 
     studentGroup1.setLessons(List.of(lesson1, lesson2, lesson3));
@@ -283,15 +287,15 @@ public class GradeServiceTests {
   }
 
 
-  private Lesson createLesson(Teacher teacher, Room room, StudentGroup studentGroup,
-                              String number,
-                              Subject subject) {
+  private Lesson createLesson(Teacher teacher, Room room, StudentGroup studentGroup, String number,
+                              Subject subject, Timetable timetable) {
     Lesson lesson = new Lesson();
     lesson.setTeacher(teacher);
     lesson.setRoom(room);
     lesson.setStudentGroup(studentGroup);
     lesson.setYear(number);
     lesson.setSubject(subject);
+    lesson.setTimetable(timetable);
     return lesson;
   }
 }

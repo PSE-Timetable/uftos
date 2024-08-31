@@ -140,7 +140,7 @@ class GradesTest {
         .then()
         .statusCode(200)
         .body("size()", equalTo(2))
-        .log().all();
+        .log().ifValidationFails();
   }
 
   @Test
