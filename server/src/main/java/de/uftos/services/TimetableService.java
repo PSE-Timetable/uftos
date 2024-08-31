@@ -407,12 +407,7 @@ public class TimetableService {
 
   private List<StudentProblemDto> getStudents() {
     List<StudentProblemDto> students = new ArrayList<>();
-    List<Student> studentList = studentRepository.findAll();
-    if (studentList.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "There must be at least one student to create a timetable");
-    }
-    for (Student student : studentList) {
+    for (Student student : studentRepository.findAll()) {
       List<String> tagIds = new ArrayList<>();
       for (Tag tag : student.getTags()) {
         tagIds.add(tag.getId());
