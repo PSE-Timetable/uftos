@@ -10,7 +10,8 @@
 </script>
 
 <div
-  class="row-span-{length} flex flex-col bg-[{color}] p-4 items-center rounded-lg gap-2 justify-between w-full h-full"
+  style="background-color: {color};"
+  class="row-span-{length} flex flex-col p-4 items-center rounded-lg gap-2 justify-between w-full h-full"
 >
   {#if title.onClick}
     <button type="button" on:click={title.onClick}>{title.text}</button>
