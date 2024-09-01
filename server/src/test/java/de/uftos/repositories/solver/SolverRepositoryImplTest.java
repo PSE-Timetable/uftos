@@ -1,4 +1,4 @@
-package de.uftos.repositories.solver.timefold;
+package de.uftos.repositories.solver;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
@@ -18,7 +18,6 @@ import de.uftos.dto.solver.TimetableProblemDto;
 import de.uftos.dto.ucdl.ConstraintDefinitionDto;
 import de.uftos.dto.ucdl.UcdlToken;
 import de.uftos.dto.ucdl.ast.ValueDto;
-import de.uftos.repositories.solver.SolverRepositoryImpl;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
