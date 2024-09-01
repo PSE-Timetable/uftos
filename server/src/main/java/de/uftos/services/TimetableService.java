@@ -24,6 +24,7 @@ import de.uftos.entities.Grade;
 import de.uftos.entities.Lesson;
 import de.uftos.entities.LessonsCount;
 import de.uftos.entities.Room;
+import de.uftos.entities.Server;
 import de.uftos.entities.Student;
 import de.uftos.entities.StudentGroup;
 import de.uftos.entities.Subject;
@@ -196,8 +197,8 @@ public class TimetableService {
     timetableRepository.save(timetableEntity);
     try {
       TimetableProblemDto problemInstance = getProblemInstance(timetableEntity);
-      solverRepository.solve(problemInstance, solverFinishedEvent).get();
-    } catch (InterruptedException | ExecutionException | BadRequestException e) {
+      solverRepository.solve(problemInstance, solverFinishedEvent);
+    } catch (BadRequestException | ResponseStatusException e) {
       return new SuccessResponse(false, e.getMessage());
     }
     return new SuccessResponse(true, "Solver erfolgreich gestartet!");
@@ -276,28 +277,70 @@ public class TimetableService {
   private List<LessonProblemDto> getLessons(Timetable timetable) {
     //initializing new Lessons
     List<Curriculum> curriculums = curriculumRepository.findAll();
-    for (StudentGroup studentGroup : studentGroupRepository.findAll()) {
+    if (curriculums.isEmpty()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "Es muss mindestens ein Curriculum vorhanden sein, um einen Stundenplan zu erstellen");
+    }
+
+    List<StudentGroup> studentGroups = studentGroupRepository.findAll();
+    if (studentGroups.isEmpty()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "Es muss mindestens eine Schülergruppe vorhanden sein, um einen Stundenplan zu erstellen");
+    }
+
+    List<Teacher> teachers = teacherRepository.findAll();
+    if (teachers.isEmpty()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "Es muss mindestens ein Lehrer vorhanden sein, um einen Stundenplan zu erstellen");
+    }
+
+    List<Room> rooms = roomRepository.findAll();
+    if (rooms.isEmpty()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "Es muss mindestens ein Raum vorhanden sein, um einen Stundenplan zu erstellen");
+    }
+
+    List<Timeslot> timeslots = timeslotRepository.findAll();
+    if (timeslots.isEmpty()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "Es muss mindestens ein Timeslot vorhanden sein, um einen Fahrplan zu erstellen");
+    }
+
+    List<Server> serverData = serverRepository.findAll();
+    // This shouldn't be possible since it should always contain at least one element,
+    // but you never know...
+    if (serverData.isEmpty()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "Man muss die Server-Metadaten einstellen, um einen Stundenplan zu erstellen");
+    }
+
+    for (StudentGroup studentGroup : studentGroups) {
       for (Curriculum curriculum : curriculums) {
         if (curriculum.getGrade() != studentGroup.getGrades().getFirst()) {
           continue;
         }
-        for (LessonsCount lessonsCount : curriculum.getLessonsCounts()) {
+
+        List<LessonsCount> lessonsCounts = curriculum.getLessonsCounts();
+        if (lessonsCounts.isEmpty()) {
+          throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+              "Es muss mindestens ein Fach vorhanden sein, um einen Stundenplan zu erstellen");
+        }
+
+        for (LessonsCount lessonsCount : lessonsCounts) {
           if (!studentGroup.getSubjects().contains(lessonsCount.getSubject())) {
             continue;
           }
           for (int index = 0; index < lessonsCount.getCount(); index++) {
             Lesson lesson = new Lesson();
-            lesson.setYear(serverRepository.findAll().getLast().getCurrentYear());
+            lesson.setYear(serverData.getLast().getCurrentYear());
+
             lesson.setIndex(index);
             lesson.setStudentGroup(studentGroup);
             lesson.setSubject(lessonsCount.getSubject());
-            lesson.setTeacher(
-                teacherRepository.findAll().get((int) (Math.random() * teacherRepository.count())));
-            lesson.setRoom(
-                roomRepository.findAll().get((int) (Math.random() * roomRepository.count())));
-            lesson.setTimeslot(
-                timeslotRepository.findAll()
-                    .get((int) (Math.random() * timeslotRepository.count())));
+            lesson.setTeacher(teachers.get((int) (Math.random() * teacherRepository.count())));
+            lesson.setRoom(rooms.get((int) (Math.random() * roomRepository.count())));
+            lesson.setTimeslot(timeslots.get((int) (Math.random() * timeslotRepository.count())));
+
             lesson.setTimetable(timetable);
 
             lessonRepository.save(lesson);
@@ -376,7 +419,12 @@ public class TimetableService {
 
   private List<SubjectProblemDto> getSubjects(Timetable timetable) {
     List<SubjectProblemDto> subjects = new ArrayList<>();
-    for (Subject subject : subjectRepository.findAll()) {
+    List<Subject> subjectList = subjectRepository.findAll();
+    if (subjectList.isEmpty()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "Es muss mindestens ein Fach vorhanden sein, um einen Stundenplan zu erstellen");
+    }
+    for (Subject subject : subjectList) {
       List<String> tagIds = new ArrayList<>();
       for (Tag tag : subject.getTags()) {
         tagIds.add(tag.getId());

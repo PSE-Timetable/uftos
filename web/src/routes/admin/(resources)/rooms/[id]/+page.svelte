@@ -1,48 +1,28 @@
 <script lang="ts">
   import AddResource from '$lib/components/ui/add-resource/add-resource.svelte';
-  import { createRoom, updateRoom, type Room, type RoomRequestDto } from '$lib/sdk/fetch-client.js';
+  import { createRoom, updateRoom, type RoomRequestDto } from '$lib/sdk/fetch-client.js';
   import { error } from '@sveltejs/kit';
+  import { _schema as schema } from './+page';
 
   export let data;
-  let room: Room = data.room;
-  let values: string[] = [room.name, room.buildingName, String(room.capacity)];
-  let descriptions: string[] = ['Name:', 'Gebäudename:', 'Kapazität:'];
+  let descriptions: string[] = ['Name:', 'Gebäudename:'];
 
-  async function create(values: string[], tagIds: string[]) {
+  async function update(formData: Record<string, string | number | string[]>) {
     let roomRequestDto: RoomRequestDto = {
-      name: values[0],
-      buildingName: values[1],
-      capacity: Number(values[2]),
-      tagIds,
+      name: String(formData.name),
+      buildingName: String(formData.buildingName),
+      capacity: Number(formData.capacity),
+      tagIds: formData.tags as string[],
     };
     try {
-      await createRoom(roomRequestDto);
-    } catch {
-      error(400, { message: 'Could not create student' });
-    }
-  }
-
-  async function update(values: string[], tagIds: string[]) {
-    let roomRequestDto: RoomRequestDto = {
-      name: values[0],
-      buildingName: values[1],
-      capacity: Number(values[2]),
-      tagIds,
-    };
-    try {
-      await updateRoom(room.id, roomRequestDto);
+      const _ =
+        formData.id === 'new'
+          ? await createRoom(roomRequestDto)
+          : await updateRoom(String(formData.id), roomRequestDto);
     } catch {
       error(400, { message: 'Could not update student' });
     }
   }
 </script>
 
-<AddResource
-  {descriptions}
-  {values}
-  {create}
-  {update}
-  createEntity={data.create}
-  tags={data.tags}
-  entityTags={room.tags}
-/>
+<AddResource {descriptions} data={data.form} {schema} {update} tags={data.tags} />
