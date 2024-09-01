@@ -426,7 +426,7 @@ public class TimetableService {
     List<Subject> subjectList = subjectRepository.findAll();
     if (subjectList.isEmpty()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "There must be at least one subject to create a timetable");
+          "Es muss mindestens ein Fach vorhanden sein, um einen Stundenplan zu erstellen");
     }
     for (Subject subject : subjectList) {
       List<String> tagIds = new ArrayList<>();
