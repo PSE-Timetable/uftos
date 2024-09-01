@@ -22,7 +22,6 @@ import de.uftos.repositories.solver.SolverRepositoryImpl;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -35,7 +34,7 @@ import org.mockito.quality.Strictness;
 public class SolverRepositoryImplTest {
 
   @Test
-  void solveValid() throws ExecutionException, InterruptedException {
+  void solveValid() {
     assertDoesNotThrow(() -> {
       new SolverRepositoryImpl().solve(getValidTimetableProblemDto(), (timetable) -> {
       }).get();
@@ -46,6 +45,11 @@ public class SolverRepositoryImplTest {
       new SolverRepositoryImpl().solve(noConstraintInstances, (timetable) -> {
       }).get();
     });
+  }
+
+  @Test
+  void solveInvalid() {
+    //TODO: Increase coverage with invalid instances.
   }
 
   private TimetableProblemDto getValidTimetableProblemDto() {
