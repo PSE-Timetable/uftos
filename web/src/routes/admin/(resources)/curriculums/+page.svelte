@@ -11,6 +11,7 @@
   } from '$lib/sdk/fetch-client';
   import type { Selected } from 'bits-ui';
   import { error } from '@sveltejs/kit';
+  import { toast } from '$lib/utils/resources.js';
 
   export let data;
   let selectGrades = data.grades.map((grade) => ({
@@ -23,6 +24,7 @@
   let curriculum: CurriculumResponseDto;
   let lessonsCounts: LessonsCount[] = [];
   let selectedGrade: GradeResponseDto | undefined = data.grades.find((grade) => grade.id === selectedGradeId.value);
+  let gradesAvailable = data.grades.length > 0;
 
   async function getCurriculumFromGrade() {
     selectedGrade = data.grades.find((grade) => grade.id === selectedGradeId.value);
@@ -39,24 +41,28 @@
 
 <div class="grid grid-cols-[max-content,1fr] p-4 gap-8">
   <div class="text-lg font-bold">Stufe:</div>
-  <Select.Root bind:selected={selectedGradeId}>
-    <Select.Trigger class="shadow-custom w-[15vw]">
-      <Select.Value placeholder="Stufe auswählen" />
-    </Select.Trigger>
-    <Select.Content>
-      <Select.Group>
-        {#each selectGrades as grade}
-          <Select.Item value={grade.value} label={grade.label}>{grade.label}</Select.Item>
-        {/each}
-      </Select.Group>
-    </Select.Content>
-  </Select.Root>
+  {#if gradesAvailable}
+    <Select.Root bind:selected={selectedGradeId}>
+      <Select.Trigger class="shadow-custom w-[15vw]">
+        <Select.Value placeholder="Stufe auswählen" />
+      </Select.Trigger>
+      <Select.Content>
+        <Select.Group>
+          {#each selectGrades as grade}
+            <Select.Item value={grade.value} label={grade.label}>{grade.label}</Select.Item>
+          {/each}
+        </Select.Group>
+      </Select.Content>
+    </Select.Root>
+  {:else}
+    <div class="text-lg font-bold">Keine Stufen vorhanden.</div>
+  {/if}
 
   {#if selectedGrade}
     {#key selectedGradeId}
-      {#await getCurriculumFromGrade() then}
-        <div class="w-[10vw] text-lg font-bold">Anzahl an Stunden pro Fach:</div>
-        <div class="grid grid-cols-4 w-fit gap-8">
+      <div class="w-[10vw] text-lg font-bold">Anzahl an Stunden pro Fach:</div>
+      <div class="grid grid-cols-4 w-fit gap-8">
+        {#await getCurriculumFromGrade() then}
           {#each lessonsCounts as lessonCount}
             <div class="bg-white shadow-custom p-4 w-[15vw] break-words rounded-md flex flex-col gap-2 justify-between">
               <div class="text-center m-1">{lessonCount.subject?.name}</div>
@@ -86,9 +92,11 @@
                 </button>
               </div>
             </div>
+          {:else}
+            <div class="text-lg font-bold">Keine Fächer vorhanden.</div>
           {/each}
-        </div>
-      {/await}
+        {/await}
+      </div>
     {/key}
   {/if}
 
@@ -104,9 +112,11 @@
           name: selectedGrade.name,
         };
         await updateCurriculum(curriculum.id, test);
+        toast(true, 'Curriculum erfolgreich gespeichert.');
       }
     }}
     class="col-start-2 w-[15vw] p-8 text-lg bg-accent text-white"
-    variant="secondary">Speichern</Button
+    variant="secondary"
+    disabled={!gradesAvailable || lessonsCounts.length === 0}>Speichern</Button
   >
 </div>
