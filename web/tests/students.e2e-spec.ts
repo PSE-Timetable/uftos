@@ -9,10 +9,10 @@ test.describe.configure({ mode: 'serial' });
 test.describe('Students page', () => {
   test.beforeAll('delete all existing students', async ({ browser }) => {
     page = await browser.newPage();
-    await page.goto('http://localhost:5173/');
+    await page.goto('/');
     await page.getByRole('link').first().click();
     await page.locator('div:nth-child(2) > .bg-accent').first().click();
-    await expect(page).toHaveURL('http://localhost:5173/admin/students');
+    await expect(page).toHaveURL('/admin/students');
     await page.getByRole('row').first().waitFor();
     await page.getByRole('row', { name: 'Vorname Nachname Tags' }).getByRole('checkbox').waitFor();
     await expect(async () => {
@@ -28,7 +28,7 @@ test.describe('Students page', () => {
   test('create entities', async () => {
     await expect(page.locator('body')).toContainText('Hinzufügen');
     await page.getByRole('button', { name: 'Hinzufügen' }).click();
-    await expect(page).toHaveURL('http://localhost:5173/admin/students/new');
+    await expect(page).toHaveURL('/admin/students/new');
     await page.getByRole('textbox').first().click();
     await page.getByRole('textbox').first().fill('odgsogdpnpowad');
     await page.getByRole('textbox').nth(1).click();
@@ -158,8 +158,8 @@ test.describe('Students page', () => {
   test('empty input', async () => {
     await page.getByRole('button', { name: 'Hinzufügen' }).click();
     await page.getByRole('button', { name: 'Speichern' }).click();
-    await expect(page.getByText('Dieses Feld darf nicht leer').first()).toBeVisible();
-    await page.getByText('Dieses Feld darf nicht leer').nth(1).click();
+    await expect(page.getByText('Der Vorname darf nicht leer sein.')).toBeVisible();
+    await expect(page.getByText('Der Nachname darf nicht leer sein.')).toBeVisible();
     await page.getByRole('button').first().click();
   });
 
