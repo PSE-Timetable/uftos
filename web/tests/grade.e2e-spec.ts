@@ -186,7 +186,7 @@ test.describe('grades page', () => {
     await page.getByRole('textbox').fill('BTag');
     await page.getByRole('button', { name: 'Speichern' }).click();
 
-    await page.getByRole('link', { name: 'Raum' }).click();
+    await page.getByRole('link', { name: 'Stufe' }).click();
     await page.getByRole('row').nth(1).getByRole('button').click();
     await page.getByRole('menuitem', { name: 'Editieren' }).click();
     await page.getByRole('combobox').click();
