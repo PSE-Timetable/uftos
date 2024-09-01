@@ -290,6 +290,12 @@ export type RoomRequestDto = {
     name: string;
     tagIds: string[];
 };
+export type ServerEmailResponseDto = {
+    email: string;
+};
+export type ServerEmailRequestDto = {
+    email?: string;
+};
 export type ServerStatisticsResponseDto = {
     constraintCount: number;
     gradeCount: number;
@@ -550,7 +556,10 @@ export function validateUcdlFile(body?: {
     })));
 }
 export function deleteGrades(body: string[], opts?: Oazapfts.RequestOpts) {
-    return oazapfts.ok(oazapfts.fetchText("/grades", oazapfts.json({
+    return oazapfts.ok(oazapfts.fetchJson<{
+        status: 200;
+        data: SuccessResponse;
+    }>("/grades", oazapfts.json({
         ...opts,
         method: "DELETE",
         body
@@ -710,6 +719,21 @@ export function getRoomLessons(id: string, opts?: Oazapfts.RequestOpts) {
     }>(`/rooms/${encodeURIComponent(id)}/lessons`, {
         ...opts
     }));
+}
+export function getNotificationEmail(opts?: Oazapfts.RequestOpts) {
+    return oazapfts.ok(oazapfts.fetchJson<{
+        status: 200;
+        data: ServerEmailResponseDto;
+    }>("/server/email", {
+        ...opts
+    }));
+}
+export function setNotificationEmail(serverEmailRequestDto: ServerEmailRequestDto, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.ok(oazapfts.fetchText("/server/email", oazapfts.json({
+        ...opts,
+        method: "PUT",
+        body: serverEmailRequestDto
+    })));
 }
 export function getServerStats(opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{

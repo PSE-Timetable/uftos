@@ -68,10 +68,17 @@
             class="text-base"
             on:click={async () => {
               const name = `${new Date().getFullYear()}:${Date.now()}`;
-              await createTimetable({ name });
-              toast.success('Erfolgreich', {
-                description: 'Die Erstellung eines Stundenplan wurde erfolgereich gestartet!',
-              });
+              const response = await createTimetable({ name });
+              if (response.success) {
+                toast.success('Erfolgreich', {
+                  description: 'Die Erstellung eines Stundenplan wurde erfolgereich gestartet!',
+                });
+              } else {
+                toast.error('Fehler', {
+                  description: 'Die Erstellung eines Stundenplan ist fehlgeschlagen: ' + response.message,
+                });
+              }
+              
             }}>Stundenplan generieren</DropdownMenu.Item
           >
         </DropdownMenu.Group>

@@ -15,6 +15,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import lombok.Data;
@@ -45,11 +46,11 @@ public class StudentGroup {
       joinColumns = @JoinColumn(name = "student_groups_id"),
       inverseJoinColumns = @JoinColumn(name = "students_id"),
       uniqueConstraints = @UniqueConstraint(columnNames = {"student_groups_id", "students_id"}))
-  private List<Student> students;
+  private List<Student> students = new ArrayList<>();
 
   @NotNull
   @ManyToMany(mappedBy = "studentGroups")
-  private List<Grade> grades;
+  private List<Grade> grades = new ArrayList<>();
 
   @NotNull
   @ManyToMany(fetch = FetchType.EAGER)
@@ -57,18 +58,18 @@ public class StudentGroup {
       joinColumns = @JoinColumn(name = "student_groups_id"),
       inverseJoinColumns = @JoinColumn(name = "tags_id"),
       uniqueConstraints = @UniqueConstraint(columnNames = {"student_groups_id", "tags_id"}))
-  private List<Tag> tags;
+  private List<Tag> tags = new ArrayList<>();
 
   @JsonIgnore
   @OneToMany(mappedBy = "studentGroup")
-  private List<Lesson> lessons;
+  private List<Lesson> lessons = new ArrayList<>();
 
   @NotNull
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(name = "student_groups_subjects",
       joinColumns = @JoinColumn(name = "student_groups_id"),
       inverseJoinColumns = @JoinColumn(name = "subjects_id"))
-  private List<Subject> subjects;
+  private List<Subject> subjects = new ArrayList<>();
 
   @JsonIgnore
   @Type(PostgreSQLTSVectorType.class)

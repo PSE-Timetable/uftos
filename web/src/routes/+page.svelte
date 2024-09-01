@@ -2,12 +2,11 @@
   import { UserCog, Calendar } from 'lucide-svelte';
 </script>
 
-<div class="flex flex-row justify-start bg-foreground p-4 text-white">
+<div class="flex flex-row w-fit min-w-full justify-start bg-foreground p-4 text-white">
   <h1 class="text-xl font-bold">UFTOS</h1>
 </div>
 
-<div class="flex flex-col gap-8 p-4 bg-background">
-  <h1 class="text-xl font-bold">Wohin willst du gehen?</h1>
+<div class="flex flex-col gap-8 p-8 bg-background">
   <div class="flex flex-row justify-evenly">
     <div class="flex flex-col gap-2 items-center">
       <a href="/admin" class="flex justify-center items-center bg-white p-4 w-full rounded-lg hover:bg-accent">
