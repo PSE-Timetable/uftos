@@ -37,7 +37,8 @@ test.describe('Constraints', () => {
       await fileChooser.setFiles('./tests/empty-ucdl.yml');
       await expect(page.locator('.view-line').first()).toBeEmpty({ timeout: 250 });
     }).toPass();
-    const students = await getStudents({ page: 0 }).then(({ content }) => content ?? []);
+    const totalStudents = await getStudents({ page: 0 }).then(({ totalElements }) => totalElements);
+    const students = await getStudents({ page: 0, size: totalStudents }).then(({ content }) => content ?? []);
     if (students.length > 0) {
       await deleteStudents(students.map((student) => student.id));
     }
@@ -49,11 +50,13 @@ test.describe('Constraints', () => {
     if (tags.length > 0) {
       await deleteSubjects(subjects.map((subject) => subject.id));
     }
-    const teachers = await getTeachers({ page: 0 }).then(({ content }) => content ?? []);
+    const totalTeachers = await getTeachers({ page: 0 }).then(({ totalElements }) => totalElements);
+    const teachers = await getTeachers({ page: 0, size: totalTeachers }).then(({ content }) => content ?? []);
     if (teachers.length > 0) {
       await deleteTeachers(teachers.map((teacher) => teacher.id));
     }
-    const groups = await getStudentGroups({ page: 0 }).then(({ content }) => content ?? []);
+    const totalGroups = await getStudentGroups({ page: 0 }).then(({ totalElements }) => totalElements);
+    const groups = await getStudentGroups({ page: 0, size: totalGroups }).then(({ content }) => content ?? []);
     if (groups.length > 0) {
       for (const group of groups) {
         await deleteStudentGroup(group.id);
