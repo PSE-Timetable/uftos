@@ -3,7 +3,7 @@
 </script>
 
 <div class="flex flex-col gap-2">
-  <Navbar title="Stundenplan" />
+  <Navbar title="Stundenplan" backToRoot={true} />
   <div class="p-4">
     <slot />
   </div>

@@ -14,13 +14,18 @@
 
   let title: string = '';
   export { title };
+  export let backToRoot: boolean = false;
 </script>
 
 {#if title !== ''}
   <div class="h-[10%] bg-primary text-white p-4 font-medium text-2xl">
     <Button
       on:click={async () => {
-        await goto('../');
+        if (backToRoot) {
+          await goto('/');
+        } else {
+          await goto('../');
+        }
       }}
       variant="secondary"
       size="icon"
@@ -32,8 +37,8 @@
     <slot />
   </div>
 {:else}
-  <div class="bg-primary p-4 flex flex-row gap ì-2 justify-between text-white font-medium text-2xl items-center"> 
-    <div class="flex flex-row">
+  <div class="bg-primary p-4 flex flex-row gap justify-between text-white font-medium text-2xl items-center"> 
+    <div class="flex flex-row items-center">
       <Button on:click={() => goto('./')} variant="secondary" size="icon" class="rounded-full bg-accent mr-6">
         <ChevronLeft class="h-5 w-5 text-white" />
       </Button>
@@ -43,7 +48,7 @@
 
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild let:builder>
-        <Button class="bg-white text-primary text-lg hover:bg-accent hover:text-white" builders={[builder]}>
+        <Button class="bg-white text-primary text-base hover:bg-accent hover:text-white" builders={[builder]}>
           <div class="flex flex-row gap-2 items-center">
             Einstellungen
             <ChevronDown />
@@ -54,13 +59,13 @@
         <DropdownMenu.Group>
           {#each settings as setting}
             <DropdownMenu.Item
-              class="text-lg"
+              class="text-base"
               on:click={() => (window.location.href = setting.url)}
               >{setting.label}</DropdownMenu.Item
             >
           {/each}
           <DropdownMenu.Item
-            class="text-lg"
+            class="text-base"
             on:click={async () => {
               const name = `${new Date().getFullYear()}:${Date.now()}`;
               await createTimetable({ name });
