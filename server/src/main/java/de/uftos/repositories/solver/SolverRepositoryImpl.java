@@ -58,8 +58,7 @@ public class SolverRepositoryImpl implements SolverRepository {
 
   @Override
   public Future<TimetableSolutionDto> solve(TimetableProblemDto timetable,
-                                            Consumer<TimetableSolutionDto> solverFinishedEvent)
-      throws IllegalArgumentException {
+                                            Consumer<TimetableSolutionDto> solverFinishedEvent) {
     Callable<TimetableSolutionDto> solveTimetable = () -> {
       TimetableSolutionTimefoldInstance solution =
           getSolutionInstanceFromTimetableInstance(timetable);

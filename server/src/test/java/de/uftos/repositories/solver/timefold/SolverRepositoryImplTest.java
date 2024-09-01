@@ -39,17 +39,158 @@ public class SolverRepositoryImplTest {
       new SolverRepositoryImpl().solve(getValidTimetableProblemDto(), (timetable) -> {
       }).get();
     });
+
     TimetableProblemDto noConstraintInstances = getValidTimetableProblemDto();
     noConstraintInstances.instances().clear();
     assertDoesNotThrow(() -> {
       new SolverRepositoryImpl().solve(noConstraintInstances, (timetable) -> {
       }).get();
     });
+
+    TimetableProblemDto lessonsUnset = getValidTimetableProblemDto();
+    lessonsUnset.lessons().clear();
+    lessonsUnset.lessons()
+        .add(new LessonProblemDto(null, 0, null, "studentGroup", null, "subject", null));
+
+    RoomProblemDto oldRoom = lessonsUnset.rooms().getFirst();
+    lessonsUnset.rooms()
+        .set(0, new RoomProblemDto(oldRoom.id(), oldRoom.tagIds(), new ArrayList<>()));
+
+    TeacherProblemDto oldTeacher = lessonsUnset.teachers().getFirst();
+    lessonsUnset.teachers().set(0,
+        new TeacherProblemDto(oldTeacher.id(), oldTeacher.tagIds(), new ArrayList<>(),
+            oldTeacher.subjectIds()));
+
+    TimeslotProblemDto oldTimeslot = lessonsUnset.timeslots().getFirst();
+    lessonsUnset.timeslots().set(0,
+        new TimeslotProblemDto(oldTimeslot.id(), oldTimeslot.day(), oldTimeslot.slot(),
+            oldTimeslot.tagIds(), new ArrayList<>()));
+
+    assertDoesNotThrow(() -> {
+      new SolverRepositoryImpl().solve(lessonsUnset, (timetable) -> {
+      });
+    });
   }
 
   @Test
   void solveInvalid() {
-    //TODO: Increase coverage with invalid instances.
+    //Exceptions are thrown in the solver thread and therefore the .solve() method does not throw by itself
+    TimetableProblemDto timetable;
+    TimetableProblemDto invalidTimetable;
+
+    timetable = getValidTimetableProblemDto();
+    invalidTimetable =
+        new TimetableProblemDto(null, timetable.lessons(), timetable.rooms(),
+            timetable.studentGroups(), timetable.students(), timetable.subjects(), timetable.tags(),
+            timetable.teachers(), timetable.timeslots(), timetable.definitions(),
+            timetable.instances());
+    TimetableProblemDto finalInvalidTimetable = invalidTimetable;
+    assertDoesNotThrow(() -> new SolverRepositoryImpl().solve(finalInvalidTimetable, (t) -> {
+    }));
+    invalidTimetable =
+        new TimetableProblemDto(timetable.grades(), null, timetable.rooms(),
+            timetable.studentGroups(), timetable.students(), timetable.subjects(), timetable.tags(),
+            timetable.teachers(), timetable.timeslots(), timetable.definitions(),
+            timetable.instances());
+    TimetableProblemDto finalInvalidTimetable1 = invalidTimetable;
+    assertDoesNotThrow(() -> new SolverRepositoryImpl().solve(finalInvalidTimetable1, (t) -> {
+    }));
+    invalidTimetable =
+        new TimetableProblemDto(timetable.grades(), timetable.lessons(), null,
+            timetable.studentGroups(), timetable.students(), timetable.subjects(), timetable.tags(),
+            timetable.teachers(), timetable.timeslots(), timetable.definitions(),
+            timetable.instances());
+    TimetableProblemDto finalInvalidTimetable2 = invalidTimetable;
+    assertDoesNotThrow(() -> new SolverRepositoryImpl().solve(finalInvalidTimetable2, (t) -> {
+    }));
+    invalidTimetable =
+        new TimetableProblemDto(timetable.grades(), timetable.lessons(), timetable.rooms(),
+            null, timetable.students(), timetable.subjects(), timetable.tags(),
+            timetable.teachers(), timetable.timeslots(), timetable.definitions(),
+            timetable.instances());
+    TimetableProblemDto finalInvalidTimetable3 = invalidTimetable;
+    assertDoesNotThrow(() -> new SolverRepositoryImpl().solve(finalInvalidTimetable3, (t) -> {
+    }));
+    invalidTimetable =
+        new TimetableProblemDto(timetable.grades(), timetable.lessons(), timetable.rooms(),
+            timetable.studentGroups(), null, timetable.subjects(), timetable.tags(),
+            timetable.teachers(), timetable.timeslots(), timetable.definitions(),
+            timetable.instances());
+    TimetableProblemDto finalInvalidTimetable4 = invalidTimetable;
+    assertDoesNotThrow(() -> new SolverRepositoryImpl().solve(finalInvalidTimetable4, (t) -> {
+    }));
+    invalidTimetable =
+        new TimetableProblemDto(timetable.grades(), timetable.lessons(), timetable.rooms(),
+            timetable.studentGroups(), timetable.students(), null, timetable.tags(),
+            timetable.teachers(), timetable.timeslots(), timetable.definitions(),
+            timetable.instances());
+    TimetableProblemDto finalInvalidTimetable5 = invalidTimetable;
+    assertDoesNotThrow(() -> new SolverRepositoryImpl().solve(finalInvalidTimetable5, (t) -> {
+    }));
+    invalidTimetable =
+        new TimetableProblemDto(timetable.grades(), timetable.lessons(), timetable.rooms(),
+            timetable.studentGroups(), timetable.students(), timetable.subjects(), null,
+            timetable.teachers(), timetable.timeslots(), timetable.definitions(),
+            timetable.instances());
+    TimetableProblemDto finalInvalidTimetable6 = invalidTimetable;
+    assertDoesNotThrow(() -> new SolverRepositoryImpl().solve(finalInvalidTimetable6, (t) -> {
+    }));
+    invalidTimetable =
+        new TimetableProblemDto(timetable.grades(), timetable.lessons(), timetable.rooms(),
+            timetable.studentGroups(), timetable.students(), timetable.subjects(), timetable.tags(),
+            null, timetable.timeslots(), timetable.definitions(),
+            timetable.instances());
+    TimetableProblemDto finalInvalidTimetable7 = invalidTimetable;
+    assertDoesNotThrow(() -> new SolverRepositoryImpl().solve(finalInvalidTimetable7, (t) -> {
+    }));
+    invalidTimetable =
+        new TimetableProblemDto(timetable.grades(), timetable.lessons(), timetable.rooms(),
+            timetable.studentGroups(), timetable.students(), timetable.subjects(), timetable.tags(),
+            timetable.teachers(), null, timetable.definitions(),
+            timetable.instances());
+    TimetableProblemDto finalInvalidTimetable8 = invalidTimetable;
+    assertDoesNotThrow(() -> new SolverRepositoryImpl().solve(finalInvalidTimetable8, (t) -> {
+    }));
+    invalidTimetable =
+        new TimetableProblemDto(timetable.grades(), timetable.lessons(), timetable.rooms(),
+            timetable.studentGroups(), timetable.students(), timetable.subjects(), timetable.tags(),
+            timetable.teachers(), timetable.timeslots(), null,
+            timetable.instances());
+    TimetableProblemDto finalInvalidTimetable9 = invalidTimetable;
+    assertDoesNotThrow(() -> new SolverRepositoryImpl().solve(finalInvalidTimetable9, (t) -> {
+    }));
+    invalidTimetable =
+        new TimetableProblemDto(timetable.grades(), timetable.lessons(), timetable.rooms(),
+            timetable.studentGroups(), timetable.students(), timetable.subjects(), timetable.tags(),
+            timetable.teachers(), timetable.timeslots(), timetable.definitions(),
+            null);
+    TimetableProblemDto finalInvalidTimetable10 = invalidTimetable;
+    assertDoesNotThrow(() -> new SolverRepositoryImpl().solve(finalInvalidTimetable10, (t) -> {
+    }));
+    invalidTimetable =
+        new TimetableProblemDto(timetable.grades(), timetable.lessons(), new ArrayList<>(),
+            timetable.studentGroups(), timetable.students(), timetable.subjects(), timetable.tags(),
+            timetable.teachers(), timetable.timeslots(), timetable.definitions(),
+            timetable.instances());
+    TimetableProblemDto finalInvalidTimetable11 = invalidTimetable;
+    assertDoesNotThrow(() -> new SolverRepositoryImpl().solve(finalInvalidTimetable11, (t) -> {
+    }));
+    invalidTimetable =
+        new TimetableProblemDto(timetable.grades(), timetable.lessons(), timetable.rooms(),
+            timetable.studentGroups(), timetable.students(), timetable.subjects(), timetable.tags(),
+            new ArrayList<>(), timetable.timeslots(), timetable.definitions(),
+            timetable.instances());
+    TimetableProblemDto finalInvalidTimetable12 = invalidTimetable;
+    assertDoesNotThrow(() -> new SolverRepositoryImpl().solve(finalInvalidTimetable12, (t) -> {
+    }));
+    invalidTimetable =
+        new TimetableProblemDto(timetable.grades(), timetable.lessons(), timetable.rooms(),
+            timetable.studentGroups(), timetable.students(), timetable.subjects(), timetable.tags(),
+            timetable.teachers(), new ArrayList<>(), timetable.definitions(),
+            timetable.instances());
+    TimetableProblemDto finalInvalidTimetable13 = invalidTimetable;
+    assertDoesNotThrow(() -> new SolverRepositoryImpl().solve(finalInvalidTimetable13, (t) -> {
+    }));
   }
 
   private TimetableProblemDto getValidTimetableProblemDto() {
