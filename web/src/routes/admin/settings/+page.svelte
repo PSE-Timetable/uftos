@@ -186,7 +186,7 @@
 </div>
 
 <div class="flex flex-row gap-8 p-4">
-  <div class="grid grid-cols-2 auto-rows-auto h-fit gap-4">
+  <div class="grid grid-cols-2 auto-rows-auto items-center h-fit gap-4">
     <label for="slot" class="font-bold fit-content">Timeslots pro Tag:</label>
     <Input
       background={true}

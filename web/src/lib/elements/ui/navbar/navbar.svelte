@@ -18,7 +18,7 @@
 </script>
 
 {#if title !== ''}
-  <div class="h-[10%] bg-primary text-white p-4 font-medium text-2xl">
+  <div class="h-[10%] bg-primary w-fit min-w-full text-white p-4 font-medium text-2xl">
     <Button
       on:click={async () => {
         if (backToRoot) {
@@ -37,7 +37,7 @@
     <slot />
   </div>
 {:else}
-  <div class="bg-primary p-4 flex flex-row gap justify-between text-white font-medium text-2xl items-center"> 
+  <div class="bg-primary w-fit min-w-full p-4 gap-4 flex flex-row gap justify-between text-white font-medium text-2xl items-center"> 
     <div class="flex flex-row items-center">
       <Button on:click={() => goto('./')} variant="secondary" size="icon" class="rounded-full bg-accent mr-6">
         <ChevronLeft class="h-5 w-5 text-white" />

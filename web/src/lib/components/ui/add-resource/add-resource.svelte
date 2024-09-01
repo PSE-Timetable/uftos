@@ -55,7 +55,7 @@
 </script>
 
 <form method="POST" use:enhance>
-  <div class="grid grid-cols-[max-content,1fr] gap-8 p-4">
+  <div class="grid grid-cols-[max-content,1fr] items-center gap-8 p-4">
     {#each descriptions as description, i}
       <div class="text-base font-bold flex items-center">{description}</div>
       <div class="flex flex-col gap-1 w-80">
@@ -74,7 +74,7 @@
     {/each}
 
     {#if names.includes('capacity')}
-      <div class="text-base font-bold flex">Kapazität:</div>
+      <div class="text-base font-bold flex items-center">Kapazität:</div>
       <div class="flex flex-col gap-1 w-80">
         <Form.Field {form} name="capacity">
           <Form.Control let:attrs>
@@ -93,7 +93,7 @@
     {/if}
 
     {#if grades}
-      <div class="flex text-base font-bold">Stufe:</div>
+      <div class="flex text-base font-bold items-center">Stufe:</div>
       {#if gradesAvailable}
         <div class="flex flex-col">
           <Form.Field {form} name="grades">
@@ -114,7 +114,7 @@
     {/if}
 
     {#if subjects}
-      <div class="flex text-base font-bold">Fächer:</div>
+      <div class="flex text-base font-bold items-center">Fächer:</div>
       {#if subjects.length > 0}
         <div class="flex flex-wrap bg-white rounded-md gap-2 p-4 shadow-custom max-w-80">
           {#each subjects as subject, i}
@@ -134,7 +134,7 @@
     {#if tags}
       <div class=" flex text-base font-bold">Tags:</div>
       {#if tags.length > 0}
-        <div class="w-80 flex">
+        <div class="w-80 flex items-center">
           <Form.Field {form} name="tags">
             <Form.Control>
               <TagsMultipleSelect {tags} bind:selectedTagIds={$formData.tags} />
