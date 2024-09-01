@@ -1,29 +1,22 @@
 package de.uftos.repositories.ucdl;
 
+import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import org.junit.jupiter.api.BeforeEach;
+import org.apache.coyote.BadRequestException;
 import org.junit.jupiter.api.Test;
 
 public class UcdlRepositoryImplTest {
 
-  @BeforeEach
-  void setup() throws IOException {
-    when(Files.readString(any())).thenReturn("");
-  }
 
   @Test
   void getUcdl() {
-    assertDoesNotThrow(() -> new UcdlRepositoryImpl().getUcdl());
+    assertThrows(BadRequestException.class, () -> new UcdlRepositoryImpl().getUcdl());
   }
 
   @Test
   void setUcdl() {
-    assertDoesNotThrow(() -> new UcdlRepositoryImpl().setUcdl(""));
+    assertThrows(BadRequestException.class, () -> new UcdlRepositoryImpl().setUcdl(""));
   }
 
   @Test
