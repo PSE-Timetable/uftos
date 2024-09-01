@@ -1,5 +1,6 @@
 package de.uftos.controller;
 
+import de.uftos.dto.SuccessResponse;
 import de.uftos.dto.requestdtos.GradeRequestDto;
 import de.uftos.dto.responsedtos.GradeResponseDto;
 import de.uftos.dto.responsedtos.LessonResponseDto;
@@ -109,7 +110,7 @@ public class GradeController {
    * @param ids the IDs of the grades which are to be deleted.
    */
   @DeleteMapping()
-  public void deleteGrades(@RequestBody String[] ids) {
-    this.gradeService.deleteGrades(ids);
+  public SuccessResponse deleteGrades(@RequestBody String[] ids) {
+    return this.gradeService.deleteGrades(ids);
   }
 }

@@ -513,6 +513,13 @@
         },
         "responses" : {
           "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SuccessResponse"
+                }
+              }
+            },
             "description" : "OK"
           }
         },

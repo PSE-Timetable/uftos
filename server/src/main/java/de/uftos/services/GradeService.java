@@ -1,6 +1,7 @@
 package de.uftos.services;
 
 
+import de.uftos.dto.SuccessResponse;
 import de.uftos.dto.requestdtos.GradeRequestDto;
 import de.uftos.dto.responsedtos.GradeResponseDto;
 import de.uftos.dto.responsedtos.LessonResponseDto;
@@ -185,25 +186,24 @@ public class GradeService {
    * @param ids the IDs of the grades which are to be deleted.
    * @throws ResponseStatusException is thrown if no grade exists with the given ID.
    */
-  public void deleteGrades(String[] ids) {
+  public SuccessResponse deleteGrades(String[] ids) {
     List<String> gradesIds = Arrays.asList(ids);
     List<Grade> grades = this.repository.findAllById(gradesIds);
     if (grades.size() != gradesIds.size()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "Could not found a grade with this id");
+      return new SuccessResponse(false, "Es konnte keine Stufe mit dieser ID gefunden werden!");
     }
 
     List<StudentGroup> studentGroups =
         this.studentGroupRepository.findAllByGrades(gradesIds);
     if (!studentGroups.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "This grade is still associated with a student group.");
+      return new SuccessResponse(false, "Diese Stufe ist noch mit einer Schülergruppe verbunden");
     }
 
     new ConstraintInstanceDeleter(constraintSignatureRepository, constraintInstanceRepository)
         .removeAllInstancesWithArgumentValue(ids);
 
     this.repository.deleteAll(grades);
+    return new SuccessResponse(true, "Stufe erfolgreich gelöscht");
   }
 
   private GradeResponseDto mapResponseDto(Grade grade) {
