@@ -25,10 +25,10 @@ test.describe.configure({ mode: 'serial' });
 test.describe('Student group page', () => {
   test.beforeAll('delete existing groups', async ({ browser }) => {
     page = await browser.newPage();
-    await page.goto('http://localhost:5173/');
+    await page.goto('/');
     await page.getByRole('link').first().click();
     await page.getByRole('link', { name: 'Gruppe' }).click();
-    await expect(page).toHaveURL('http://localhost:5173/admin/studentGroups');
+    await expect(page).toHaveURL('/admin/studentGroups');
     while (await page.getByRole('button', { name: 'Schüler hinzufügen' }).first().isVisible()) {
       try {
         await page.locator('.flex > .flex > button:nth-child(2)').first().click({ timeout: 500 });
@@ -111,7 +111,7 @@ test.describe('Student group page', () => {
   test('create no selected', async () => {
     await page.getByRole('button', { name: 'Hinzufügen', exact: true }).click();
     await page.getByRole('button', { name: 'Speichern' }).click();
-    await expect(page.locator('body')).toContainText('Dieses Feld darf nicht leer sein.');
+    await expect(page.locator('body')).toContainText('Der Name darf nicht leer sein.');
     await expect(page.locator('body')).toContainText('Es muss eine Stufe ausgewählt werden.');
     await page.getByRole('button').first().click();
   });
