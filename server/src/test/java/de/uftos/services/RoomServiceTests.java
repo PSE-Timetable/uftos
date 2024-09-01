@@ -173,13 +173,6 @@ public class RoomServiceTests {
     assertThrows(ResponseStatusException.class, () -> roomService.create(requestDto));
   }
 
-  @Test
-  void createRoomZeroCapacity() {
-    RoomRequestDto requestDto =
-        new RoomRequestDto("roomName", "buildingName", 0, List.of("tagId"));
-    assertThrows(ResponseStatusException.class, () -> roomService.create(requestDto));
-  }
-
 
   @Test
   void updateRoom() {

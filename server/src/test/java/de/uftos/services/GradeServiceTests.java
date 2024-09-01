@@ -307,20 +307,21 @@ public class GradeServiceTests {
 
   @Test
   void deleteExistentGrade() {
-    assertDoesNotThrow(() -> gradeService.deleteGrades(new String[] {"123"}));
+    assertDoesNotThrow(() -> gradeService.deleteGrades(new String[] {"567"}));
     ArgumentCaptor<List<Grade>> gradeCap = ArgumentCaptor.forClass(getClassType());
     verify(gradeRepository, times(1)).deleteAll(gradeCap.capture());
 
     List<Grade> grade = gradeCap.getValue();
     assertEquals(1, grade.size());
-    assertEquals("123", grade.getFirst().getId());
+    assertEquals("567", grade.getFirst().getId());
   }
 
-//  @Test
-//  void deleteGradeAssociatedWithGroup() {
-//    assertThrows(ResponseStatusException.class, () -> gradeService.delete("123"));
-//  }
-//
+  @Test
+  void deleteGradeAssociatedWithGroup() {
+    assertThrows(ResponseStatusException.class,
+        () -> gradeService.deleteGrades(new String[] {"123"}));
+  }
+
 //  @Test
 //  void deleteGrade() {
 //    assertDoesNotThrow(() -> gradeService.delete("567"));
