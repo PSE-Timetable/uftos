@@ -16,6 +16,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import lombok.Data;
@@ -44,7 +45,7 @@ public class Subject {
 
   @JsonIgnore
   @ManyToMany(mappedBy = "subjects")
-  private List<Teacher> teachers;
+  private List<Teacher> teachers = new ArrayList<>();
 
   @NotNull
   @ManyToMany(fetch = FetchType.EAGER)
@@ -52,15 +53,15 @@ public class Subject {
       joinColumns = @JoinColumn(name = "subjects_id"),
       inverseJoinColumns = @JoinColumn(name = "tags_id"),
       uniqueConstraints = @UniqueConstraint(columnNames = {"subjects_id", "tags_id"}))
-  private List<Tag> tags;
+  private List<Tag> tags = new ArrayList<>();
 
   @JsonIgnore
   @OneToMany(mappedBy = "subject")
-  private List<Lesson> lessons;
+  private List<Lesson> lessons = new ArrayList<>();
 
   @JsonIgnore
   @OneToMany(mappedBy = "subject", cascade = CascadeType.REMOVE)
-  private List<LessonsCount> lessonsCounts;
+  private List<LessonsCount> lessonsCounts = new ArrayList<>();
 
   @JsonIgnore
   @Type(PostgreSQLTSVectorType.class)

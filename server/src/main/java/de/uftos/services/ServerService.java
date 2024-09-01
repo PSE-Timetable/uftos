@@ -1,6 +1,8 @@
 package de.uftos.services;
 
 import de.uftos.dto.Weekday;
+import de.uftos.dto.requestdtos.ServerEmailRequestDto;
+import de.uftos.dto.responsedtos.ServerEmailResponseDto;
 import de.uftos.dto.responsedtos.ServerStatisticsResponseDto;
 import de.uftos.entities.Server;
 import de.uftos.entities.Timeslot;
@@ -103,6 +105,27 @@ public class ServerService {
     server.setTimetableMetadata(timetableMetadata);
 
     this.updateTimeslots(timetableMetadata);
+
+    this.repository.save(server);
+  }
+
+  /**
+   * Gets the current notification email address.
+   *
+   * @return the current email address.
+   */
+  public ServerEmailResponseDto getEmail() {
+    return new ServerEmailResponseDto(this.repository.findAll().getFirst().getEmail());
+  }
+
+  /**
+   * Sets the current notification email address.
+   *
+   * @param dto the dto containing new email address.
+   */
+  public void setEmail(ServerEmailRequestDto dto) {
+    Server server = this.repository.findAll().getFirst();
+    server.setEmail(dto.email());
 
     this.repository.save(server);
   }

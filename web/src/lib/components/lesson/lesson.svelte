@@ -1,29 +1,17 @@
 <script lang="ts">
-  import type { Slot, Color } from './lesson';
+  import type { Slot } from './lesson';
 
   export let title: Slot;
   export let leftCorner: Slot;
   export let rightCorner: Slot;
   export let length: number;
 
-  export let color: Color = 'red';
-  const colorClasses: Record<Color, string> = {
-    purple: 'bg-subjectPurple',
-    red: 'bg-subjectRed',
-    orange: 'bg-subjectOrange',
-    lightBlue: 'bg-subjectLightBlue',
-    blue: 'bg-subjectBlue',
-    green: 'bg-subjectGreen',
-    yellow: 'bg-subjectYellow',
-    brown: 'bg-subjectBrown',
-    aquamarine: 'bg-subjectAquamarine',
-  };
+  export let color: string = '#EDB686';
 </script>
 
 <div
-  class="row-span-{length} flex flex-col {colorClasses[
-    color
-  ]} p-4 items-center rounded-lg gap-2 justify-between w-full h-full"
+  style="background-color: {color};"
+  class="row-span-{length} flex flex-col p-4 items-center rounded-lg gap-2 justify-between w-full h-full"
 >
   {#if title.onClick}
     <button type="button" on:click={title.onClick}>{title.text}</button>

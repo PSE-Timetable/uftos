@@ -11,6 +11,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
  * The REST controller for the constraint signature and constraint instance entity.
  * This controller handles /constraints HTTP requests.
  */
+@Validated
 @RestController
 @RequestMapping("/constraints")
 public class ConstraintController {
@@ -143,7 +145,7 @@ public class ConstraintController {
    * the constraint instance service.
    *
    * @param signatureId the signature ID of the instances which are to be deleted.
-   * @param ids the IDs of the instances which are to be deleted.
+   * @param ids         the IDs of the instances which are to be deleted.
    */
   @DeleteMapping("/{signatureId}/instances")
   public void deleteConstraintInstance(@PathVariable String signatureId,
