@@ -38,13 +38,13 @@ public class SolverRepositoryImplTest {
   void solveValid() throws ExecutionException, InterruptedException {
     assertDoesNotThrow(() -> {
       new SolverRepositoryImpl().solve(getValidTimetableProblemDto(), (timetable) -> {
-      });
+      }).get();
     });
     TimetableProblemDto noConstraintInstances = getValidTimetableProblemDto();
     noConstraintInstances.instances().clear();
     assertDoesNotThrow(() -> {
       new SolverRepositoryImpl().solve(noConstraintInstances, (timetable) -> {
-      });
+      }).get();
     });
   }
 
