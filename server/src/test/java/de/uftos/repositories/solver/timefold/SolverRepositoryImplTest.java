@@ -1,5 +1,7 @@
 package de.uftos.repositories.solver.timefold;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 import de.uftos.dto.ResourceType;
 import de.uftos.dto.solver.ConstraintInstanceDto;
 import de.uftos.dto.solver.GradeProblemDto;
@@ -16,8 +18,10 @@ import de.uftos.dto.solver.TimetableProblemDto;
 import de.uftos.dto.ucdl.ConstraintDefinitionDto;
 import de.uftos.dto.ucdl.UcdlToken;
 import de.uftos.dto.ucdl.ast.ValueDto;
+import de.uftos.repositories.solver.SolverRepositoryImpl;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -30,28 +34,34 @@ import org.mockito.quality.Strictness;
 public class SolverRepositoryImplTest {
 
   @Test
-  void solve() {
-
+  void solveValid() throws ExecutionException, InterruptedException {
+    assertDoesNotThrow(() -> {
+      new SolverRepositoryImpl().solve(getValidTimetableProblemDto(), (timetable) -> {
+      });
+    });
+    System.out.println(
+        new SolverRepositoryImpl().solve(getValidTimetableProblemDto(), (timetable) -> {
+        }).get());
   }
 
-  private TimetableProblemDto timetableDataSetup() {
+  private TimetableProblemDto getValidTimetableProblemDto() {
     GradeProblemDto grade = new GradeProblemDto("grade", List.of("tag"), List.of("studentGroup"));
-    RoomProblemDto room = new RoomProblemDto("room", List.of("tag"), List.of());
+    RoomProblemDto room = new RoomProblemDto("room", List.of("tag"), List.of("lesson"));
     StudentProblemDto student =
         new StudentProblemDto("student", List.of("tag"), List.of("studentGroup"));
     StudentGroupProblemDto studentGroup =
-        new StudentGroupProblemDto("studentGroup", "grade", List.of("tag"), List.of(),
+        new StudentGroupProblemDto("studentGroup", "grade", List.of("tag"), List.of("lesson"),
             List.of("student"));
     SubjectProblemDto subject =
-        new SubjectProblemDto("subject", List.of("tag"), List.of(), List.of("teacher"));
+        new SubjectProblemDto("subject", List.of("tag"), List.of("lesson"), List.of("teacher"));
     TagProblemDto tag =
         new TagProblemDto("tag", List.of("grade"), List.of("room"), List.of("student"),
             List.of("studentGroup"), List.of("subject"), List.of("teacher"),
             List.of("timeslot"));
     TeacherProblemDto teacher =
-        new TeacherProblemDto("teacher", List.of("tag"), List.of(), List.of("subject"));
+        new TeacherProblemDto("teacher", List.of("tag"), List.of("lesson"), List.of("subject"));
     TimeslotProblemDto timeslot =
-        new TimeslotProblemDto("timeslot", 0, 0, List.of("tag"), List.of());
+        new TimeslotProblemDto("timeslot", 0, 0, List.of("tag"), List.of("lesson"));
     LessonProblemDto lesson =
         new LessonProblemDto("lesson", 0, "teacher", "studentGroup",
             "timeslot", "subject", "room");
@@ -69,7 +79,8 @@ public class SolverRepositoryImplTest {
         RewardPenalize.HARD_PENALIZE, definitionParameters,
         new ValueDto<>(UcdlToken.BOOL_VALUE, true));
     ConstraintInstanceDto constraintInstance =
-        new ConstraintInstanceDto("testConstraint", RewardPenalize.SOFT_REWARD, List.of());
+        new ConstraintInstanceDto("testConstraint", RewardPenalize.SOFT_REWARD,
+            List.of(grade, room, student, studentGroup, subject, tag, teacher, timeslot));
 
     return new TimetableProblemDto(List.of(grade), List.of(lesson),
         List.of(room), List.of(studentGroup), List.of(student), List.of(subject), List.of(tag),
