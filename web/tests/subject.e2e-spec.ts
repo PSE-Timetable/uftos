@@ -186,7 +186,7 @@ test.describe('subjects page', () => {
     await page.getByRole('option', { name: 'BTag' }).click();
     await page.getByRole('combobox').click();
     await page.getByRole('button', { name: 'Speichern' }).click();
-
+    await page.getByRole('button', { name: 'Name' }).click();
     const locator1 = page.getByText('ATag,BTag');
     const locator2 = page.getByText('BTag,ATag');
     await expect(locator1.or(locator2)).toBeVisible();
@@ -195,6 +195,7 @@ test.describe('subjects page', () => {
     await page.getByRole('combobox').click();
     await page.getByRole('option', { name: 'BTag' }).click();
     await page.getByRole('button', { name: 'Speichern' }).click();
+    await page.getByRole('button', { name: 'Name' }).click();
     await expect(page.getByRole('row').nth(2)).toContainText('BTag');
     await page.getByRole('row').nth(1).getByRole('button').click();
     await page.getByRole('menuitem', { name: 'Editieren' }).click();
@@ -206,6 +207,7 @@ test.describe('subjects page', () => {
     await page.getByRole('option', { name: 'BTag' }).click();
     await page.getByRole('combobox').click();
     await page.getByRole('button', { name: 'Speichern' }).click();
+    await page.getByRole('button', { name: 'Name' }).click();
     await expect(page.getByRole('row').nth(1)).toContainText('ATag');
   });
 });
