@@ -190,8 +190,7 @@ public class GradeService {
     List<String> gradesIds = Arrays.asList(ids);
     List<Grade> grades = this.repository.findAllById(gradesIds);
     if (grades.size() != gradesIds.size()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "Could not find a grade with this id");
+      return new SuccessResponse(false, "Es konnte keine Stufe mit dieser ID gefunden werden!");
     }
 
     List<StudentGroup> studentGroups =
