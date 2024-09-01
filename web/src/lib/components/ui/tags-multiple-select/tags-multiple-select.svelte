@@ -2,25 +2,18 @@
   import * as Select from '$lib/elements/ui/select';
   import type { Tag } from '$lib/sdk/fetch-client';
   import type { Selected } from 'bits-ui';
-  import { onMount } from 'svelte';
 
   export let tags: Tag[];
-  let selectedTags: Selected<string>[] = [];
-  export let selectedTagIds: unknown[];
-  export let entityTags: Tag[];
+  export let selectedTagIds: string[];
 
-  onMount(() => {
-    selectedTags = entityTags.map((tag) => ({ label: tag.name, value: tag.id }));
-    selectedTagIds = selectedTags.map((tag) => tag.value);
-  });
+  let selectedTags: Selected<string>[] = tags
+    .filter((tag) => selectedTagIds.includes(tag.id))
+    .map((tag) => ({ label: tag.name, value: tag.id }));
+  $: selectedTagIds = selectedTags.map((tag) => tag.value);
 </script>
 
 {#if tags.length > 0}
-  <Select.Root
-    multiple
-    selected={selectedTags}
-    onSelectedChange={(s) => (selectedTagIds = s?.map((tag) => tag.value) || [])}
-  >
+  <Select.Root multiple bind:selected={selectedTags}>
     {#each selectedTags as tag}
       <input name={tag.label} hidden value={tag} />
     {/each}

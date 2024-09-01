@@ -1,12 +1,12 @@
 import { goto } from '$app/navigation';
 import { Day, getTimeslots, type LessonResponseDto } from '$lib/sdk/fetch-client';
-import type { Color, Slot } from '../lesson/lesson';
+import type { Slot } from '../lesson/lesson';
 
 export type TimetableItems = Array<Array<LessonItem>>;
 
 export type LessonItem = {
   length: number;
-  color?: Color;
+  color?: string;
   title: Slot;
   bottomLeft: Slot;
   bottomRight: Slot;
@@ -82,7 +82,7 @@ export const getStudentTimetableLessons = async (response: LessonResponseDto, se
         text: `${room.buildingName} - ${room.name}`,
         onClick: () => goto(`/admin/rooms/${room.id}`),
       },
-      color: subject.color as Color | undefined,
+      color: subject.color,
       lessonId: lesson.id,
       length: 1,
     };
@@ -107,7 +107,7 @@ export const getClassTimetableLessons = async (response: LessonResponseDto, sele
         text: `${room.buildingName} — ${room.name}`,
         onClick: () => goto(`/admin/rooms/${room.id}`),
       },
-      color: subject.color as Color | undefined,
+      color: subject.color,
       lessonId: lesson.id,
       length: 1,
     };
@@ -129,7 +129,7 @@ export const getRoomTimetableLessons = async (response: LessonResponseDto, selec
       title: { text: subject.name, onClick: () => goto(`/admin/subjects/${subject.id}`) },
       bottomLeft: { text: teacher.acronym, onClick: () => goto(`/admin/teachers/${teacher.id}`) },
       bottomRight: { text: studentGroup.name, onClick: () => goto(`/admin/studentGroups/${studentGroup.id}`) },
-      color: subject.color as Color | undefined,
+      color: subject.color,
       lessonId: lesson.id,
       length: 1,
     };
@@ -154,7 +154,7 @@ export const getTeacherTimetableLessons = async (response: LessonResponseDto, se
         text: `${room.buildingName} - ${room.name}`,
         onClick: () => goto(`/admin/rooms/${room.id}`),
       },
-      color: subject.color as Color | undefined,
+      color: subject.color,
       lessonId: lesson.id,
       length: 1,
     };

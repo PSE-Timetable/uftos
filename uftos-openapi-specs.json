@@ -996,6 +996,43 @@
         "tags" : [ "room-controller" ]
       }
     },
+    "/server/email" : {
+      "get" : {
+        "operationId" : "getNotificationEmail",
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ServerEmailResponseDto"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "tags" : [ "server-controller" ]
+      },
+      "put" : {
+        "operationId" : "setNotificationEmail",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ServerEmailRequestDto"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        },
+        "tags" : [ "server-controller" ]
+      }
+    },
     "/server/statistics" : {
       "get" : {
         "operationId" : "getServerStats",
@@ -3153,6 +3190,23 @@
             "items" : {
               "type" : "string"
             }
+          }
+        }
+      },
+      "ServerEmailRequestDto" : {
+        "type" : "object",
+        "properties" : {
+          "email" : {
+            "type" : "string"
+          }
+        }
+      },
+      "ServerEmailResponseDto" : {
+        "required" : [ "email" ],
+        "type" : "object",
+        "properties" : {
+          "email" : {
+            "type" : "string"
           }
         }
       },
