@@ -253,6 +253,7 @@ public class TimetableServiceTests {
     for (ResourceType resourceType : parameterTypes) {
       ConstraintParameter constraintParameter = new ConstraintParameter(resourceType.name());
       constraintParameter.setParameterType(resourceType);
+      constraintParameters.add(constraintParameter);
       definitionParameters.put(resourceType.name(), resourceType);
     }
 
