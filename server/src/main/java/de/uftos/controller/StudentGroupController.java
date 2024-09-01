@@ -9,6 +9,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
  * The REST controller for the student group entity.
  * This controller handles /student-groups HTTP requests.
  */
+@Validated
 @RestController
 @RequestMapping("/student-groups")
 public class StudentGroupController {
@@ -46,7 +48,8 @@ public class StudentGroupController {
    * @return the created student group with the assigned ID.
    */
   @PostMapping()
-  public StudentGroupResponseDto createStudentGroup(@RequestBody StudentGroupRequestDto studentGroup) {
+  public StudentGroupResponseDto createStudentGroup(
+      @RequestBody StudentGroupRequestDto studentGroup) {
     return this.studentGroupService.create(studentGroup);
   }
 
@@ -62,7 +65,7 @@ public class StudentGroupController {
    */
   @GetMapping()
   public Page<StudentGroupResponseDto> getStudentGroups(Pageable pageable, Optional<String> search,
-                                             Optional<String[]> tags) {
+                                                        Optional<String[]> tags) {
     return this.studentGroupService.get(pageable, search, tags);
   }
 
@@ -130,7 +133,8 @@ public class StudentGroupController {
    */
   @PutMapping("/{id}")
   public StudentGroupResponseDto updateStudentGroup(@PathVariable String id,
-                                                    @RequestBody StudentGroupRequestDto studentGroup) {
+                                                    @RequestBody
+                                                    StudentGroupRequestDto studentGroup) {
     return this.studentGroupService.update(id, studentGroup);
   }
 
