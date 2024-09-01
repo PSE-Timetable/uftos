@@ -1,27 +1,22 @@
 package de.uftos.services;
 
-import de.uftos.dto.ResourceType;
 import de.uftos.dto.Weekday;
 import de.uftos.dto.responsedtos.ServerStatisticsResponseDto;
-import de.uftos.entities.ConstraintArgument;
-import de.uftos.entities.ConstraintInstance;
-import de.uftos.entities.ConstraintParameter;
-import de.uftos.entities.ConstraintSignature;
-import de.uftos.entities.Lesson;
 import de.uftos.entities.Server;
 import de.uftos.entities.Timeslot;
-import de.uftos.entities.Timetable;
 import de.uftos.entities.TimetableMetadata;
 import de.uftos.repositories.database.ConstraintInstanceRepository;
 import de.uftos.repositories.database.ConstraintSignatureRepository;
 import de.uftos.repositories.database.GradeRepository;
+import de.uftos.repositories.database.LessonRepository;
 import de.uftos.repositories.database.RoomRepository;
 import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.StudentRepository;
 import de.uftos.repositories.database.TeacherRepository;
 import de.uftos.repositories.database.TimeslotRepository;
 import de.uftos.repositories.database.TimetableRepository;
-import java.util.ArrayList;
+import de.uftos.utils.ConstraintInstanceDeleter;
+import de.uftos.utils.LessonsDeleter;
 import java.util.LinkedList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +36,7 @@ public class ServerService {
   private final ConstraintSignatureRepository constraintSignatureRepository;
   private final TimeslotRepository timeslotRepository;
   private final TimetableRepository timetableRepository;
+  private final LessonRepository lessonRepository;
 
   /**
    * Creates a server service.
@@ -54,6 +50,7 @@ public class ServerService {
    * @param constraintSignatureRepository the repository for accessing the constraint signature table.
    * @param timeslotRepository            the repository for accessing the timeslot table.
    * @param timetableRepository           the repository for accessing the timetable table.
+   * @param lessonRepository              the repository for accessing the lesson table.
    */
   @Autowired
   public ServerService(ServerRepository repository, StudentRepository studentRepository,
@@ -63,7 +60,7 @@ public class ServerService {
                        ConstraintInstanceRepository constraintInstanceRepository,
                        ConstraintSignatureRepository constraintSignatureRepository,
                        TimeslotRepository timeslotRepository,
-                       TimetableRepository timetableRepository) {
+                       TimetableRepository timetableRepository, LessonRepository lessonRepository) {
     this.repository = repository;
     this.studentRepository = studentRepository;
     this.teacherRepository = teacherRepository;
@@ -73,6 +70,7 @@ public class ServerService {
     this.constraintSignatureRepository = constraintSignatureRepository;
     this.timeslotRepository = timeslotRepository;
     this.timetableRepository = timetableRepository;
+    this.lessonRepository = lessonRepository;
   }
 
   /**
@@ -132,45 +130,16 @@ public class ServerService {
       return;
     }
 
+    // currentSlots now contains all the slots that have to be deleted
     currentSlots.removeIf(slot -> slot.getSlot() < timeslots.size() / Weekday.values().length);
 
-    List<Timetable> timetables = currentSlots.stream()
-        .flatMap(timeslot -> timeslot.getLessons().stream().map(Lesson::getTimetable)).distinct()
-        .toList();
+    new LessonsDeleter(lessonRepository, timetableRepository)
+        .fromTimeSlots(currentSlots);
 
     List<String> timeslotIds = currentSlots.stream().map(Timeslot::getId).toList();
-    List<ConstraintSignature> constraintSignatures = constraintSignatureRepository.findAll();
-
-    constraintSignatures.removeIf(constraintSignature -> {
-      for (ConstraintParameter constraintParameter : constraintSignature.getParameters()) {
-        if (constraintParameter.getParameterType().equals(ResourceType.TIMESLOT)) {
-          return false;
-        }
-      }
-      return true;
-    });
-
-    List<ConstraintInstance> constraintInstances = new ArrayList<>(constraintSignatures.stream()
-        .flatMap(constraintSignature -> constraintSignature.getInstances().stream()).toList());
-
-    constraintInstances.removeIf(constraintInstance -> {
-      for (String argumentId : constraintInstance.getArguments().stream()
-          .map(ConstraintArgument::getValue).toList()) {
-        if (timeslotIds.contains(argumentId)) {
-          return false;
-        }
-      }
-      return true;
-    });
+    new ConstraintInstanceDeleter(constraintSignatureRepository, constraintInstanceRepository)
+        .removeAllInstancesWithArgumentValue(timeslotIds.toArray(new String[0]));
 
     this.timeslotRepository.deleteAll(currentSlots);
-    this.timetableRepository.deleteAll(timetables);
-
-    for (ConstraintSignature constraintSignature : constraintSignatures) {
-      constraintSignature.getInstances().removeAll(constraintInstances);
-    }
-
-    this.constraintSignatureRepository.saveAll(constraintSignatures);
-    this.constraintInstanceRepository.deleteAll(constraintInstances);
   }
 }

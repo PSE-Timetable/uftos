@@ -1,6 +1,7 @@
 package de.uftos.e2e;
 
 import static de.uftos.utils.JsonGenerator.generateGradeJson;
+import static de.uftos.utils.JsonGenerator.generateIdListJson;
 import static de.uftos.utils.JsonGenerator.generatePageJson;
 import static de.uftos.utils.JsonGenerator.generateStudentGroupJson;
 import static de.uftos.utils.JsonGenerator.generateStudentJson;
@@ -100,7 +101,7 @@ public class StudentGroupsTest {
         .statusCode(200)
         .body("id", notNullValue())
         .body("name", equalTo(FIRST_STUDENT_GROUP_NAME))
-        .log().all()
+        .log().ifValidationFails()
         .extract()
         .body().jsonPath().getString("id");
 
@@ -136,25 +137,29 @@ public class StudentGroupsTest {
 
     given().contentType(ContentType.JSON)
         .when()
-        .delete("/grades/{id}", gradeId)
+        .body(generateIdListJson(gradeId))
+        .delete("/grades")
         .then()
         .statusCode(200);
 
     given().contentType(ContentType.JSON)
         .when()
-        .delete("/students/{id}", studentId)
+        .body(generateIdListJson(studentId))
+        .delete("/students")
         .then()
         .statusCode(200);
 
     given().contentType(ContentType.JSON)
         .when()
-        .delete("/subjects/{id}", subjectId)
+        .body(generateIdListJson(subjectId))
+        .delete("/subjects")
         .then()
         .statusCode(200);
 
     given().contentType(ContentType.JSON)
         .when()
-        .delete("/tags/{id}", tagId)
+        .body(generateIdListJson(tagId))
+        .delete("/tags")
         .then()
         .statusCode(200);
   }
@@ -167,7 +172,6 @@ public class StudentGroupsTest {
         .get("/student-groups")
         .then()
         .statusCode(200)
-        //.body("size()", equalTo(2))
         .log().ifValidationFails();
   }
 

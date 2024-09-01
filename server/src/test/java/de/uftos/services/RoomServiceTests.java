@@ -1,6 +1,7 @@
 package de.uftos.services;
 
 
+import static de.uftos.utils.ClassCaster.getClassType;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -22,9 +23,14 @@ import de.uftos.entities.Student;
 import de.uftos.entities.StudentGroup;
 import de.uftos.entities.Subject;
 import de.uftos.entities.Teacher;
+import de.uftos.entities.Timetable;
 import de.uftos.entities.TimetableMetadata;
+import de.uftos.repositories.database.ConstraintInstanceRepository;
+import de.uftos.repositories.database.ConstraintSignatureRepository;
+import de.uftos.repositories.database.LessonRepository;
 import de.uftos.repositories.database.RoomRepository;
 import de.uftos.repositories.database.ServerRepository;
+import de.uftos.repositories.database.TimetableRepository;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -48,6 +54,18 @@ public class RoomServiceTests {
 
   @Mock
   private ServerRepository serverRepository;
+
+  @Mock
+  private ConstraintSignatureRepository signatureRepository;
+
+  @Mock
+  private ConstraintInstanceRepository instanceRepository;
+
+  @Mock
+  private LessonRepository lessonRepository;
+
+  @Mock
+  private TimetableRepository timetableRepository;
 
   @InjectMocks
   private RoomService roomService;
@@ -95,9 +113,12 @@ public class RoomServiceTests {
 
     Teacher teacher1 = new Teacher("123");
 
-    Lesson lesson1 = createLesson(teacher1, room1, studentGroup1, "2024", subject);
-    Lesson lesson2 = createLesson(teacher1, room1, studentGroup1, "2022", subject);
-    Lesson lesson3 = createLesson(teacher1, room1, studentGroup2, "2024", subject);
+    Timetable timetable = new Timetable("timetable");
+    timetable.setId("timetableId");
+
+    Lesson lesson1 = createLesson(teacher1, room1, studentGroup1, "2024", subject, timetable);
+    Lesson lesson2 = createLesson(teacher1, room1, studentGroup1, "2022", subject, timetable);
+    Lesson lesson3 = createLesson(teacher1, room1, studentGroup2, "2024", subject, timetable);
 
     room1.setLessons(List.of(lesson1, lesson2, lesson3));
 
@@ -196,17 +217,19 @@ public class RoomServiceTests {
 
   @Test
   void deleteExistingRoom() {
-    assertDoesNotThrow(() -> roomService.delete("123"));
-    ArgumentCaptor<Room> roomCap = ArgumentCaptor.forClass(Room.class);
-    verify(roomRepository, times(1)).delete(roomCap.capture());
+    assertDoesNotThrow(() -> roomService.deleteRooms(new String[] {"123"}));
+    ArgumentCaptor<List<Room>> roomCap = ArgumentCaptor.forClass(getClassType());
+    verify(roomRepository, times(1)).deleteAll(roomCap.capture());
 
-    Room room = roomCap.getValue();
-    assertEquals("123", room.getId());
+    List<Room> room = roomCap.getValue();
+    assertEquals(1, room.size());
+    assertEquals("123", room.getFirst().getId());
   }
 
   @Test
   void deleteNonExistingRoom() {
-    assertThrows(ResponseStatusException.class, () -> roomService.delete("nonExistentId"));
+    assertThrows(ResponseStatusException.class,
+        () -> roomService.deleteRooms(new String[] {"nonExistentId"}));
   }
 
   @Test
@@ -255,7 +278,7 @@ public class RoomServiceTests {
 
     assertAll("Testing whether all the rooms are there",
         () -> assertTrue(
-            result.rooms().stream().map(room -> room.getId()).toList().contains(room1.getId()))
+            result.rooms().stream().map(Room::getId).toList().contains(room1.getId()))
     );
 
     assertAll("Testing whether all the student groups are there",
@@ -269,15 +292,15 @@ public class RoomServiceTests {
     );
   }
 
-  private Lesson createLesson(Teacher teacher, Room room, StudentGroup studentGroup,
-                              String number,
-                              Subject subject) {
+  private Lesson createLesson(Teacher teacher, Room room, StudentGroup studentGroup, String number,
+                              Subject subject, Timetable timetable) {
     Lesson lesson = new Lesson();
     lesson.setTeacher(teacher);
     lesson.setRoom(room);
     lesson.setStudentGroup(studentGroup);
     lesson.setYear(number);
     lesson.setSubject(subject);
+    lesson.setTimetable(timetable);
     return lesson;
   }
 

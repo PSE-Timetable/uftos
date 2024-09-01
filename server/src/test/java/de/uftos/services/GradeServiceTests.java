@@ -1,5 +1,6 @@
 package de.uftos.services;
 
+import static de.uftos.utils.ClassCaster.getClassType;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -22,10 +23,15 @@ import de.uftos.entities.Server;
 import de.uftos.entities.StudentGroup;
 import de.uftos.entities.Subject;
 import de.uftos.entities.Teacher;
+import de.uftos.entities.Timetable;
 import de.uftos.entities.TimetableMetadata;
+import de.uftos.repositories.database.ConstraintInstanceRepository;
+import de.uftos.repositories.database.ConstraintSignatureRepository;
+import de.uftos.repositories.database.CurriculumRepository;
 import de.uftos.repositories.database.GradeRepository;
 import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.StudentGroupRepository;
+import de.uftos.repositories.database.SubjectRepository;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,6 +63,18 @@ public class GradeServiceTests {
 
   @Mock
   private StudentGroupRepository studentGroupRepository;
+
+  @Mock
+  private ConstraintSignatureRepository signatureRepository;
+
+  @Mock
+  private ConstraintInstanceRepository instanceRepository;
+
+  @Mock
+  private SubjectRepository subjectRepository;
+
+  @Mock
+  private CurriculumRepository curriculumRepository;
 
   @Mock
   private Grade grade1Mock;
@@ -120,15 +138,18 @@ public class GradeServiceTests {
     Teacher teacher1 = new Teacher("Te1");
     Teacher teacher2 = new Teacher("Te2");
 
-    Lesson lesson1 = createLesson(teacher1, room1, studentGroup1, "2024", subject);
+    Timetable timetable = new Timetable("timetable");
+    timetable.setId("timetableId");
+
+    Lesson lesson1 = createLesson(teacher1, room1, studentGroup1, "2024", subject, timetable);
     lesson1.setId("l1");
-    Lesson lesson2 = createLesson(teacher2, room1, studentGroup1, "2022", subject);
+    Lesson lesson2 = createLesson(teacher2, room1, studentGroup1, "2022", subject, timetable);
     lesson2.setId("l2");
-    Lesson lesson3 = createLesson(teacher1, room2, studentGroup1, "2024", subject);
+    Lesson lesson3 = createLesson(teacher1, room2, studentGroup1, "2024", subject, timetable);
     lesson3.setId("l3");
-    Lesson lesson4 = createLesson(teacher1, room2, studentGroup2, "2022", subject);
+    Lesson lesson4 = createLesson(teacher1, room2, studentGroup2, "2022", subject, timetable);
     lesson4.setId("l4");
-    Lesson lesson5 = createLesson(teacher2, room2, studentGroup2, "2024", subject);
+    Lesson lesson5 = createLesson(teacher2, room2, studentGroup2, "2024", subject, timetable);
     lesson5.setId("l5");
 
     studentGroup1.setLessons(List.of(lesson1, lesson2, lesson3));
@@ -159,9 +180,10 @@ public class GradeServiceTests {
     when(serverRepository.findAll()).thenReturn(List.of(server));
     when(studentGroupRepository.findByGrades(grade1Mock)).thenReturn(
         List.of(studentGroup1, studentGroup2));
-    when(studentGroupRepository.findAllByGrades(List.of(grade1Mock))).thenReturn(
+    when(studentGroupRepository.findAllByGrades(List.of("123"))).thenReturn(
         List.of(studentGroup1, studentGroup2));
     when(gradeRepository.findById("123")).thenReturn(Optional.of(grade1Mock));
+    when(gradeRepository.findAllById(List.of("123"))).thenReturn(List.of(grade1Mock));
     when(gradeRepository.findById("456")).thenReturn(Optional.of(grade2Mock));
     when(gradeRepository.findById("567")).thenReturn(Optional.of(grade3Mock));
     when(gradeRepository.save(any(Grade.class))).thenReturn(gradeForCreateAndUpdateMock);
@@ -182,7 +204,6 @@ public class GradeServiceTests {
     when(gradeForCreateAndUpdateMock.getId()).thenReturn(gradeForTests.getId());
     when(gradeForCreateAndUpdateMock.getName()).thenReturn(gradeForTests.getName());
     when(gradeForCreateAndUpdateMock.getTags()).thenReturn(gradeForTests.getTags());
-
   }
 
   @Test
@@ -235,7 +256,6 @@ public class GradeServiceTests {
         () -> gradeService.update("123", requestDtoForCreateAndUpdateEmptyName));
   }
 
-
   @Test
   void lessonsById() {
     LessonResponseDto result = gradeService.getLessonsById("123");
@@ -286,23 +306,35 @@ public class GradeServiceTests {
   }
 
   @Test
-  void deleteGradeAssociatedWithGroup() {
-    assertThrows(ResponseStatusException.class, () -> gradeService.delete("123"));
+  void deleteExistentGrade() {
+    assertDoesNotThrow(() -> gradeService.deleteGrades(new String[] {"123"}));
+    ArgumentCaptor<List<Grade>> gradeCap = ArgumentCaptor.forClass(getClassType());
+    verify(gradeRepository, times(1)).deleteAll(gradeCap.capture());
+
+    List<Grade> grade = gradeCap.getValue();
+    assertEquals(1, grade.size());
+    assertEquals("123", grade.getFirst().getId());
   }
 
-  @Test
-  void deleteGrade() {
-    assertDoesNotThrow(() -> gradeService.delete("567"));
-    ArgumentCaptor<Grade> gradeCap = ArgumentCaptor.forClass(Grade.class);
-    verify(gradeRepository, times(1)).delete(gradeCap.capture());
-
-    Grade grade = gradeCap.getValue();
-    assertEquals("567", grade.getId());
-  }
+//  @Test
+//  void deleteGradeAssociatedWithGroup() {
+//    assertThrows(ResponseStatusException.class, () -> gradeService.delete("123"));
+//  }
+//
+//  @Test
+//  void deleteGrade() {
+//    assertDoesNotThrow(() -> gradeService.delete("567"));
+//    ArgumentCaptor<Grade> gradeCap = ArgumentCaptor.forClass(Grade.class);
+//    verify(gradeRepository, times(1)).delete(gradeCap.capture());
+//
+//    Grade grade = gradeCap.getValue();
+//    assertEquals("567", grade.getId());
+//  }
 
   @Test
   void deleteNonExistentGrade() {
-    assertThrows(ResponseStatusException.class, () -> gradeService.delete("nonExistentId"));
+    assertThrows(ResponseStatusException.class,
+        () -> gradeService.deleteGrades(new String[] {"nonExistentId"}));
   }
 
   @Test
@@ -347,15 +379,15 @@ public class GradeServiceTests {
   }
 
 
-  private Lesson createLesson(Teacher teacher, Room room, StudentGroup studentGroup,
-                              String number,
-                              Subject subject) {
+  private Lesson createLesson(Teacher teacher, Room room, StudentGroup studentGroup, String number,
+                              Subject subject, Timetable timetable) {
     Lesson lesson = new Lesson();
     lesson.setTeacher(teacher);
     lesson.setRoom(room);
     lesson.setStudentGroup(studentGroup);
     lesson.setYear(number);
     lesson.setSubject(subject);
+    lesson.setTimetable(timetable);
     return lesson;
   }
 }

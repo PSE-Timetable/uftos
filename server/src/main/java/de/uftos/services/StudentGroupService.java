@@ -7,10 +7,16 @@ import de.uftos.entities.Grade;
 import de.uftos.entities.Lesson;
 import de.uftos.entities.Student;
 import de.uftos.entities.StudentGroup;
+import de.uftos.repositories.database.ConstraintInstanceRepository;
+import de.uftos.repositories.database.ConstraintSignatureRepository;
 import de.uftos.repositories.database.GradeRepository;
+import de.uftos.repositories.database.LessonRepository;
 import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.StudentGroupRepository;
 import de.uftos.repositories.database.StudentRepository;
+import de.uftos.repositories.database.TimetableRepository;
+import de.uftos.utils.ConstraintInstanceDeleter;
+import de.uftos.utils.LessonsDeleter;
 import de.uftos.utils.SpecificationBuilder;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -34,22 +40,38 @@ public class StudentGroupService {
   private final ServerRepository serverRepository;
   private final StudentRepository studentRepository;
   private final GradeRepository gradeRepository;
+  private final ConstraintSignatureRepository constraintSignatureRepository;
+  private final ConstraintInstanceRepository constraintInstanceRepository;
+  private final LessonRepository lessonRepository;
+  private final TimetableRepository timetableRepository;
 
   /**
    * Creates a student group service.
    *
-   * @param repository        the repository for accessing the student group table.
-   * @param serverRepository  the repository for accessing the server table.
-   * @param studentRepository the repository for accessing the student table.
-   * @param gradeRepository   the repository for accessing the grade table.
+   * @param repository                    the repository for accessing the student group table.
+   * @param serverRepository              the repository for accessing the server table.
+   * @param studentRepository             the repository for accessing the student table.
+   * @param gradeRepository               the repository for accessing the grade table.
+   * @param constraintSignatureRepository the repository for accessing the constraint signature table.
+   * @param constraintInstanceRepository  the repository for accessing the constraint instance table.
+   * @param lessonRepository              the repository for accessing the lesson table.
+   * @param timetableRepository           the repository for accessing the timetable table.
    */
   @Autowired
   public StudentGroupService(StudentGroupRepository repository, ServerRepository serverRepository,
-                             StudentRepository studentRepository, GradeRepository gradeRepository) {
+                             StudentRepository studentRepository, GradeRepository gradeRepository,
+                             ConstraintSignatureRepository constraintSignatureRepository,
+                             ConstraintInstanceRepository constraintInstanceRepository,
+                             LessonRepository lessonRepository,
+                             TimetableRepository timetableRepository) {
     this.repository = repository;
     this.serverRepository = serverRepository;
     this.studentRepository = studentRepository;
     this.gradeRepository = gradeRepository;
+    this.constraintSignatureRepository = constraintSignatureRepository;
+    this.constraintInstanceRepository = constraintInstanceRepository;
+    this.lessonRepository = lessonRepository;
+    this.timetableRepository = timetableRepository;
   }
 
   /**
@@ -218,6 +240,12 @@ public class StudentGroupService {
       grade.getStudentGroups().removeIf(group1 -> group1.getId().equals(id));
     }
     gradeRepository.saveAll(grades);
+
+    new ConstraintInstanceDeleter(constraintSignatureRepository, constraintInstanceRepository)
+        .removeAllInstancesWithArgumentValue(new String[] {id});
+
+    new LessonsDeleter(lessonRepository, timetableRepository)
+        .fromStudentGroups(List.of(group.get()));
 
     this.repository.delete(group.get());
   }
