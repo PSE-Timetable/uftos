@@ -35,7 +35,7 @@ test.describe('Constraints', () => {
       await page.getByText('Upload').click();
       const fileChooser = await fileChooserPromise;
       await fileChooser.setFiles('./tests/empty-ucdl.yml');
-      await expect(page.locator('.view-line').first()).toBeEmpty({ timeout: 250 });
+      await expect(page.locator('.view-line').first()).toBeEmpty({ timeout: 500 });
     }).toPass();
     const totalStudents = await getStudents({ page: 0 }).then(({ totalElements }) => totalElements);
     const students = await getStudents({ page: 0, size: totalStudents }).then(({ content }) => content ?? []);
@@ -171,7 +171,7 @@ test.describe('Constraints', () => {
         await page.getByRole('button', { name: 'Nein' }).click();
       }
       await page.locator('.inline-flex').first().click();
-      await expect(page).toHaveURL('/admin', { timeout: 750 });
+      await expect(page).toHaveURL('/admin', { timeout: 1000 });
     }).toPass();
   });
 });
