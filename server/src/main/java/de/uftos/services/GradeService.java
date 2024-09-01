@@ -4,13 +4,22 @@ package de.uftos.services;
 import de.uftos.dto.requestdtos.GradeRequestDto;
 import de.uftos.dto.responsedtos.GradeResponseDto;
 import de.uftos.dto.responsedtos.LessonResponseDto;
+import de.uftos.entities.Curriculum;
 import de.uftos.entities.Grade;
 import de.uftos.entities.Lesson;
+import de.uftos.entities.LessonsCount;
 import de.uftos.entities.StudentGroup;
+import de.uftos.entities.Subject;
+import de.uftos.repositories.database.ConstraintInstanceRepository;
+import de.uftos.repositories.database.ConstraintSignatureRepository;
+import de.uftos.repositories.database.CurriculumRepository;
 import de.uftos.repositories.database.GradeRepository;
 import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.StudentGroupRepository;
+import de.uftos.repositories.database.SubjectRepository;
+import de.uftos.utils.ConstraintInstanceDeleter;
 import de.uftos.utils.SpecificationBuilder;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -32,20 +41,37 @@ import org.springframework.web.server.ResponseStatusException;
 public class GradeService {
   private final GradeRepository repository;
   private final ServerRepository serverRepository;
+  private final ConstraintSignatureRepository constraintSignatureRepository;
+  private final ConstraintInstanceRepository constraintInstanceRepository;
   private final StudentGroupRepository studentGroupRepository;
+  private final CurriculumRepository curriculumRepository;
+  private final SubjectRepository subjectRepository;
 
   /**
    * Creates a grade service.
    *
-   * @param repository             the repository for accessing the grade table.
-   * @param studentGroupRepository the repository for accessing the student group table.
+   * @param repository                    the repository for accessing the grade table.
+   * @param serverRepository              the repository for accessing the server table.
+   * @param studentGroupRepository        the repository for accessing the student group table.
+   * @param curriculumRepository          the repository for accessing the curriculum table.
+   * @param subjectRepository             the repository for accessing the subject table.
+   * @param constraintSignatureRepository the repository for accessing the constraint signature table.
+   * @param constraintInstanceRepository  the repository for accessing the constraint instance table.
    */
   @Autowired
   public GradeService(GradeRepository repository, ServerRepository serverRepository,
-                      StudentGroupRepository studentGroupRepository) {
+                      StudentGroupRepository studentGroupRepository,
+                      CurriculumRepository curriculumRepository,
+                      SubjectRepository subjectRepository,
+                      ConstraintSignatureRepository constraintSignatureRepository,
+                      ConstraintInstanceRepository constraintInstanceRepository) {
     this.repository = repository;
     this.serverRepository = serverRepository;
+    this.constraintSignatureRepository = constraintSignatureRepository;
+    this.constraintInstanceRepository = constraintInstanceRepository;
     this.studentGroupRepository = studentGroupRepository;
+    this.curriculumRepository = curriculumRepository;
+    this.subjectRepository = subjectRepository;
   }
 
   /**
@@ -119,7 +145,20 @@ public class GradeService {
     if (grade.name().isBlank()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The name of the grade is blank.");
     }
-    return this.mapResponseDto(this.repository.save(grade.map()));
+    Grade gradeEntity = this.repository.save(grade.map());
+    List<Subject> subjects = subjectRepository.findAll();
+    List<LessonsCount> lessonsCounts = new ArrayList<>();
+    for (Subject subject : subjects) {
+      lessonsCounts.add(new LessonsCount(subject.getId(), 0));
+    }
+
+    Curriculum curriculum = new Curriculum();
+    curriculum.setGrade(gradeEntity);
+    curriculum.setName(gradeEntity.getName());
+    curriculum.setLessonsCounts(lessonsCounts);
+    curriculumRepository.save(curriculum);
+
+    return this.mapResponseDto(gradeEntity);
   }
 
   /**
@@ -143,27 +182,6 @@ public class GradeService {
   /**
    * Deletes the grade with the given ID.
    *
-   * @param id the ID of the grade which is to be deleted.
-   * @throws ResponseStatusException is thrown if no grade exists with the given ID.
-   */
-  public void delete(String id) {
-    Optional<Grade> grade = this.repository.findById(id);
-    if (grade.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "Could not find a grade with this id!");
-    }
-    List<StudentGroup> studentGroups = this.studentGroupRepository.findByGrades(grade.get());
-    if (!studentGroups.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "This grade is still associated with a student group.");
-    }
-
-    this.repository.delete(grade.get());
-  }
-
-  /**
-   * Deletes the grade with the given ID.
-   *
    * @param ids the IDs of the grades which are to be deleted.
    * @throws ResponseStatusException is thrown if no grade exists with the given ID.
    */
@@ -175,11 +193,15 @@ public class GradeService {
           "Could not found a grade with this id");
     }
 
-    List<StudentGroup> studentGroups = this.studentGroupRepository.findAllByGrades(grades);
+    List<StudentGroup> studentGroups =
+        this.studentGroupRepository.findAllByGrades(gradesIds);
     if (!studentGroups.isEmpty()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
           "This grade is still associated with a student group.");
     }
+
+    new ConstraintInstanceDeleter(constraintSignatureRepository, constraintInstanceRepository)
+        .removeAllInstancesWithArgumentValue(ids);
 
     this.repository.deleteAll(grades);
   }

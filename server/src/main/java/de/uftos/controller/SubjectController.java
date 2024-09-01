@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
  * The REST controller for the subject entity.
  * This controller handles /subjects HTTP requests.
  */
+@Validated
 @RestController
 @RequestMapping("/subjects")
 public class SubjectController {
@@ -84,17 +86,6 @@ public class SubjectController {
   @PutMapping("/{id}")
   public Subject updateSubject(@PathVariable String id, @RequestBody SubjectRequestDto subject) {
     return this.subjectService.update(id, subject);
-  }
-
-  /**
-   * Maps the HTTP DELETE request to the {@link SubjectService#delete(String) delete} function
-   * of the subject service.
-   *
-   * @param id the ID of the subject which is to be deleted.
-   */
-  @DeleteMapping("/{id}")
-  public void deleteSubject(@PathVariable String id) {
-    this.subjectService.delete(id);
   }
 
   /**

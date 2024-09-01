@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.validation.constraints.NotEmpty;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import lombok.Data;
@@ -35,31 +36,31 @@ public class Tag {
 
   @JsonIgnore
   @ManyToMany(mappedBy = "tags")
-  private List<Student> students;
+  private List<Student> students = new ArrayList<>();
 
   @JsonIgnore
   @ManyToMany(mappedBy = "tags")
-  private List<Teacher> teachers;
+  private List<Teacher> teachers = new ArrayList<>();
 
   @JsonIgnore
   @ManyToMany(mappedBy = "tags")
-  private List<StudentGroup> studentGroups;
+  private List<StudentGroup> studentGroups = new ArrayList<>();
 
   @JsonIgnore
   @ManyToMany(mappedBy = "tags")
-  private List<Room> rooms;
+  private List<Room> rooms = new ArrayList<>();
 
   @JsonIgnore
   @ManyToMany(mappedBy = "tags")
-  private List<Subject> subjects;
+  private List<Subject> subjects = new ArrayList<>();
 
   @JsonIgnore
   @ManyToMany(mappedBy = "tags")
-  private List<Grade> grades;
+  private List<Grade> grades = new ArrayList<>();
 
   @JsonIgnore
   @ManyToMany(mappedBy = "tags")
-  private List<Timeslot> timeslots;
+  private List<Timeslot> timeslots = new ArrayList<>();
 
   @JsonIgnore
   @Type(PostgreSQLTSVectorType.class)

@@ -26,10 +26,14 @@ import de.uftos.entities.Subject;
 import de.uftos.entities.Teacher;
 import de.uftos.entities.Timetable;
 import de.uftos.entities.TimetableMetadata;
+import de.uftos.repositories.database.ConstraintInstanceRepository;
+import de.uftos.repositories.database.ConstraintSignatureRepository;
 import de.uftos.repositories.database.GradeRepository;
+import de.uftos.repositories.database.LessonRepository;
 import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.StudentGroupRepository;
 import de.uftos.repositories.database.StudentRepository;
+import de.uftos.repositories.database.TimetableRepository;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -52,14 +56,31 @@ public class StudentGroupServiceTests {
   private final StudentGroupRequestDto requestDto =
       new StudentGroupRequestDto("testName", List.of("studentId1"), List.of("gradeId1"),
           List.of("tagId1"), List.of("subjectId1"));
+
   @Mock
   private StudentGroupRepository studentGroupRepository;
+
   @Mock
   private StudentRepository studentRepository;
+
   @Mock
   private GradeRepository gradeRepository;
+
   @Mock
   private ServerRepository serverRepository;
+
+  @Mock
+  private ConstraintSignatureRepository signatureRepository;
+
+  @Mock
+  private ConstraintInstanceRepository instanceRepository;
+
+  @Mock
+  private LessonRepository lessonRepository;
+
+  @Mock
+  private TimetableRepository timetableRepository;
+
   @InjectMocks
   private StudentGroupService studentGroupService;
 

@@ -8,6 +8,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
  * The REST controller for the student entity.
  * This controller handles /students HTTP requests.
  */
+@Validated
 @RestController
 @RequestMapping("/students")
 public class StudentController {
@@ -105,18 +107,7 @@ public class StudentController {
   }
 
   /**
-   * Maps the HTTP DELETE request to the {@link StudentService#delete(String) delete} function of
-   * the student service.
-   *
-   * @param id the ID of the student which is to be deleted.
-   */
-  @DeleteMapping("/{id}")
-  public void deleteStudent(@PathVariable String id) {
-    this.studentService.delete(id);
-  }
-
-  /**
-   * Maps the HTTP DELETE request to the {@link StudentService#delete(String) delete} function of
+   * Maps the HTTP DELETE request to the {@link StudentService#deleteStudents(String[]) delete} function of
    * the student service.
    *
    * @param ids the ID of the student which is to be deleted.

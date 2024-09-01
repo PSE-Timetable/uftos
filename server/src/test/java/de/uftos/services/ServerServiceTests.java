@@ -12,6 +12,7 @@ import de.uftos.entities.Server;
 import de.uftos.entities.TimetableMetadata;
 import de.uftos.repositories.database.ConstraintSignatureRepository;
 import de.uftos.repositories.database.GradeRepository;
+import de.uftos.repositories.database.LessonRepository;
 import de.uftos.repositories.database.RoomRepository;
 import de.uftos.repositories.database.ServerRepository;
 import de.uftos.repositories.database.StudentRepository;
@@ -57,6 +58,9 @@ public class ServerServiceTests {
 
   @Mock
   private TimetableRepository timetableRepository;
+
+  @Mock
+  private LessonRepository lessonRepository;
 
   @InjectMocks
   private ServerService serverService;

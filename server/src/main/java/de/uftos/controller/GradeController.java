@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
  * The REST controller for the grade entity.
  * This controller handles /grades HTTP requests.
  */
+@Validated
 @RestController
 @RequestMapping("/grades")
 public class GradeController {
@@ -98,17 +100,6 @@ public class GradeController {
   @PutMapping("/{id}")
   public GradeResponseDto updateGrade(@PathVariable String id, @RequestBody GradeRequestDto grade) {
     return this.gradeService.update(id, grade);
-  }
-
-  /**
-   * Maps the HTTP DELETE request to the {@link GradeService#delete(String) delete} function of the
-   * grade service.
-   *
-   * @param id the ID of the grade which is to be deleted.
-   */
-  @DeleteMapping("/{id}")
-  public void deleteGrade(@PathVariable String id) {
-    this.gradeService.delete(id);
   }
 
   /**

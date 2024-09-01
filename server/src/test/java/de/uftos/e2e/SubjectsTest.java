@@ -1,5 +1,6 @@
 package de.uftos.e2e;
 
+import static de.uftos.utils.JsonGenerator.generateIdListJson;
 import static de.uftos.utils.JsonGenerator.generateSubjectJson;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
@@ -51,19 +52,14 @@ class SubjectsTest {
   static void deleteCreatedStudents() {
     given().contentType(ContentType.JSON)
         .when()
-        .delete("/subjects/{id}", subject1Id)
-        .then()
-        .statusCode(200);
-
-    given().contentType(ContentType.JSON)
-        .when()
-        .delete("/subjects/{id}", subject2Id)
+        .body(generateIdListJson(subject1Id, subject2Id))
+        .delete("/subjects")
         .then()
         .statusCode(200);
   }
 
   @Test
-  void getAllSubjects() throws JSONException {
+  void getAllSubjects() {
     given().contentType(ContentType.JSON)
         .when()
         .get("/subjects")
@@ -74,7 +70,7 @@ class SubjectsTest {
   }
 
   @Test
-  void getSubjectsWithName() throws JSONException {
+  void getSubjectsWithName() {
     given().contentType(ContentType.JSON)
         .param("search", SUBJECT1_NAME)
         .when()

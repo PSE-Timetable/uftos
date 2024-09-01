@@ -1,43 +1,25 @@
 <script lang="ts">
   import AddResource from '$lib/components/ui/add-resource/add-resource.svelte';
-  import {
-    createStudentGroup,
-    updateStudentGroup,
-    type StudentGroupRequestDto,
-    type StudentGroupResponseDto,
-  } from '$lib/sdk/fetch-client.js';
+  import { createStudentGroup, updateStudentGroup, type StudentGroupRequestDto } from '$lib/sdk/fetch-client.js';
   import { error } from '@sveltejs/kit';
+  import { _schema as schema } from './+page';
 
   export let data;
-  let studentGroup: StudentGroupResponseDto = data.studentGroup;
-  let values: string[] = [studentGroup.name];
   let descriptions: string[] = ['Name:'];
 
-  async function create(values: string[], tagIds: string[], subjectIds?: string[], gradeId?: string) {
+  async function update(formData: Record<string, string | number | string[]>, subjectIds?: string[]) {
     let studentGroupRequestDto: StudentGroupRequestDto = {
-      name: values[0],
-      gradeIds: [gradeId ?? ''],
-      studentIds: studentGroup.students.map((student) => student.id),
-      tagIds,
+      name: String(formData.name),
+      gradeIds: formData.grades as string[],
+      studentIds: formData.students as string[],
+      tagIds: formData.tags as string[],
       subjectIds: subjectIds || [],
     };
     try {
-      await createStudentGroup(studentGroupRequestDto);
-    } catch {
-      error(400, { message: 'Could not create student group' });
-    }
-  }
-
-  async function update(values: string[], tagIds: string[], subjectIds?: string[], gradeId?: string) {
-    let studentGroupRequestDto: StudentGroupRequestDto = {
-      name: values[0],
-      gradeIds: [gradeId ?? ''],
-      studentIds: studentGroup.students.map((student) => student.id),
-      tagIds,
-      subjectIds: subjectIds || [],
-    };
-    try {
-      await updateStudentGroup(studentGroup.id, studentGroupRequestDto);
+      const _ =
+        formData.id === 'new'
+          ? await createStudentGroup(studentGroupRequestDto)
+          : await updateStudentGroup(String(formData.id), studentGroupRequestDto);
     } catch {
       error(400, { message: 'Could not update student group' });
     }
@@ -46,14 +28,11 @@
 
 <AddResource
   {descriptions}
-  {values}
-  {create}
+  data={data.form}
+  {schema}
   {update}
-  createEntity={data.create}
   tags={data.tags}
   subjects={data.subjects}
-  entitySubjectsIds={new Set(studentGroup.subjects.map((subject) => subject.id))}
-  entityTags={studentGroup.tags}
+  entitySubjectsIds={new Set(data.groupSubjects)}
   grades={data.grades}
-  entityGradeId={studentGroup.grades.length > 0 ? studentGroup.grades[0].id : ''}
 />

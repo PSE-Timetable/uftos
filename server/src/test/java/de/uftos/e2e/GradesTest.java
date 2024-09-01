@@ -2,6 +2,7 @@ package de.uftos.e2e;
 
 import static de.uftos.utils.JsonGenerator.generateCurriculumJson;
 import static de.uftos.utils.JsonGenerator.generateGradeJson;
+import static de.uftos.utils.JsonGenerator.generateIdListJson;
 import static de.uftos.utils.JsonGenerator.generateTagJson;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.contains;
@@ -69,67 +70,22 @@ class GradesTest {
         .log().ifValidationFails(LogDetail.BODY)
         .extract()
         .body().jsonPath().getString("id");
-
-    firstCurriculum = given().contentType(ContentType.JSON)
-        .body(generateCurriculumJson(firstGrade, FIRST_CURRICULUM_NAME,
-            Collections.emptyList()))
-        .when()
-        .post("/curriculum")
-        .then()
-        .log().ifValidationFails(LogDetail.BODY)
-        .statusCode(200)
-        .body("id", notNullValue())
-        .body("grade.id", equalTo(firstGrade))
-        .body("name", equalTo(FIRST_CURRICULUM_NAME))
-        .log().ifValidationFails(LogDetail.BODY)
-        .extract()
-        .body().jsonPath().getString("id");
-
-    secondCurriculum = given().contentType(ContentType.JSON)
-        .body(generateCurriculumJson(secondGrade, SECOND_CURRICULUM_NAME,
-            Collections.emptyList()))
-        .when()
-        .post("/curriculum")
-        .then()
-        .log().ifValidationFails(LogDetail.BODY)
-        .statusCode(200)
-        .body("id", notNullValue())
-        .body("grade.id", equalTo(secondGrade))
-        .body("name", equalTo(SECOND_CURRICULUM_NAME))
-        .log().ifValidationFails(LogDetail.BODY)
-        .extract()
-        .body().jsonPath().getString("id");
   }
 
   @AfterAll
   static void deleteCreatedEntities() {
+
     given().contentType(ContentType.JSON)
         .when()
-        .delete("/curriculum/{id}", firstCurriculum)
+        .body(generateIdListJson(firstGrade, secondGrade))
+        .delete("/grades")
         .then()
         .statusCode(200);
 
     given().contentType(ContentType.JSON)
         .when()
-        .delete("/curriculum/{id}", secondCurriculum)
-        .then()
-        .statusCode(200);
-
-    given().contentType(ContentType.JSON)
-        .when()
-        .delete("/grades/{id}", firstGrade)
-        .then()
-        .statusCode(200);
-
-    given().contentType(ContentType.JSON)
-        .when()
-        .delete("/grades/{id}", secondGrade)
-        .then()
-        .statusCode(200);
-
-    given().contentType(ContentType.JSON)
-        .when()
-        .delete("/tags/{id}", tagId)
+        .body(generateIdListJson(tagId))
+        .delete("/tags")
         .then()
         .statusCode(200);
   }
