@@ -1,4 +1,4 @@
-import { createGrade, type GradeRequestDto } from '$lib/sdk/fetch-client';
+import { createGrade, deleteStudentGroup, getStudentGroups, type GradeRequestDto } from '$lib/sdk/fetch-client';
 import { expect, test, type Page } from '@playwright/test';
 
 let page: Page;
@@ -9,6 +9,13 @@ test.describe.configure({ mode: 'serial' });
 test.describe('grades page', () => {
   test.beforeAll('delete all existing grades', async ({ browser }) => {
     page = await browser.newPage();
+    const totalGroups = await getStudentGroups({ page: 0 }).then(({ totalElements }) => totalElements);
+    const groups = await getStudentGroups({ page: 0, size: totalGroups }).then(({ content }) => content ?? []);
+    if (groups.length > 0) {
+      for (const group of groups) {
+        await deleteStudentGroup(group.id);
+      }
+    }
     await page.goto('/');
     await page.getByRole('link').first().click();
     await page.getByRole('link', { name: 'Stufe' }).click();
