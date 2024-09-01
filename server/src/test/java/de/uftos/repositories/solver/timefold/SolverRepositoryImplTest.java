@@ -19,6 +19,7 @@ import de.uftos.dto.ucdl.ConstraintDefinitionDto;
 import de.uftos.dto.ucdl.UcdlToken;
 import de.uftos.dto.ucdl.ast.ValueDto;
 import de.uftos.repositories.solver.SolverRepositoryImpl;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -39,37 +40,49 @@ public class SolverRepositoryImplTest {
       new SolverRepositoryImpl().solve(getValidTimetableProblemDto(), (timetable) -> {
       });
     });
-    System.out.println(
-        new SolverRepositoryImpl().solve(getValidTimetableProblemDto(), (timetable) -> {
-        }).get());
+    TimetableProblemDto noConstraintInstances = getValidTimetableProblemDto();
+    noConstraintInstances.instances().clear();
+    assertDoesNotThrow(() -> {
+      new SolverRepositoryImpl().solve(noConstraintInstances, (timetable) -> {
+      });
+    });
   }
 
   private TimetableProblemDto getValidTimetableProblemDto() {
-    GradeProblemDto grade = new GradeProblemDto("grade", List.of("tag"), List.of("studentGroup"));
-    RoomProblemDto room = new RoomProblemDto("room", List.of("tag"), List.of("lesson"));
+    GradeProblemDto grade = new GradeProblemDto("grade", new ArrayList<>(List.of("tag")),
+        new ArrayList<>(List.of("studentGroup")));
+    RoomProblemDto room = new RoomProblemDto("room", new ArrayList<>(List.of("tag")),
+        new ArrayList<>(List.of("lesson")));
     StudentProblemDto student =
-        new StudentProblemDto("student", List.of("tag"), List.of("studentGroup"));
+        new StudentProblemDto("student", new ArrayList<>(List.of("tag")),
+            new ArrayList<>(List.of("studentGroup")));
     StudentGroupProblemDto studentGroup =
-        new StudentGroupProblemDto("studentGroup", "grade", List.of("tag"), List.of("lesson"),
-            List.of("student"));
+        new StudentGroupProblemDto("studentGroup", "grade", new ArrayList<>(List.of("tag")),
+            new ArrayList<>(List.of("lesson")),
+            new ArrayList<>(List.of("student")));
     SubjectProblemDto subject =
-        new SubjectProblemDto("subject", List.of("tag"), List.of("lesson"), List.of("teacher"));
+        new SubjectProblemDto("subject", new ArrayList<>(List.of("tag")),
+            new ArrayList<>(List.of("lesson")), new ArrayList<>(List.of("teacher")));
     TagProblemDto tag =
-        new TagProblemDto("tag", List.of("grade"), List.of("room"), List.of("student"),
-            List.of("studentGroup"), List.of("subject"), List.of("teacher"),
-            List.of("timeslot"));
+        new TagProblemDto("tag", new ArrayList<>(List.of("grade")),
+            new ArrayList<>(List.of("room")), new ArrayList<>(List.of("student")),
+            new ArrayList<>(List.of("studentGroup")), new ArrayList<>(List.of("subject")),
+            new ArrayList<>(List.of("teacher")),
+            new ArrayList<>(List.of("timeslot")));
     TeacherProblemDto teacher =
-        new TeacherProblemDto("teacher", List.of("tag"), List.of("lesson"), List.of("subject"));
+        new TeacherProblemDto("teacher", new ArrayList<>(List.of("tag")),
+            new ArrayList<>(List.of("lesson")), new ArrayList<>(List.of("subject")));
     TimeslotProblemDto timeslot =
-        new TimeslotProblemDto("timeslot", 0, 0, List.of("tag"), List.of("lesson"));
+        new TimeslotProblemDto("timeslot", 0, 0, new ArrayList<>(List.of("tag")),
+            new ArrayList<>(List.of("lesson")));
     LessonProblemDto lesson =
         new LessonProblemDto("lesson", 0, "teacher", "studentGroup",
             "timeslot", "subject", "room");
 
     List<ResourceType> parameterTypes =
-        List.of(ResourceType.GRADE, ResourceType.ROOM, ResourceType.STUDENT,
+        new ArrayList<>(List.of(ResourceType.GRADE, ResourceType.ROOM, ResourceType.STUDENT,
             ResourceType.STUDENT_GROUP, ResourceType.SUBJECT, ResourceType.TAG,
-            ResourceType.TEACHER, ResourceType.TIMESLOT);
+            ResourceType.TEACHER, ResourceType.TIMESLOT));
 
     LinkedHashMap<String, ResourceType> definitionParameters = new LinkedHashMap<>();
     for (ResourceType resourceType : parameterTypes) {
@@ -80,11 +93,16 @@ public class SolverRepositoryImplTest {
         new ValueDto<>(UcdlToken.BOOL_VALUE, true));
     ConstraintInstanceDto constraintInstance =
         new ConstraintInstanceDto("testConstraint", RewardPenalize.SOFT_REWARD,
-            List.of(grade, room, student, studentGroup, subject, tag, teacher, timeslot));
+            new ArrayList<>(
+                List.of(grade, room, student, studentGroup, subject, tag, teacher, timeslot)));
 
-    return new TimetableProblemDto(List.of(grade), List.of(lesson),
-        List.of(room), List.of(studentGroup), List.of(student), List.of(subject), List.of(tag),
-        List.of(teacher), List.of(timeslot), List.of(constraintDefinition),
-        List.of(constraintInstance));
+    return new TimetableProblemDto(new ArrayList<>(List.of(grade)),
+        new ArrayList<>(List.of(lesson)),
+        new ArrayList<>(List.of(room)), new ArrayList<>(List.of(studentGroup)),
+        new ArrayList<>(List.of(student)), new ArrayList<>(List.of(subject)),
+        new ArrayList<>(List.of(tag)),
+        new ArrayList<>(List.of(teacher)), new ArrayList<>(List.of(timeslot)),
+        new ArrayList<>(List.of(constraintDefinition)),
+        new ArrayList<>(List.of(constraintInstance)));
   }
 }
