@@ -31,7 +31,17 @@
     if (selectedGrade) {
       try {
         curriculum = await getCurriculum(selectedGrade.curriculumId);
-        lessonsCounts = curriculum.lessonsCounts;
+        lessonsCounts = curriculum.lessonsCounts.sort((count0, count1) => {
+          let a = count0.subject?.name.toLowerCase() ?? '';
+          let b = count1.subject?.name.toLowerCase() ?? '';
+          if (a < b) {
+            return -1;
+          }
+          if (a > b) {
+            return 1;
+          }
+          return 0;
+        });
       } catch {
         error(400, { message: 'could not get curriculum' });
       }
@@ -64,7 +74,10 @@
       <div class="grid grid-cols-4 w-fit gap-8">
         {#await getCurriculumFromGrade() then}
           {#each lessonsCounts as lessonCount}
-            <div class="bg-white shadow-custom p-4 w-[15vw] break-words rounded-md flex flex-col gap-2 justify-between">
+            <div
+              aria-label="lessonCount"
+              class="bg-white shadow-custom p-4 w-[15vw] break-words rounded-md flex flex-col gap-2 justify-between"
+            >
               <div class="text-center m-1">{lessonCount.subject?.name}</div>
               <div class="flex-row flex justify-center gap-2">
                 <button
@@ -103,7 +116,7 @@
   <Button
     on:click={async () => {
       if (selectedGrade) {
-        let test = {
+        let requestDto = {
           gradeId: selectedGrade.id,
           lessonsCounts: curriculum.lessonsCounts.map((lessonsCount) => ({
             count: lessonsCount.count || 0,
@@ -111,7 +124,8 @@
           })),
           name: selectedGrade.name,
         };
-        await updateCurriculum(curriculum.id, test);
+        console.log(requestDto);
+        await updateCurriculum(curriculum.id, requestDto);
         toast(true, 'Curriculum erfolgreich gespeichert.');
       }
     }}
