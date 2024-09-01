@@ -50,7 +50,7 @@ test.describe('Student group page', () => {
       await deleteTags(tags.map((tag) => tag.id));
     }
     const subjects = await getSubjects({});
-    if (tags.length > 0) {
+    if (subjects.length > 0) {
       await deleteSubjects(subjects.map((subject) => subject.id));
     }
 
