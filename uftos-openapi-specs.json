@@ -682,135 +682,6 @@
         "tags" : [ "grade-controller" ]
       }
     },
-    "/lessons" : {
-      "get" : {
-        "operationId" : "getLessons",
-        "parameters" : [ {
-          "in" : "query",
-          "name" : "pageable",
-          "required" : true,
-          "schema" : {
-            "$ref" : "#/components/schemas/Pageable"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "content" : {
-              "*/*" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/PageLessonResponseDto"
-                }
-              }
-            },
-            "description" : "OK"
-          }
-        },
-        "tags" : [ "lesson-controller" ]
-      },
-      "post" : {
-        "operationId" : "createLesson",
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/LessonRequestDto"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "content" : {
-              "*/*" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Lesson"
-                }
-              }
-            },
-            "description" : "OK"
-          }
-        },
-        "tags" : [ "lesson-controller" ]
-      }
-    },
-    "/lessons/{id}" : {
-      "delete" : {
-        "operationId" : "deleteLesson",
-        "parameters" : [ {
-          "in" : "path",
-          "name" : "id",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK"
-          }
-        },
-        "tags" : [ "lesson-controller" ]
-      },
-      "get" : {
-        "operationId" : "getLesson",
-        "parameters" : [ {
-          "in" : "path",
-          "name" : "id",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "content" : {
-              "*/*" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Lesson"
-                }
-              }
-            },
-            "description" : "OK"
-          }
-        },
-        "tags" : [ "lesson-controller" ]
-      },
-      "put" : {
-        "operationId" : "updateLesson",
-        "parameters" : [ {
-          "in" : "path",
-          "name" : "id",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/LessonRequestDto"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "content" : {
-              "*/*" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Lesson"
-                }
-              }
-            },
-            "description" : "OK"
-          }
-        },
-        "tags" : [ "lesson-controller" ]
-      }
-    },
     "/rooms" : {
       "delete" : {
         "operationId" : "deleteRooms",
@@ -2422,27 +2293,6 @@
           }
         }
       },
-      "Curriculum" : {
-        "required" : [ "name" ],
-        "type" : "object",
-        "properties" : {
-          "grade" : {
-            "$ref" : "#/components/schemas/Grade"
-          },
-          "id" : {
-            "type" : "string"
-          },
-          "lessonsCounts" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/LessonsCount"
-            }
-          },
-          "name" : {
-            "type" : "string"
-          }
-        }
-      },
       "CurriculumRequestDto" : {
         "required" : [ "gradeId", "lessonsCounts", "name" ],
         "type" : "object",
@@ -2479,32 +2329,6 @@
           },
           "name" : {
             "type" : "string"
-          }
-        }
-      },
-      "Grade" : {
-        "type" : "object",
-        "properties" : {
-          "curriculum" : {
-            "$ref" : "#/components/schemas/Curriculum"
-          },
-          "id" : {
-            "type" : "string"
-          },
-          "name" : {
-            "type" : "string"
-          },
-          "studentGroups" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/StudentGroup"
-            }
-          },
-          "tags" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/Tag"
-            }
           }
         }
       },
@@ -2559,68 +2383,6 @@
             "items" : {
               "$ref" : "#/components/schemas/Tag"
             }
-          }
-        }
-      },
-      "Lesson" : {
-        "required" : [ "id", "index", "room", "studentGroup", "subject", "teacher", "timeslot", "timetable", "year" ],
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "string"
-          },
-          "index" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "room" : {
-            "$ref" : "#/components/schemas/Room"
-          },
-          "studentGroup" : {
-            "$ref" : "#/components/schemas/StudentGroup"
-          },
-          "subject" : {
-            "$ref" : "#/components/schemas/Subject"
-          },
-          "teacher" : {
-            "$ref" : "#/components/schemas/Teacher"
-          },
-          "timeslot" : {
-            "$ref" : "#/components/schemas/Timeslot"
-          },
-          "timetable" : {
-            "$ref" : "#/components/schemas/Timetable"
-          },
-          "year" : {
-            "type" : "string"
-          }
-        }
-      },
-      "LessonRequestDto" : {
-        "required" : [ "index", "roomId", "studentGroupId", "subjectId", "teacherId", "timeslotId", "timetableId" ],
-        "type" : "object",
-        "properties" : {
-          "index" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "roomId" : {
-            "type" : "string"
-          },
-          "studentGroupId" : {
-            "type" : "string"
-          },
-          "subjectId" : {
-            "type" : "string"
-          },
-          "teacherId" : {
-            "type" : "string"
-          },
-          "timeslotId" : {
-            "type" : "string"
-          },
-          "timetableId" : {
-            "type" : "string"
           }
         }
       },
@@ -2756,55 +2518,6 @@
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/CurriculumResponseDto"
-            }
-          },
-          "empty" : {
-            "type" : "boolean"
-          },
-          "first" : {
-            "type" : "boolean"
-          },
-          "last" : {
-            "type" : "boolean"
-          },
-          "number" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "numberOfElements" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "pageable" : {
-            "$ref" : "#/components/schemas/PageableObject"
-          },
-          "size" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "sort" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/SortObject"
-            }
-          },
-          "totalElements" : {
-            "type" : "integer",
-            "format" : "int64"
-          },
-          "totalPages" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        }
-      },
-      "PageLessonResponseDto" : {
-        "type" : "object",
-        "properties" : {
-          "content" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/LessonResponseDto"
             }
           },
           "empty" : {
@@ -3309,42 +3022,6 @@
           },
           "lastName" : {
             "type" : "string"
-          },
-          "tags" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/Tag"
-            }
-          }
-        }
-      },
-      "StudentGroup" : {
-        "required" : [ "grades", "id", "name", "students", "subjects", "tags" ],
-        "type" : "object",
-        "properties" : {
-          "grades" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/Grade"
-            }
-          },
-          "id" : {
-            "type" : "string"
-          },
-          "name" : {
-            "type" : "string"
-          },
-          "students" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/Student"
-            }
-          },
-          "subjects" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/Subject"
-            }
           },
           "tags" : {
             "type" : "array",
