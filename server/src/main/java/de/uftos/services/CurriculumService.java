@@ -6,9 +6,11 @@ import de.uftos.dto.responsedtos.CurriculumResponseDto;
 import de.uftos.dto.responsedtos.GradeResponseDto;
 import de.uftos.entities.Curriculum;
 import de.uftos.entities.Grade;
+import de.uftos.entities.LessonsCount;
 import de.uftos.repositories.database.CurriculumRepository;
 import de.uftos.repositories.database.GradeRepository;
 import de.uftos.utils.SpecificationBuilder;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,11 +107,31 @@ public class CurriculumService {
     Grade grade = gradeRepository.findById(curriculumRequest.gradeId())
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
             "Could not find a grade with this id"));
-    Curriculum curriculum = curriculumRequest.map(grade);
-    this.repository.delete(this.repository.findById(id)
+    Curriculum newCurriculum = curriculumRequest.map(grade);
+    Curriculum oldCurriculum = this.repository.findById(id)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
-            "Could not find a curriculum with this id")));
-    return new CurriculumResponseDto(this.repository.save(curriculum));
+            "Could not find a curriculum with this id"));
+
+    List<LessonsCount> newLessonsCounts = newCurriculum.getLessonsCounts().stream().sorted(
+        Comparator.comparing(l -> l.getSubject().getId())).toList();
+
+    List<LessonsCount> oldLessonsCounts = oldCurriculum.getLessonsCounts().stream().sorted(
+        Comparator.comparing(l -> l.getSubject().getId())).toList();
+
+    if (newLessonsCounts.size() != oldLessonsCounts.size()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Lessons counts don't match!");
+    }
+
+    for (int i = 0; i < newLessonsCounts.size(); i++) {
+      LessonsCount newCount = newLessonsCounts.get(i);
+      LessonsCount oldCount = oldLessonsCounts.get(i);
+      if (!newCount.getSubject().getId().equals(oldCount.getSubject().getId())) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Lessons counts don't match!");
+      }
+      oldCount.setCount(newCount.getCount());
+    }
+
+    return new CurriculumResponseDto(this.repository.save(oldCurriculum));
   }
 
   /**
