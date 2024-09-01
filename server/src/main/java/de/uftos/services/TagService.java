@@ -21,6 +21,7 @@ import de.uftos.repositories.database.TeacherRepository;
 import de.uftos.repositories.database.TimeslotRepository;
 import de.uftos.utils.ConstraintInstanceDeleter;
 import de.uftos.utils.SpecificationBuilder;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -157,43 +158,64 @@ public class TagService {
 
     List<Student> students = studentRepository.findAllByTags(tagIds);
     for (Student student : students) {
-      student.getTags().removeIf(tag1 -> tagIds.contains(tag1.getId()));
+      List<Tag> studentTags = new ArrayList<>(student.getTags());
+      studentTags.removeIf(tag1 -> tagIds.contains(tag1.getId()));
+      student.setTags(studentTags);
+      //student.getTags().removeIf(tag1 -> tagIds.contains(tag1.getId()));
     }
     studentRepository.saveAll(students);
 
     List<Teacher> teachers = teacherRepository.findAllByTags(tagIds);
     for (Teacher teacher : teachers) {
-      teacher.getTags().removeIf(tag1 -> tagIds.contains(tag1.getId()));
+      List<Tag> teacherTags = new ArrayList<>(teacher.getTags());
+      teacherTags.removeIf(tag1 -> tagIds.contains(tag1.getId()));
+      teacher.setTags(teacherTags);
+      //teacher.getTags().removeIf(tag1 -> tagIds.contains(tag1.getId()));
     }
     teacherRepository.saveAll(teachers);
 
     List<StudentGroup> studentGroups = studentGroupRepository.findAllByTags(tagIds);
     for (StudentGroup group : studentGroups) {
-      group.getTags().removeIf(tag1 -> tagIds.contains(tag1.getId()));
+      List<Tag> groupTags = new ArrayList<>(group.getTags());
+      groupTags.removeIf(tag1 -> tagIds.contains(tag1.getId()));
+      group.setTags(groupTags);
+      //group.getTags().removeIf(tag1 -> tagIds.contains(tag1.getId()));
     }
     studentGroupRepository.saveAll(studentGroups);
 
     List<Room> rooms = roomRepository.findAllByTags(tagIds);
     for (Room room : rooms) {
-      room.getTags().removeIf(tag1 -> tagIds.contains(tag1.getId()));
+      List<Tag> roomTags = new ArrayList<>(room.getTags());
+      roomTags.removeIf(tag1 -> tagIds.contains(tag1.getId()));
+      room.setTags(roomTags);
+      //room.getTags().removeIf(tag1 -> tagIds.contains(tag1.getId()));
     }
     roomRepository.saveAll(rooms);
 
     List<Subject> subjects = subjectRepository.findAllByTags(tagIds);
     for (Subject subject : subjects) {
-      subject.getTags().removeIf(tag1 -> tagIds.contains(tag1.getId()));
+      List<Tag> subjectTags = new ArrayList<>(subject.getTags());
+      subjectTags.removeIf(tag1 -> tagIds.contains(tag1.getId()));
+      subject.setTags(subjectTags);
+      //subject.getTags().removeIf(tag1 -> tagIds.contains(tag1.getId()));
     }
     subjectRepository.saveAll(subjects);
 
     List<Grade> grades = gradeRepository.findAllByTags(tagIds);
     for (Grade grade : grades) {
-      grade.getTags().removeIf(tag1 -> tagIds.contains(tag1.getId()));
+      List<Tag> gradeTags = new ArrayList<>(grade.getTags());
+      gradeTags.removeIf(tag1 -> tagIds.contains(tag1.getId()));
+      grade.setTags(gradeTags);
+      //grade.getTags().removeIf(tag1 -> tagIds.contains(tag1.getId()));
     }
     gradeRepository.saveAll(grades);
 
     List<Timeslot> timeslots = timeslotRepository.findAllByTags(tagIds);
     for (Timeslot timeslot : timeslots) {
-      timeslot.getTags().removeIf(tag1 -> tagIds.contains(tag1.getId()));
+      List<Tag> timeslotTags = new ArrayList<>(timeslot.getTags());
+      timeslotTags.removeIf(tag1 -> tagIds.contains(tag1.getId()));
+      timeslot.setTags(timeslotTags);
+      //timeslot.getTags().removeIf(tag1 -> tagIds.contains(tag1.getId()));
     }
     timeslotRepository.saveAll(timeslots);
 

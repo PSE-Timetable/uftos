@@ -17,6 +17,7 @@ import de.uftos.repositories.database.TimetableRepository;
 import de.uftos.utils.ConstraintInstanceDeleter;
 import de.uftos.utils.LessonsDeleter;
 import de.uftos.utils.SpecificationBuilder;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -118,7 +119,9 @@ public class SubjectService {
     List<Curriculum> curricula = curriculumRepository.findAll();
 
     for (Curriculum curriculum : curricula) {
-      curriculum.getLessonsCounts().add(new LessonsCount(subjectEntity.getId(), 0));
+      List<LessonsCount> lessonsCounts = new ArrayList<>(curriculum.getLessonsCounts());
+      lessonsCounts.add(new LessonsCount(subjectEntity.getId(), 0));
+      curriculum.setLessonsCounts(lessonsCounts);
     }
     curriculumRepository.saveAll(curricula);
 
@@ -166,8 +169,12 @@ public class SubjectService {
     List<Curriculum> curricula = curriculumRepository.findAll(curriculumSpecification);
 
     for (Curriculum curriculum : curricula) {
-      curriculum.getLessonsCounts()
-          .removeIf((lessonsCount) -> subjectIds.contains(lessonsCount.getSubject().getId()));
+      List<LessonsCount> lessonsCounts = new ArrayList<>(curriculum.getLessonsCounts());
+      lessonsCounts.removeIf(
+          (lessonsCount) -> subjectIds.contains(lessonsCount.getSubject().getId()));
+      curriculum.setLessonsCounts(lessonsCounts);
+//      curriculum.getLessonsCounts()
+//          .removeIf((lessonsCount) -> subjectIds.contains(lessonsCount.getSubject().getId()));
     }
     curriculumRepository.saveAll(curricula);
 
@@ -176,7 +183,10 @@ public class SubjectService {
         .build();
     List<Teacher> teachers = teacherRepository.findAll(teacherSpecification);
     for (Teacher teacher : teachers) {
-      teacher.getSubjects().removeIf(subject1 -> subjectIds.contains(subject1.getId()));
+      List<Subject> teacherSubjects = new ArrayList<>(teacher.getSubjects());
+      teacherSubjects.removeIf(subject1 -> subjectIds.contains(subject1.getId()));
+      teacher.setSubjects(teacherSubjects);
+      //teacher.getSubjects().removeIf(subject1 -> subjectIds.contains(subject1.getId()));
     }
 
     Specification<StudentGroup> studentGroupSpecification = new SpecificationBuilder<StudentGroup>()
@@ -184,7 +194,10 @@ public class SubjectService {
         .build();
     List<StudentGroup> studentGroups = studentGroupRepository.findAll(studentGroupSpecification);
     for (StudentGroup studentGroup : studentGroups) {
-      studentGroup.getSubjects().removeIf(subject1 -> subjectIds.contains(subject1.getId()));
+      List<Subject> groupSubjects = new ArrayList<>(studentGroup.getSubjects());
+      groupSubjects.removeIf(subject1 -> subjectIds.contains(subject1.getId()));
+      studentGroup.setSubjects(groupSubjects);
+      //studentGroup.getSubjects().removeIf(subject1 -> subjectIds.contains(subject1.getId()));
     }
     studentGroupRepository.saveAll(studentGroups);
 
