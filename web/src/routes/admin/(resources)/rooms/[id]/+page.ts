@@ -9,7 +9,7 @@ export const _schema = z.object({
   id: z.string(),
   name: z.string().trim().min(1, { message: 'Der Name darf nicht leer sein.' }),
   buildingName: z.string().trim().min(1, { message: 'Der Gebäudename darf nicht leer sein.' }),
-  capacity: z.coerce.number().int().positive({ message: 'Die Kapazität darf nicht 0 sein' }),
+  capacity: z.coerce.number().int().positive({ message: 'Die Kapazität darf nicht 0 sein.' }),
   tags: z.string().array(),
 });
 
