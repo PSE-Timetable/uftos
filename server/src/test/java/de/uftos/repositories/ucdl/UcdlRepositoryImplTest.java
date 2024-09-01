@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import org.apache.coyote.BadRequestException;
 import org.junit.jupiter.api.Test;
 
+@SuppressWarnings("checkstyle:MissingJavadocType")
 public class UcdlRepositoryImplTest {
 
 
