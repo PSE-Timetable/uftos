@@ -10,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotEmpty;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import lombok.Data;
@@ -34,7 +35,7 @@ public class ConstraintParameter {
 
   @JsonIgnore
   @OneToMany(mappedBy = "constraintParameter")
-  private List<ConstraintArgument> constraintArguments;
+  private List<ConstraintArgument> constraintArguments = new ArrayList<>();
 
   @NotEmpty
   @Enumerated(EnumType.STRING)
