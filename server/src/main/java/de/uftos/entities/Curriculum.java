@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotEmpty;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import lombok.Data;
@@ -36,7 +37,7 @@ public class Curriculum {
   private Grade grade;
 
   @OneToMany(cascade = CascadeType.ALL)
-  private List<LessonsCount> lessonsCounts;
+  private List<LessonsCount> lessonsCounts = new ArrayList<>();
 
   /**
    * Creates a new curriculum.

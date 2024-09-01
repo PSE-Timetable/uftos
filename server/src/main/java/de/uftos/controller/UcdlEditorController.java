@@ -5,6 +5,7 @@ import de.uftos.services.UcdlEditorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
  * The REST controller for the UCDL editor.
  * This controller handles /editor HTTP requests.
  */
+@Validated
 @RestController
 @RequestMapping("/editor")
 public class UcdlEditorController {

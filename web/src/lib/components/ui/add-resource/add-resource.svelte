@@ -6,7 +6,7 @@
   import TagsMultipleSelect from '$lib/components/ui/tags-multiple-select/tags-multiple-select.svelte';
   import ComboBox from '$lib/elements/ui/combo-box/combo-box.svelte';
   import { error } from '@sveltejs/kit';
-  import SuperDebug, { superForm } from 'sveltekit-superforms';
+  import { superForm } from 'sveltekit-superforms';
   import { zodClient } from 'sveltekit-superforms/adapters';
   import { goto } from '$app/navigation';
 
@@ -72,6 +72,24 @@
         </Form.Field>
       </div>
     {/each}
+
+    {#if names.includes('color')}
+      <div class="text-lg font-bold flex">Farbe:</div>
+      <div class="flex flex-col gap-1 w-80">
+        <Form.Field {form} name="capacity">
+          <Form.Control let:attrs>
+            <Input
+              {...attrs}
+              type="color"
+              bind:value={$formData.color}
+              background={true}
+              class="rounded-none font-normal flex max-w-80"
+            />
+          </Form.Control>
+          <Form.FieldErrors />
+        </Form.Field>
+      </div>
+    {/if}
 
     {#if names.includes('capacity')}
       <div class="text-lg font-bold flex">Kapazität:</div>
@@ -155,5 +173,4 @@
       Speichern
     </Form.Button>
   </div>
-  <SuperDebug data={$formData}></SuperDebug>
 </form>

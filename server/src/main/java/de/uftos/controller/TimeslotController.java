@@ -6,6 +6,7 @@ import de.uftos.services.TimeslotService;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
  * The REST controller for the timeslot entity.
  * This controller handles /timeslots HTTP requests.
  */
+@Validated
 @RestController
 @RequestMapping("/timeslots")
 public class TimeslotController {
@@ -75,7 +77,7 @@ public class TimeslotController {
    * {@link TimeslotService#update(String, TimeslotRequestDto) update} function of the timeslot
    * service.
    *
-   * @param id      the ID of the timeslot which is to be updated.
+   * @param id       the ID of the timeslot which is to be updated.
    * @param timeslot the updated information of the timeslot.
    * @return the updated timeslot.
    */

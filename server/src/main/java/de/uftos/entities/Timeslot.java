@@ -17,6 +17,7 @@ import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import lombok.Data;
@@ -51,11 +52,11 @@ public class Timeslot {
       joinColumns = @JoinColumn(name = "timeslots_id"),
       inverseJoinColumns = @JoinColumn(name = "tags_id"),
       uniqueConstraints = @UniqueConstraint(columnNames = {"timeslots_id", "tags_id"}))
-  private List<Tag> tags;
+  private List<Tag> tags = new ArrayList<>();
 
   @JsonIgnore
   @OneToMany(mappedBy = "timeslot")
-  private List<Lesson> lessons;
+  private List<Lesson> lessons = new ArrayList<>();
 
   /**
    * Creates a new timeslot.

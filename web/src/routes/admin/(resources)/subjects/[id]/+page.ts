@@ -8,6 +8,7 @@ import type { PageLoad } from './$types';
 export const _schema = z.object({
   id: z.string(),
   name: z.string().trim().min(1, { message: 'Der Name darf nicht leer sein.' }),
+  color: z.string().optional().default('#EDB686'),
   tags: z.string().array(),
 });
 

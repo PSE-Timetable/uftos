@@ -1,20 +1,27 @@
 <script lang="ts">
-  import { setTimetableMetadata, type TimetableMetadata } from '$lib/sdk/fetch-client';
+  import {
+    getNotificationEmail,
+    setNotificationEmail,
+    setTimetableMetadata,
+    type TimetableMetadata,
+  } from '$lib/sdk/fetch-client';
   import { CirclePlus, ChevronLeft, Trash2 } from 'lucide-svelte/icons';
   import { Input } from '$lib/elements/ui/input/index.js';
   import { toast } from 'svelte-sonner';
   import { Button } from '$lib/elements/ui/button';
   import { page } from '$app/stores';
   import { goto } from '$app/navigation';
+  import { parseError } from '$lib/utils/error.js';
 
   export let data;
-  let changed: boolean = false;
+  let isMetadataChanged: boolean = false;
 
   enum Type {
     TIMESLOT,
     PAUSE,
   }
 
+  let email: string = data.email;
   let metadata: TimetableMetadata = data.metadata;
 
   let timeslotList: { from: string; to: string; relativeIndex: number; type: Type }[] = generateTimetable(metadata);
@@ -28,14 +35,14 @@
   }
 
   function addBreakAndUpdate(metadata: TimetableMetadata, afterSlot: number, length: number, long?: boolean) {
-    changed = true;
+    isMetadataChanged = true;
     metadata.breaks.push({ afterSlot, length, long });
     metadata.breaks.sort((a, b) => a.afterSlot - b.afterSlot);
     trigger = !trigger;
   }
 
   function removeBreakAndUpdate(metadata: TimetableMetadata, index: number) {
-    changed = true;
+    isMetadataChanged = true;
     metadata.breaks.splice(index, 1);
     metadata.breaks.sort((a, b) => a.afterSlot - b.afterSlot);
     trigger = !trigger;
@@ -46,7 +53,7 @@
     if (!target || target.value === null) {
       return;
     }
-    changed = true;
+    isMetadataChanged = true;
     metadata.breaks[index].length = Number.parseInt(target.value);
     trigger = !trigger;
   }
@@ -92,11 +99,26 @@
     return timeslotList;
   }
 
-  async function saveMetadata() {
-    await setTimetableMetadata(metadata);
-    toast.success('Erfolgreich', {
-      description: 'Die Einstellungen wurden erfolgreich gespeichert!',
-    });
+  async function save() {
+    try {
+      if (isMetadataChanged) {
+        await setTimetableMetadata(metadata);
+        isMetadataChanged = false;
+      }
+
+      if (email !== data.email) {
+        await setNotificationEmail({ email });
+        const { email: newEmail } = await getNotificationEmail();
+        data.email = newEmail;
+        email = newEmail;
+      }
+      toast.success('Erfolgreich', {
+        description: 'Die Einstellungen wurden erfolgreich gespeichert!',
+      });
+    } catch (error) {
+      const parsedError = parseError(error);
+      toast.error('Fehler', { description: parsedError.errors.at(0)?.defaultMessage || parsedError.message });
+    }
   }
 
   function convertTimeStringToDate(timeString: string): Date {
@@ -131,7 +153,7 @@
 
     const value = Number.parseInt(target.value);
     if (value !== metadata.timeslotsAmount) {
-      changed = true;
+      isMetadataChanged = true;
       metadata.timeslotsAmount = value;
       metadata.breaks = metadata.breaks.filter((b) => b.afterSlot < metadata.timeslotsAmount);
     }
@@ -143,7 +165,7 @@
       return;
     }
     if (target.value !== metadata.startTime) {
-      changed = true;
+      isMetadataChanged = true;
       metadata.startTime = target.value;
     }
   }
@@ -156,7 +178,7 @@
     const newLength: number = Number.parseInt(target.value);
     if (newLength !== metadata.timeslotLength) {
       metadata.timeslotLength = newLength;
-      changed = true;
+      isMetadataChanged = true;
     }
   }
 
@@ -185,83 +207,93 @@
   <h1 class="font-bold text-xl mt-1">{$page.data['meta']['title']}</h1>
 </div>
 
-<div class="flex flex-row gap-8 p-4">
-  <div class="grid grid-cols-2 auto-rows-auto h-fit gap-4">
-    <label for="slot" class="font-bold fit-content">Timeslots pro Tag:</label>
-    <Input
-      background={true}
-      class="border-0"
-      id="slot"
-      type="number"
-      value={metadata.timeslotsAmount}
-      on:input={updateTimeslots}
-      min="0"
-      step="1"
-      placeholder="Anzahl"
-    />
-    <label for="slot_length" class="font-bold">Timeslots Länge:</label>
-    <Input
-      background={true}
-      class="border-0"
-      id="slot_length"
-      type="number"
-      value={metadata.timeslotLength}
-      on:input={updateTimeSlotLength}
-      min="0"
-      step="1"
-      placeholder="Länge"
-    />
-    <label for="start_time" class="font-bold">Anfangsuhrzeit:</label>
-    <Input
-      background={true}
-      class="border-0"
-      value={metadata.startTime}
-      on:input={updateStartTime}
-      id="start_time"
-      type="time"
-      placeholder="07:45"
-    />
-    <div></div>
-    <Button class="bg-accent text-white py-8 col-span-2" on:click={saveMetadata} disabled={!changed}>Speichern</Button>
+<div class="flex flex-col gap-4 p-4">
+  <div class="flex flex-row items-center gap-4 w-80 p-4">
+    <div class="text-lg font-bold flex">Email:</div>
+    <Input bind:value={email} class="rounded-none font-normal max-w-80" />
   </div>
-  <div class="bg-white rounded-md p-8 gap-6 flex flex-col w-1/2 min-w-[fit-content]">
-    <p class="font-bold text-lg">Timeslots</p>
-    {#each timeslotList as timeslot}
-      <div class="flex flex-row gap-2 items-center">
-        {#if timeslot.type === Type.TIMESLOT}
-          <p>
-            {timeslot.relativeIndex + 1}. Stunde von {timeslot.from} bis {timeslot.to}
-          </p>
-          <button
-            disabled={hasTimeslotBreak(timeslot.relativeIndex)}
-            type="button"
-            on:click={() => addBreakAndUpdate(metadata, timeslot.relativeIndex, 5, false)}
-          >
-            <div class="stroke-accent">
-              <CirclePlus class={hasTimeslotBreak(timeslot.relativeIndex) ? 'stroke-gray-400' : ''} />
-            </div>
-          </button>
-        {:else}
-          <p class="invisible">...</p>
-          <p>
-            Pause von {timeslot.from} bis {timeslot.to}
-          </p>
-          <Input
-            background={true}
-            id="pause_length"
-            type="number"
-            value={metadata.breaks[timeslot.relativeIndex].length}
-            on:input={(e) => setPauseLength(metadata, timeslot.relativeIndex, e)}
-            min="0"
-            step="1"
-            placeholder="Länge"
-            class="w-min border-0"
-          />
-          <button type="button" on:click={() => removeBreakAndUpdate(metadata, timeslot.relativeIndex)}>
-            <Trash2 />
-          </button>
-        {/if}
-      </div>
-    {/each}
+  <div class="flex flex-row gap-8 p-4">
+    <div class="grid grid-cols-2 auto-rows-auto h-fit gap-4">
+      <label for="slot" class="font-bold fit-content">Timeslots pro Tag:</label>
+      <Input
+        background={true}
+        class="border-0"
+        id="slot"
+        type="number"
+        value={metadata.timeslotsAmount}
+        on:input={updateTimeslots}
+        min="0"
+        step="1"
+        placeholder="Anzahl"
+      />
+      <label for="slot_length" class="font-bold">Timeslots Länge:</label>
+      <Input
+        background={true}
+        class="border-0"
+        id="slot_length"
+        type="number"
+        value={metadata.timeslotLength}
+        on:input={updateTimeSlotLength}
+        min="0"
+        step="1"
+        placeholder="Länge"
+      />
+      <label for="start_time" class="font-bold">Anfangsuhrzeit:</label>
+      <Input
+        background={true}
+        class="border-0"
+        value={metadata.startTime}
+        on:input={updateStartTime}
+        id="start_time"
+        type="time"
+        placeholder="07:45"
+      />
+      <div></div>
+      <Button
+        class="bg-accent text-white py-8 col-span-2"
+        on:click={save}
+        disabled={!isMetadataChanged && data.email === email}>Speichern</Button
+      >
+    </div>
+    <div class="bg-white rounded-md p-8 gap-6 flex flex-col w-1/2 min-w-[fit-content]">
+      <p class="font-bold text-lg">Timeslots</p>
+      {#each timeslotList as timeslot}
+        <div class="flex flex-row gap-2 items-center">
+          {#if timeslot.type === Type.TIMESLOT}
+            <p>
+              {timeslot.relativeIndex + 1}. Stunde von {timeslot.from} bis {timeslot.to}
+            </p>
+            <button
+              disabled={hasTimeslotBreak(timeslot.relativeIndex)}
+              type="button"
+              on:click={() => addBreakAndUpdate(metadata, timeslot.relativeIndex, 5, false)}
+            >
+              <div class="stroke-accent">
+                <CirclePlus class={hasTimeslotBreak(timeslot.relativeIndex) ? 'stroke-gray-400' : ''} />
+              </div>
+            </button>
+          {:else}
+            <p class="invisible">...</p>
+            <p>
+              Pause von {timeslot.from} bis {timeslot.to}
+            </p>
+            <Input
+              background={true}
+              id="pause_length"
+              type="number"
+              value={metadata.breaks[timeslot.relativeIndex].length}
+              on:input={(e) => setPauseLength(metadata, timeslot.relativeIndex, e)}
+              min="0"
+              step="1"
+              placeholder="Länge"
+              class="w-min border-0"
+            />
+            <button type="button" on:click={() => removeBreakAndUpdate(metadata, timeslot.relativeIndex)}>
+              <Trash2 />
+            </button>
+          {/if}
+        </div>
+      {/each}
+    </div>
   </div>
 </div>
