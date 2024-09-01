@@ -185,7 +185,6 @@ public class GradeServiceTests {
     when(studentGroupRepository.findAllByGrades(List.of("123"))).thenReturn(
         List.of(studentGroup1, studentGroup2));
     when(gradeRepository.findById("123")).thenReturn(Optional.of(grade1Mock));
-    when(gradeRepository.findAllById(List.of("123"))).thenReturn(List.of(grade1Mock));
     when(gradeRepository.findById("456")).thenReturn(Optional.of(grade2Mock));
     when(gradeRepository.findById("567")).thenReturn(Optional.of(grade3Mock));
     when(gradeRepository.save(any(Grade.class))).thenReturn(gradeForCreateAndUpdateMock);
@@ -323,16 +322,6 @@ public class GradeServiceTests {
     assertThrows(ResponseStatusException.class,
         () -> gradeService.deleteGrades(new String[] {"123"}));
   }
-
-//  @Test
-//  void deleteGrade() {
-//    assertDoesNotThrow(() -> gradeService.delete("567"));
-//    ArgumentCaptor<Grade> gradeCap = ArgumentCaptor.forClass(Grade.class);
-//    verify(gradeRepository, times(1)).delete(gradeCap.capture());
-//
-//    Grade grade = gradeCap.getValue();
-//    assertEquals("567", grade.getId());
-//  }
 
   @Test
   void deleteNonExistentGrade() {

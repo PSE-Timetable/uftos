@@ -173,8 +173,7 @@ public class SubjectService {
       lessonsCounts.removeIf(
           (lessonsCount) -> subjectIds.contains(lessonsCount.getSubject().getId()));
       curriculum.setLessonsCounts(lessonsCounts);
-//      curriculum.getLessonsCounts()
-//          .removeIf((lessonsCount) -> subjectIds.contains(lessonsCount.getSubject().getId()));
+
     }
     curriculumRepository.saveAll(curricula);
 
@@ -186,7 +185,6 @@ public class SubjectService {
       List<Subject> teacherSubjects = new ArrayList<>(teacher.getSubjects());
       teacherSubjects.removeIf(subject1 -> subjectIds.contains(subject1.getId()));
       teacher.setSubjects(teacherSubjects);
-      //teacher.getSubjects().removeIf(subject1 -> subjectIds.contains(subject1.getId()));
     }
 
     Specification<StudentGroup> studentGroupSpecification = new SpecificationBuilder<StudentGroup>()
@@ -197,7 +195,6 @@ public class SubjectService {
       List<Subject> groupSubjects = new ArrayList<>(studentGroup.getSubjects());
       groupSubjects.removeIf(subject1 -> subjectIds.contains(subject1.getId()));
       studentGroup.setSubjects(groupSubjects);
-      //studentGroup.getSubjects().removeIf(subject1 -> subjectIds.contains(subject1.getId()));
     }
     studentGroupRepository.saveAll(studentGroups);
 
