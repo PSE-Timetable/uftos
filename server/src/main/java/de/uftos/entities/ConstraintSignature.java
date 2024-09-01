@@ -29,7 +29,7 @@ public class ConstraintSignature {
   @NotEmpty
   private String description;
 
-  @NotEmpty
+  @NotNull
   private RewardPenalize defaultType;
 
   @NotNull
