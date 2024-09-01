@@ -197,9 +197,8 @@ public class TimetableService {
     timetableRepository.save(timetableEntity);
     try {
       TimetableProblemDto problemInstance = getProblemInstance(timetableEntity);
-      solverRepository.solve(problemInstance, solverFinishedEvent).get();
-    } catch (InterruptedException | ExecutionException | BadRequestException
-             | ResponseStatusException e) {
+      solverRepository.solve(problemInstance, solverFinishedEvent);
+    } catch (BadRequestException | ResponseStatusException e) {
       return new SuccessResponse(false, e.getMessage());
     }
     return new SuccessResponse(true, "Solver erfolgreich gestartet!");
