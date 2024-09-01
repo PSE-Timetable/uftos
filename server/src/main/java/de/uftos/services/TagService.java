@@ -161,7 +161,6 @@ public class TagService {
       List<Tag> studentTags = new ArrayList<>(student.getTags());
       studentTags.removeIf(tag1 -> tagIds.contains(tag1.getId()));
       student.setTags(studentTags);
-      //student.getTags().removeIf(tag1 -> tagIds.contains(tag1.getId()));
     }
     studentRepository.saveAll(students);
 
@@ -170,7 +169,6 @@ public class TagService {
       List<Tag> teacherTags = new ArrayList<>(teacher.getTags());
       teacherTags.removeIf(tag1 -> tagIds.contains(tag1.getId()));
       teacher.setTags(teacherTags);
-      //teacher.getTags().removeIf(tag1 -> tagIds.contains(tag1.getId()));
     }
     teacherRepository.saveAll(teachers);
 
@@ -179,7 +177,6 @@ public class TagService {
       List<Tag> groupTags = new ArrayList<>(group.getTags());
       groupTags.removeIf(tag1 -> tagIds.contains(tag1.getId()));
       group.setTags(groupTags);
-      //group.getTags().removeIf(tag1 -> tagIds.contains(tag1.getId()));
     }
     studentGroupRepository.saveAll(studentGroups);
 
@@ -188,7 +185,6 @@ public class TagService {
       List<Tag> roomTags = new ArrayList<>(room.getTags());
       roomTags.removeIf(tag1 -> tagIds.contains(tag1.getId()));
       room.setTags(roomTags);
-      //room.getTags().removeIf(tag1 -> tagIds.contains(tag1.getId()));
     }
     roomRepository.saveAll(rooms);
 
@@ -197,7 +193,6 @@ public class TagService {
       List<Tag> subjectTags = new ArrayList<>(subject.getTags());
       subjectTags.removeIf(tag1 -> tagIds.contains(tag1.getId()));
       subject.setTags(subjectTags);
-      //subject.getTags().removeIf(tag1 -> tagIds.contains(tag1.getId()));
     }
     subjectRepository.saveAll(subjects);
 
@@ -206,7 +201,6 @@ public class TagService {
       List<Tag> gradeTags = new ArrayList<>(grade.getTags());
       gradeTags.removeIf(tag1 -> tagIds.contains(tag1.getId()));
       grade.setTags(gradeTags);
-      //grade.getTags().removeIf(tag1 -> tagIds.contains(tag1.getId()));
     }
     gradeRepository.saveAll(grades);
 
@@ -215,7 +209,6 @@ public class TagService {
       List<Tag> timeslotTags = new ArrayList<>(timeslot.getTags());
       timeslotTags.removeIf(tag1 -> tagIds.contains(tag1.getId()));
       timeslot.setTags(timeslotTags);
-      //timeslot.getTags().removeIf(tag1 -> tagIds.contains(tag1.getId()));
     }
     timeslotRepository.saveAll(timeslots);
 

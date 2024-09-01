@@ -174,6 +174,8 @@ public class GradeServiceTests {
     studentGroup1.setGrades(List.of(grade1Mock));
     studentGroup2.setGrades(List.of(grade1Mock));
 
+    when(subjectRepository.findAll()).thenReturn(List.of(subject));
+
     Break[] breaks = {};
     Server server =
         new Server(new TimetableMetadata(45, 8, "8:00", breaks), "2024", "test@uftos.de");

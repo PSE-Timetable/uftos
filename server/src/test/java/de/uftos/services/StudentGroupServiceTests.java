@@ -115,11 +115,20 @@ public class StudentGroupServiceTests {
             List.of("subjectId1"));
 
     Grade grade1 = new Grade("gradeId1");
-    grade1.setStudentGroups(new ArrayList<>(List.of(studentGroup1, studentGroup2, studentGroup3)));
+    grade1.setStudentGroups(List.of(studentGroup1, studentGroup2, studentGroup3));
+
+    Grade gradeEmpty = new Grade("emptyGrade");
+    gradeEmpty.setStudentGroups(List.of(studentGroup1));
 
     when(gradeRepository.findAllById(List.of("gradeId1"))).thenReturn(List.of(grade1));
+    when(gradeRepository.findAllById(List.of("gradeId1", "emptyGrade"))).thenReturn(
+        List.of(gradeEmpty, grade1));
+    when(gradeRepository.findAllById(
+        List.of("noGroupsId", "gradeForUpdate", "emptyGrade"))).thenReturn(
+        List.of(gradeEmpty, grade1));
 
-    studentGroup1.setGrades(List.of(grade1));
+
+    studentGroup1.setGrades(List.of(grade1, gradeEmpty));
     studentGroup2.setGrades(List.of(grade1));
     studentGroup3.setGrades(List.of(grade1));
 
@@ -159,6 +168,9 @@ public class StudentGroupServiceTests {
     studentGroup3.setId("789");
     when(studentGroupRepository.save(any(StudentGroup.class))).thenReturn(studentGroup3);
     when(studentGroupRepository.findById("789")).thenReturn(Optional.of(studentGroup3));
+
+    when(gradeRepository.findByStudentGroups(studentGroup1)).thenReturn(
+        List.of(grade1, gradeEmpty));
   }
 
   @Test
@@ -174,8 +186,9 @@ public class StudentGroupServiceTests {
     assertEquals(2, result.students().size());
     assertEquals("studentId0", result.students().getFirst().getId());
     assertEquals("studentId1", result.students().get(1).getId());
-    assertEquals(1, result.grades().size());
+    assertEquals(2, result.grades().size());
     assertEquals("gradeId1", result.grades().getFirst().id());
+    assertEquals("emptyGrade", result.grades().get(1).id());
     assertEquals(0, result.tags().size());
   }
 
@@ -189,7 +202,7 @@ public class StudentGroupServiceTests {
   @Test
   void lessonsById() {
     LessonResponseDto result = studentGroupService.getLessonsById("123");
-    assertResultArraySizes(result, 1, 2, 2, 1);
+    assertResultArraySizes(result, 1, 2, 2, 2);
     assertAll("Testing whether the sizes of the arrays are correct",
         () -> assertEquals(3, result.grades().getFirst().studentGroupIds().size()),
         () -> assertEquals(4, result.grades().getFirst().studentIds().size())
@@ -250,7 +263,7 @@ public class StudentGroupServiceTests {
   void updateGroup() {
     StudentGroupRequestDto requestDto =
         new StudentGroupRequestDto("Ethics2", List.of("studentId0", "studentId1"),
-            List.of("noGroupsId", "gradeForUpdate"), List.of(), List.of());
+            List.of("noGroupsId", "gradeForUpdate", "emptyGrade"), List.of(), List.of());
     studentGroupService.update("123", requestDto);
 
     ArgumentCaptor<StudentGroup> studentGroupCap = ArgumentCaptor.forClass(StudentGroup.class);

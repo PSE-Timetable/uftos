@@ -73,12 +73,17 @@ public class StudentServiceTest {
         new Lesson(0, "teacherId", "groupId", "roomId", "timeslotId", "subjectId", "timetableId",
             "2024");
     lesson.setStudentGroup(groupMock);
-    group.setLessons(List.of(lesson));
+
+    Lesson lessonWrongYear =
+        new Lesson(0, "teacherId", "groupId", "roomId", "timeslotId", "subjectId", "timetableId",
+            "1865");
+    lessonWrongYear.setStudentGroup(groupMock);
+    group.setLessons(List.of(lesson, lessonWrongYear));
 
     Student student = new Student("123", "Max", "Mustermann", List.of(groupMock), List.of(tag));
 
     when(groupMock.getGrades()).thenReturn(List.of());
-    when(groupMock.getLessons()).thenReturn(List.of(lesson));
+    when(groupMock.getLessons()).thenReturn(List.of(lesson, lessonWrongYear));
     when(groupMock.getStudents()).thenReturn(List.of(student));
     when(groupMock.getId()).thenReturn("groupId");
     Server server = new Server(null, "2024", "email");
@@ -86,10 +91,13 @@ public class StudentServiceTest {
     when(studentRepository.findAll()).thenReturn(List.of(student));
     when(studentRepository.findById("123")).thenReturn(Optional.of(student));
     when(studentRepository.findAllById(List.of("123"))).thenReturn(List.of(student));
+    when(studentRepository.findAllById(List.of("nonExistentId", "123"))).thenReturn(
+        List.of(student));
     when(constraintSignatureRepository.findAll(any(Specification.class))).thenReturn(
         Collections.emptyList());
     when(studentGroupRepository.findByStudents(any(Student.class))).thenReturn(
         Collections.emptyList());
+    when(studentGroupRepository.findAll(any(Specification.class))).thenReturn(List.of(groupMock));
     when(studentRepository.save(any(Student.class))).thenReturn(student);
   }
 
@@ -198,6 +206,12 @@ public class StudentServiceTest {
   void deleteNonExistentStudent() {
     assertThrows(ResponseStatusException.class,
         () -> studentService.deleteStudents(new String[] {"nonExistentId"}));
+  }
+
+  @Test
+  void deleteStudentsSomeExistent() {
+    assertThrows(ResponseStatusException.class,
+        () -> studentService.deleteStudents(new String[] {"nonExistentId", "123"}));
   }
 
   @Test

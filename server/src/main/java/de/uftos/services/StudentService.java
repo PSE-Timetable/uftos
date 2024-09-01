@@ -160,7 +160,9 @@ public class StudentService {
 
     List<StudentGroup> studentGroups = this.studentGroupRepository.findAll(groupSpecification);
     for (StudentGroup group : studentGroups) {
-      group.getStudents().removeIf(students::contains);
+      List<Student> groupStudents = new ArrayList<>(group.getStudents());
+      groupStudents.removeIf(students::contains);
+      group.setStudents(groupStudents);
     }
 
     studentGroupRepository.saveAll(studentGroups);

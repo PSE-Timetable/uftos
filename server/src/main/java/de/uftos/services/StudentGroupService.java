@@ -140,7 +140,9 @@ public class StudentGroupService {
           "Could not find all grades by id");
     }
     for (Grade grade : grades) {
-      grade.getStudentGroups().add(studentGroup);
+      List<StudentGroup> groups = new ArrayList<>(grade.getStudentGroups());
+      groups.add(studentGroup);
+      grade.setStudentGroups(groups);
       this.gradeRepository.save(grade);
     }
 
@@ -237,7 +239,9 @@ public class StudentGroupService {
 
     List<Grade> grades = gradeRepository.findByStudentGroups(group.get());
     for (Grade grade : grades) {
-      grade.getStudentGroups().removeIf(group1 -> group1.getId().equals(id));
+      List<StudentGroup> groups = new ArrayList<>(grade.getStudentGroups());
+      groups.removeIf(group1 -> group1.getId().equals(id));
+      grade.setStudentGroups(groups);
     }
     gradeRepository.saveAll(grades);
 
