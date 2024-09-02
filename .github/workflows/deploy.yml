@@ -64,7 +64,7 @@ jobs:
       - name: Determine build cache output
         id: cache-target
         run: |
-          echo "cache-to=type=registry,mode=max,ref=ghcr.io/${{ github.repository_owner }}/immich-build-cache:${{ matrix.image }}" >> $GITHUB_OUTPUT
+          echo "cache-to=type=registry,mode=max,ref=ghcr.io/pse-timetable/uftos-build-cache:${{ matrix.image }}" >> $GITHUB_OUTPUT
 
       - name: Build and push image
         uses: docker/build-push-action@v6.7.0
@@ -74,7 +74,7 @@ jobs:
           platforms: ${{ matrix.platforms }}
           # Skip pushing when PR from a fork
           push: true
-          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/uftos-build-cache:${{matrix.image}}
+          cache-from: type=registry,ref=ghcr.io/pse-timetable/uftos-build-cache:${{matrix.image}}
           cache-to: ${{ steps.cache-target.outputs.cache-to }}
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
