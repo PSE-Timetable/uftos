@@ -166,10 +166,10 @@ test.describe('Constraints', () => {
     await page.getByRole('button', { name: 'Speichern' }).click();
     await expect(async () => {
       if (await page.getByRole('button', { name: 'Nein' }).isVisible()) {
-        await page.getByRole('button', { name: 'Nein' }).click();
+        await page.getByRole('button', { name: 'Nein' }).click({ timeout: 1000 });
       }
-      await page.locator('.inline-flex').first().click();
-      await expect(page).toHaveURL('/admin', { timeout: 1000 });
+      await page.locator('.inline-flex').first().click({ timeout: 1000 });
+      await expect(page).toHaveURL('/admin', { timeout: 1250 });
     }).toPass();
   });
 });
