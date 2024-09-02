@@ -1,4 +1,11 @@
-import { createSubject, deleteGrades, deleteStudentGroup, getGrades, getStudentGroups, type SubjectRequestDto } from '$lib/sdk/fetch-client';
+import {
+  createSubject,
+  deleteGrades,
+  deleteStudentGroup,
+  getGrades,
+  getStudentGroups,
+  type SubjectRequestDto,
+} from '$lib/sdk/fetch-client';
 import { expect, test, type Page } from '@playwright/test';
 
 let page: Page;
