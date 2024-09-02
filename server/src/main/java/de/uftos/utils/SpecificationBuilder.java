@@ -38,7 +38,7 @@ public class SpecificationBuilder<T> {
    *
    * @param text The text to search for
    * @return The current instance of {@code SpecificationBuilder} with the
-   *     search filter added if the parameter is present.
+   * search filter added if the parameter is present.
    */
   public SpecificationBuilder<T> search(Optional<String> text) {
     if (text.isEmpty()) {
@@ -63,7 +63,7 @@ public class SpecificationBuilder<T> {
    * @param param     The optional parameter value to filter by.
    * @param paramName The name of the parameter to filter on.
    * @return The current instance of {@code SpecificationBuilder} with the
-   *     OR filter added if the parameter is present.
+   * OR filter added if the parameter is present.
    */
   public SpecificationBuilder<T> optionalOrLike(Optional<String> param, String paramName) {
     if (param.isEmpty()) {
@@ -77,23 +77,6 @@ public class SpecificationBuilder<T> {
   }
 
   /**
-   * Adds an AND filter to the specification that checks whether the parameter
-   * is present in the array.
-   *
-   * @param param     The parameter value to filter by.
-   * @param paramName The name of the parameter to filter on.
-   * @return The current instance of {@code SpecificationBuilder} with the
-   *     AND filter added if the parameter is present.
-   */
-  public SpecificationBuilder<T> andIn(String[] param, String paramName) {
-    specification =
-        specification.and(
-            (root, query, cb) -> root.get(paramName).in(Arrays.stream(param).toList())
-        );
-    return this;
-  }
-
-  /**
    * Adds a filter to the specification by joining with another relation if the
    * provided attribute value array is present.
    *
@@ -101,7 +84,7 @@ public class SpecificationBuilder<T> {
    * @param relationName   The name of the relation to join.
    * @param attributeName  The name of the attribute in the joined relation to filter on.
    * @return The current instance of {@code SpecificationBuilder} with the join filter
-   *     added if the attribute value array is present.
+   * added if the attribute value array is present.
    */
   public SpecificationBuilder<T> optionalAndJoinIn(Optional<String[]> attributeValue,
                                                    String relationName, String attributeName) {
@@ -125,7 +108,7 @@ public class SpecificationBuilder<T> {
    * @param secondRelationName The name of the second relation to join.
    * @param attributeName      The name of the attribute in the joined relation to filter on.
    * @return The current instance of {@code SpecificationBuilder} with the join filter
-   *     added if the attribute value array is present.
+   * added if the attribute value array is present.
    */
   public SpecificationBuilder<T> andDoubleJoinIn(String[] attributeValue, String firstRelationName,
                                                  String secondRelationName, String attributeName) {
@@ -135,52 +118,6 @@ public class SpecificationBuilder<T> {
             .join(secondRelationName)
             .get(attributeName)
             .in(Arrays.stream(attributeValue).toList())
-    );
-    return this;
-  }
-
-  /**
-   * Adds a filter to the specification by joining with another relation if the
-   * provided attribute value array is present and checking whether the given attribute
-   * has a similar value to the wanted one.
-   *
-   * @param attributeValue The optional attribute value to filter by.
-   * @param relationName   The name of the relation to join.
-   * @param attributeName  The name of the attribute in the joined relation to filter on.
-   * @return The current instance of {@code SpecificationBuilder} with the join filter
-   *     added if the attribute value is present.
-   */
-  public SpecificationBuilder<T> optionalAndJoinLikeIgnoreCase(Optional<String> attributeValue,
-                                                               String relationName,
-                                                               String attributeName) {
-    if (attributeValue.isEmpty()) {
-      return this;
-    }
-    specification = specification.and(
-        (root, query, cb) -> likeIgnoreCase(cb, root.join(relationName).get(attributeName),
-            attributeValue.get())
-    );
-    return this;
-  }
-
-  /**
-   * Adds a filter to the specification by joining with another relation if the
-   * provided attribute value array is present and checking whether the given attribute
-   * has the exact same value as the wanted one.
-   *
-   * @param attributeValue The optional attribute value to filter by.
-   * @param relationName   The name of the relation to join.
-   * @param attributeName  The name of the attribute in the joined relation to filter on.
-   * @return The current instance of {@code SpecificationBuilder} with the join filter
-   *     added if the attribute value is present.
-   */
-  public SpecificationBuilder<T> andJoinEquals(String attributeValue,
-                                               String relationName, String attributeName) {
-    if (attributeValue.isEmpty()) {
-      return this;
-    }
-    specification = specification.and(
-        (root, query, cb) -> cb.equal(root.join(relationName).get(attributeName), attributeValue)
     );
     return this;
   }

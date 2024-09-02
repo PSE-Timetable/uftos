@@ -150,6 +150,8 @@
                         <exclude>de/uftos/repositories/ucdl/parser/javacc/*</exclude>
                         <exclude>de/uftos/entities/*</exclude>
                         <exclude>de/uftos/controller/*</exclude>
+                        <exclude>de/uftos/config/*</exclude>
+                        <exclude>de/uftos/*</exclude>
                     </excludes>
                 </configuration>
                 <executions>
