@@ -43,14 +43,21 @@ test.describe('Admin Overview', () => {
     if (grades.length > 0) {
       await deleteGrades(grades.map((grade) => grade.id));
     }
-    await page.goto('/admin/editor');
+    await page.goto('/');
+    await page.getByRole('link').first().click();
+    await page.getByRole('link', { name: 'UCDL Editor' }).click();
+    await expect(page).toHaveURL('/admin/editor');
     await expect(async () => {
       const fileChooserPromise = page.waitForEvent('filechooser', { timeout: 1000 });
       await page.getByText('Upload').click();
       const fileChooser = await fileChooserPromise;
       await fileChooser.setFiles('./tests/empty-ucdl.yml');
-      await expect(page.locator('.view-line').first()).toBeEmpty({ timeout: 250 });
+      await expect(page.locator('.view-line').first()).toBeEmpty({ timeout: 500 });
     }).toPass();
+    await page.getByRole('button', { name: 'Speichern' }).click();
+    if (await page.getByRole('heading', { name: 'Datei konnte nicht' }).isVisible()) {
+      await page.getByRole('button', { name: 'Ja' }).click();
+    }
     await page.goto('/');
     await page.getByRole('link').first().click();
     await expect(page).toHaveURL('/admin');

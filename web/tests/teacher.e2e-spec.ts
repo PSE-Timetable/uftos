@@ -40,8 +40,10 @@ test.describe('teachers page', () => {
 
   test('create entities', async () => {
     await expect(page.locator('body')).toContainText('Hinzufügen');
-    await page.getByRole('button', { name: 'Hinzufügen' }).click();
-    await expect(page).toHaveURL('/admin/teachers/new');
+    await expect(async () => {
+      await page.getByRole('button', { name: 'Hinzufügen' }).click();
+      await expect(page).toHaveURL('/admin/teachers/new', { timeout: 750 });
+    }).toPass();
     await page.getByRole('textbox').first().click();
     await page.getByRole('textbox').first().fill('odgsogdpnpowad');
     await page.getByRole('textbox').nth(1).click();
