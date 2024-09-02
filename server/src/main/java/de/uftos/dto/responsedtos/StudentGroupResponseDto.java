@@ -17,7 +17,6 @@ import java.util.List;
  * @param students the students in the student group
  * @param grades   the grades of the student group
  * @param tags     the tags of the student group
- * @param lessons  the lessons of the student group
  * @param subjects the subjects of the student group
  */
 public record StudentGroupResponseDto(@NotEmpty String id,

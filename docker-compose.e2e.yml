@@ -12,7 +12,7 @@ services:
       POSTGRES_PASSWORD: superSecurePassword
       POSTGRES_DB: uftos
   api:
-    image: uftos-server-dev:latest
+    image: uftos-api-dev:latest
     container_name: uftos-api
     build:
       context: ./
