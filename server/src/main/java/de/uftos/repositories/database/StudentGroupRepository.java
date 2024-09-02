@@ -3,7 +3,6 @@ package de.uftos.repositories.database;
 import de.uftos.entities.Student;
 import de.uftos.entities.StudentGroup;
 import de.uftos.entities.Subject;
-import de.uftos.entities.Tag;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -19,8 +18,6 @@ public interface StudentGroupRepository
     ListCrudRepository<StudentGroup, String>, JpaSpecificationExecutor<StudentGroup> {
 
   List<StudentGroup> findByStudents(Student student);
-
-  List<StudentGroup> findByTags(Tag tag);
 
   @Query("SELECT sg FROM student_groups sg JOIN sg.tags t WHERE t IN :tagIds")
   List<StudentGroup> findAllByTags(List<String> tagIds);
