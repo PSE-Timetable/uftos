@@ -196,10 +196,9 @@ export async function loadGrades(sortString: string, filter: string) {
 }
 
 export async function deleteGradeEntry(ids: string[]) {
-  try {
-    await deleteGrades(ids);
-  } catch {
-    toast(false, 'Beim Löschen der Stufe ist ein Fehler aufgetreten');
+  const response = await deleteGrades(ids);
+  if (!response.success) {
+    toast(false, `Beim Löschen der Stufe ist ein Fehler aufgetreten:  ${response.message}`);
     error(400, { message: `could not delete grades` });
   }
 }
