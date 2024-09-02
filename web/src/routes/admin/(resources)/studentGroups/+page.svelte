@@ -42,7 +42,7 @@
 
   async function deleteGroup(id: string) {
     await deleteStudentGroup(id);
-    const size = await getStudentGroups({ page: 0, size: 1 }).then(({ totalElements }) => totalElements);
+    const { totalElements: size } = await getStudentGroups({ page: 0, size: 1 });
     studentGroups = await getStudentGroups({ page: 0, size, sort: ['name,asc'] }).then(({ content }) => content ?? []);
   }
 </script>

@@ -14,7 +14,7 @@
   let reloadTable = false;
 
   const getConstraints = async () => {
-    const size = await getConstraintSignatures({ page: 0, size: 1 }).then(({ totalElements }) => totalElements);
+    const { totalElements: size } = await getConstraintSignatures({ page: 0, size: 1 });
     return {
       constraints: await getConstraintSignatures({ page: 0, size }).then(({ content }) => content),
     };
