@@ -9,7 +9,7 @@ export const _schema = z.object({
   id: z.string(),
   firstName: z.string().trim().min(1, { message: 'Der Vorname darf nicht leer sein.' }),
   lastName: z.string().trim().min(1, { message: 'Der Nachname darf nicht leer sein.' }),
-  acronym: z.string().trim().min(1, { message: 'Das Akroynm darf nicht leer sein.' }),
+  acronym: z.string().trim().min(1, { message: 'Das Akronym darf nicht leer sein.' }),
   tags: z.string().array(),
 });
 

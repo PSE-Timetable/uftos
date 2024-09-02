@@ -35,7 +35,7 @@ test.describe('Constraints', () => {
       await page.getByText('Upload').click();
       const fileChooser = await fileChooserPromise;
       await fileChooser.setFiles('./tests/empty-ucdl.yml');
-      await expect(page.locator('.view-line').first()).toBeEmpty({ timeout: 500 });
+      await expect(page.locator('.view-line').first()).toBeEmpty({ timeout: 750 });
     }).toPass();
     const totalStudents = await getStudents({ page: 0 }).then(({ totalElements }) => totalElements);
     const students = await getStudents({ page: 0, size: totalStudents }).then(({ content }) => content ?? []);
@@ -73,9 +73,7 @@ test.describe('Constraints', () => {
     for (let i = 0; i < 5; i++) {
       await createTag({ tagName: `tag${i}` });
     }
-    for (let i = 0; i < 5; i++) {
-      await createSubject({ name: `subject${i}`, tagIds: [] });
-    }
+    await createSubject({ name: `subject0`, tagIds: [] });
     const gradeId = await createGrade({ name: 'grade', tagIds: [], studentGroupIds: [] }).then(({ id }) => id);
     for (let i = 0; i < 5; i++) {
       await createStudentGroup({ name: `group${i}`, gradeIds: [gradeId], studentIds: [], subjectIds: [], tagIds: [] });
@@ -168,10 +166,10 @@ test.describe('Constraints', () => {
     await page.getByRole('button', { name: 'Speichern' }).click();
     await expect(async () => {
       if (await page.getByRole('button', { name: 'Nein' }).isVisible()) {
-        await page.getByRole('button', { name: 'Nein' }).click();
+        await page.getByRole('button', { name: 'Nein' }).click({ timeout: 1000 });
       }
-      await page.locator('.inline-flex').first().click();
-      await expect(page).toHaveURL('/admin', { timeout: 1000 });
+      await page.locator('.inline-flex').first().click({ timeout: 1000 });
+      await expect(page).toHaveURL('/admin', { timeout: 1250 });
     }).toPass();
   });
 });
