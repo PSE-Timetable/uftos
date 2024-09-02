@@ -129,10 +129,10 @@ public class StudentGroupServiceTests {
         new ArrayList<>(List.of(grade1)));
     when(
         gradeRepository.findAllById(new ArrayList<>(List.of("gradeId1", "emptyGrade")))).thenReturn(
-        new ArrayList<>(List.of(gradeEmpty, grade1)));
+          new ArrayList<>(List.of(gradeEmpty, grade1)));
     when(gradeRepository.findAllById(
         new ArrayList<>(List.of("noGroupsId", "gradeForUpdate", "emptyGrade")))).thenReturn(
-        new ArrayList<>(List.of(gradeEmpty, grade1)));
+          new ArrayList<>(List.of(gradeEmpty, grade1)));
 
 
     studentGroup1.setGrades(new ArrayList<>(List.of(grade1, gradeEmpty)));

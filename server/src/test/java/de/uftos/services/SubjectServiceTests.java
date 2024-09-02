@@ -98,7 +98,7 @@ public class SubjectServiceTests {
         new ArrayList<>(List.of(subject)));
     when(subjectRepository.findAllById(
         new ArrayList<>(List.of("nonExistentId", SUBJECT_ID)))).thenReturn(
-        new ArrayList<>(List.of(subject)));
+          new ArrayList<>(List.of(subject)));
     when(subjectRepository.save(any(Subject.class))).thenReturn(subject);
 
     LessonsCountRequestDto lessonsCount = new LessonsCountRequestDto("123", 1);
