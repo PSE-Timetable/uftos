@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotEmpty;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import lombok.Data;
@@ -31,7 +32,7 @@ public class Timetable {
 
   @JsonIgnore
   @OneToMany(mappedBy = "timetable")
-  private List<Lesson> lessons;
+  private List<Lesson> lessons = new ArrayList<>();
 
   /**
    * Creates a new timetable.
@@ -41,7 +42,6 @@ public class Timetable {
   public Timetable(String name) {
     this.name = name;
   }
-
 
 
   @Override

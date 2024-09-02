@@ -16,6 +16,7 @@ import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import lombok.Data;
@@ -51,12 +52,11 @@ public class Room {
       joinColumns = @JoinColumn(name = "rooms_id"),
       inverseJoinColumns = @JoinColumn(name = "tags_id"),
       uniqueConstraints = @UniqueConstraint(columnNames = {"rooms_id", "tags_id"}))
-  private List<Tag> tags;
+  private List<Tag> tags = new ArrayList<>();
 
-  @NotNull
   @JsonIgnore
   @OneToMany(mappedBy = "room")
-  private List<Lesson> lessons;
+  private List<Lesson> lessons = new ArrayList<>();
 
   @JsonIgnore
   @Type(PostgreSQLTSVectorType.class)

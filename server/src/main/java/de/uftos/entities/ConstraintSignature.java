@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import lombok.Data;
@@ -28,17 +29,16 @@ public class ConstraintSignature {
   @NotEmpty
   private String description;
 
-  @NotEmpty
+  @NotNull
   private RewardPenalize defaultType;
 
   @NotNull
   @OneToMany(cascade = CascadeType.ALL)
-  private List<ConstraintParameter> parameters;
+  private List<ConstraintParameter> parameters = new ArrayList<>();
 
   @JsonIgnore
   @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<ConstraintInstance> instances;
-
+  private List<ConstraintInstance> instances = new ArrayList<>();
 
 
   @Override

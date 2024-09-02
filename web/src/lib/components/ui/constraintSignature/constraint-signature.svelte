@@ -75,7 +75,7 @@
   };
 </script>
 
-<div class="flex flex-col gap-8 bg-primary w-full h-fit p-6 rounded-md text-white">
+<div class="flex flex-col gap-8 bg-primary min-w-fit h-fit p-6 rounded-md text-white">
   <p class="font-bold text-md">
     {constraintSignature.description.replaceAll(
       /{(?<paramName>.*?)}/gm,
@@ -85,7 +85,7 @@
 
   {#await initData() then}
     {#each constraintSignature.parameters as parameter (parameter.id)}
-      <div class="flex flex-row items-center justify-between w-full gap-8">
+      <div class="flex flex-row items-center justify-between min-w-fit gap-8">
         <p>{parameter.parameterName}</p>
 
         <div class="text-primary">

@@ -91,7 +91,7 @@
   {#if !data.id}
     <div class="flex justify-center bg-white rounded-2xl p-4">Wähle einen Stundenplan aus!</div>
   {:else}
-    <div class="flex flex-col gap-2">
+    <div class="flex flex-col gap-2 min-w-fit">
       <ComboBox
         onSearch={onTimetableSearch}
         data={filteredItems}

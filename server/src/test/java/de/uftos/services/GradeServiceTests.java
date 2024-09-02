@@ -4,6 +4,7 @@ import static de.uftos.utils.ClassCaster.getClassType;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -12,6 +13,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import de.uftos.dto.SuccessResponse;
 import de.uftos.dto.requestdtos.GradeRequestDto;
 import de.uftos.dto.responsedtos.GradeResponseDto;
 import de.uftos.dto.responsedtos.LessonResponseDto;
@@ -308,7 +310,8 @@ public class GradeServiceTests {
 
   @Test
   void deleteExistentGrade() {
-    assertDoesNotThrow(() -> gradeService.deleteGrades(new String[] {"567"}));
+    SuccessResponse successResponse = gradeService.deleteGrades(new String[] {"567"});
+    assertTrue(successResponse.success());
     ArgumentCaptor<List<Grade>> gradeCap = ArgumentCaptor.forClass(getClassType());
     verify(gradeRepository, times(1)).deleteAll(gradeCap.capture());
 
@@ -319,49 +322,34 @@ public class GradeServiceTests {
 
   @Test
   void deleteGradeAssociatedWithGroup() {
-    assertThrows(ResponseStatusException.class,
-        () -> gradeService.deleteGrades(new String[] {"123"}));
+    SuccessResponse response = gradeService.deleteGrades(new String[] {"123"});
+    assertFalse(response.success());
   }
 
   @Test
   void deleteNonExistentGrade() {
-    assertThrows(ResponseStatusException.class,
-        () -> gradeService.deleteGrades(new String[] {"nonExistentId"}));
-  }
-
-  @Test
-  void deleteGradesNonExistent() {
-    assertThrows(ResponseStatusException.class,
-        () -> gradeService.deleteGrades(new String[] {"nonExistentId"}));
+    SuccessResponse successResponse = gradeService.deleteGrades(new String[] {"nonExistentId"});
+    assertFalse(successResponse.success());
   }
 
   @Test
   void deleteGradesSomeExistent() {
-    assertThrows(ResponseStatusException.class,
-        () -> gradeService.deleteGrades(new String[] {"nonExistentId", "123"}));
-  }
-
-  @Test
-  void deleteGradesAllExistentReferencesGroup() {
-    assertThrows(ResponseStatusException.class,
-        () -> gradeService.deleteGrades(new String[] {"123"}));
-
+    SuccessResponse successResponse =
+        gradeService.deleteGrades(new String[] {"nonExistentId", "123"});
+    assertFalse(successResponse.success());
   }
 
   @Test
   void deleteGradesAllExistent() {
-    assertDoesNotThrow(() -> gradeService.deleteGrades(new String[] {"567"}));
-    Class<List<Grade>> listClass =
-        (Class<List<Grade>>) (Class) List.class;
-    ArgumentCaptor<List<Grade>> gradeCap = ArgumentCaptor.forClass(listClass);
+    SuccessResponse successResponse = gradeService.deleteGrades(new String[] {"567"});
+    assertTrue(successResponse.success());
+    ArgumentCaptor<List<Grade>> gradeCap = ArgumentCaptor.forClass(getClassType());
     verify(gradeRepository, times(1)).deleteAll(gradeCap.capture());
 
     List<Grade> gradeList = gradeCap.getValue();
     assertEquals(1, gradeList.size());
     assertEquals("567", gradeList.getFirst().getId());
-
   }
-
 
   @Test
   void emptyLessons() {

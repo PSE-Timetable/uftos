@@ -217,60 +217,6 @@ export type LessonResponseDto = {
     teachers: Teacher[];
     timetables: Timetable[];
 };
-export type PageLessonResponseDto = {
-    content?: LessonResponseDto[];
-    empty?: boolean;
-    first?: boolean;
-    last?: boolean;
-    "number"?: number;
-    numberOfElements?: number;
-    pageable?: PageableObject;
-    size?: number;
-    sort?: SortObject[];
-    totalElements?: number;
-    totalPages?: number;
-};
-export type LessonRequestDto = {
-    index: number;
-    roomId: string;
-    studentGroupId: string;
-    subjectId: string;
-    teacherId: string;
-    timeslotId: string;
-    timetableId: string;
-};
-export type Curriculum = {
-    grade?: Grade;
-    id?: string;
-    lessonsCounts?: LessonsCount[];
-    name: string;
-};
-export type Grade = {
-    curriculum?: Curriculum;
-    id?: string;
-    name?: string;
-    studentGroups?: StudentGroup[];
-    tags?: Tag[];
-};
-export type StudentGroup = {
-    grades: Grade[];
-    id: string;
-    name: string;
-    students: Student[];
-    subjects: Subject[];
-    tags: Tag[];
-};
-export type Lesson = {
-    id: string;
-    index: number;
-    room: Room;
-    studentGroup: StudentGroup;
-    subject: Subject;
-    teacher: Teacher;
-    timeslot: Timeslot;
-    timetable: Timetable;
-    year: string;
-};
 export type PageRoom = {
     content?: Room[];
     empty?: boolean;
@@ -289,6 +235,12 @@ export type RoomRequestDto = {
     capacity: number;
     name: string;
     tagIds: string[];
+};
+export type ServerEmailResponseDto = {
+    email: string;
+};
+export type ServerEmailRequestDto = {
+    email?: string;
 };
 export type ServerStatisticsResponseDto = {
     constraintCount: number;
@@ -550,7 +502,10 @@ export function validateUcdlFile(body?: {
     })));
 }
 export function deleteGrades(body: string[], opts?: Oazapfts.RequestOpts) {
-    return oazapfts.ok(oazapfts.fetchText("/grades", oazapfts.json({
+    return oazapfts.ok(oazapfts.fetchJson<{
+        status: 200;
+        data: SuccessResponse;
+    }>("/grades", oazapfts.json({
         ...opts,
         method: "DELETE",
         body
@@ -606,50 +561,6 @@ export function getGradeLessons(id: string, opts?: Oazapfts.RequestOpts) {
     }>(`/grades/${encodeURIComponent(id)}/lessons`, {
         ...opts
     }));
-}
-export function getLessons(pageable: Pageable, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.ok(oazapfts.fetchJson<{
-        status: 200;
-        data: PageLessonResponseDto;
-    }>(`/lessons${QS.query(QS.explode({
-        pageable
-    }))}`, {
-        ...opts
-    }));
-}
-export function createLesson(lessonRequestDto: LessonRequestDto, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.ok(oazapfts.fetchJson<{
-        status: 200;
-        data: Lesson;
-    }>("/lessons", oazapfts.json({
-        ...opts,
-        method: "POST",
-        body: lessonRequestDto
-    })));
-}
-export function deleteLesson(id: string, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.ok(oazapfts.fetchText(`/lessons/${encodeURIComponent(id)}`, {
-        ...opts,
-        method: "DELETE"
-    }));
-}
-export function getLesson(id: string, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.ok(oazapfts.fetchJson<{
-        status: 200;
-        data: Lesson;
-    }>(`/lessons/${encodeURIComponent(id)}`, {
-        ...opts
-    }));
-}
-export function updateLesson(id: string, lessonRequestDto: LessonRequestDto, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.ok(oazapfts.fetchJson<{
-        status: 200;
-        data: Lesson;
-    }>(`/lessons/${encodeURIComponent(id)}`, oazapfts.json({
-        ...opts,
-        method: "PUT",
-        body: lessonRequestDto
-    })));
 }
 export function deleteRooms(body: string[], opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchText("/rooms", oazapfts.json({
@@ -710,6 +621,21 @@ export function getRoomLessons(id: string, opts?: Oazapfts.RequestOpts) {
     }>(`/rooms/${encodeURIComponent(id)}/lessons`, {
         ...opts
     }));
+}
+export function getNotificationEmail(opts?: Oazapfts.RequestOpts) {
+    return oazapfts.ok(oazapfts.fetchJson<{
+        status: 200;
+        data: ServerEmailResponseDto;
+    }>("/server/email", {
+        ...opts
+    }));
+}
+export function setNotificationEmail(serverEmailRequestDto: ServerEmailRequestDto, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.ok(oazapfts.fetchText("/server/email", oazapfts.json({
+        ...opts,
+        method: "PUT",
+        body: serverEmailRequestDto
+    })));
 }
 export function getServerStats(opts?: Oazapfts.RequestOpts) {
     return oazapfts.ok(oazapfts.fetchJson<{
