@@ -12,11 +12,18 @@ services:
       POSTGRES_PASSWORD: superSecurePassword
       POSTGRES_DB: uftos
   api:
-    image: ghcr.io/PSE-timetable/uftos-api:latest
+    image: uftos-api-dev:latest
     container_name: uftos-api
+    build:
+      context: ./
+      dockerfile: server/Dockerfile
     restart: unless-stopped
-    # volumes:
-    #   - ./server:/app
+    ports:
+      - 8080:8080
+      # debug port
+      - 5005:5005
+    volumes:
+      - ./server:/app
     depends_on:
       - db
     environment:
@@ -30,10 +37,15 @@ services:
       MAIL_PASSWORD: highlySecurePassword
       MAIL_FROM: uftos@example.com
   web:
-    image: ghcr.io/PSE-timetable/uftos-web:latest
+    image: uftos-web-dev:latest
     container_name: uftos-web
+    build:
+      context: ./web
     ports:
       - 5173:5173
+    volumes:
+      - ./web:/app
+      - /app/node_modules
     restart: unless-stopped
 
 volumes:

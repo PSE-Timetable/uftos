@@ -15,7 +15,7 @@ import org.testcontainers.utility.DockerImageName;
 @Testcontainers
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Suite
-@SelectPackages({"de.uftos.e2e"})
+@SelectPackages({ "de.uftos.e2e" })
 class UftosApplicationTests {
 
   static Network network = Network.newNetwork();
@@ -29,7 +29,7 @@ class UftosApplicationTests {
       .withEnv("POSTGRES_PASSWORD", "superSecurePassword")
       .withEnv("POSTGRES_DB", "uftos");
 
-  static final GenericContainer<?> server = new GenericContainer<>("uftos-server-dev")
+  static final GenericContainer<?> server = new GenericContainer<>("uftos-api-dev")
       .dependsOn(postgres)
       .withNetwork(network)
       .withAccessToHost(true)
