@@ -1,11 +1,14 @@
 package de.uftos.services;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import de.uftos.dto.requestdtos.ServerEmailRequestDto;
+import de.uftos.dto.responsedtos.ServerEmailResponseDto;
 import de.uftos.dto.responsedtos.ServerStatisticsResponseDto;
 import de.uftos.entities.Break;
 import de.uftos.entities.Server;
@@ -116,5 +119,14 @@ public class ServerServiceTests {
     assertEquals(server.getCurrentYear(), "2024");
   }
 
+  @Test
+  void getEmail() {
+    assertDoesNotThrow(() -> serverService.getEmail());
+    assertEquals(new ServerEmailResponseDto("test@uftos.de"), serverService.getEmail());
+  }
 
+  @Test
+  void setEmail() {
+    assertDoesNotThrow(() -> serverService.setEmail(new ServerEmailRequestDto("mail@example.org")));
+  }
 }
