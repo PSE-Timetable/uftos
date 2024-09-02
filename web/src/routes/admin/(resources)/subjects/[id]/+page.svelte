@@ -10,6 +10,7 @@
   async function update(formData: Record<string, string | number | string[]>) {
     let subjectRequestDto: SubjectRequestDto = {
       name: String(formData.name),
+      color: String(formData.color),
       tagIds: formData.tags as string[],
     };
     try {

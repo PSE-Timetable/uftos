@@ -50,12 +50,12 @@
 <div class="flex flex-col gap-8 p-8">
   {#await getConstraints() then { constraints }}
     {#each constraints || [] as constraint}
-      <div class="flex flex-row w-full gap-8 items-top">
-        <div class="w-1/3">
+      <div class="flex flex-row w-fit min-w-full gap-8 items-top">
+        <div class="w-1/4 min-w-min">
           <ConstraintSignatureComp constraintSignature={constraint} {addInstance} />
         </div>
         {#key reloadTable}
-          <div class="w-full">
+          <div class="w-3/4 min-w-min">
             {#await getInstancesPage('', '', 0, 5, constraint.name) then initialData}
               <DataTable
                 {initialData}

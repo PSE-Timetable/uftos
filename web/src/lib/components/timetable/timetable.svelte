@@ -59,7 +59,7 @@
           <div />
         {:else}
           <Lesson
-            color={lesson.color || 'orange'}
+            color={lesson.color}
             leftCorner={lesson.bottomLeft}
             length={lesson.length}
             rightCorner={lesson.bottomRight}
