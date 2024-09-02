@@ -182,8 +182,6 @@ public class GradeServiceTests {
     Server server =
         new Server(new TimetableMetadata(45, 8, "8:00", breaks), "2024", "test@uftos.de");
     when(serverRepository.findAll()).thenReturn(List.of(server));
-    when(studentGroupRepository.findByGrades(grade1Mock)).thenReturn(
-        List.of(studentGroup1, studentGroup2));
     when(studentGroupRepository.findAllByGrades(List.of("123"))).thenReturn(
         List.of(studentGroup1, studentGroup2));
     when(gradeRepository.findById("123")).thenReturn(Optional.of(grade1Mock));
