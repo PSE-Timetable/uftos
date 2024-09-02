@@ -42,8 +42,8 @@
 
   async function deleteGroup(id: string) {
     await deleteStudentGroup(id);
-    studentGroups =
-      (await getStudentGroups({ page: 0, size: 50, sort: ['name,asc'] }).then(({ content }) => content)) || [];
+    const size = await getStudentGroups({ page: 0, size: 1 }).then(({ totalElements }) => totalElements);
+    studentGroups = await getStudentGroups({ page: 0, size, sort: ['name,asc'] }).then(({ content }) => content ?? []);
   }
 </script>
 
