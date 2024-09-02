@@ -33,6 +33,7 @@ import de.uftos.repositories.database.SubjectRepository;
 import de.uftos.repositories.database.TagRepository;
 import de.uftos.repositories.database.TeacherRepository;
 import de.uftos.repositories.database.TimeslotRepository;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -94,37 +95,45 @@ public class TagServiceTests {
 
     Server server =
         new Server(new TimetableMetadata(45, 8, "7:45", new Break[] {}), "2024", "test@uftos.de");
-    when(serverRepository.findAll()).thenReturn(List.of(server));
+    when(serverRepository.findAll()).thenReturn(new ArrayList<>(List.of(server)));
     when(tagRepository.findById("123")).thenReturn(Optional.of(tag));
-    when(tagRepository.findAllById(List.of("123"))).thenReturn(List.of(tag));
+    when(tagRepository.findAllById(new ArrayList<>(List.of("123")))).thenReturn(
+        new ArrayList<>(List.of(tag)));
 
     Teacher teacherWithTag = new Teacher("teacherId");
-    teacherWithTag.setTags(List.of(tag));
-    when(teacherRepository.findAllByTags(List.of("123"))).thenReturn(List.of(teacherWithTag));
+    teacherWithTag.setTags(new ArrayList<>(List.of(tag)));
+    when(teacherRepository.findAllByTags(new ArrayList<>(List.of("123")))).thenReturn(
+        new ArrayList<>(List.of(teacherWithTag)));
 
     StudentGroup groupWithTag = new StudentGroup("groupId");
-    groupWithTag.setTags(List.of(tag));
-    when(studentGroupRepository.findAllByTags(List.of("123"))).thenReturn(List.of(groupWithTag));
+    groupWithTag.setTags(new ArrayList<>(List.of(tag)));
+    when(studentGroupRepository.findAllByTags(new ArrayList<>(List.of("123")))).thenReturn(
+        new ArrayList<>(List.of(groupWithTag)));
 
     Student studentWithTag = new Student("studentId");
-    studentWithTag.setTags(List.of(tag));
-    when(studentRepository.findAllByTags(List.of("123"))).thenReturn(List.of(studentWithTag));
+    studentWithTag.setTags(new ArrayList<>(List.of(tag)));
+    when(studentRepository.findAllByTags(new ArrayList<>(List.of("123")))).thenReturn(
+        new ArrayList<>(List.of(studentWithTag)));
 
     Room roomWithTag = new Room("roomId");
-    roomWithTag.setTags(List.of(tag));
-    when(roomRepository.findAllByTags(List.of("123"))).thenReturn(List.of(roomWithTag));
+    roomWithTag.setTags(new ArrayList<>(List.of(tag)));
+    when(roomRepository.findAllByTags(new ArrayList<>(List.of("123")))).thenReturn(
+        new ArrayList<>(List.of(roomWithTag)));
 
     Subject subjectWithTag = new Subject("subjectId");
-    subjectWithTag.setTags(List.of(tag));
-    when(subjectRepository.findAllByTags(List.of("123"))).thenReturn(List.of(subjectWithTag));
+    subjectWithTag.setTags(new ArrayList<>(List.of(tag)));
+    when(subjectRepository.findAllByTags(new ArrayList<>(List.of("123")))).thenReturn(
+        new ArrayList<>(List.of(subjectWithTag)));
 
     Grade gradeWithTag = new Grade("gradeId");
-    gradeWithTag.setTags(List.of(tag));
-    when(gradeRepository.findAllByTags(List.of("123"))).thenReturn(List.of(gradeWithTag));
+    gradeWithTag.setTags(new ArrayList<>(List.of(tag)));
+    when(gradeRepository.findAllByTags(new ArrayList<>(List.of("123")))).thenReturn(
+        new ArrayList<>(List.of(gradeWithTag)));
 
     Timeslot timeslotWithTag = new Timeslot("timeslotId");
-    timeslotWithTag.setTags(List.of(tag));
-    when(timeslotRepository.findAllByTags(List.of("123"))).thenReturn(List.of(timeslotWithTag));
+    timeslotWithTag.setTags(new ArrayList<>(List.of(tag)));
+    when(timeslotRepository.findAllByTags(new ArrayList<>(List.of("123")))).thenReturn(
+        new ArrayList<>(List.of(timeslotWithTag)));
   }
 
   @Test

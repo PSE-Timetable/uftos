@@ -54,15 +54,18 @@ import org.springframework.web.server.ResponseStatusException;
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class StudentGroupServiceTests {
   private final StudentGroupRequestDto requestDto =
-      new StudentGroupRequestDto("testName", List.of("studentId1"), List.of("gradeId1"),
-          List.of("tagId1"), List.of("subjectId1"));
+      new StudentGroupRequestDto("testName", new ArrayList<>(List.of("studentId1")),
+          new ArrayList<>(List.of("gradeId1")),
+          new ArrayList<>(List.of("tagId1")), new ArrayList<>(List.of("subjectId1")));
 
   private final StudentGroupRequestDto requestDtoEmptyName =
-      new StudentGroupRequestDto("", List.of("studentId1"), List.of("gradeId1"),
-          List.of("tagId1"), List.of("subjectId1"));
+      new StudentGroupRequestDto("", new ArrayList<>(List.of("studentId1")),
+          new ArrayList<>(List.of("gradeId1")),
+          new ArrayList<>(List.of("tagId1")), new ArrayList<>(List.of("subjectId1")));
   private final StudentGroupRequestDto requestDtoInvalidGrade =
-      new StudentGroupRequestDto("groupName", List.of("studentId1"), List.of("nonExistentGrade"),
-          List.of("tagId1"), List.of("subjectId1"));
+      new StudentGroupRequestDto("groupName", new ArrayList<>(List.of("studentId1")),
+          new ArrayList<>(List.of("nonExistentGrade")),
+          new ArrayList<>(List.of("tagId1")), new ArrayList<>(List.of("subjectId1")));
 
   @Mock
   private Grade gradeNoGroupsMock;
@@ -99,38 +102,42 @@ public class StudentGroupServiceTests {
   @BeforeEach
   void setUp() {
     StudentGroup studentGroup1 =
-        new StudentGroup("Ethics", List.of("studentId0", "studentId1"), List.of(),
-            List.of());
+        new StudentGroup("Ethics", new ArrayList<>(List.of("studentId0", "studentId1")),
+            Collections.emptyList(),
+            Collections.emptyList());
     studentGroup1.setId("123");
 
     StudentGroup studentGroup2 =
-        new StudentGroup("Religion", List.of("studentId1", "studentId2", "studentId3"),
-            List.of(),
-            List.of("T1", "T2"));
+        new StudentGroup("Religion",
+            new ArrayList<>(List.of("studentId1", "studentId2", "studentId3")),
+            Collections.emptyList(), new ArrayList<>(List.of("T1", "T2")));
     studentGroup2.setId("456");
     studentGroup2.setLessons(Collections.emptyList());
 
     StudentGroup studentGroup3 =
-        new StudentGroup("testName", List.of("studentId1"), List.of("tagId1"),
-            List.of("subjectId1"));
+        new StudentGroup("testName", new ArrayList<>(List.of("studentId1")),
+            new ArrayList<>(List.of("tagId1")),
+            new ArrayList<>(List.of("subjectId1")));
 
     Grade grade1 = new Grade("gradeId1");
-    grade1.setStudentGroups(List.of(studentGroup1, studentGroup2, studentGroup3));
+    grade1.setStudentGroups(new ArrayList<>(List.of(studentGroup1, studentGroup2, studentGroup3)));
 
     Grade gradeEmpty = new Grade("emptyGrade");
-    gradeEmpty.setStudentGroups(List.of(studentGroup1));
+    gradeEmpty.setStudentGroups(new ArrayList<>(List.of(studentGroup1)));
 
-    when(gradeRepository.findAllById(List.of("gradeId1"))).thenReturn(List.of(grade1));
-    when(gradeRepository.findAllById(List.of("gradeId1", "emptyGrade"))).thenReturn(
-        List.of(gradeEmpty, grade1));
+    when(gradeRepository.findAllById(new ArrayList<>(List.of("gradeId1")))).thenReturn(
+        new ArrayList<>(List.of(grade1)));
+    when(
+        gradeRepository.findAllById(new ArrayList<>(List.of("gradeId1", "emptyGrade")))).thenReturn(
+        new ArrayList<>(List.of(gradeEmpty, grade1)));
     when(gradeRepository.findAllById(
-        List.of("noGroupsId", "gradeForUpdate", "emptyGrade"))).thenReturn(
-        List.of(gradeEmpty, grade1));
+        new ArrayList<>(List.of("noGroupsId", "gradeForUpdate", "emptyGrade")))).thenReturn(
+        new ArrayList<>(List.of(gradeEmpty, grade1)));
 
 
-    studentGroup1.setGrades(List.of(grade1, gradeEmpty));
-    studentGroup2.setGrades(List.of(grade1));
-    studentGroup3.setGrades(List.of(grade1));
+    studentGroup1.setGrades(new ArrayList<>(List.of(grade1, gradeEmpty)));
+    studentGroup2.setGrades(new ArrayList<>(List.of(grade1)));
+    studentGroup3.setGrades(new ArrayList<>(List.of(grade1)));
 
     Subject subject = new Subject("789");
 
@@ -147,21 +154,21 @@ public class StudentGroupServiceTests {
     Lesson lesson2 = createLesson(teacher2, room1, studentGroup1, "2022", subject, timetable);
     Lesson lesson3 = createLesson(teacher1, room2, studentGroup2, "2024", subject, timetable);
 
-    studentGroup1.setLessons(List.of(lesson1, lesson2, lesson3));
+    studentGroup1.setLessons(new ArrayList<>(List.of(lesson1, lesson2, lesson3)));
 
-    Student student = new Student("Firstname", "Lastname", List.of("tagId1"));
+    Student student = new Student("Firstname", "Lastname", new ArrayList<>(List.of("tagId1")));
     student.setId("studentId1");
 
-    Student student1 = new Student("Firstname1", "Lastname1", List.of("tagId1"));
+    Student student1 = new Student("Firstname1", "Lastname1", new ArrayList<>(List.of("tagId1")));
     student1.setId("studentId2");
     when(studentRepository.findById(student.getId())).thenReturn(Optional.of(student));
     when(studentRepository.findById(student1.getId())).thenReturn(Optional.of(student1));
-    when(studentRepository.findAll()).thenReturn(List.of(student, student1));
+    when(studentRepository.findAll()).thenReturn(new ArrayList<>(List.of(student, student1)));
 
     Break[] breaks = {};
     Server server =
         new Server(new TimetableMetadata(45, 8, "8:00", breaks), "2024", "test@uftos.de");
-    when(serverRepository.findAll()).thenReturn(List.of(server));
+    when(serverRepository.findAll()).thenReturn(new ArrayList<>(List.of(server)));
     when(studentGroupRepository.findById("123")).thenReturn(Optional.of(studentGroup1));
     when(studentGroupRepository.findById("456")).thenReturn(Optional.of(studentGroup2));
 
@@ -170,7 +177,7 @@ public class StudentGroupServiceTests {
     when(studentGroupRepository.findById("789")).thenReturn(Optional.of(studentGroup3));
 
     when(gradeRepository.findByStudentGroups(studentGroup1)).thenReturn(
-        List.of(grade1, gradeEmpty));
+        new ArrayList<>(List.of(grade1, gradeEmpty)));
   }
 
   @Test
@@ -262,8 +269,9 @@ public class StudentGroupServiceTests {
   @Test
   void updateGroup() {
     StudentGroupRequestDto requestDto =
-        new StudentGroupRequestDto("Ethics2", List.of("studentId0", "studentId1"),
-            List.of("noGroupsId", "gradeForUpdate", "emptyGrade"), List.of(), List.of());
+        new StudentGroupRequestDto("Ethics2", new ArrayList<>(List.of("studentId0", "studentId1")),
+            new ArrayList<>(List.of("noGroupsId", "gradeForUpdate", "emptyGrade")),
+            Collections.emptyList(), Collections.emptyList());
     studentGroupService.update("123", requestDto);
 
     ArgumentCaptor<StudentGroup> studentGroupCap = ArgumentCaptor.forClass(StudentGroup.class);
@@ -284,12 +292,13 @@ public class StudentGroupServiceTests {
   @Test
   void addNonExistentStudent() {
     assertThrows(ResponseStatusException.class,
-        () -> studentGroupService.addStudents("123", List.of("studentId3")));
+        () -> studentGroupService.addStudents("123", new ArrayList<>(List.of("studentId3"))));
   }
 
   @Test
   void addExistentStudent() {
-    assertDoesNotThrow(() -> studentGroupService.addStudents("123", List.of("studentId1")));
+    assertDoesNotThrow(
+        () -> studentGroupService.addStudents("123", new ArrayList<>(List.of("studentId1"))));
 
     ArgumentCaptor<StudentGroup> studentGroupCap = ArgumentCaptor.forClass(StudentGroup.class);
     verify(studentGroupRepository, times(1)).save(studentGroupCap.capture());
@@ -300,7 +309,7 @@ public class StudentGroupServiceTests {
 
   @Test
   void removeStudent() {
-    studentGroupService.removeStudents("456", List.of("studentId2"));
+    studentGroupService.removeStudents("456", new ArrayList<>(List.of("studentId2")));
 
     ArgumentCaptor<StudentGroup> studentGroupCap = ArgumentCaptor.forClass(StudentGroup.class);
     verify(studentGroupRepository, times(1)).save(studentGroupCap.capture());

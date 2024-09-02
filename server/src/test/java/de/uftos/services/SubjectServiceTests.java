@@ -90,31 +90,34 @@ public class SubjectServiceTests {
     Subject subject = new Subject();
     subject.setId(SUBJECT_ID);
     subject.setName(SUBJECT_NAME);
-    subject.setTags(List.of(tag));
+    subject.setTags(new ArrayList<>(List.of(tag)));
 
-    when(subjectRepository.findAll()).thenReturn(List.of(subject));
+    when(subjectRepository.findAll()).thenReturn(new ArrayList<>(List.of(subject)));
     when(subjectRepository.findById(SUBJECT_ID)).thenReturn(Optional.of(subject));
-    when(subjectRepository.findAllById(List.of(SUBJECT_ID))).thenReturn(List.of(subject));
-    when(subjectRepository.findAllById(List.of("nonExistentId", SUBJECT_ID))).thenReturn(
-        List.of(subject));
+    when(subjectRepository.findAllById(new ArrayList<>(List.of(SUBJECT_ID)))).thenReturn(
+        new ArrayList<>(List.of(subject)));
+    when(subjectRepository.findAllById(
+        new ArrayList<>(List.of("nonExistentId", SUBJECT_ID)))).thenReturn(
+        new ArrayList<>(List.of(subject)));
     when(subjectRepository.save(any(Subject.class))).thenReturn(subject);
 
     LessonsCountRequestDto lessonsCount = new LessonsCountRequestDto("123", 1);
-    Curriculum testCurriculum = new Curriculum(new Grade("gradeId"), "name", List.of(lessonsCount));
-    when(curriculumRepository.findAll()).thenReturn(List.of(testCurriculum));
+    Curriculum testCurriculum =
+        new Curriculum(new Grade("gradeId"), "name", new ArrayList<>(List.of(lessonsCount)));
+    when(curriculumRepository.findAll()).thenReturn(new ArrayList<>(List.of(testCurriculum)));
     when(curriculumRepository.findAll(any(Specification.class))).thenReturn(
-        List.of(testCurriculum));
+        new ArrayList<>(List.of(testCurriculum)));
 
     Teacher teacherWithSubject = new Teacher("teacherId");
-    teacherWithSubject.setSubjects(List.of(subject));
+    teacherWithSubject.setSubjects(new ArrayList<>(List.of(subject)));
     when(teacherRepository.findAll(any(Specification.class))).thenReturn(
-        List.of(teacherWithSubject));
+        new ArrayList<>(List.of(teacherWithSubject)));
     when(teacherRepository.findBySubjects(any(Subject.class))).thenReturn(Collections.emptyList());
 
     StudentGroup groupWithSubject = new StudentGroup("groupId");
-    groupWithSubject.setSubjects(List.of(subject));
+    groupWithSubject.setSubjects(new ArrayList<>(List.of(subject)));
     when(studentGroupRepository.findAll(any(Specification.class))).thenReturn(
-        List.of(groupWithSubject));
+        new ArrayList<>(List.of(groupWithSubject)));
     when(studentGroupRepository.findBySubjects(any(Subject.class))).thenReturn(
         Collections.emptyList());
   }
@@ -137,7 +140,7 @@ public class SubjectServiceTests {
   @Test
   void createSubject() {
     SubjectRequestDto requestDto =
-        new SubjectRequestDto("Mathe", "blue", List.of("tagId"));
+        new SubjectRequestDto("Mathe", "blue", new ArrayList<>(List.of("tagId")));
     subjectService.create(requestDto);
 
     ArgumentCaptor<Subject> subjectCap = ArgumentCaptor.forClass(Subject.class);
@@ -156,14 +159,14 @@ public class SubjectServiceTests {
   @Test
   void createSubjectEmptyName() {
     SubjectRequestDto requestDto =
-        new SubjectRequestDto("", "blue", List.of("tagId"));
+        new SubjectRequestDto("", "blue", new ArrayList<>(List.of("tagId")));
     assertThrows(ResponseStatusException.class, () -> subjectService.create(requestDto));
   }
 
   @Test
   void updateSubject() {
     SubjectRequestDto requestDto =
-        new SubjectRequestDto("Englisch", "red", List.of("otherTagId"));
+        new SubjectRequestDto("Englisch", "red", new ArrayList<>(List.of("otherTagId")));
     subjectService.update(SUBJECT_ID, requestDto);
 
     ArgumentCaptor<Subject> subjectCap = ArgumentCaptor.forClass(Subject.class);
@@ -182,7 +185,7 @@ public class SubjectServiceTests {
   @Test
   void updateSubjectEmptyName() {
     SubjectRequestDto requestDto =
-        new SubjectRequestDto("", "blue", List.of("tagId"));
+        new SubjectRequestDto("", "blue", new ArrayList<>(List.of("tagId")));
     assertThrows(ResponseStatusException.class, () -> subjectService.update("123", requestDto));
   }
 

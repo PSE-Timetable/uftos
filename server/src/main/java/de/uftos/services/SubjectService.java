@@ -117,11 +117,11 @@ public class SubjectService {
     Subject subjectEntity = this.repository.save(subject.map());
 
     List<Curriculum> curricula = curriculumRepository.findAll();
+    System.out.println(curricula.getFirst().getName());
+    System.out.println(curricula.size());
 
     for (Curriculum curriculum : curricula) {
-      List<LessonsCount> lessonsCounts = new ArrayList<>(curriculum.getLessonsCounts());
-      lessonsCounts.add(new LessonsCount(subjectEntity.getId(), 0));
-      curriculum.setLessonsCounts(lessonsCounts);
+      curriculum.getLessonsCounts().add(new LessonsCount(subjectEntity.getId(), 0));
     }
     curriculumRepository.saveAll(curricula);
 
@@ -169,11 +169,8 @@ public class SubjectService {
     List<Curriculum> curricula = curriculumRepository.findAll(curriculumSpecification);
 
     for (Curriculum curriculum : curricula) {
-      List<LessonsCount> lessonsCounts = new ArrayList<>(curriculum.getLessonsCounts());
-      lessonsCounts.removeIf(
-          (lessonsCount) -> subjectIds.contains(lessonsCount.getSubject().getId()));
-      curriculum.setLessonsCounts(lessonsCounts);
-
+      curriculum.getLessonsCounts()
+          .removeIf((lessonsCount) -> subjectIds.contains(lessonsCount.getSubject().getId()));
     }
     curriculumRepository.saveAll(curricula);
 
@@ -182,9 +179,7 @@ public class SubjectService {
         .build();
     List<Teacher> teachers = teacherRepository.findAll(teacherSpecification);
     for (Teacher teacher : teachers) {
-      List<Subject> teacherSubjects = new ArrayList<>(teacher.getSubjects());
-      teacherSubjects.removeIf(subject1 -> subjectIds.contains(subject1.getId()));
-      teacher.setSubjects(teacherSubjects);
+      teacher.getSubjects().removeIf(subject1 -> subjectIds.contains(subject1.getId()));
     }
 
     Specification<StudentGroup> studentGroupSpecification = new SpecificationBuilder<StudentGroup>()
@@ -192,9 +187,7 @@ public class SubjectService {
         .build();
     List<StudentGroup> studentGroups = studentGroupRepository.findAll(studentGroupSpecification);
     for (StudentGroup studentGroup : studentGroups) {
-      List<Subject> groupSubjects = new ArrayList<>(studentGroup.getSubjects());
-      groupSubjects.removeIf(subject1 -> subjectIds.contains(subject1.getId()));
-      studentGroup.setSubjects(groupSubjects);
+      studentGroup.getSubjects().removeIf(subject1 -> subjectIds.contains(subject1.getId()));
     }
     studentGroupRepository.saveAll(studentGroups);
 
