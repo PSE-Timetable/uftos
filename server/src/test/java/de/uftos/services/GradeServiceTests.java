@@ -4,6 +4,7 @@ import static de.uftos.utils.ClassCaster.getClassType;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -12,6 +13,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import de.uftos.dto.SuccessResponse;
 import de.uftos.dto.requestdtos.GradeRequestDto;
 import de.uftos.dto.responsedtos.GradeResponseDto;
 import de.uftos.dto.responsedtos.LessonResponseDto;
@@ -325,8 +327,9 @@ public class GradeServiceTests {
 
   @Test
   void deleteNonExistentGrade() {
-    assertThrows(ResponseStatusException.class,
-        () -> gradeService.deleteGrades(new String[] {"nonExistentId"}));
+    assertDoesNotThrow(() -> gradeService.deleteGrades(new String[] {"nonExistentId"}));
+    SuccessResponse successResponse = gradeService.deleteGrades(new String[] {"nonExistentId"});
+    assertFalse(successResponse.success());
   }
 
   @Test

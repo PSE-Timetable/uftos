@@ -26,7 +26,7 @@
   let roomKeys = ['id', 'name', 'buildingName', 'capacity', 'tags'];
 </script>
 
-<div class="h-[170px] w-[100%] min-w-[fit-content] bg-primary items-center absolute">
+<div class="h-[160px] w-[100%] min-w-[fit-content] bg-primary items-center absolute">
   <Navbar />
 
   <div class="px-4">
@@ -39,7 +39,7 @@
     </div>
     <div class="flex flex-col gap-16 pb-4">
       <div class="flex flex-col gap-4">
-        <p class="font-bold text-2xl">Schüler</p>
+        <p class="font-bold text-xl">Schüler</p>
         <DataTable
           initialData={data.initialStudents}
           columnNames={studentColumnNames}
@@ -52,7 +52,7 @@
         />
       </div>
       <div class="flex flex-col gap-4">
-        <p class="font-bold text-2xl">Lehrer</p>
+        <p class="font-bold text-xl">Lehrer</p>
         <DataTable
           initialData={data.initialTeachers}
           columnNames={teacherColumnNames}
@@ -65,7 +65,7 @@
         />
       </div>
       <div class="flex flex-col gap-4">
-        <p class="font-bold text-2xl">Stufen</p>
+        <p class="font-bold text-xl">Stufen</p>
         <DataTable
           initialData={data.initialGrades}
           columnNames={gradeColumnNames}
@@ -78,7 +78,7 @@
         />
       </div>
       <div class="flex flex-col gap-4">
-        <p class="font-bold text-2xl">Räume</p>
+        <p class="font-bold text-xl">Räume</p>
         <DataTable
           initialData={data.initialRooms}
           columnNames={roomColumnNames}

@@ -27,6 +27,10 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+        <dependency>
             <groupId>ai.timefold.solver</groupId>
             <artifactId>timefold-solver-spring-boot-starter</artifactId>
         </dependency>
@@ -141,6 +145,13 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.12</version>
+                <configuration>
+                    <excludes>
+                        <exclude>de/uftos/repositories/ucdl/parser/javacc/*</exclude>
+                        <exclude>de/uftos/entities/*</exclude>
+                        <exclude>de/uftos/controller/*</exclude>
+                    </excludes>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>

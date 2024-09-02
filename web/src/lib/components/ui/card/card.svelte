@@ -12,8 +12,8 @@
   class="w-1/4 max-w-[300px] h-1/4 rounded-xl bg-white p-4 justify-between flex flex-row top-[50%] transform shadow-custom"
 >
   <div class="flex flex-col text-primary justify-between">
-    <p class="font-normal text-xl">{text}</p>
-    <p class="text-4xl text-bold mt-6">{number}</p>
+    <p class="font-normal text-lg">{text}</p>
+    <p class="text-3xl text-bold mt-6">{number}</p>
     <p class="invisible">.</p>
   </div>
   <div class="flex flex-col justify-between">
