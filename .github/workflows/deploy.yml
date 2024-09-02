@@ -53,9 +53,7 @@ jobs:
         id: metadata
         uses: docker/metadata-action@v5
         with:
-          images: |
-            name=ghcr.io/pse-timetable/${{matrix.image}}
-            name=pse-timetable/${{matrix.image}},enable=${{ github.event_name == 'release' }}
+          images: name=ghcr.io/pse-timetable/${{matrix.image}}
           tags: |
             # Tag with git tag on release
             type=ref,event=tag
