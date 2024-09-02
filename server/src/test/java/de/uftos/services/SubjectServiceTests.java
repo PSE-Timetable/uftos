@@ -15,7 +15,6 @@ import de.uftos.dto.requestdtos.LessonsCountRequestDto;
 import de.uftos.dto.requestdtos.SubjectRequestDto;
 import de.uftos.entities.Curriculum;
 import de.uftos.entities.Grade;
-import de.uftos.entities.LessonsCount;
 import de.uftos.entities.StudentGroup;
 import de.uftos.entities.Subject;
 import de.uftos.entities.Tag;
@@ -32,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -102,8 +102,13 @@ public class SubjectServiceTests {
     when(subjectRepository.save(any(Subject.class))).thenReturn(subject);
 
     LessonsCountRequestDto lessonsCount = new LessonsCountRequestDto("123", 1);
+    List<LessonsCountRequestDto> lessonsCounts = List.of(lessonsCount);
     Curriculum testCurriculum =
-        new Curriculum(new Grade("gradeId"), "name", new ArrayList<>(List.of(lessonsCount)));
+        new Curriculum(new Grade("gradeId"), "name", Collections.emptyList());
+    testCurriculum.setLessonsCounts(
+        lessonsCounts.stream().map(LessonsCountRequestDto::map).collect(Collectors.toList())
+    );
+
     when(curriculumRepository.findAll()).thenReturn(new ArrayList<>(List.of(testCurriculum)));
     when(curriculumRepository.findAll(any(Specification.class))).thenReturn(
         new ArrayList<>(List.of(testCurriculum)));

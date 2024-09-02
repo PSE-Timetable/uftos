@@ -48,7 +48,7 @@ class TeachersTest {
         .body().jsonPath().getString("id");
 
     subjectId = given().contentType(ContentType.JSON)
-        .body(generateSubjectJson(SUBJECT_NAME))
+        .body(generateSubjectJson(SUBJECT_NAME, "ffffff"))
         .when()
         .post("/subjects")
         .then()

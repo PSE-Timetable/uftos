@@ -3,7 +3,6 @@ package de.uftos.utils;
 import de.uftos.dto.Weekday;
 import de.uftos.dto.requestdtos.LessonsCountRequestDto;
 import de.uftos.entities.Break;
-import de.uftos.entities.TimetableMetadata;
 import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -235,14 +234,16 @@ public class JsonGenerator {
   /**
    * Generates the subject JSON.
    *
-   * @param name The name of the subject
+   * @param name  The name of the subject
+   * @param color The color of the subject
    * @return The requested JSON
    * @throws JSONException If something is malformed.
    */
-  public static String generateSubjectJson(String name)
+  public static String generateSubjectJson(String name, String color)
       throws JSONException {
     return new JSONObject()
         .put("name", name)
+        .put("color", color)
         .put("tagIds", new JSONArray())
         .toString();
   }

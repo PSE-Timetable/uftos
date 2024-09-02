@@ -24,7 +24,7 @@ class SubjectsTest {
   @BeforeAll
   static void createTestStudents() throws JSONException {
     subject1Id = given().contentType(ContentType.JSON)
-        .body(generateSubjectJson(SUBJECT1_NAME))
+        .body(generateSubjectJson(SUBJECT1_NAME, "ffffff"))
         .when()
         .post("/subjects")
         .then()
@@ -36,7 +36,7 @@ class SubjectsTest {
         .body().jsonPath().getString("id");
 
     subject2Id = given().contentType(ContentType.JSON)
-        .body(generateSubjectJson(SUBJECT2_NAME))
+        .body(generateSubjectJson(SUBJECT2_NAME, "ffffff"))
         .when()
         .post("/subjects")
         .then()
