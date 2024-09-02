@@ -15,10 +15,10 @@ import org.testcontainers.utility.DockerImageName;
 @Testcontainers
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Suite
-@SelectPackages({ "de.uftos.e2e" })
+@SelectPackages({"de.uftos.e2e"})
 class UftosApplicationTests {
 
-  static Network network = Network.newNetwork();
+  static final Network network = Network.newNetwork();
 
   static final GenericContainer<?> postgres = new GenericContainer<>(
       DockerImageName.parse("postgres:16.3-alpine3.18"))

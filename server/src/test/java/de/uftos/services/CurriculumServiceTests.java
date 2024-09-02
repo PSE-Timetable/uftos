@@ -42,28 +42,23 @@ import org.springframework.web.server.ResponseStatusException;
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class CurriculumServiceTests {
   @Mock
+  private final Grade testGrade = new Grade("testName", List.of("group5"),
+      List.of("T2", "T3"));
+  @Mock
+  private final Grade newGrade = new Grade("newGradeName", List.of("group5"),
+      List.of("T2", "T3"));
+  @Mock
   private GradeRepository gradeRepository;
-
   @Mock
   private CurriculumRepository curriculumRepository;
-
   @Mock
   private ServerRepository serverRepository;
-
-  @Mock
-  private Grade testGrade = new Grade("testName", List.of("group5"),
-      List.of("T2", "T3"));
-
-  @Mock
-  private Grade newGrade = new Grade("newGradeName", List.of("group5"),
-      List.of("T2", "T3"));
   /*
    the grades need to be mocked to return a studentGroup with a non-null
    student list, when getStudentGroups() is called.
    Otherwise a null pointer exception is thrown when making a
    response dto from the curricula with these grades.
   */
-
   @InjectMocks
   private CurriculumService curriculumService;
 

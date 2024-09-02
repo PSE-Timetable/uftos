@@ -1,7 +1,6 @@
 package de.uftos.repositories.database;
 
 import de.uftos.entities.Student;
-import de.uftos.entities.Tag;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -14,8 +13,6 @@ import org.springframework.data.repository.ListPagingAndSortingRepository;
 public interface StudentRepository
     extends ListPagingAndSortingRepository<Student, String>, ListCrudRepository<Student, String>,
     JpaSpecificationExecutor<Student> {
-
-  List<Student> findByTags(Tag tag);
 
   @Query("SELECT s FROM students s JOIN s.tags t WHERE t IN :tagIds")
   List<Student> findAllByTags(List<String> tagIds);

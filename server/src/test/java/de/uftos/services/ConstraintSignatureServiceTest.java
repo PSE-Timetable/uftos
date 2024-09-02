@@ -1,12 +1,10 @@
 package de.uftos.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
-import de.uftos.dto.responsedtos.ConstraintInstancesResponseDto;
 import de.uftos.entities.ConstraintSignature;
 import de.uftos.repositories.database.ConstraintSignatureRepository;
 import java.util.Optional;
