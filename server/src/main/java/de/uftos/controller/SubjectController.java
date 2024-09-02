@@ -89,7 +89,7 @@ public class SubjectController {
   }
 
   /**
-   * Maps the HTTP DELETE request to the {@link SubjectService#delete(String) delete} function
+   * Maps the HTTP DELETE request to the {@link SubjectService#deleteSubjects(String[])}  delete function
    * of the subject service.
    *
    * @param ids the ID sof the subject which are to be deleted.

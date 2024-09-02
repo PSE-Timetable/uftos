@@ -62,7 +62,7 @@ public class ConstraintController {
 
   /**
    * Maps the HTTP GET request for a constraint signature with the given ID to the
-   * {@link ConstraintSignatureService#getById(String)}  getById} function of the
+   * {@link ConstraintSignatureService#getById(String)  getById} function of the
    * constraint signature service.
    *
    * @param signatureId the ID of the signature.
@@ -91,7 +91,7 @@ public class ConstraintController {
 
   /**
    * Maps the HTTP GET request for a constraint signature with the given ID to the
-   * {@link ConstraintSignatureService#getById(String)}  getById} function of
+   * {@link ConstraintSignatureService#getById(String)}  getById function of
    * the constraint signature service.
    *
    * @param signatureId the constraint signature for which an instance is to be created.

@@ -38,7 +38,7 @@ public class Server {
    *
    * @param timetableMetadata the timetable metadata, including information like start of the day.
    * @param currentYear       the current year.
-   * @param email             the email address notifications should be send to.
+   * @param email             the email address notifications should be sent to.
    */
   public Server(TimetableMetadata timetableMetadata, String currentYear, String email) {
     this.timetableMetadata = timetableMetadata;

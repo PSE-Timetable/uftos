@@ -6,8 +6,8 @@ import lombok.Getter;
 /**
  * This class models a number that can be used by the Timefold solver.
  */
+@Getter
 public class NumberTimefoldInstance implements ResourceTimefoldInstance {
-  @Getter
   private final int value;
 
   public NumberTimefoldInstance(int value) {
@@ -31,7 +31,7 @@ public class NumberTimefoldInstance implements ResourceTimefoldInstance {
     }
     return n.value == this.value;
   }
-  
+
   @Override
   public int hashCode() {
     return this.value;

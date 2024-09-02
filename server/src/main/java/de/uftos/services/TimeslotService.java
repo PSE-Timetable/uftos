@@ -65,7 +65,7 @@ public class TimeslotService {
     Optional<Timeslot> timeslot = this.repository.findById(id);
 
     return timeslot.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
-        "Could not find a timesot with this id"));
+        "Could not find a timeslot with this id"));
   }
 
   /**
