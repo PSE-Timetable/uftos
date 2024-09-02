@@ -17,7 +17,6 @@ import de.uftos.repositories.database.TimetableRepository;
 import de.uftos.utils.ConstraintInstanceDeleter;
 import de.uftos.utils.LessonsDeleter;
 import de.uftos.utils.SpecificationBuilder;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -117,8 +116,6 @@ public class SubjectService {
     Subject subjectEntity = this.repository.save(subject.map());
 
     List<Curriculum> curricula = curriculumRepository.findAll();
-    System.out.println(curricula.getFirst().getName());
-    System.out.println(curricula.size());
 
     for (Curriculum curriculum : curricula) {
       curriculum.getLessonsCounts().add(new LessonsCount(subjectEntity.getId(), 0));
