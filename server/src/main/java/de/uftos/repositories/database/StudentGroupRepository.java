@@ -1,6 +1,5 @@
 package de.uftos.repositories.database;
 
-import de.uftos.entities.Grade;
 import de.uftos.entities.Student;
 import de.uftos.entities.StudentGroup;
 import de.uftos.entities.Subject;
@@ -27,8 +26,6 @@ public interface StudentGroupRepository
   List<StudentGroup> findAllByTags(List<String> tagIds);
 
   List<StudentGroup> findBySubjects(Subject subject);
-
-  List<StudentGroup> findByGrades(Grade grade);
 
   @Query("SELECT sg FROM student_groups sg LEFT JOIN sg.grades g WHERE g.id IN :gradeIds")
   List<StudentGroup> findAllByGrades(List<String> gradeIds);

@@ -51,7 +51,7 @@ import java.util.function.Consumer;
 import org.springframework.stereotype.Repository;
 
 /**
- * This class represents a implementation of the SolverRepository interface utilizing the Timefold solver.
+ * This class represents an implementation of the SolverRepository interface utilizing the Timefold solver.
  */
 @Repository
 public class SolverRepositoryImpl implements SolverRepository {

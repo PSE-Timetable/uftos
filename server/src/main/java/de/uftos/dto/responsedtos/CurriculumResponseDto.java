@@ -25,7 +25,6 @@ public record CurriculumResponseDto(@NotEmpty String id, @NotEmpty String name,
    *
    * @param curriculum the Curriculum whose information should be included
    *                   in the CurriculumResponseDto.
-   * @return the CurriculumResponseDto containing information about the Curriculum.
    */
   public CurriculumResponseDto(Curriculum curriculum) {
     this(curriculum.getId(), curriculum.getName(),

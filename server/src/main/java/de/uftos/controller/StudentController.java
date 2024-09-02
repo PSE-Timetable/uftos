@@ -94,7 +94,7 @@ public class StudentController {
   }
 
   /**
-   * Maps the HTTP GET request, to get the lessons that the student atttends to the
+   * Maps the HTTP GET request, to get the lessons that the student attends to the
    * {@link StudentService#getLessonsById(String) get LessonsById}
    * function of the student service.
    *
