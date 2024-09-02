@@ -1,4 +1,4 @@
-import { createSubject, type SubjectRequestDto } from '$lib/sdk/fetch-client';
+import { createSubject, deleteGrades, deleteStudentGroup, getGrades, getStudentGroups, type SubjectRequestDto } from '$lib/sdk/fetch-client';
 import { expect, test, type Page } from '@playwright/test';
 
 let page: Page;
@@ -8,6 +8,17 @@ test.describe.configure({ mode: 'serial' });
 //tests need to be done in order or they might break!
 test.describe('subjects page', () => {
   test.beforeAll('delete all existing subjects', async ({ browser }) => {
+    const totalGroups = await getStudentGroups({ page: 0 }).then(({ totalElements }) => totalElements);
+    const groups = await getStudentGroups({ page: 0, size: totalGroups }).then(({ content }) => content ?? []);
+    if (groups.length > 0) {
+      for (const group of groups) {
+        await deleteStudentGroup(group.id);
+      }
+    }
+    const grades = await getGrades({});
+    if (grades.length > 0) {
+      await deleteGrades(grades.map((grade) => grade.id));
+    }
     page = await browser.newPage();
     await page.goto('/');
     await page.getByRole('link').first().click();

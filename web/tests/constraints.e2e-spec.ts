@@ -73,9 +73,7 @@ test.describe('Constraints', () => {
     for (let i = 0; i < 5; i++) {
       await createTag({ tagName: `tag${i}` });
     }
-    for (let i = 0; i < 5; i++) {
-      await createSubject({ name: `subject${i}`, tagIds: [] });
-    }
+    await createSubject({ name: `subject0`, tagIds: [] });
     const gradeId = await createGrade({ name: 'grade', tagIds: [], studentGroupIds: [] }).then(({ id }) => id);
     for (let i = 0; i < 5; i++) {
       await createStudentGroup({ name: `group${i}`, gradeIds: [gradeId], studentIds: [], subjectIds: [], tagIds: [] });
