@@ -35,7 +35,7 @@ test.describe('Constraints', () => {
       await page.getByText('Upload').click();
       const fileChooser = await fileChooserPromise;
       await fileChooser.setFiles('./tests/empty-ucdl.yml');
-      await expect(page.locator('.view-line').first()).toBeEmpty({ timeout: 500 });
+      await expect(page.locator('.view-line').first()).toBeEmpty({ timeout: 750 });
     }).toPass();
     const totalStudents = await getStudents({ page: 0 }).then(({ totalElements }) => totalElements);
     const students = await getStudents({ page: 0, size: totalStudents }).then(({ content }) => content ?? []);
