@@ -12,8 +12,15 @@ import static org.mockito.Mockito.when;
 
 import de.uftos.dto.requestdtos.TagRequestDto;
 import de.uftos.entities.Break;
+import de.uftos.entities.Grade;
+import de.uftos.entities.Room;
 import de.uftos.entities.Server;
+import de.uftos.entities.Student;
+import de.uftos.entities.StudentGroup;
+import de.uftos.entities.Subject;
 import de.uftos.entities.Tag;
+import de.uftos.entities.Teacher;
+import de.uftos.entities.Timeslot;
 import de.uftos.entities.TimetableMetadata;
 import de.uftos.repositories.database.ConstraintInstanceRepository;
 import de.uftos.repositories.database.ConstraintSignatureRepository;
@@ -26,6 +33,7 @@ import de.uftos.repositories.database.SubjectRepository;
 import de.uftos.repositories.database.TagRepository;
 import de.uftos.repositories.database.TeacherRepository;
 import de.uftos.repositories.database.TimeslotRepository;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -87,16 +95,45 @@ public class TagServiceTests {
 
     Server server =
         new Server(new TimetableMetadata(45, 8, "7:45", new Break[] {}), "2024", "test@uftos.de");
-    when(serverRepository.findAll()).thenReturn(List.of(server));
+    when(serverRepository.findAll()).thenReturn(new ArrayList<>(List.of(server)));
     when(tagRepository.findById("123")).thenReturn(Optional.of(tag));
-    when(tagRepository.findAllById(List.of("123"))).thenReturn(List.of(tag));
-    when(teacherRepository.findByTags(any(Tag.class))).thenReturn(Collections.emptyList());
-    when(studentGroupRepository.findByTags(any(Tag.class))).thenReturn(Collections.emptyList());
-    when(studentRepository.findByTags(any(Tag.class))).thenReturn(Collections.emptyList());
-    when(roomRepository.findByTags(any(Tag.class))).thenReturn(Collections.emptyList());
-    when(subjectRepository.findByTags(any(Tag.class))).thenReturn(Collections.emptyList());
-    when(gradeRepository.findByTags(any(Tag.class))).thenReturn(Collections.emptyList());
-    when(timeslotRepository.findByTags(any(Tag.class))).thenReturn(Collections.emptyList());
+    when(tagRepository.findAllById(new ArrayList<>(List.of("123")))).thenReturn(
+        new ArrayList<>(List.of(tag)));
+
+    Teacher teacherWithTag = new Teacher("teacherId");
+    teacherWithTag.setTags(new ArrayList<>(List.of(tag)));
+    when(teacherRepository.findAllByTags(new ArrayList<>(List.of("123")))).thenReturn(
+        new ArrayList<>(List.of(teacherWithTag)));
+
+    StudentGroup groupWithTag = new StudentGroup("groupId");
+    groupWithTag.setTags(new ArrayList<>(List.of(tag)));
+    when(studentGroupRepository.findAllByTags(new ArrayList<>(List.of("123")))).thenReturn(
+        new ArrayList<>(List.of(groupWithTag)));
+
+    Student studentWithTag = new Student("studentId");
+    studentWithTag.setTags(new ArrayList<>(List.of(tag)));
+    when(studentRepository.findAllByTags(new ArrayList<>(List.of("123")))).thenReturn(
+        new ArrayList<>(List.of(studentWithTag)));
+
+    Room roomWithTag = new Room("roomId");
+    roomWithTag.setTags(new ArrayList<>(List.of(tag)));
+    when(roomRepository.findAllByTags(new ArrayList<>(List.of("123")))).thenReturn(
+        new ArrayList<>(List.of(roomWithTag)));
+
+    Subject subjectWithTag = new Subject("subjectId");
+    subjectWithTag.setTags(new ArrayList<>(List.of(tag)));
+    when(subjectRepository.findAllByTags(new ArrayList<>(List.of("123")))).thenReturn(
+        new ArrayList<>(List.of(subjectWithTag)));
+
+    Grade gradeWithTag = new Grade("gradeId");
+    gradeWithTag.setTags(new ArrayList<>(List.of(tag)));
+    when(gradeRepository.findAllByTags(new ArrayList<>(List.of("123")))).thenReturn(
+        new ArrayList<>(List.of(gradeWithTag)));
+
+    Timeslot timeslotWithTag = new Timeslot("timeslotId");
+    timeslotWithTag.setTags(new ArrayList<>(List.of(tag)));
+    when(timeslotRepository.findAllByTags(new ArrayList<>(List.of("123")))).thenReturn(
+        new ArrayList<>(List.of(timeslotWithTag)));
   }
 
   @Test
@@ -126,6 +163,20 @@ public class TagServiceTests {
     Tag tag = tagCap.getValue();
     assertNotNull(tag);
     assertEquals("Wheelchair", tag.getName());
+  }
+
+  @Test
+  void createTagEmptyName() {
+    TagRequestDto requestDto =
+        new TagRequestDto("");
+    assertThrows(ResponseStatusException.class, () -> tagService.create(requestDto));
+  }
+
+  @Test
+  void updateTagEmptyName() {
+    TagRequestDto requestDto =
+        new TagRequestDto("");
+    assertThrows(ResponseStatusException.class, () -> tagService.update("123", requestDto));
   }
 
   @Test

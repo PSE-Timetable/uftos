@@ -1,6 +1,5 @@
 package de.uftos.e2e;
 
-import static de.uftos.utils.JsonGenerator.generateCurriculumJson;
 import static de.uftos.utils.JsonGenerator.generateGradeJson;
 import static de.uftos.utils.JsonGenerator.generateIdListJson;
 import static de.uftos.utils.JsonGenerator.generatePageJson;
@@ -9,11 +8,9 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
-import de.uftos.dto.requestdtos.LessonsCountRequestDto;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.http.ContentType;
 import java.util.Collections;
-import java.util.List;
 import org.json.JSONException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -38,7 +35,7 @@ class CurriculumTest {
   static void createTestCurricula() throws JSONException {
 
     subjectId = given().contentType(ContentType.JSON)
-        .body(generateSubjectJson(SUBJECT_NAME))
+        .body(generateSubjectJson(SUBJECT_NAME, "ffffff"))
         .when()
         .post("/subjects")
         .then()

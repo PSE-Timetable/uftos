@@ -11,9 +11,14 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import de.uftos.dto.requestdtos.LessonsCountRequestDto;
 import de.uftos.dto.requestdtos.SubjectRequestDto;
+import de.uftos.entities.Curriculum;
+import de.uftos.entities.Grade;
+import de.uftos.entities.StudentGroup;
 import de.uftos.entities.Subject;
 import de.uftos.entities.Tag;
+import de.uftos.entities.Teacher;
 import de.uftos.repositories.database.ConstraintInstanceRepository;
 import de.uftos.repositories.database.ConstraintSignatureRepository;
 import de.uftos.repositories.database.CurriculumRepository;
@@ -26,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,6 +41,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.web.server.ResponseStatusException;
 
 @SuppressWarnings("checkstyle:MissingJavadocType")
@@ -83,13 +90,39 @@ public class SubjectServiceTests {
     Subject subject = new Subject();
     subject.setId(SUBJECT_ID);
     subject.setName(SUBJECT_NAME);
-    subject.setTags(List.of(tag));
+    subject.setTags(new ArrayList<>(List.of(tag)));
 
-    when(subjectRepository.findAll()).thenReturn(List.of(subject));
+    when(subjectRepository.findAll()).thenReturn(new ArrayList<>(List.of(subject)));
     when(subjectRepository.findById(SUBJECT_ID)).thenReturn(Optional.of(subject));
-    when(subjectRepository.findAllById(List.of(SUBJECT_ID))).thenReturn(List.of(subject));
-    when(curriculumRepository.findAll()).thenReturn(new ArrayList<>());
+    when(subjectRepository.findAllById(new ArrayList<>(List.of(SUBJECT_ID)))).thenReturn(
+        new ArrayList<>(List.of(subject)));
+    when(subjectRepository.findAllById(
+        new ArrayList<>(List.of("nonExistentId", SUBJECT_ID)))).thenReturn(
+          new ArrayList<>(List.of(subject)));
+    when(subjectRepository.save(any(Subject.class))).thenReturn(subject);
+
+    LessonsCountRequestDto lessonsCount = new LessonsCountRequestDto("123", 1);
+    List<LessonsCountRequestDto> lessonsCounts = List.of(lessonsCount);
+    Curriculum testCurriculum =
+        new Curriculum(new Grade("gradeId"), "name", Collections.emptyList());
+    testCurriculum.setLessonsCounts(
+        lessonsCounts.stream().map(LessonsCountRequestDto::map).collect(Collectors.toList())
+    );
+
+    when(curriculumRepository.findAll()).thenReturn(new ArrayList<>(List.of(testCurriculum)));
+    when(curriculumRepository.findAll(any(Specification.class))).thenReturn(
+        new ArrayList<>(List.of(testCurriculum)));
+
+    Teacher teacherWithSubject = new Teacher("teacherId");
+    teacherWithSubject.setSubjects(new ArrayList<>(List.of(subject)));
+    when(teacherRepository.findAll(any(Specification.class))).thenReturn(
+        new ArrayList<>(List.of(teacherWithSubject)));
     when(teacherRepository.findBySubjects(any(Subject.class))).thenReturn(Collections.emptyList());
+
+    StudentGroup groupWithSubject = new StudentGroup("groupId");
+    groupWithSubject.setSubjects(new ArrayList<>(List.of(subject)));
+    when(studentGroupRepository.findAll(any(Specification.class))).thenReturn(
+        new ArrayList<>(List.of(groupWithSubject)));
     when(studentGroupRepository.findBySubjects(any(Subject.class))).thenReturn(
         Collections.emptyList());
   }
@@ -112,7 +145,7 @@ public class SubjectServiceTests {
   @Test
   void createSubject() {
     SubjectRequestDto requestDto =
-        new SubjectRequestDto("Mathe", "blue", List.of("tagId"));
+        new SubjectRequestDto("Mathe", "blue", new ArrayList<>(List.of("tagId")));
     subjectService.create(requestDto);
 
     ArgumentCaptor<Subject> subjectCap = ArgumentCaptor.forClass(Subject.class);
@@ -129,9 +162,16 @@ public class SubjectServiceTests {
   }
 
   @Test
+  void createSubjectEmptyName() {
+    SubjectRequestDto requestDto =
+        new SubjectRequestDto("", "blue", new ArrayList<>(List.of("tagId")));
+    assertThrows(ResponseStatusException.class, () -> subjectService.create(requestDto));
+  }
+
+  @Test
   void updateSubject() {
     SubjectRequestDto requestDto =
-        new SubjectRequestDto("Englisch", "red", List.of("otherTagId"));
+        new SubjectRequestDto("Englisch", "red", new ArrayList<>(List.of("otherTagId")));
     subjectService.update(SUBJECT_ID, requestDto);
 
     ArgumentCaptor<Subject> subjectCap = ArgumentCaptor.forClass(Subject.class);
@@ -145,6 +185,13 @@ public class SubjectServiceTests {
 
     assertEquals(1, subject.getTags().size());
     assertEquals("otherTagId", subject.getTags().getFirst().getId());
+  }
+
+  @Test
+  void updateSubjectEmptyName() {
+    SubjectRequestDto requestDto =
+        new SubjectRequestDto("", "blue", new ArrayList<>(List.of("tagId")));
+    assertThrows(ResponseStatusException.class, () -> subjectService.update("123", requestDto));
   }
 
   @Test
@@ -162,5 +209,11 @@ public class SubjectServiceTests {
   void deleteNonExistentSubject() {
     assertThrows(ResponseStatusException.class,
         () -> subjectService.deleteSubjects(new String[] {"nonExistentId"}));
+  }
+
+  @Test
+  void deleteSubjectsSomeExistent() {
+    assertThrows(ResponseStatusException.class,
+        () -> subjectService.deleteSubjects(new String[] {"nonExistentId", "123"}));
   }
 }

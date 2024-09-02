@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -51,6 +53,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.server.ResponseStatusException;
 
 @SuppressWarnings("checkstyle:MissingJavadocType")
@@ -260,11 +266,19 @@ public class ConstraintInstanceServiceTest {
         Optional.of(constraintInstanceInvalidArgs));
     when(constraintSignatureRepository.findById(constraintSignature.getName())).thenReturn(
         Optional.of(constraintSignature));
+
+    Page<ConstraintInstance> instancePage = new PageImpl<>(List.of(constraintInstance));
+    when(constraintInstanceRepository.findByArguments(eq("teacherArgId"),
+        any(Pageable.class))).thenReturn(instancePage);
+
     when(
         constraintSignatureRepository.findById(constraintSignatureManyParams.getName())).thenReturn(
         Optional.of(constraintSignatureManyParams));
     when(constraintSignatureRepository.findById(constraintSignatureInvalid.getName())).thenReturn(
         Optional.of(constraintSignatureInvalid));
+    when(constraintSignatureRepository.findInstancesBySignatureId(eq("test constraint"),
+        any(Pageable.class))).thenReturn(instancePage);
+
 
     Timeslot timeslot = new Timeslot("timeslotId1");
     timeslot.setDay(Weekday.TUESDAY);
@@ -332,6 +346,35 @@ public class ConstraintInstanceServiceTest {
   }
 
   @Test
+  void getConstraintInstancesNoArgs() {
+    ConstraintInstancesResponseDto result =
+        constraintInstanceService.get("test constraint", PageRequest.of(0, 10), Optional.empty());
+    assertEquals(1, result.totalElements());
+    List<ConstraintInstancesResponseDto.SlimInstance> instances = result.constraintInstances();
+    assertEquals("123", instances.getFirst().id());
+  }
+
+  @Test
+  void getConstraintInstancesWithArgs() {
+    ConstraintInstancesResponseDto result =
+        constraintInstanceService.get("test constraint", PageRequest.of(0, 10),
+            Optional.of("teacherArgId"));
+    assertEquals(1, result.totalElements());
+    List<ConstraintInstancesResponseDto.SlimInstance> instances = result.constraintInstances();
+    assertEquals("123", instances.getFirst().id());
+  }
+
+  @Test
+  void getConstraintInstancesWithEmptyArg() {
+    ConstraintInstancesResponseDto result =
+        constraintInstanceService.get("test constraint", PageRequest.of(0, 10),
+            Optional.of(""));
+    assertEquals(1, result.totalElements());
+    List<ConstraintInstancesResponseDto.SlimInstance> instances = result.constraintInstances();
+    assertEquals("123", instances.getFirst().id());
+  }
+
+  @Test
   void tooManyParameter() {
     ConstraintArgumentRequestDto arg1 =
         new ConstraintArgumentRequestDto("teacher123", "teacherId1");
@@ -353,6 +396,17 @@ public class ConstraintInstanceServiceTest {
 
     assertDoesNotThrow(
         () -> constraintInstanceService.create("test constraint", constraintInstanceRequestDto));
+  }
+
+  @Test
+  void createConstraintInstanceInvalidSignatureId() {
+    ConstraintArgumentRequestDto arg =
+        new ConstraintArgumentRequestDto("teacher123", "teacherId1");
+    ConstraintInstanceRequestDto constraintInstanceRequestDto =
+        new ConstraintInstanceRequestDto(List.of(arg), RewardPenalize.HARD_PENALIZE);
+
+    assertThrows(ResponseStatusException.class,
+        () -> constraintInstanceService.create("nonExistentId", constraintInstanceRequestDto));
   }
 
   @Test
