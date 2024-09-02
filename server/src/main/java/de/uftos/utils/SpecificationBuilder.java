@@ -38,7 +38,7 @@ public class SpecificationBuilder<T> {
    *
    * @param text The text to search for
    * @return The current instance of {@code SpecificationBuilder} with the
-   * search filter added if the parameter is present.
+   *       search filter added if the parameter is present.
    */
   public SpecificationBuilder<T> search(Optional<String> text) {
     if (text.isEmpty()) {
@@ -63,7 +63,7 @@ public class SpecificationBuilder<T> {
    * @param param     The optional parameter value to filter by.
    * @param paramName The name of the parameter to filter on.
    * @return The current instance of {@code SpecificationBuilder} with the
-   * OR filter added if the parameter is present.
+   *       OR filter added if the parameter is present.
    */
   public SpecificationBuilder<T> optionalOrLike(Optional<String> param, String paramName) {
     if (param.isEmpty()) {
@@ -84,7 +84,7 @@ public class SpecificationBuilder<T> {
    * @param relationName   The name of the relation to join.
    * @param attributeName  The name of the attribute in the joined relation to filter on.
    * @return The current instance of {@code SpecificationBuilder} with the join filter
-   * added if the attribute value array is present.
+   *       added if the attribute value array is present.
    */
   public SpecificationBuilder<T> optionalAndJoinIn(Optional<String[]> attributeValue,
                                                    String relationName, String attributeName) {
@@ -108,7 +108,7 @@ public class SpecificationBuilder<T> {
    * @param secondRelationName The name of the second relation to join.
    * @param attributeName      The name of the attribute in the joined relation to filter on.
    * @return The current instance of {@code SpecificationBuilder} with the join filter
-   * added if the attribute value array is present.
+   *       added if the attribute value array is present.
    */
   public SpecificationBuilder<T> andDoubleJoinIn(String[] attributeValue, String firstRelationName,
                                                  String secondRelationName, String attributeName) {
