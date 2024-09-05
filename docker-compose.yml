@@ -12,7 +12,7 @@ services:
       POSTGRES_PASSWORD: superSecurePassword
       POSTGRES_DB: uftos
   api:
-    image: ghcr.io/PSE-timetable/uftos-api:latest
+    image: ghcr.io/pse-timetable/uftos-api:latest
     container_name: uftos-api
     restart: unless-stopped
     # volumes:
@@ -30,7 +30,7 @@ services:
       MAIL_PASSWORD: highlySecurePassword
       MAIL_FROM: uftos@example.com
   web:
-    image: ghcr.io/PSE-timetable/uftos-web:latest
+    image: ghcr.io/pse-timetable/uftos-web:latest
     container_name: uftos-web
     ports:
       - 5173:5173
