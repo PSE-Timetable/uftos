@@ -88,6 +88,14 @@ public class ScoreCalculator
       soft += score.softScore();
 
     }
+
+    if (!es.isShutdown()) {
+      es.shutdown();
+    }
+    if (!es.isShutdown()) {
+      es.shutdownNow();
+    }
+    
     return HardSoftScore.of(hard, soft);
   }
 
