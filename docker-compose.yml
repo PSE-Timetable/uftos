@@ -29,6 +29,7 @@ services:
       MAIL_USER: myUser
       MAIL_PASSWORD: highlySecurePassword
       MAIL_FROM: uftos@example.com
+      JAVA_TOOL_OPTIONS: -Xmx8G
   web:
     image: ghcr.io/pse-timetable/uftos-web:latest
     container_name: uftos-web
