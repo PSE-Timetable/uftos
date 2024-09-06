@@ -89,7 +89,11 @@ public class SolverRepositoryImpl implements SolverRepository {
     BlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<>(1);
     ExecutorService es = new ThreadPoolExecutor(1, 1, 1, TimeUnit.SECONDS, workQueue);
 
-    return es.submit(solveTimetable);
+    Future<TimetableSolutionDto> future = es.submit(solveTimetable);
+
+    es.shutdown();
+
+    return future;
   }
 
   @SuppressWarnings("checkstyle:VariableDeclarationUsageDistance")
