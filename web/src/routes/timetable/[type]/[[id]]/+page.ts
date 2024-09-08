@@ -1,9 +1,11 @@
 import { resourceDisplayName, type Resource } from '$lib/components/timetable/timetable';
 import type { ComboBoxItem } from '$lib/elements/ui/combo-box/combo-box';
 import { getRoomsItems, getStudentGroupsItems, getStudentsItems, getTeachersItems } from '$lib/utils/combobox-items';
+import { init } from '$lib/utils/server';
 import type { PageLoad } from './$types';
 
 export const load = (async ({ params }) => {
+  init();
   const type = params.type as Resource;
   const resources: { [K in Resource]: ComboBoxItem[] } = { class: [], room: [], teacher: [], student: [] };
 

@@ -1,4 +1,5 @@
 import { getTag, type Tag } from '$lib/sdk/fetch-client';
+import { init } from '$lib/utils/server';
 import { error } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
@@ -11,6 +12,7 @@ export const _schema = z.object({
 });
 
 export const load = (async ({ params }) => {
+  init();
   let tag: Tag, title: string;
   if (params.id === 'new') {
     tag = { id: 'new', name: '' };
