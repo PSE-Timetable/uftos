@@ -1,4 +1,4 @@
-import { createTag, type TagRequestDto } from '$lib/sdk/fetch-client';
+import { createTag, defaults, type TagRequestDto } from '$lib/sdk/fetch-client';
 import { expect, test, type Page } from '@playwright/test';
 
 let page: Page;
@@ -8,6 +8,7 @@ test.describe.configure({ mode: 'serial' });
 //tests need to be done in order or they might break!
 test.describe('tags page', () => {
   test.beforeAll('delete all existing tags', async ({ browser }) => {
+    defaults.baseUrl = 'http://localhost:5173/api';
     page = await browser.newPage();
     await page.goto('/');
     await page.getByRole('link').first().click();

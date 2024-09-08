@@ -1,6 +1,7 @@
 import {
   createGrade,
   createSubject,
+  defaults,
   deleteGrades,
   deleteStudentGroup,
   deleteSubjects,
@@ -17,6 +18,7 @@ test.describe.configure({ mode: 'serial' });
 
 test.describe('Curriculum', () => {
   test.beforeAll('Delete existing entities', async ({ browser }) => {
+    defaults.baseUrl = 'http://localhost:5173/api';
     page = await browser.newPage();
     const subjects = await getSubjects({});
     if (subjects.length > 0) {

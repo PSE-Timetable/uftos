@@ -1,3 +1,4 @@
+import { defaults } from '$lib/sdk/fetch-client';
 import { expect, test, type Page } from '@playwright/test';
 
 let page: Page;
@@ -6,6 +7,7 @@ test.describe.configure({ mode: 'serial' });
 
 test.describe('Settings', () => {
   test.beforeAll('delete all existing timeslots', async ({ browser }) => {
+    defaults.baseUrl = 'http://localhost:5173/api';
     page = await browser.newPage();
     await page.goto('/');
     await page.getByRole('link').first().click();

@@ -1,4 +1,10 @@
-import { createGrade, deleteStudentGroup, getStudentGroups, type GradeRequestDto } from '$lib/sdk/fetch-client';
+import {
+  createGrade,
+  defaults,
+  deleteStudentGroup,
+  getStudentGroups,
+  type GradeRequestDto,
+} from '$lib/sdk/fetch-client';
 import { expect, test, type Page } from '@playwright/test';
 
 let page: Page;
@@ -8,6 +14,7 @@ test.describe.configure({ mode: 'serial' });
 //tests need to be done in order or they might break!
 test.describe('grades page', () => {
   test.beforeAll('delete all existing grades', async ({ browser }) => {
+    defaults.baseUrl = 'http://localhost:5173/api';
     page = await browser.newPage();
     const totalGroups = await getStudentGroups({ page: 0 }).then(({ totalElements }) => totalElements);
     const groups = await getStudentGroups({ page: 0, size: totalGroups }).then(({ content }) => content ?? []);

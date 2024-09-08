@@ -1,5 +1,6 @@
 import {
   createSubject,
+  defaults,
   deleteGrades,
   deleteStudentGroup,
   getGrades,
@@ -15,6 +16,7 @@ test.describe.configure({ mode: 'serial' });
 //tests need to be done in order or they might break!
 test.describe('subjects page', () => {
   test.beforeAll('delete all existing subjects', async ({ browser }) => {
+    defaults.baseUrl = 'http://localhost:5173/api';
     const totalGroups = await getStudentGroups({ page: 0 }).then(({ totalElements }) => totalElements);
     const groups = await getStudentGroups({ page: 0, size: totalGroups }).then(({ content }) => content ?? []);
     if (groups.length > 0) {
