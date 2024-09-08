@@ -1,4 +1,5 @@
 import { getSubjects, getTags, getTeacher, type Sort } from '$lib/sdk/fetch-client';
+import { init } from '$lib/utils/server';
 import { error } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
@@ -14,6 +15,7 @@ export const _schema = z.object({
 });
 
 export const load = (async ({ params }) => {
+  init();
   const sort: Sort = { sort: ['name,asc'] };
   const tags = await getTags(sort);
   const subjects = await getSubjects(sort);

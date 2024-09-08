@@ -1,7 +1,9 @@
 import { getGrades, getStudentGroups, getStudents } from '$lib/sdk/fetch-client';
+import { init } from '$lib/utils/server';
 import type { PageLoad } from './$types';
 
 export const load = (async () => {
+  init();
   const { totalElements: size } = await getStudentGroups({ page: 0, size: 1 });
   return {
     studentGroups: await getStudentGroups({ page: 0, size, sort: ['name,asc'] }).then(({ content }) => content),
