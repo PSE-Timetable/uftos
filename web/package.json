@@ -59,7 +59,7 @@
     "cmdk-sv": "^0.0.18",
     "formsnap": "^1.0.1",
     "lodash-es": "^4.17.21",
-    "lucide-svelte": "^0.437.0",
+    "lucide-svelte": "^0.438.0",
     "luxon": "^3.4.4",
     "mode-watcher": "^0.4.0",
     "monaco-editor": "^0.51.0",
