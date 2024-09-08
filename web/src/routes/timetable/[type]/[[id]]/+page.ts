@@ -4,8 +4,8 @@ import { getRoomsItems, getStudentGroupsItems, getStudentsItems, getTeachersItem
 import { init } from '$lib/utils/server';
 import type { PageLoad } from './$types';
 
-export const load = (async ({ params }) => {
-  init();
+export const load = (async ({ params, fetch }) => {
+  init(fetch);
   const type = params.type as Resource;
   const resources: { [K in Resource]: ComboBoxItem[] } = { class: [], room: [], teacher: [], student: [] };
 

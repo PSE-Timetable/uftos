@@ -4,8 +4,8 @@ import { init } from '$lib/utils/server';
 import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
 
-export const load = (async () => {
-  init();
+export const load = (async ({ fetch }) => {
+  init(fetch);
   try {
     return {
       initialGrades: await loadGrades('', ''),

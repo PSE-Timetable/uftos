@@ -11,8 +11,8 @@ export const _schema = z.object({
   name: z.string().trim().min(1, { message: 'Der Name darf nicht leer sein.' }),
 });
 
-export const load = (async ({ params }) => {
-  init();
+export const load = (async ({ params, fetch }) => {
+  init(fetch);
   let tag: Tag, title: string;
   if (params.id === 'new') {
     tag = { id: 'new', name: '' };
