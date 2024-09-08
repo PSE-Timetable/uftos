@@ -3,6 +3,7 @@ import {
   createStudent,
   createSubject,
   createTag,
+  defaults,
   deleteGrades,
   deleteStudents,
   deleteSubjects,
@@ -24,6 +25,7 @@ test.describe.configure({ mode: 'serial' });
 
 test.describe('Student group page', () => {
   test.beforeAll('delete existing groups', async ({ browser }) => {
+    defaults.baseUrl = 'http://localhost:5173/api';
     page = await browser.newPage();
     await page.goto('/');
     await page.getByRole('link').first().click();

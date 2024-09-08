@@ -5,8 +5,8 @@
     "version" : "v0"
   },
   "servers" : [ {
-    "url" : "http://localhost:5173/api",
-    "description" : "UFTOS api URL"
+    "url" : "/api",
+    "description" : "UFTOS API URL"
   } ],
   "paths" : {
     "/constraints" : {

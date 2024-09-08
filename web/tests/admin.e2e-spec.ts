@@ -2,6 +2,7 @@ import {
   createGrade,
   createStudent,
   createTeacher,
+  defaults,
   deleteGrades,
   deleteRooms,
   deleteStudentGroup,
@@ -16,6 +17,9 @@ import {
 import { expect, test } from '@playwright/test';
 
 test.describe('Admin Overview', () => {
+  test.beforeAll(() => {
+    defaults.baseUrl = 'http://localhost:5173/api';
+  });
   test('shows statistics', async ({ page }) => {
     const totalStudents = await getStudents({ page: 0 }).then(({ totalElements }) => totalElements);
     const students = await getStudents({ page: 0, size: totalStudents }).then(({ content }) => content ?? []);

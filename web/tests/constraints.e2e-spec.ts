@@ -5,6 +5,7 @@ import {
   createSubject,
   createTag,
   createTeacher,
+  defaults,
   deleteGrades,
   deleteStudentGroup,
   deleteStudents,
@@ -26,6 +27,7 @@ test.describe.configure({ mode: 'serial' });
 
 test.describe('Constraints', () => {
   test.beforeAll('Delete existing constraints', async ({ browser }) => {
+    defaults.baseUrl = 'http://localhost:5173/api';
     page = await browser.newPage();
     await page.goto('/');
     await page.getByRole('link').first().click();

@@ -1,6 +1,7 @@
 import {
   createSubject,
   createTeacher,
+  defaults,
   deleteSubjects,
   getSubjects,
   type TeacherRequestDto,
@@ -14,6 +15,7 @@ test.describe.configure({ mode: 'serial' });
 //tests need to be done in order or they might break!
 test.describe('teachers page', () => {
   test.beforeAll('delete all existing teachers', async ({ browser }) => {
+    defaults.baseUrl = 'http://localhost:5173/api';
     page = await browser.newPage();
     const subjects = await getSubjects({});
     if (subjects.length > 0) {

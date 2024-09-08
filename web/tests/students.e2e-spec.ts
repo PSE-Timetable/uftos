@@ -1,4 +1,4 @@
-import { createStudent, type StudentRequestDto } from '$lib/sdk/fetch-client';
+import { createStudent, defaults, type StudentRequestDto } from '$lib/sdk/fetch-client';
 import { expect, test, type Page } from '@playwright/test';
 
 let page: Page;
@@ -8,6 +8,7 @@ test.describe.configure({ mode: 'serial' });
 //tests need to be done in order or they might break!
 test.describe('Students page', () => {
   test.beforeAll('delete all existing students', async ({ browser }) => {
+    defaults.baseUrl = 'http://localhost:5173/api';
     page = await browser.newPage();
     await page.goto('/');
     await page.getByRole('link').first().click();
