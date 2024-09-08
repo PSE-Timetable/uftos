@@ -65,7 +65,7 @@ public class SolverRepositoryImpl implements SolverRepository {
 
       SolverConfig solverConfig = new SolverConfig()
           .withTerminationConfig(new TerminationConfig()
-              .withUnimprovedMinutesSpentLimit(1L)
+              .withUnimprovedMinutesSpentLimit(5L)
               .withBestScoreLimit("0hard/0soft"))
           .withSolutionClass(TimetableSolutionTimefoldInstance.class)
           .withEntityClassList(
