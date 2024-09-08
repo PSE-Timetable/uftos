@@ -8,11 +8,11 @@ import * as Oazapfts from "@oazapfts/runtime";
 import * as QS from "@oazapfts/runtime/query";
 export const defaults: Oazapfts.Defaults<Oazapfts.CustomHeaders> = {
     headers: {},
-    baseUrl: "http://localhost:5173/api",
+    baseUrl: "/api",
 };
 const oazapfts = Oazapfts.runtime(defaults);
 export const servers = {
-    uftosApiUrl: "http://localhost:5173/api"
+    uftosApiUrl: "/api"
 };
 export type Pageable = {
     page?: number;

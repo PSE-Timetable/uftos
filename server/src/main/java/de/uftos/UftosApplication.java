@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Bean;
  * Contains the method to start the UFTOS application.
  */
 @OpenAPIDefinition(info = @Info(title = "UFTOS OpenAPI definition", version = "v0"), servers = {
-    @Server(url = "http://localhost:5173/api", description = "UFTOS api URL")})
+    @Server(url = "/api", description = "UFTOS API URL")})
 @SpringBootApplication
 public class UftosApplication {
   /**
