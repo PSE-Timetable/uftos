@@ -14,8 +14,8 @@ export const _schema = z.object({
   tags: z.string().array(),
 });
 
-export const load = (async ({ params }) => {
-  init();
+export const load = (async ({ params, fetch }) => {
+  init(fetch);
   const sort: Sort = { sort: ['name,asc'] };
   const tags = await getTags(sort);
   let formRoom: { id: string; name: string; buildingName: string; capacity: number; tags: string[] }, title: string;

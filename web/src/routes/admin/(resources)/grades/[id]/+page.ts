@@ -13,8 +13,8 @@ export const _schema = z.object({
   studentGroups: z.string().array(),
 });
 
-export const load = (async ({ params }) => {
-  init();
+export const load = (async ({ params, fetch }) => {
+  init(fetch);
   const sort: Sort = { sort: ['name,asc'] };
   const tags = await getTags(sort);
   let formGrade: { id: string; name: string; studentGroups: string[]; tags: string[] }, title: string;

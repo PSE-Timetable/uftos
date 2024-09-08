@@ -1,8 +1,8 @@
 import { init } from '$lib/utils/server';
 import type { PageLoad } from './$types';
 
-export const load = (() => {
-  init();
+export const load = (({ fetch }) => {
+  init(fetch);
   return {
     meta: {
       title: 'UFTOS',

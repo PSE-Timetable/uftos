@@ -1,9 +1,10 @@
 import { defaults } from '$lib/sdk/fetch-client';
 import { memoize } from 'lodash-es';
 
-function _init() {
-  //   defaults.fetch = fetch;
-  defaults.baseUrl = 'http://localhost:5173/api';
+type Fetch = typeof fetch;
+
+function _init(fetch: Fetch) {
+  defaults.fetch = fetch;
 }
 
 export const init = memoize(_init, () => 'singlevalue');
